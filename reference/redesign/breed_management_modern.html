@@ -1,0 +1,1846 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breed Management - Pampered Pooch Database</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Design System Variables */
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --primary-dark: #3730a3;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        /* Spacing Scale */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg:
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl:
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+
+      /* Reset */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Layout Structure */
+      .app-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Persistent Header */
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Hamburger Menu */
+      .hamburger-menu {
+        position: relative;
+      }
+
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Dropdown Menu */
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + var(--space-2));
+        left: 0;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+
+      .nav-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .dropdown-header {
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      }
+
+      .dropdown-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon-dropdown {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .brand-text-dropdown h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-dropdown p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .nav-menu {
+        padding: var(--space-3);
+      }
+
+      .nav-item {
+        margin-bottom: var(--space-1);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Brand Logo */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        cursor: pointer;
+      }
+
+      .brand-icon-header {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .brand-text-header h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-header p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb-link:hover {
+        color: var(--primary-hover);
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      /* Header Actions */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .date-display {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        margin-top: 0;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+      }
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      /* Page Header */
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: var(--space-8);
+        padding-bottom: var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .page-title-section h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .page-stats {
+        display: flex;
+        gap: var(--space-6);
+        text-align: right;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+      }
+
+      /* Add New Breed Section */
+      .add-breed-section {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        margin-bottom: var(--space-8);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-6);
+      }
+
+      .section-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--primary);
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: var(--space-4);
+        align-items: end;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+
+      .form-input {
+        padding: var(--space-3) var(--space-4);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        font-size: 1rem;
+        font-family: var(--font-family);
+        background: white;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      /* Breed Management Section */
+      .breed-management {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .management-header {
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      /* Search and Filter Controls */
+      .controls-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+      }
+
+      .search-box {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: var(--space-4);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        color: var(--gray-400);
+      }
+
+      .filter-buttons {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .filter-btn {
+        padding: var(--space-2) var(--space-4);
+        border: 1px solid var(--gray-300);
+        background: white;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--gray-700);
+      }
+
+      .filter-btn:hover {
+        background: var(--gray-50);
+      }
+
+      .filter-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      /* Breed Table */
+      .breed-table-container {
+        overflow-x: auto;
+      }
+
+      .breed-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .breed-table th {
+        background: var(--gray-50);
+        padding: var(--space-4);
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+      }
+
+      .breed-table td {
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+      }
+
+      .breed-table tr:hover {
+        background: var(--gray-50);
+      }
+
+      .breed-name {
+        font-weight: 600;
+        color: var(--gray-900);
+      }
+
+      .breed-category {
+        display: inline-block;
+        padding: var(--space-1) var(--space-2);
+        background: var(--secondary);
+        color: white;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .breed-category.dogs {
+        background: var(--primary);
+      }
+      .breed-category.cats {
+        background: var(--accent);
+      }
+      .breed-category.other {
+        background: var(--gray-500);
+      }
+
+      .time-input,
+      .cost-input {
+        width: 100%;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        background: white;
+        transition: all 0.2s ease;
+      }
+
+      .time-input:focus,
+      .cost-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: var(--space-3) var(--space-5);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+      }
+
+      .btn-danger {
+        background: var(--error);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-small {
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.75rem;
+      }
+
+      .btn-icon {
+        padding: var(--space-2);
+        width: auto;
+        height: auto;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-6);
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+      }
+
+      .pagination-info {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .pagination-controls {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      /* Overlay for dropdown */
+      .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 150;
+        display: none;
+      }
+
+      .nav-overlay.active {
+        display: block;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-content {
+          gap: var(--space-4);
+        }
+
+        .brand-text-header {
+          display: none;
+        }
+
+        .date-display {
+          display: none;
+        }
+
+        .page-header {
+          flex-direction: column;
+          gap: var(--space-4);
+          text-align: left;
+        }
+
+        .page-stats {
+          align-self: stretch;
+          justify-content: space-around;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .controls-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .breed-table-container {
+          overflow-x: scroll;
+        }
+
+        .pagination {
+          flex-direction: column;
+          gap: var(--space-4);
+        }
+      }
+
+      /* Animations */
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .add-breed-section,
+      .breed-management {
+        animation: slideInUp 0.4s ease-out forwards;
+      }
+
+      .breed-management {
+        animation-delay: 0.1s;
+      }
+
+      /* Loading state */
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+        position: relative;
+      }
+
+      .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- Persistent Header with Navigation -->
+      <header class="app-header">
+        <div class="header-content">
+          <!-- Hamburger Menu -->
+          <div class="hamburger-menu">
+            <div class="hamburger" id="hamburgerBtn" onclick="toggleNavMenu()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <!-- Navigation Dropdown -->
+            <div class="nav-dropdown" id="navDropdown">
+              <div class="dropdown-header">
+                <div class="dropdown-brand">
+                  <div class="brand-icon-dropdown">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="brand-text-dropdown">
+                    <h3>Pampered Pooch</h3>
+                    <p>Professional Pet Care</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="nav-menu">
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('dashboard')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                      />
+                    </svg>
+                    Dashboard
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('search')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                      />
+                    </svg>
+                    Search Animals
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('customers')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                    Add Customer
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link active"
+                    onclick="navigate('breeds')"
+                  >
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                      />
+                    </svg>
+                    Manage Breeds
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('analytics')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                      />
+                    </svg>
+                    Daily Analytics
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('history')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                      />
+                    </svg>
+                    Customer History
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Logo -->
+          <div class="brand-header" onclick="navigate('dashboard')">
+            <div class="brand-icon-header">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                />
+              </svg>
+            </div>
+            <div class="brand-text-header">
+              <h1>Pampered Pooch</h1>
+              <p>Professional Pet Care</p>
+            </div>
+          </div>
+
+          <!-- Breadcrumb -->
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link" onclick="navigate('dashboard')"
+              >Dashboard</a
+            >
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-current">Breed Management</span>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <div class="date-display" id="currentDate"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Overlay -->
+      <div class="nav-overlay" id="navOverlay" onclick="toggleNavMenu()"></div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- Add New Breed Section -->
+          <div class="add-breed-section">
+            <div class="section-header">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              <h2 class="section-title">Add New Breed</h2>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Breed Name</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newBreedName"
+                  placeholder="Enter breed name (e.g., Golden Retriever)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Average Time (HH:MM:SS)</label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="newBreedTime"
+                  placeholder="01:00:00"
+                  pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Average Cost ($)</label>
+                <input
+                  type="number"
+                  class="form-input"
+                  id="newBreedCost"
+                  placeholder="75"
+                  min="0"
+                  step="5"
+                />
+              </div>
+              <button class="btn btn-primary" onclick="addNewBreed()">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+                Add Breed
+              </button>
+            </div>
+          </div>
+
+          <!-- Breed Management Section -->
+          <div class="breed-management">
+            <div class="management-header">
+              <div class="section-header">
+                <svg
+                  class="section-icon"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                  />
+                </svg>
+                <h2 class="section-title">Existing Breeds Database</h2>
+              </div>
+
+              <div class="controls-section">
+                <div class="search-box">
+                  <svg
+                    class="search-icon"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    class="search-input"
+                    id="breedSearch"
+                    placeholder="Search breeds..."
+                  />
+                </div>
+
+                <div class="filter-buttons">
+                  <button
+                    class="filter-btn active"
+                    onclick="filterBreeds('all')"
+                  >
+                    All
+                  </button>
+                  <button class="filter-btn" onclick="filterBreeds('dogs')">
+                    Dogs
+                  </button>
+                  <button class="filter-btn" onclick="filterBreeds('cats')">
+                    Cats
+                  </button>
+                  <button class="filter-btn" onclick="filterBreeds('other')">
+                    Other
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="breed-table-container">
+              <table class="breed-table" id="breedTable">
+                <thead>
+                  <tr>
+                    <th>Breed Name</th>
+                    <th>Category</th>
+                    <th>Average Time</th>
+                    <th>Average Cost</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="breedTableBody">
+                  <!-- Sample breed data - will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination">
+              <div class="pagination-info">
+                Showing <span id="currentRange">1-20</span> of
+                <span id="totalBreeds">200+</span> breeds
+              </div>
+              <div class="pagination-controls">
+                <button
+                  class="btn btn-secondary btn-small"
+                  onclick="previousPage()"
+                  id="prevBtn"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                  </svg>
+                  Previous
+                </button>
+                <button
+                  class="btn btn-secondary btn-small"
+                  onclick="nextPage()"
+                  id="nextBtn"
+                >
+                  Next
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Sample breed data based on the original application
+      const breedDatabase = [
+        // Dogs
+        {
+          id: 1,
+          name: 'Afghan Hound',
+          category: 'dogs',
+          time: '01:30:00',
+          cost: 115,
+        },
+        {
+          id: 2,
+          name: 'Australian Shepherd',
+          category: 'dogs',
+          time: '01:15:00',
+          cost: 90,
+        },
+        {
+          id: 3,
+          name: 'Border Collie',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 85,
+        },
+        {
+          id: 4,
+          name: 'Cavalier King Charles',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 70,
+        },
+        {
+          id: 5,
+          name: 'Chihuahua Long Coat',
+          category: 'dogs',
+          time: '00:45:00',
+          cost: 55,
+        },
+        {
+          id: 6,
+          name: 'Chihuahua Smooth Coat',
+          category: 'dogs',
+          time: '00:30:00',
+          cost: 45,
+        },
+        {
+          id: 7,
+          name: 'Cocker Spaniel',
+          category: 'dogs',
+          time: '02:00:00',
+          cost: 95,
+        },
+        { id: 8, name: 'Corgi', category: 'dogs', time: '01:00:00', cost: 75 },
+        {
+          id: 9,
+          name: 'Dachshund Long Coat',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 65,
+        },
+        {
+          id: 10,
+          name: 'Dachshund Smooth Coat',
+          category: 'dogs',
+          time: '00:45:00',
+          cost: 55,
+        },
+        {
+          id: 11,
+          name: 'German Shepherd',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 85,
+        },
+        {
+          id: 12,
+          name: 'Golden Retriever',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 85,
+        },
+        {
+          id: 13,
+          name: 'Great Dane',
+          category: 'dogs',
+          time: '01:30:00',
+          cost: 100,
+        },
+        {
+          id: 14,
+          name: 'Greyhound',
+          category: 'dogs',
+          time: '00:45:00',
+          cost: 70,
+        },
+        { id: 15, name: 'Husky', category: 'dogs', time: '01:15:00', cost: 90 },
+        {
+          id: 16,
+          name: 'Jack Russell Long Coat',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 65,
+        },
+        {
+          id: 17,
+          name: 'Jack Russell Smooth Coat',
+          category: 'dogs',
+          time: '00:45:00',
+          cost: 55,
+        },
+        {
+          id: 18,
+          name: 'Labrador',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 75,
+        },
+        {
+          id: 19,
+          name: 'Labradoodle',
+          category: 'dogs',
+          time: '01:30:00',
+          cost: 115,
+        },
+        {
+          id: 20,
+          name: 'Maltese',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 70,
+        },
+        {
+          id: 21,
+          name: 'Maremma',
+          category: 'dogs',
+          time: '01:30:00',
+          cost: 95,
+        },
+        {
+          id: 22,
+          name: 'New Foundland',
+          category: 'dogs',
+          time: '02:00:00',
+          cost: 120,
+        },
+        {
+          id: 23,
+          name: 'Old English Sheepdog',
+          category: 'dogs',
+          time: '02:00:00',
+          cost: 125,
+        },
+        {
+          id: 24,
+          name: 'Pomeranian',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 65,
+        },
+        {
+          id: 25,
+          name: 'Poodle',
+          category: 'dogs',
+          time: '01:15:00',
+          cost: 85,
+        },
+        { id: 26, name: 'Pug', category: 'dogs', time: '00:45:00', cost: 50 },
+        {
+          id: 27,
+          name: 'Rottweiler',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 80,
+        },
+        {
+          id: 28,
+          name: 'Schnauzer Miniature',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 70,
+        },
+        {
+          id: 29,
+          name: 'Shih Tzu',
+          category: 'dogs',
+          time: '01:15:00',
+          cost: 75,
+        },
+        {
+          id: 30,
+          name: 'Spoodle',
+          category: 'dogs',
+          time: '01:15:00',
+          cost: 85,
+        },
+        {
+          id: 31,
+          name: 'St Bernard',
+          category: 'dogs',
+          time: '01:45:00',
+          cost: 110,
+        },
+        {
+          id: 32,
+          name: 'Terriers Large',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 75,
+        },
+        {
+          id: 33,
+          name: 'Terriers Small',
+          category: 'dogs',
+          time: '00:45:00',
+          cost: 60,
+        },
+        {
+          id: 34,
+          name: 'Yorkshire Terrier',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 65,
+        },
+        {
+          id: 35,
+          name: 'Cavoodle',
+          category: 'dogs',
+          time: '01:00:00',
+          cost: 70,
+        },
+        {
+          id: 36,
+          name: 'Groodle',
+          category: 'dogs',
+          time: '01:30:00',
+          cost: 100,
+        },
+
+        // Cats
+        { id: 37, name: 'Cat', category: 'cats', time: '01:00:00', cost: 115 },
+
+        // Other Animals
+        {
+          id: 38,
+          name: 'Guinea Pig',
+          category: 'other',
+          time: '00:30:00',
+          cost: 70,
+        },
+        {
+          id: 39,
+          name: 'Rabbit',
+          category: 'other',
+          time: '00:45:00',
+          cost: 95,
+        },
+      ]
+
+      // App state
+      let currentPage = 1
+      let itemsPerPage = 20
+      let filteredBreeds = [...breedDatabase]
+      let currentFilter = 'all'
+      let navMenuOpen = false
+
+      // Set current date
+      function updateDate() {
+        const now = new Date()
+        const options = {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }
+        document.getElementById('currentDate').textContent =
+          now.toLocaleDateString('en-US', options)
+      }
+
+      // Toggle navigation menu
+      function toggleNavMenu() {
+        const hamburger = document.getElementById('hamburgerBtn')
+        const dropdown = document.getElementById('navDropdown')
+        const overlay = document.getElementById('navOverlay')
+
+        navMenuOpen = !navMenuOpen
+
+        hamburger.classList.toggle('active')
+        dropdown.classList.toggle('active')
+        overlay.classList.toggle('active')
+
+        if (navMenuOpen) {
+          document.body.style.overflow = 'hidden'
+        } else {
+          document.body.style.overflow = ''
+        }
+      }
+
+      // Navigation functions
+      function navigate(section) {
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.classList.remove('active')
+        })
+
+        // Add active class to clicked nav link if event is available
+        if (event && event.target) {
+          event.target.closest('.nav-link').classList.add('active')
+        }
+
+        // Close navigation menu
+        if (navMenuOpen) {
+          toggleNavMenu()
+        }
+
+        alert(`Navigating to ${section}...`)
+      }
+
+      // Add new breed
+      function addNewBreed() {
+        const nameInput = document.getElementById('newBreedName')
+        const timeInput = document.getElementById('newBreedTime')
+        const costInput = document.getElementById('newBreedCost')
+
+        const name = nameInput.value.trim()
+        const time = timeInput.value.trim() || '01:00:00'
+        const cost = parseInt(costInput.value) || 75
+
+        if (!name) {
+          alert('Please enter a breed name')
+          nameInput.focus()
+          return
+        }
+
+        // Check if breed already exists
+        if (
+          breedDatabase.find(
+            breed => breed.name.toLowerCase() === name.toLowerCase()
+          )
+        ) {
+          alert('This breed already exists in the database')
+          nameInput.focus()
+          return
+        }
+
+        // Determine category based on breed name
+        let category = 'dogs'
+        if (name.toLowerCase().includes('cat')) {
+          category = 'cats'
+        } else if (
+          name.toLowerCase().includes('guinea') ||
+          name.toLowerCase().includes('rabbit') ||
+          name.toLowerCase().includes('bird')
+        ) {
+          category = 'other'
+        }
+
+        // Add new breed
+        const newBreed = {
+          id: breedDatabase.length + 1,
+          name: name,
+          category: category,
+          time: time,
+          cost: cost,
+        }
+
+        breedDatabase.push(newBreed)
+
+        // Clear form
+        nameInput.value = ''
+        timeInput.value = ''
+        costInput.value = ''
+
+        // Refresh display
+        filterBreeds(currentFilter)
+
+        alert(`Successfully added ${name} to the breed database!`)
+      }
+
+      // Filter breeds
+      function filterBreeds(category) {
+        currentFilter = category
+        currentPage = 1
+
+        // Update filter button states
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.remove('active')
+        })
+        event.target.classList.add('active')
+
+        // Filter breeds
+        if (category === 'all') {
+          filteredBreeds = [...breedDatabase]
+        } else {
+          filteredBreeds = breedDatabase.filter(
+            breed => breed.category === category
+          )
+        }
+
+        // Apply search filter if active
+        const searchTerm = document
+          .getElementById('breedSearch')
+          .value.toLowerCase()
+        if (searchTerm) {
+          filteredBreeds = filteredBreeds.filter(breed =>
+            breed.name.toLowerCase().includes(searchTerm)
+          )
+        }
+
+        renderBreedTable()
+        updatePagination()
+      }
+
+      // Search breeds
+      function searchBreeds() {
+        const searchTerm = document
+          .getElementById('breedSearch')
+          .value.toLowerCase()
+        currentPage = 1
+
+        // Start with current filter
+        if (currentFilter === 'all') {
+          filteredBreeds = [...breedDatabase]
+        } else {
+          filteredBreeds = breedDatabase.filter(
+            breed => breed.category === currentFilter
+          )
+        }
+
+        // Apply search filter
+        if (searchTerm) {
+          filteredBreeds = filteredBreeds.filter(breed =>
+            breed.name.toLowerCase().includes(searchTerm)
+          )
+        }
+
+        renderBreedTable()
+        updatePagination()
+      }
+
+      // Update breed
+      function updateBreed(id) {
+        const row = event.target.closest('tr')
+        const timeInput = row.querySelector('.time-input')
+        const costInput = row.querySelector('.cost-input')
+
+        const newTime = timeInput.value
+        const newCost = parseInt(costInput.value)
+
+        // Validate inputs
+        if (!newTime.match(/^\d{2}:\d{2}:\d{2}$/)) {
+          alert('Please enter time in HH:MM:SS format')
+          timeInput.focus()
+          return
+        }
+
+        if (isNaN(newCost) || newCost < 0) {
+          alert('Please enter a valid cost')
+          costInput.focus()
+          return
+        }
+
+        // Update breed in database
+        const breed = breedDatabase.find(b => b.id === id)
+        if (breed) {
+          breed.time = newTime
+          breed.cost = newCost
+          alert(`Successfully updated ${breed.name}`)
+        }
+      }
+
+      // Delete breed
+      function deleteBreed(id) {
+        const breed = breedDatabase.find(b => b.id === id)
+        if (!breed) return
+
+        if (
+          confirm(
+            `Are you sure you want to delete ${breed.name}?\n\nThis action cannot be undone.`
+          )
+        ) {
+          const index = breedDatabase.findIndex(b => b.id === id)
+          breedDatabase.splice(index, 1)
+
+          // Refresh display
+          filterBreeds(currentFilter)
+
+          alert(`${breed.name} has been deleted from the database.`)
+        }
+      }
+
+      // Render breed table
+      function renderBreedTable() {
+        const tbody = document.getElementById('breedTableBody')
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const endIndex = Math.min(
+          startIndex + itemsPerPage,
+          filteredBreeds.length
+        )
+        const currentBreeds = filteredBreeds.slice(startIndex, endIndex)
+
+        tbody.innerHTML = ''
+
+        currentBreeds.forEach(breed => {
+          const row = document.createElement('tr')
+          row.innerHTML = `
+                    <td>
+                        <div class="breed-name">${breed.name}</div>
+                    </td>
+                    <td>
+                        <span class="breed-category ${breed.category}">${breed.category}</span>
+                    </td>
+                    <td>
+                        <input type="text" class="time-input" value="${breed.time}" 
+                               pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" 
+                               title="Format: HH:MM:SS">
+                    </td>
+                    <td>
+                        <input type="number" class="cost-input" value="${breed.cost}" 
+                               min="0" step="5">
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-success btn-small" onclick="updateBreed(${breed.id})" title="Update breed">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58 3.51-3.47 9.14-3.47 12.65 0L21 3v7.12z"/>
+                                </svg>
+                            </button>
+                            <button class="btn btn-danger btn-small" onclick="deleteBreed(${breed.id})" title="Delete breed">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `
+          tbody.appendChild(row)
+        })
+      }
+
+      // Update pagination
+      function updatePagination() {
+        const totalPages = Math.ceil(filteredBreeds.length / itemsPerPage)
+        const startIndex = (currentPage - 1) * itemsPerPage + 1
+        const endIndex = Math.min(
+          currentPage * itemsPerPage,
+          filteredBreeds.length
+        )
+
+        document.getElementById('currentRange').textContent =
+          `${startIndex}-${endIndex}`
+        document.getElementById('totalBreeds').textContent =
+          filteredBreeds.length
+
+        document.getElementById('prevBtn').disabled = currentPage === 1
+        document.getElementById('nextBtn').disabled = currentPage === totalPages
+      }
+
+      // Pagination functions
+      function previousPage() {
+        if (currentPage > 1) {
+          currentPage--
+          renderBreedTable()
+          updatePagination()
+        }
+      }
+
+      function nextPage() {
+        const totalPages = Math.ceil(filteredBreeds.length / itemsPerPage)
+        if (currentPage < totalPages) {
+          currentPage++
+          renderBreedTable()
+          updatePagination()
+        }
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.hamburger-menu') && navMenuOpen) {
+          toggleNavMenu()
+        }
+      })
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function () {
+        updateDate()
+        renderBreedTable()
+        updatePagination()
+
+        // Search functionality
+        const searchInput = document.getElementById('breedSearch')
+        let searchTimeout
+
+        searchInput.addEventListener('input', function () {
+          clearTimeout(searchTimeout)
+          searchTimeout = setTimeout(searchBreeds, 300)
+        })
+
+        // Form validation
+        document
+          .getElementById('newBreedTime')
+          .addEventListener('input', function (e) {
+            const value = e.target.value
+            if (value && !value.match(/^\d{2}:\d{2}:\d{2}$/)) {
+              e.target.setCustomValidity('Please enter time in HH:MM:SS format')
+            } else {
+              e.target.setCustomValidity('')
+            }
+          })
+
+        // Auto-format time input
+        document
+          .getElementById('newBreedTime')
+          .addEventListener('blur', function (e) {
+            const value = e.target.value.trim()
+            if (value && value.match(/^\d{1,2}:\d{2}$/)) {
+              // Convert MM:SS to HH:MM:SS
+              e.target.value = '00:' + value
+            } else if (value && value.match(/^\d{1,2}$/)) {
+              // Convert MM to 00:MM:00
+              e.target.value = '00:' + value.padStart(2, '0') + ':00'
+            }
+          })
+      })
+
+      // Update date every minute
+      setInterval(updateDate, 60000)
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function (e) {
+        // Ctrl/Cmd + F for search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+          e.preventDefault()
+          document.getElementById('breedSearch').focus()
+        }
+
+        // Ctrl/Cmd + N for new breed
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+          e.preventDefault()
+          document.getElementById('newBreedName').focus()
+        }
+
+        // Arrow keys for pagination
+        if (e.key === 'ArrowLeft' && e.ctrlKey) {
+          e.preventDefault()
+          previousPage()
+        }
+
+        if (e.key === 'ArrowRight' && e.ctrlKey) {
+          e.preventDefault()
+          nextPage()
+        }
+      })
+    </script>
+  </body>
+</html>

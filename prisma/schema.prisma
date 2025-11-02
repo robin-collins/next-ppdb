@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model animal {
+  animalID   Int        @id @default(autoincrement()) @db.UnsignedInt
+  animalname String     @db.VarChar(50)
+  breedID    Int        @db.UnsignedInt
+  customerID Int        @db.UnsignedInt
+  sex        animal_sex
+  colour     String?    @db.VarChar(100)
+  cost       Int?
+  lastvisit  DateTime?  @db.Date
+  thisvisit  DateTime?  @db.Date
+  comments   String?    @db.Text
+  breed      breed      @relation(fields: [breedID], references: [breedID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_breed")
+  customer   customer   @relation(fields: [customerID], references: [customerID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_customer")
+  notes      notes[]
+
+  @@index([animalname], map: "ix_animalname")
+  @@index([breedID], map: "ix_breedID")
+  @@index([customerID], map: "ix_customerID")
+}
+
+model breed {
+  breedID   Int       @id @default(autoincrement()) @db.UnsignedInt
+  breedname String    @unique(map: "uq_breedname") @db.VarChar(30)
+  avgtime   DateTime? @db.Time(0)
+  avgcost   Int?      @db.SmallInt
+  animal    animal[]
+}
+
+model customer {
+  customerID Int      @id @default(autoincrement()) @db.UnsignedInt
+  surname    String   @db.VarChar(50)
+  firstname  String?  @db.VarChar(50)
+  address    String?  @db.VarChar(100)
+  suburb     String?  @db.VarChar(50)
+  postcode   String?  @db.VarChar(10)
+  phone1     String?  @db.VarChar(20)
+  phone2     String?  @db.VarChar(20)
+  phone3     String?  @db.VarChar(20)
+  email      String?  @db.VarChar(200)
+  animal     animal[]
+}
+
+model notes {
+  noteID    Int      @id @default(autoincrement()) @db.UnsignedInt
+  animalID  Int      @db.UnsignedInt
+  note_text String   @db.MediumText
+  note_date DateTime @db.Date
+  animal    animal   @relation(fields: [animalID], references: [animalID], onUpdate: Restrict, onDelete: Restrict, map: "fk_notes_animal")
+
+  @@index([animalID], map: "ix_animalID")
+}
+
+enum animal_sex {
+  Male
+  Female
+}

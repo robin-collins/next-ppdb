@@ -1,0 +1,363 @@
+
+> ppdb-ts@0.1.0 dev /home/tech/projects/ppdb-ts
+> next dev --turbopack
+
+   ▲ Next.js 15.4.5 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://10.255.255.254:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1105ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.6s
+ GET /sw.js 404 in 1670ms
+ GET / 200 in 2747ms
+ GET /sw.js 404 in 57ms
+ ✓ Compiled /api/animals in 259ms
+ GET /api/animals 200 in 414ms
+ GET /api/animals 200 in 33ms
+ GET /sw.js 404 in 77ms
+ ✓ Compiled /favicon.ico in 117ms
+ GET /favicon.ico 200 in 362ms
+ GET /api/animals 200 in 27ms
+=== SEARCH DEBUG ===
+Original query: 047579573
+Is phone query?: true
+Normalized query: 047579573
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "047579573"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=047579573 200 in 78ms
+=== SEARCH DEBUG ===
+Original query: 047579573
+Is phone query?: true
+Normalized query: 047579573
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "047579573"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=047579573 200 in 61ms
+=== SEARCH DEBUG ===
+Original query: 0475795732
+Is phone query?: true
+Normalized query: 0475795732
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475795732"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=0475795732 200 in 63ms
+=== SEARCH DEBUG ===
+Original query: 85562340
+Is phone query?: true
+Normalized query: 85562340
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "85562340"
+    }
+  }
+}
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?)           
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?)          
+Records found: 13
+First record customer phones: { phone1: '85562340', phone2: '', phone3: '' }
+===================
+
+ GET /api/animals?q=85562340 200 in 72ms
+=== SEARCH DEBUG ===
+Original query: 8556234
+Is phone query?: true
+Normalized query: 8556234
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "8556234"
+    }
+  }
+}
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?)           
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?)          
+Records found: 13
+First record customer phones: { phone1: '85562340', phone2: '', phone3: '' }
+===================
+
+ GET /api/animals?q=8556234 200 in 65ms
+=== SEARCH DEBUG ===
+Original query: 0475795732
+Is phone query?: true
+Normalized query: 0475795732
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475795732"
+    }
+  }
+}
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+Records found: 0
+===================
+
+ GET /api/animals?q=0475795732 200 in 67ms
+=== SEARCH DEBUG ===
+Original query: 8556234
+Is phone query?: true
+Normalized query: 8556234
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "8556234"
+    }
+  }
+}
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?)           
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?)          
+Records found: 13
+First record customer phones: { phone1: '85562340', phone2: '', phone3: '' }
+===================
+
+ GET /api/animals?q=8556234 200 in 72ms
+=== SEARCH DEBUG ===
+Original query: 85562340
+Is phone query?: true
+Normalized query: 85562340
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "85562340"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?)           
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?)          
+Records found: 13
+First record customer phones: { phone1: '85562340', phone2: '', phone3: '' }
+===================
+
+ GET /api/animals?q=85562340 200 in 70ms
+=== SEARCH DEBUG ===
+Original query: 0411
+Is phone query?: true
+Normalized query: 0411
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0411"
+    }
+  }
+}
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                                                         
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)                                             
+Records found: 110
+First record customer phones: { phone1: '0409280840', phone2: '85577173', phone3: '0411270735' }
+===================
+
+ GET /api/animals?q=0411 200 in 80ms
+=== SEARCH DEBUG ===
+Original query: 047579573
+Is phone query?: true
+Normalized query: 047579573
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "047579573"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=047579573&page=1 200 in 838ms
+ GET /sw.js 404 in 589ms
+=== SEARCH DEBUG ===
+Original query: 0475795732
+Is phone query?: true
+Normalized query: 0475795732
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475795732"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=0475795732&page=1 200 in 82ms
+ GET /sw.js 404 in 80ms
+=== SEARCH DEBUG ===
+Original query: 0475911560
+Is phone query?: true
+Normalized query: 0475911560
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475911560"
+    }
+  }
+}
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+Records found: 0
+===================
+
+ GET /api/animals?q=0475911560&page=1 200 in 168ms
+ GET /sw.js 404 in 107ms
+=== SEARCH DEBUG ===
+Original query: 04759115
+Is phone query?: true
+Normalized query: 04759115
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "04759115"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=04759115&page=1 200 in 72ms
+ GET /sw.js 404 in 73ms
+=== SEARCH DEBUG ===
+Original query: 0475911
+Is phone query?: true
+Normalized query: 0475911
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475911"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=0475911&page=1 200 in 68ms
+ GET /sw.js 404 in 65ms
+=== SEARCH DEBUG ===
+Original query: 047591
+Is phone query?: true
+Normalized query: 047591
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "047591"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=047591&page=1 200 in 63ms
+ GET /sw.js 404 in 61ms
+=== SEARCH DEBUG ===
+Original query: 04759
+Is phone query?: true
+Normalized query: 04759
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "04759"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+Records found: 0
+===================
+
+ GET /api/animals?q=04759&page=1 200 in 67ms
+ GET /sw.js 404 in 58ms
+=== SEARCH DEBUG ===
+Original query: 0475
+Is phone query?: true
+Normalized query: 0475
+Number of OR conditions: 3
+First condition: {
+  "customer": {
+    "phone1": {
+      "contains": "0475"
+    }
+  }
+}
+prisma:query SELECT COUNT(*) AS `_count._all` FROM (SELECT `ppdb-app`.`animal`.`animalID` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))) AS `sub`                                       
+prisma:query SELECT `ppdb-app`.`animal`.`animalID`, `ppdb-app`.`animal`.`animalname`, `ppdb-app`.`animal`.`breedID`, `ppdb-app`.`animal`.`customerID`, `ppdb-app`.`animal`.`SEX`, `ppdb-app`.`animal`.`colour`, `ppdb-app`.`animal`.`cost`, `ppdb-app`.`animal`.`lastvisit`, `ppdb-app`.`animal`.`thisvisit`, `ppdb-app`.`animal`.`comments` FROM `ppdb-app`.`animal` LEFT JOIN `ppdb-app`.`customer` AS `j0` ON (`j0`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j1` ON (`j1`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) LEFT JOIN `ppdb-app`.`customer` AS `j2` ON (`j2`.`customerID`) = (`ppdb-app`.`animal`.`customerID`) WHERE ((`j0`.`phone1` LIKE ? AND (`j0`.`customerID` IS NOT NULL)) OR (`j1`.`phone2` LIKE ? AND (`j1`.`customerID` IS NOT NULL)) OR (`j2`.`phone3` LIKE ? AND (`j2`.`customerID` IS NOT NULL)))                        
+prisma:query SELECT `ppdb-app`.`customer`.`customerID`, `ppdb-app`.`customer`.`surname`, `ppdb-app`.`customer`.`firstname`, `ppdb-app`.`customer`.`address`, `ppdb-app`.`customer`.`suburb`, `ppdb-app`.`customer`.`postcode`, `ppdb-app`.`customer`.`phone1`, `ppdb-app`.`customer`.`phone2`, `ppdb-app`.`customer`.`phone3`, `ppdb-app`.`customer`.`email` FROM `ppdb-app`.`customer` WHERE `ppdb-app`.`customer`.`customerID` IN (?,?,?,?,?)     
+prisma:query SELECT `ppdb-app`.`breed`.`breedID`, `ppdb-app`.`breed`.`breedname`, `ppdb-app`.`breed`.`avgtime`, `ppdb-app`.`breed`.`avgcost` FROM `ppdb-app`.`breed` WHERE `ppdb-app`.`breed`.`breedID` IN (?,?,?,?,?)    
+Records found: 7
+First record customer phones: { phone1: '0475767863', phone2: '', phone3: '' }
+===================
+
+ GET /api/animals?q=0475&page=1 200 in 70ms
+ GET /sw.js 404 in 55ms

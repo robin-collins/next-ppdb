@@ -1,0 +1,1850 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results - Pampered Pooch Database</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Design System Variables */
+
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* Spacing Scale */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg:
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl:
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        /* Layout */
+        --sidebar-width: 280px;
+        --header-height: 70px;
+      }
+      /* Reset */
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      /* Layout Structure */
+
+      .app-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      /* Persistent Header */
+
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      /* Hamburger Menu */
+
+      .hamburger-menu {
+        position: relative;
+      }
+
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+      /* Sidebar */
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid var(--gray-200);
+        box-shadow: var(--shadow-xl);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar.pinned {
+        position: relative;
+        transform: translateX(0);
+        transition: none;
+      }
+
+      .sidebar-header {
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: var(--header-height);
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon-sidebar {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .brand-text-sidebar h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-sidebar p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .sidebar-controls {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .sidebar-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        color: var(--gray-600);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      .sidebar-btn.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu {
+        flex: 1;
+        padding: var(--space-4);
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        margin-bottom: var(--space-1);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-footer {
+        padding: var(--space-4);
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+      }
+
+      .date-sidebar {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      /* Resize Handle */
+
+      .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -2px;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        cursor: col-resize;
+        z-index: 10;
+        transition: background 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover,
+      .sidebar-resize-handle.dragging {
+        background: var(--primary);
+      }
+
+      .sidebar-resize-handle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 40px;
+        background: var(--gray-300);
+        border-radius: 1px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover::before,
+      .sidebar-resize-handle.dragging::before {
+        opacity: 1;
+      }
+      /* Brand Logo */
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        cursor: pointer;
+      }
+
+      .brand-icon-header {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .brand-text-header h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-header p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+      /* Search Bar */
+
+      .search-section {
+        flex: 1;
+        max-width: 600px;
+      }
+
+      .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow:
+          0 0 0 4px rgba(99, 102, 241, 0.1),
+          var(--shadow-md);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+        margin-left: var(--space-4);
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--space-4);
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--gray-800);
+        font-family: var(--font-family);
+      }
+
+      .search-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-right: var(--space-2);
+      }
+      /* Header Actions */
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .date-display {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        margin-left: auto;
+      }
+      /* Main Content */
+
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        transition: margin-left 0.3s ease;
+      }
+
+      .app-layout.sidebar-pinned .main-content {
+        margin-left: calc(var(--sidebar-width) + var(--space-6));
+      }
+
+      .btn {
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        border-radius: var(--radius-md);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+      /* Empty State */
+
+      .empty-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - var(--header-height) - var(--space-12));
+        padding: var(--space-8);
+      }
+
+      .empty-state-content {
+        text-align: center;
+        max-width: 500px;
+      }
+
+      .empty-icon {
+        color: var(--gray-400);
+        margin-bottom: var(--space-6);
+        display: flex;
+        justify-content: center;
+      }
+
+      .empty-state h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: var(--space-3);
+      }
+
+      .empty-state p {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin-bottom: var(--space-8);
+        line-height: 1.6;
+      }
+
+      .empty-suggestions {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+      }
+
+      .suggestions-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: var(--space-3);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .suggestion-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        justify-content: center;
+      }
+
+      .suggestion-tag {
+        background: white;
+        color: var(--gray-700);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        border: 1px solid var(--gray-300);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+      }
+
+      .suggestion-tag:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+      }
+      /* Results Content */
+
+      .results-content {
+        padding: var(--space-6);
+      }
+
+      .results-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: var(--space-6);
+        gap: var(--space-4);
+      }
+
+      .results-info h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0 0 var(--space-1) 0;
+      }
+
+      .results-meta {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .query-highlight {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+      }
+
+      .results-controls {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .view-toggle {
+        display: flex;
+        background: var(--gray-100);
+        border-radius: var(--radius-lg);
+        padding: var(--space-1);
+      }
+
+      .view-btn {
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        background: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--gray-600);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .view-btn.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+      }
+      /* Grid View - 2 columns */
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+      }
+
+      .animal-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .animal-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: 0;
+      }
+
+      .animal-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary);
+      }
+
+      .animal-card:hover::before {
+        height: 6px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 50%,
+          var(--accent) 100%
+        );
+      }
+
+      .card-inner {
+        padding: var(--space-4);
+        padding-top: var(--space-5);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: between;
+        margin-bottom: var(--space-3);
+      }
+
+      .animal-info {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .animal-avatar {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.25rem;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+        border: 2px solid white;
+      }
+
+      .animal-card:hover .animal-avatar {
+        transform: scale(1.1);
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+      }
+
+      .animal-details h3 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+      }
+
+      .animal-details p {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .status-badge {
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-full);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+      }
+
+      .status-active {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: white;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      .status-inactive {
+        background: var(--gray-100);
+        color: var(--gray-600);
+        border: 1px solid var(--gray-300);
+      }
+
+      .animal-card:hover .status-active {
+        background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      }
+
+      .animal-card:hover .status-inactive {
+        background: var(--gray-200);
+      }
+
+      .card-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+        font-size: 0.875rem;
+        margin-top: var(--space-4);
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-2);
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-100);
+        transition: all 0.3s ease;
+      }
+
+      .animal-card:hover .info-item {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(99, 102, 241, 0.1);
+      }
+
+      .info-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--gray-500);
+        margin-bottom: var(--space-1);
+      }
+
+      .info-value {
+        font-weight: 600;
+        color: var(--gray-800);
+        line-height: 1.4;
+      }
+      /* List View - Compact */
+
+      .results-list {
+        display: none;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+      }
+
+      .results-list.active {
+        display: block;
+      }
+
+      .list-item {
+        background: white;
+        border: none;
+        border-radius: 0;
+        padding: var(--space-3) var(--space-4);
+        margin-bottom: 0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-bottom: 1px solid var(--gray-100);
+        position: relative;
+      }
+
+      .list-item:last-child {
+        border-bottom: none;
+      }
+      /* Alternating row colors */
+
+      .list-item:nth-child(even) {
+        background: var(--gray-50);
+      }
+
+      .list-item:nth-child(odd) {
+        background: white;
+      }
+      /* Gentle hover glow effect */
+
+      .list-item:hover {
+        background: var(--primary-light);
+        box-shadow:
+          0 0 0 1px rgba(99, 102, 241, 0.1),
+          0 4px 12px rgba(99, 102, 241, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transform: none;
+      }
+
+      .list-item:hover .list-avatar {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        transform: scale(1.05);
+      }
+
+      .list-item:hover .list-info h4 {
+        color: var(--primary);
+      }
+
+      .list-content {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto auto;
+        gap: var(--space-4);
+        align-items: center;
+      }
+
+      .list-avatar {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--secondary)
+        );
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.875rem;
+      }
+
+      .list-info h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 0;
+      }
+
+      .list-meta {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .list-detail {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        text-align: center;
+        min-width: 80px;
+      }
+
+      .list-cost {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.875rem;
+        text-align: right;
+        min-width: 60px;
+      }
+      /* Mobile Responsive */
+
+      @media (max-width: 768px) {
+        .header-content {
+          gap: var(--space-4);
+        }
+        .brand-text-header {
+          display: none;
+        }
+        .search-section {
+          max-width: none;
+        }
+        .date-display {
+          display: none;
+        }
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+        .list-content {
+          grid-template-columns: auto 1fr auto;
+          gap: var(--space-3);
+        }
+        .list-detail:nth-child(4) {
+          display: none;
+        }
+        /* Mobile sidebar adjustments */
+        .sidebar {
+          width: min(280px, 80vw);
+        }
+        .app-layout.sidebar-pinned .main-content {
+          margin-left: var(--space-6);
+        }
+        .sidebar.pinned {
+          position: fixed;
+        }
+        /* Mobile empty state adjustments */
+        .empty-state {
+          padding: var(--space-6) var(--space-4);
+          min-height: calc(100vh - var(--header-height) - var(--space-8));
+        }
+        .empty-state h2 {
+          font-size: 1.5rem;
+        }
+        .empty-state p {
+          font-size: 1rem;
+        }
+        .empty-suggestions {
+          padding: var(--space-4);
+        }
+        .suggestion-tags {
+          gap: var(--space-2);
+        }
+        .suggestion-tag {
+          font-size: 0.8rem;
+          padding: var(--space-2) var(--space-3);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .app-header {
+          padding: var(--space-3) var(--space-4);
+        }
+        .search-actions {
+          flex-direction: column;
+          gap: var(--space-1);
+        }
+        .btn {
+          font-size: 0.75rem;
+          padding: var(--space-2);
+        }
+        .sidebar {
+          width: min(260px, 85vw);
+        }
+      }
+      /* Overlay for dropdown */
+
+      .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 150;
+        display: none;
+      }
+
+      .nav-overlay.active {
+        display: block;
+      }
+      /* Animations */
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animal-card,
+      .list-item {
+        animation: slideInUp 0.4s ease-out forwards;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-layout">
+      <!-- Persistent Header with Navigation -->
+      <header class="app-header">
+        <div class="header-content">
+          <!-- Hamburger Menu -->
+          <div class="hamburger-menu">
+            <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- Brand Logo -->
+          <div class="brand-header" onclick="navigate('dashboard')">
+            <div class="brand-icon-header">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                />
+              </svg>
+            </div>
+            <div class="brand-text-header">
+              <h1>Pampered Pooch</h1>
+              <p>Professional Pet Care</p>
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-section">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              <input
+                type="text"
+                class="search-input"
+                id="searchInput"
+                placeholder="Search animals, breeds, owners..."
+                value=""
+              />
+              <div class="search-actions">
+                <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <div class="date-display" id="currentDate"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Overlay -->
+      <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
+
+      <!-- Left Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <!-- Resize Handle -->
+        <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand">
+            <div class="brand-icon-sidebar">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                />
+              </svg>
+            </div>
+            <div class="brand-text-sidebar">
+              <h3>Pampered Pooch</h3>
+              <p>Professional Pet Care</p>
+            </div>
+          </div>
+
+          <div class="sidebar-controls">
+            <button
+              class="sidebar-btn"
+              id="pinBtn"
+              onclick="togglePin()"
+              title="Pin sidebar"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z"
+                />
+              </svg>
+            </button>
+            <button
+              class="sidebar-btn"
+              onclick="toggleSidebar()"
+              title="Close sidebar"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('dashboard')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                />
+              </svg>
+              Dashboard
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link active" onclick="navigate('search')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              Search Results
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('customers')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              Add Customer
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('breeds')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+              Manage Breeds
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('analytics')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                />
+              </svg>
+              Daily Analytics
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('history')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg>
+              Customer History
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="date-sidebar" id="sidebarDate"></div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Empty State Content -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-content">
+            <div class="empty-icon">
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </div>
+            <h2>Search for Animals</h2>
+            <p>
+              Enter an animal name, breed, or owner in the search box above to
+              find grooming records.
+            </p>
+            <div class="empty-suggestions">
+              <p class="suggestions-title">Try searching for:</p>
+              <div class="suggestion-tags">
+                <span class="suggestion-tag" onclick="fillSearch('Cody')"
+                  >Cody</span
+                >
+                <span class="suggestion-tag" onclick="fillSearch('Maltese')"
+                  >Maltese</span
+                >
+                <span class="suggestion-tag" onclick="fillSearch('James')"
+                  >James</span
+                >
+                <span class="suggestion-tag" onclick="fillSearch('active')"
+                  >Active pets</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Content -->
+        <div class="results-content" id="resultsContent" style="display: none">
+          <div class="results-header">
+            <div class="results-info">
+              <h2 id="resultsCount">0 Animals Found</h2>
+              <div class="results-meta">
+                Search results for
+                <span class="query-highlight" id="queryTerm"></span>
+              </div>
+            </div>
+
+            <div class="results-controls">
+              <div class="view-toggle">
+                <button
+                  class="view-btn active"
+                  onclick="setView('grid')"
+                  data-view="grid"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"
+                    />
+                  </svg>
+                  Cards
+                </button>
+                <button
+                  class="view-btn"
+                  onclick="setView('list')"
+                  data-view="list"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+                    />
+                  </svg>
+                  List
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid View - 2 columns -->
+          <div class="results-grid" id="gridView">
+            <!-- Animal cards will be populated by JavaScript -->
+          </div>
+
+          <!-- List View - Compact -->
+          <div class="results-list" id="listView">
+            <!-- List items will be populated by JavaScript -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize app state and data
+      ;(function () {
+        // Sample search results data
+        const sampleSearchResults = [
+          {
+            id: 1,
+            name: 'Cody',
+            breed: 'Jack Russell Long Coat',
+            color: 'White and gold',
+            owner: 'James',
+            phone: '0428111261',
+            lastVisit: '2021-09-10',
+            status: 'active',
+            notes: 'Full clip 3 legs 7 short ears & face leave top knot',
+            cost: '$60',
+          },
+          {
+            id: 2,
+            name: 'Cody',
+            breed: 'Corgi',
+            color: 'Black and white',
+            owner: 'Chelsea Donhardt',
+            phone: '0428568458',
+            lastVisit: '2020-12-03',
+            status: 'active',
+            notes: 'Regular grooming client',
+            cost: '$65',
+          },
+          {
+            id: 3,
+            name: 'Cody',
+            breed: 'Shih Tzu',
+            color: 'White & Tan',
+            owner: 'Pamela Wood',
+            phone: '0435519234',
+            lastVisit: '2021-05-15',
+            status: 'active',
+            notes: 'Sensitive skin, use gentle products',
+            cost: '$70',
+          },
+          {
+            id: 4,
+            name: 'Cody',
+            breed: 'Maremma',
+            color: 'White',
+            owner: 'Tracey Ayres',
+            phone: '0428567890',
+            lastVisit: '2021-03-22',
+            status: 'active',
+            notes: 'Large breed, requires extra time',
+            cost: '$85',
+          },
+          {
+            id: 5,
+            name: 'Cody',
+            breed: 'Maltese',
+            color: 'White',
+            owner: 'Pete/Karen Baker/Green',
+            phone: '0428789012',
+            lastVisit: '2021-01-18',
+            status: 'active',
+            notes: 'Show cut preferred',
+            cost: '$75',
+          },
+          {
+            id: 6,
+            name: 'Cody',
+            breed: 'Maltese',
+            color: 'Black',
+            owner: 'Summers',
+            phone: '0428901234',
+            lastVisit: '2020-11-08',
+            status: 'inactive',
+            notes: 'Moved to different area',
+            cost: '$75',
+          },
+        ]
+
+        // App state
+        let appCurrentView = 'grid'
+        let appSidebarOpen = false
+        let appSidebarPinned = false
+        let isResizing = false
+        let sidebarWidth = 280 // Default width
+
+        // Set current date and time
+        function updateDate() {
+          const now = new Date()
+
+          // Format time as "2:38pm"
+          const timeOptions = {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          }
+          const timeText = now
+            .toLocaleTimeString('en-US', timeOptions)
+            .toLowerCase()
+
+          // Format date as "Tue, Sep 16 2025"
+          const dateOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }
+          const dateText = now.toLocaleDateString('en-US', dateOptions)
+
+          // Combine as "2:38pm Tue, Sep 16 2025"
+          const fullDateTime = `${timeText} ${dateText}`
+
+          document.getElementById('currentDate').textContent = fullDateTime
+
+          // Keep sidebar date simple (without time)
+          const sidebarDate = document.getElementById('sidebarDate')
+          if (sidebarDate) {
+            const simpleDateOptions = {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+            }
+            const simpleDateText = now.toLocaleDateString(
+              'en-US',
+              simpleDateOptions
+            )
+            sidebarDate.textContent = simpleDateText
+          }
+        }
+
+        // Toggle sidebar
+        window.toggleSidebar = function () {
+          const sidebar = document.getElementById('sidebar')
+          const hamburger = document.getElementById('hamburgerBtn')
+          const overlay = document.getElementById('navOverlay')
+          const appLayout = document.querySelector('.app-layout')
+
+          if (appSidebarPinned) {
+            // If pinned, toggle the pinned state instead
+            togglePin()
+            return
+          }
+
+          appSidebarOpen = !appSidebarOpen
+
+          sidebar.classList.toggle('active', appSidebarOpen)
+          hamburger.classList.toggle('active', appSidebarOpen)
+          overlay.classList.toggle('active', appSidebarOpen)
+
+          if (appSidebarOpen) {
+            document.body.style.overflow = 'hidden'
+          } else {
+            document.body.style.overflow = ''
+          }
+        }
+
+        // Toggle pin state
+        window.togglePin = function () {
+          const sidebar = document.getElementById('sidebar')
+          const pinBtn = document.getElementById('pinBtn')
+          const appLayout = document.querySelector('.app-layout')
+          const overlay = document.getElementById('navOverlay')
+          const hamburger = document.getElementById('hamburgerBtn')
+
+          appSidebarPinned = !appSidebarPinned
+
+          if (appSidebarPinned) {
+            sidebar.classList.add('pinned')
+            sidebar.classList.add('active')
+            appLayout.classList.add('sidebar-pinned')
+            pinBtn.classList.add('active')
+            overlay.classList.remove('active')
+            hamburger.classList.add('active')
+            document.body.style.overflow = ''
+            appSidebarOpen = true
+          } else {
+            sidebar.classList.remove('pinned')
+            appLayout.classList.remove('sidebar-pinned')
+            pinBtn.classList.remove('active')
+
+            // If not pinned and we want to close, close completely
+            if (appSidebarOpen) {
+              toggleSidebar()
+            }
+          }
+        }
+
+        // Initialize resize functionality
+        function initResize() {
+          const resizeHandle = document.getElementById('resizeHandle')
+          const sidebar = document.getElementById('sidebar')
+
+          let startX, startWidth
+
+          function startResize(e) {
+            isResizing = true
+            startX = e.clientX
+            startWidth = sidebarWidth
+
+            resizeHandle.classList.add('dragging')
+            document.body.style.cursor = 'col-resize'
+            document.body.style.userSelect = 'none'
+
+            document.addEventListener('mousemove', handleResize)
+            document.addEventListener('mouseup', stopResize)
+          }
+
+          function handleResize(e) {
+            if (!isResizing) return
+
+            const deltaX = e.clientX - startX
+            const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+            sidebarWidth = newWidth
+            document.documentElement.style.setProperty(
+              '--sidebar-width',
+              `${newWidth}px`
+            )
+            sidebar.style.width = `${newWidth}px`
+          }
+
+          function stopResize() {
+            isResizing = false
+            resizeHandle.classList.remove('dragging')
+            document.body.style.cursor = ''
+            document.body.style.userSelect = ''
+
+            document.removeEventListener('mousemove', handleResize)
+            document.removeEventListener('mouseup', stopResize)
+          }
+
+          resizeHandle.addEventListener('mousedown', startResize)
+        }
+
+        // Navigation functions
+        window.navigate = function (section) {
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active')
+          })
+
+          // Add active class to clicked nav link
+          event.target.closest('.nav-link').classList.add('active')
+
+          // Close sidebar if not pinned
+          if (appSidebarOpen && !appSidebarPinned) {
+            toggleSidebar()
+          }
+
+          alert(`Navigating to ${section}...`)
+        }
+
+        window.performSearch = function () {
+          const query = document.getElementById('searchInput').value
+          if (!query.trim()) {
+            alert('Please enter a search term')
+            return
+          }
+
+          // Show results content and hide empty state
+          showResults()
+
+          // Update query term display
+          document.getElementById('queryTerm').textContent = query
+
+          // Render the search results
+          renderResults()
+        }
+
+        window.clearSearch = function () {
+          document.getElementById('searchInput').value = ''
+          document.getElementById('searchInput').focus()
+
+          // Hide results content and show empty state
+          showEmpty()
+        }
+
+        // Show search results content
+        function showResults() {
+          document.getElementById('emptyState').style.display = 'none'
+          document.getElementById('resultsContent').style.display = 'block'
+        }
+
+        // Show empty state
+        function showEmpty() {
+          document.getElementById('emptyState').style.display = 'flex'
+          document.getElementById('resultsContent').style.display = 'none'
+        }
+
+        // Fill search input with suggestion
+        window.fillSearch = function (suggestion) {
+          const searchInput = document.getElementById('searchInput')
+          searchInput.value = suggestion
+          searchInput.focus()
+
+          // Optionally perform search immediately
+          performSearch()
+        }
+
+        // View toggle functions
+        window.setView = function (view) {
+          appCurrentView = view
+
+          // Update button states
+          document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.classList.remove('active')
+          })
+          document
+            .querySelector(`[data-view="${view}"]`)
+            .classList.add('active')
+
+          // Show/hide views
+          if (view === 'grid') {
+            document.getElementById('gridView').style.display = 'grid'
+            document.getElementById('listView').classList.remove('active')
+          } else {
+            document.getElementById('gridView').style.display = 'none'
+            document.getElementById('listView').classList.add('active')
+          }
+        }
+
+        // Generate compact animal card
+        function createAnimalCard(animal) {
+          const statusClass =
+            animal.status === 'active' ? 'status-active' : 'status-inactive'
+          const statusText = animal.status === 'active' ? 'Active' : 'Inactive'
+          const initials = animal.name.charAt(0).toUpperCase()
+
+          // Format last visit date
+          const lastVisitDate = new Date(animal.lastVisit)
+          const formattedDate = lastVisitDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: '2-digit',
+          })
+
+          return `
+                    <div class="animal-card" onclick="viewAnimalDetails(${animal.id})">
+                        <div class="card-inner">
+                            <div class="card-header">
+                                <div class="animal-info">
+                                    <div class="animal-avatar">${initials}</div>
+                                    <div class="animal-details">
+                                        <h3>${animal.name}</h3>
+                                        <p>${animal.breed}</p>
+                                    </div>
+                                </div>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                            
+                            <div class="card-content">
+                                <div class="info-item">
+                                    <span class="info-label">Owner</span>
+                                    <span class="info-value">${animal.owner}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Color</span>
+                                    <span class="info-value">${animal.color}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Phone</span>
+                                    <span class="info-value">${animal.phone}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Last Visit</span>
+                                    <span class="info-value">${formattedDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }
+
+        // Generate compact list item
+        function createListItem(animal) {
+          const initials = animal.name.charAt(0).toUpperCase()
+          const lastVisitDate = new Date(animal.lastVisit)
+          const formattedDate = lastVisitDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          })
+
+          return `
+                    <div class="list-item" onclick="viewAnimalDetails(${animal.id})">
+                        <div class="list-content">
+                            <div class="list-avatar">${initials}</div>
+                            <div class="list-info">
+                                <h4>${animal.name}</h4>
+                                <div class="list-meta">${animal.breed} • ${animal.owner}</div>
+                            </div>
+                            <div class="list-detail">${animal.phone}</div>
+                            <div class="list-detail">${formattedDate}</div>
+                            <div class="list-cost">${animal.cost}</div>
+                        </div>
+                    </div>
+                `
+        }
+
+        // View animal details
+        window.viewAnimalDetails = function (animalId) {
+          const animal = sampleSearchResults.find(a => a.id === animalId)
+          if (animal) {
+            alert(
+              `Opening detailed view for ${animal.name} (${animal.breed})\nOwner: ${animal.owner}\nPhone: ${animal.phone}\nLast Visit: ${animal.lastVisit}\nNotes: ${animal.notes}`
+            )
+          }
+        }
+
+        // Render results
+        function renderResults() {
+          const gridContainer = document.getElementById('gridView')
+          const listContainer = document.getElementById('listView')
+
+          // Clear existing content
+          gridContainer.innerHTML = ''
+          listContainer.innerHTML = ''
+
+          // Generate cards and list items
+          sampleSearchResults.forEach((animal, index) => {
+            // Add stagger delay for animations
+            const cardHTML = createAnimalCard(animal)
+            const listHTML = createListItem(animal)
+
+            gridContainer.innerHTML += cardHTML
+            listContainer.innerHTML += listHTML
+          })
+
+          // Update results count
+          document.getElementById('resultsCount').textContent =
+            `${sampleSearchResults.length} Animal${sampleSearchResults.length !== 1 ? 's' : ''} Found`
+
+          // Add stagger animation delays
+          setTimeout(() => {
+            const cards = document.querySelectorAll('.animal-card, .list-item')
+            cards.forEach((card, index) => {
+              card.style.animationDelay = `${index * 0.05}s`
+            })
+          }, 50)
+        }
+
+        // Close sidebar when clicking outside (only if not pinned)
+        document.addEventListener('click', function (e) {
+          if (
+            !e.target.closest('.sidebar') &&
+            !e.target.closest('.hamburger-menu') &&
+            appSidebarOpen &&
+            !appSidebarPinned
+          ) {
+            toggleSidebar()
+          }
+        })
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+          updateDate()
+          initResize()
+
+          // Start with empty state visible
+          showEmpty()
+
+          // Search on Enter key
+          document
+            .getElementById('searchInput')
+            .addEventListener('keypress', function (e) {
+              if (e.key === 'Enter') {
+                window.performSearch()
+              }
+            })
+
+          // Handle window resize
+          window.addEventListener('resize', function () {
+            if (window.innerWidth <= 768 && appSidebarPinned) {
+              togglePin() // Unpin on mobile
+            }
+          })
+        })
+
+        // Update date and time every second
+        setInterval(updateDate, 1000)
+      })()
+    </script>
+  </body>
+</html>
