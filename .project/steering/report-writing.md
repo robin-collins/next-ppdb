@@ -2,9 +2,9 @@
 inclusion: always
 ---
 
-# Task Completion Protocol for Kiro
+# Task Completion Protocol for Agents
 
-Upon successful completion of any task, Kiro must generate **two synchronized outputs**:
+Upon successful completion of any task, Agents must generate **two synchronized outputs**:
 
 ## 1. Chat Interface Report
 

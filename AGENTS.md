@@ -2,6 +2,11 @@
 
 ## Project Structure & Module Organization
 
+@.project\steering\CHANGELOG.md
+@.project\steering\manageable-tasts.md
+@.project\steering\pnpm.md
+@.project\steering\report-writing.md
+
 Core Next.js routes and layouts live in `src/app`, with API handlers nested under `src/app/api`. Reusable UI components sit in `src/components`, domain utilities in `src/lib`, and Zustand stores in `src/store`. Model changes start in `prisma/schema.prisma`; the generated client mirrors them in `src/generated/prisma`. Keep static assets in `public` and long-form notes or data drops in `reference` and `reports` so runtime code stays focused.
 
 ## Build, Test, and Development Commands

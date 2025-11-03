@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@.project\steering\CHANGELOG.md
+@.project\steering\manageable-tasts.md
+@.project\steering\pnpm.md
+@.project\steering\report-writing.md
+
 ## Project Overview
 
 This is a Next.js 15 pet grooming database application (PPDB) for "Pampered Pooch" that manages customer, animal, breed, and service records. The application features a modern glassmorphic UI with animated gradients, a searchable animal database with relevance-based ranking, and Prisma ORM connected to a MySQL database.
