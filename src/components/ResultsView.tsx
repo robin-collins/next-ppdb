@@ -39,7 +39,7 @@ export default function ResultsView({
           </h2>
           <div className="text-sm text-gray-600">
             Search results for{' '}
-            <span className="rounded bg-primary-light px-2 py-1 font-semibold text-primary">
+            <span className="bg-primary-light text-primary rounded px-2 py-1 font-semibold">
               {query}
             </span>
           </div>
@@ -51,16 +51,11 @@ export default function ResultsView({
             onClick={() => onViewModeChange('grid')}
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
               viewMode === 'grid'
-                ? 'bg-white text-primary shadow-sm'
+                ? 'text-primary bg-white shadow-sm'
                 : 'text-gray-600'
             }`}
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
             </svg>
             Cards
@@ -69,16 +64,11 @@ export default function ResultsView({
             onClick={() => onViewModeChange('list')}
             className={`flex items-center gap-2 rounded-md px-3 py-2 transition-all ${
               viewMode === 'list'
-                ? 'bg-white text-primary shadow-sm'
+                ? 'text-primary bg-white shadow-sm'
                 : 'text-gray-600'
             }`}
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
             </svg>
             List
@@ -119,11 +109,11 @@ export default function ResultsView({
                 key={animal.id}
                 onClick={() => onAnimalClick(animal.id)}
                 style={{ animationDelay: `${index * 0.05}s` }}
-                className={`flex cursor-pointer items-center gap-4 border-b border-gray-100 px-4 py-3 transition-all last:border-b-0 hover:bg-primary-light hover:shadow-[0_0_0_1px_rgba(99,102,241,0.1),0_4px_12px_rgba(99,102,241,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] ${
+                className={`hover:bg-primary-light flex cursor-pointer items-center gap-4 border-b border-gray-100 px-4 py-3 transition-all last:border-b-0 hover:shadow-[0_0_0_1px_rgba(99,102,241,0.1),0_4px_12px_rgba(99,102,241,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] ${
                   index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                 }`}
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-secondary text-sm font-bold text-primary transition-all hover:scale-105 hover:from-primary hover:to-secondary hover:text-white">
+                <div className="from-primary-light to-secondary text-primary hover:from-primary hover:to-secondary flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold transition-all hover:scale-105 hover:text-white">
                   {initials}
                 </div>
                 <div className="flex-1">
@@ -145,7 +135,7 @@ export default function ResultsView({
                 <div className="min-w-[80px] text-center text-sm text-gray-700">
                   {formattedDate}
                 </div>
-                <div className="min-w-[60px] text-right text-sm font-semibold text-primary">
+                <div className="text-primary min-w-[60px] text-right text-sm font-semibold">
                   ${animal.cost}
                 </div>
               </div>
@@ -156,4 +146,3 @@ export default function ResultsView({
     </div>
   )
 }
-

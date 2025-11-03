@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -8,16 +9,16 @@ datasource db {
 }
 
 model animal {
-  animalID   Int        @id @default(autoincrement()) @db.UnsignedInt
-  animalname String     @db.VarChar(50)
-  breedID    Int        @db.UnsignedInt
-  customerID Int        @db.UnsignedInt
-  sex        animal_sex
-  colour     String?    @db.VarChar(100)
-  cost       Int?
-  lastvisit  DateTime?  @db.Date
-  thisvisit  DateTime?  @db.Date
-  comments   String?    @db.Text
+  animalID   Int        @id @default(autoincrement()) @db.MediumInt
+  animalname String     @default("") @db.VarChar(12)
+  breedID    Int        @default(0) @db.MediumInt
+  customerID Int        @default(0) @db.MediumInt
+  SEX        animal_sex @default(Male) @map("SEX")
+  colour     String     @db.Text
+  cost       Int        @default(0) @db.SmallInt
+  lastvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
+  thisvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
+  comments   String?    @db.TinyText
   breed      breed      @relation(fields: [breedID], references: [breedID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_breed")
   customer   customer   @relation(fields: [customerID], references: [customerID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_customer")
   notes      notes[]
@@ -28,35 +29,41 @@ model animal {
 }
 
 model breed {
-  breedID   Int       @id @default(autoincrement()) @db.UnsignedInt
-  breedname String    @unique(map: "uq_breedname") @db.VarChar(30)
-  avgtime   DateTime? @db.Time(0)
-  avgcost   Int?      @db.SmallInt
+  breedID   Int       @id @default(autoincrement()) @db.MediumInt
+  breedname String    @default("") @unique(map: "breedname") @db.VarChar(30)
+  avgtime   DateTime? @default(dbgenerated("'00:00:00'")) @db.Time(0)
+  avgcost   Int?      @default(0) @db.SmallInt
   animal    animal[]
+
+  @@unique([breedID], map: "breedID")
 }
 
 model customer {
-  customerID Int      @id @default(autoincrement()) @db.UnsignedInt
-  surname    String   @db.VarChar(50)
-  firstname  String?  @db.VarChar(50)
-  address    String?  @db.VarChar(100)
-  suburb     String?  @db.VarChar(50)
-  postcode   String?  @db.VarChar(10)
-  phone1     String?  @db.VarChar(20)
-  phone2     String?  @db.VarChar(20)
-  phone3     String?  @db.VarChar(20)
-  email      String?  @db.VarChar(200)
+  customerID Int     @id @default(autoincrement()) @db.MediumInt
+  surname    String  @default("") @db.VarChar(20)
+  firstname  String? @db.VarChar(20)
+  address    String? @db.VarChar(50)
+  suburb     String? @db.VarChar(20)
+  postcode   Int?    @default(0) @db.SmallInt
+  phone1     String? @default("0") @db.VarChar(10)
+  phone2     String? @db.VarChar(10)
+  phone3     String? @db.VarChar(10)
+  email      String? @db.VarChar(200)
   animal     animal[]
+
+  @@unique([customerID], map: "customerID")
+  @@index([surname], map: "surname")
 }
 
 model notes {
-  noteID    Int      @id @default(autoincrement()) @db.UnsignedInt
-  animalID  Int      @db.UnsignedInt
-  note_text String   @db.MediumText
-  note_date DateTime @db.Date
-  animal    animal   @relation(fields: [animalID], references: [animalID], onUpdate: Restrict, onDelete: Restrict, map: "fk_notes_animal")
+  noteID   Int      @id @default(autoincrement()) @db.MediumInt
+  animalID Int      @default(0) @db.MediumInt
+  notes    String   @db.MediumText
+  date     DateTime @default(dbgenerated("'0000-00-00'")) @db.Date
+  animal   animal   @relation(fields: [animalID], references: [animalID], onUpdate: NoAction, onDelete: NoAction)
 
-  @@index([animalID], map: "ix_animalID")
+  @@unique([noteID], map: "noteID")
+  @@index([animalID], map: "animalID")
 }
 
 enum animal_sex {

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/generated/prisma'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -15,10 +15,13 @@ export const prisma =
   })
 
 // Log queries with actual parameter values
-prisma.$on('query' as never, (e: any) => {
-  console.log('🔍 SQL:', e.query)
-  console.log('📦 Params:', e.params)
-  console.log('⏱️  Duration:', e.duration + 'ms\n')
-})
+prisma.$on(
+  'query' as never,
+  (e: { query: string; params: string; duration: number }) => {
+    console.log('🔍 SQL:', e.query)
+    console.log('📦 Params:', e.params)
+    console.log('⏱️  Duration:', e.duration + 'ms\n')
+  }
+)
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma

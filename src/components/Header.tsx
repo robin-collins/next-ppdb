@@ -64,7 +64,7 @@ export default function Header({
   }
 
   return (
-    <header className="sticky top-0 z-[100] h-[92px] border-b border-gray-200 bg-white pl-[24px] pr-[24px] shadow-md">
+    <header className="sticky top-0 z-[100] h-[92px] border-b border-gray-200 bg-white pr-[24px] pl-[24px] shadow-md">
       <div className="mx-auto flex h-full max-w-[1400px] flex-nowrap items-center gap-6">
         {/* Hamburger Menu */}
         <div className="hamburger-menu">
@@ -114,7 +114,7 @@ export default function Header({
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search by name, phone, email, or breed..."
               className="h-[53px] flex-1 border-none bg-transparent py-0 pr-3 text-base font-medium text-gray-800 outline-none"
@@ -123,14 +123,14 @@ export default function Header({
               <button
                 type="button"
                 onClick={handleSearchClick}
-                className="flex h-[37px] min-w-[88px] items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 text-sm font-semibold text-white transition-all hover:bg-[var(--primary-hover)] text-center"
+                className="flex h-[37px] min-w-[88px] items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 text-center text-sm font-semibold text-white transition-all hover:bg-[var(--primary-hover)]"
               >
                 Search
               </button>
               <button
                 type="button"
                 onClick={handleClear}
-                className="flex h-[37px] min-w-[80px] items-center justify-center gap-2 rounded-md bg-gray-100 px-4 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-200 text-center"
+                className="flex h-[37px] min-w-[80px] items-center justify-center gap-2 rounded-md bg-gray-100 px-4 text-center text-sm font-semibold text-gray-700 transition-all hover:bg-gray-200"
               >
                 Clear
               </button>
@@ -139,11 +139,10 @@ export default function Header({
         </div>
 
         {/* Date Display */}
-        <div className="date-display hidden whitespace-nowrap rounded-full bg-[var(--primary-light)] !px-6 !py-2 text-sm font-semibold text-[var(--primary)] lg:block">
+        <div className="date-display hidden rounded-full bg-[var(--primary-light)] !px-6 !py-2 text-sm font-semibold whitespace-nowrap text-[var(--primary)] lg:block">
           {dateTime}
         </div>
       </div>
     </header>
   )
 }
-

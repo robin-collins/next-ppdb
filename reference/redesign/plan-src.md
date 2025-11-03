@@ -300,13 +300,11 @@ export default async function handler(
       })
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'Invalid search parameters',
-            details: error.errors,
-          })
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid search parameters',
+          details: error.errors,
+        })
       }
       return res
         .status(500)
@@ -335,13 +333,11 @@ export default async function handler(
       return res.status(201).json({ success: true, data: animal })
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            error: 'Validation failed',
-            details: error.errors,
-          })
+        return res.status(400).json({
+          success: false,
+          error: 'Validation failed',
+          details: error.errors,
+        })
       }
       return res
         .status(500)

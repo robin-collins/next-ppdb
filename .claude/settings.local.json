@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm run type-check:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(pnpm run check:*)",
+      "Bash(pnpm run fmt:*)",
+      "Bash(pnpm run build)",
+      "Bash(cat:*)",
+      "Bash(pnpm clean:next:*)",
+      "Bash(NEXT_PRIVATE_SKIP_FILE_TRACE=1 pnpm run build:*)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" INIT_CWD=\"d:/projects/ppdb-ts-oct\" pnpm run build:*)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__take_snapshot",
+      "Bash(node -e:*)",
+      "Bash(node check-db.mjs:*)",
+      "Bash(node prisma/scripts/fix-invalid-dates.mjs:*)",
+      "Bash(node prisma/scripts/fix-dates-direct.mjs:*)",
+      "Bash(node prisma/scripts/add-date-constraints.mjs:*)",
+      "Bash(node prisma/scripts/test-date-validation.mjs)",
+      "Bash(node prisma/scripts/audit-schema.mjs:*)",
+      "Bash(node prisma/scripts/comprehensive-cleanup.mjs:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

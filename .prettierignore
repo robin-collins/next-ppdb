@@ -47,3 +47,5 @@ pnpm-lock.yaml
 
 # Prisma
 prisma/migrations/
+
+.specstory/

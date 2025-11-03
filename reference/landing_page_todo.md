@@ -1,6 +1,6 @@
 # Landing page design to do list.
 
-- [X] Analyze current app vs design draft - identify missing components and styling
+- [x] Analyze current app vs design draft - identify missing components and styling
 - [ ] Create design system CSS variables and global styles
 - [ ] Build Header component with hamburger menu, brand logo, and integrated search bar
 - [ ] Create Sidebar navigation component with pin/unpin, resize, and animations

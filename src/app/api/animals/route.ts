@@ -40,13 +40,12 @@ function calculateRelevanceScore(
     fieldName: string,
     isPhoneField: boolean = false
   ): { score: number; reason: string } => {
-    if (!value)
-      return { score: 0, reason: `${fieldName}: null/empty` }
-    
+    if (!value) return { score: 0, reason: `${fieldName}: null/empty` }
+
     // For phone fields, normalize both values before comparison
     let compareValue = value.toLowerCase()
     let compareTerm = searchTerm.toLowerCase()
-    
+
     if (isPhoneField) {
       compareValue = normalizePhone(value)
       compareTerm = normalizePhone(searchTerm)
@@ -133,10 +132,20 @@ function calculateRelevanceScore(
       c => c.score === customerContactScore
     )
 
-    const animalNameCheck = checkField(animal.animalname, term, 'animalname', false)
+    const animalNameCheck = checkField(
+      animal.animalname,
+      term,
+      'animalname',
+      false
+    )
     const animalNameScore = animalNameCheck.score
 
-    const breedCheck = checkField(animal.breed.breedname, term, 'breedname', false)
+    const breedCheck = checkField(
+      animal.breed.breedname,
+      term,
+      'breedname',
+      false
+    )
     const breedScore = breedCheck.score
 
     // Take the best score for this term
@@ -229,7 +238,7 @@ export async function GET(request: NextRequest) {
 
   // Split query into terms for multi-word search
   const searchTerms = query.trim().split(/\s+/)
-  
+
   // Check if query looks like a phone number (mostly digits)
   const isPhoneQuery = /^\d[\d\s\-\(\)]*\d$/.test(query) && query.length >= 4
   const normalizedQuery = normalizePhone(query)
@@ -237,7 +246,7 @@ export async function GET(request: NextRequest) {
   // Build comprehensive OR conditions for unified search
   // Note: MySQL is case-insensitive by default, no need for mode option
   const orConditions: Prisma.animalWhereInput[] = []
-  
+
   // Always search text fields (unless it's purely a phone number)
   if (!isPhoneQuery) {
     orConditions.push(
@@ -259,11 +268,14 @@ export async function GET(request: NextRequest) {
       { customer: { phone2: { contains: normalizedQuery } } },
       { customer: { phone3: { contains: normalizedQuery } } }
     )
-    
-    console.log('Phone search normalized query:', JSON.stringify(normalizedQuery))
+
+    console.log(
+      'Phone search normalized query:',
+      JSON.stringify(normalizedQuery)
+    )
     console.log('Expected LIKE pattern:', `%${normalizedQuery}%`)
   }
-  
+
   // DEBUG: Log search details (will appear in terminal running dev server)
   console.log('=== SEARCH DEBUG ===')
   console.log('Original query:', query)
@@ -296,7 +308,7 @@ export async function GET(request: NextRequest) {
     }),
     prisma.animal.count({ where }),
   ])
-  
+
   // DEBUG: Log results
   console.log('Records found:', total)
   if (total > 0 && allAnimals[0]) {
@@ -343,10 +355,7 @@ export async function GET(request: NextRequest) {
     })
 
   // Apply pagination after scoring
-  const paginatedAnimals = scoredAnimals.slice(
-    (page - 1) * limit,
-    page * limit
-  )
+  const paginatedAnimals = scoredAnimals.slice((page - 1) * limit, page * limit)
 
   // Transform database fields to API interface
   const transformedAnimals = paginatedAnimals.map(
@@ -355,7 +364,7 @@ export async function GET(request: NextRequest) {
       name: animal.animalname,
       breed: animal.breed.breedname,
       colour: animal.colour,
-      sex: animal.SEX,
+      sex: animal.sex,
       cost: animal.cost,
       lastVisit: animal.lastvisit,
       thisVisit: animal.thisvisit,
@@ -409,7 +418,7 @@ export async function POST(request: NextRequest) {
       customerID: data.customerId,
       animalname: data.name,
       breedID: 1, // We need to handle breed lookup properly - for now using default
-      SEX: data.sex === 'Male' ? 'Male' : 'Female',
+      sex: data.sex === 'Male' ? 'Male' : 'Female',
       colour: data.colour || '',
       cost: data.cost || 0,
       lastvisit: data.lastVisit
@@ -429,7 +438,7 @@ export async function POST(request: NextRequest) {
     name: animal.animalname,
     breed: animal.breed.breedname,
     colour: animal.colour,
-    sex: animal.SEX,
+    sex: animal.sex,
     cost: animal.cost,
     lastVisit: animal.lastvisit,
     thisVisit: animal.thisvisit,

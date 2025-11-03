@@ -11,7 +11,7 @@ The migration performs the following changes:
 1. **Data Cleanup**: Removes invalid '0000-00-00' sentinel dates
 2. **Storage Optimization**: Converts all tables to InnoDB with utf8mb4 character set
 3. **Type Corrections**: Changes IDs to `INT UNSIGNED` for better range
-4. **Column Renames**: 
+4. **Column Renames**:
    - `animal.SEX` → `animal.sex`
    - `notes.notes` → `notes.note_text`
    - `notes.date` → `notes.note_date`
@@ -25,6 +25,7 @@ The migration performs the following changes:
 Before running the migration:
 
 1. **BACKUP YOUR DATABASE** - This is critical:
+
    ```bash
    mysqldump -u your_user -p ppdb-app > backup_$(date +%Y%m%d_%H%M%S).sql
    ```
@@ -97,6 +98,7 @@ The following changes may be needed in your application code:
 ### Step 6: Test Thoroughly
 
 Run your application and test:
+
 - [ ] All existing records are accessible
 - [ ] Search functionality works
 - [ ] Create/Update/Delete operations work
@@ -107,11 +109,13 @@ Run your application and test:
 If something goes wrong:
 
 1. **Restore from backup:**
+
    ```bash
    mysql -u your_user -p ppdb-app < backup_YYYYMMDD_HHMMSS.sql
    ```
 
 2. **Revert schema.prisma:**
+
    ```bash
    git checkout HEAD~1 prisma/schema.prisma
    pnpm prisma generate
@@ -127,6 +131,7 @@ If something goes wrong:
 ### Error: "Duplicate key name 'ix_animalname'"
 
 The index already exists. Remove these lines from the migration:
+
 ```sql
 CREATE INDEX ix_animalname  ON animal (animalname);
 CREATE INDEX ix_breedID     ON animal (breedID);
@@ -140,12 +145,12 @@ Some animal records may reference non-existent breed or customer IDs. Find and f
 
 ```sql
 -- Find orphaned animals
-SELECT * FROM animal a 
-LEFT JOIN breed b ON a.breedID = b.breedID 
+SELECT * FROM animal a
+LEFT JOIN breed b ON a.breedID = b.breedID
 WHERE b.breedID IS NULL;
 
-SELECT * FROM animal a 
-LEFT JOIN customer c ON a.customerID = c.customerID 
+SELECT * FROM animal a
+LEFT JOIN customer c ON a.customerID = c.customerID
 WHERE c.customerID IS NULL;
 ```
 
@@ -154,9 +159,9 @@ WHERE c.customerID IS NULL;
 Some breeds may have duplicate names. Find and merge them:
 
 ```sql
-SELECT breedname, COUNT(*) as count 
-FROM breed 
-GROUP BY breedname 
+SELECT breedname, COUNT(*) as count
+FROM breed
+GROUP BY breedname
 HAVING count > 1;
 ```
 
@@ -173,8 +178,8 @@ HAVING count > 1;
 ## Questions or Issues?
 
 If you encounter problems:
+
 1. Check the Prisma migration logs
 2. Review the MySQL error log
 3. Verify database user permissions
 4. Ensure DATABASE_URL in `.env` is correct
-

@@ -7,18 +7,21 @@ This document provides a high-level overview of the database migration system de
 ## What's Been Prepared
 
 ### ✅ Migration Files
+
 - **Main Migration**: `prisma/migrations/20251004154300_schema_normalization/migration.sql`
   - Comprehensive SQL script that transforms the legacy schema
   - Includes safety features (transactions, foreign key checks)
   - Handles data cleanup (sentinel dates)
 
 ### ✅ Updated Schema
+
 - **Prisma Schema**: `prisma/schema.prisma`
   - Reflects the final state after migration
   - Properly typed with TypeScript generation support
   - Includes all constraints and relationships
 
 ### ✅ Documentation
+
 1. **`MIGRATION_GUIDE.md`** (Root level)
    - General migration guidance for development and production
    - Troubleshooting common issues
@@ -45,11 +48,13 @@ This document provides a high-level overview of the database migration system de
 ### ✅ Validation Scripts
 
 **Pre-Migration Checks** (`prisma/scripts/pre-migration-checks.sql`)
+
 - 14 comprehensive validation checks
 - Identifies potential issues before migration
 - Generates detailed report
 
 **Post-Migration Validation** (`prisma/scripts/post-migration-validation.sql`)
+
 - 14 verification checks
 - Confirms successful migration
 - Validates no data loss occurred
@@ -57,6 +62,7 @@ This document provides a high-level overview of the database migration system de
 ### ✅ Safety Features
 
 **Backup & Rollback** (`prisma/scripts/rollback.sql`)
+
 - Emergency rollback script
 - Comprehensive backup instructions
 - Clear restoration procedures
@@ -64,21 +70,25 @@ This document provides a high-level overview of the database migration system de
 ## Key Schema Changes
 
 ### Database Engine & Character Set
+
 - **Before**: MyISAM, latin1 charset
 - **After**: InnoDB, utf8mb4 charset
 - **Benefit**: Better reliability, full Unicode support, ACID compliance
 
 ### ID Columns
+
 - **Before**: MEDIUMINT (range: -8.3M to 8.3M or 0 to 16.7M unsigned)
 - **After**: INT UNSIGNED (range: 0 to 4.3 billion)
 - **Benefit**: Future-proof capacity, standard sizing
 
 ### Column Renames
+
 - `animal.SEX` → `animal.sex` (lowercase for consistency)
 - `notes.notes` → `notes.note_text` (clarity)
 - `notes.date` → `notes.note_date` (clarity)
 
 ### Type Changes
+
 - `customer.postcode`: SMALLINT → VARCHAR(10) (handles postcodes like "0800" correctly)
 - `animal.animalname`: VARCHAR(12) → VARCHAR(50) (no truncation)
 - `animal.colour`: TEXT → VARCHAR(100) (better indexing)
@@ -86,6 +96,7 @@ This document provides a high-level overview of the database migration system de
 - Date fields: Sentinel '0000-00-00' → NULL (SQL standard)
 
 ### Constraints & Indexes
+
 - **Foreign Keys**: CASCADE → RESTRICT (prevents accidental deletions)
 - **Unique Constraint**: Added on `breed.breedname`
 - **Performance Indexes**: Added on commonly queried fields
@@ -94,7 +105,9 @@ This document provides a high-level overview of the database migration system de
 ## When to Use This Migration
 
 ### Development Database
+
 If your development database already has been modified or partially migrated:
+
 ```bash
 # Mark as applied without running
 pnpm prisma migrate resolve --applied 20251004154300_schema_normalization
@@ -102,7 +115,9 @@ pnpm prisma generate
 ```
 
 ### Production Database (Legacy Schema)
+
 If your production database has the original `ppdb-original.sql` schema:
+
 ```bash
 # Follow the complete production migration process
 # See: prisma/PRODUCTION_MIGRATION.md
@@ -111,6 +126,7 @@ If your production database has the original `ppdb-original.sql` schema:
 ## Quick Start: Production Migration
 
 1. **Read Documentation First**
+
    ```bash
    cat prisma/PRODUCTION_MIGRATION.md
    ```
@@ -123,17 +139,20 @@ If your production database has the original `ppdb-original.sql` schema:
    - [ ] Team notified
 
 3. **Run Pre-Migration Checks**
+
    ```bash
    mysql -u root -p ppdb-app < prisma/scripts/pre-migration-checks.sql > pre-report.txt
    cat pre-report.txt | grep -E '❌|⚠️'
    ```
 
 4. **Execute Migration**
+
    ```bash
    pnpm prisma migrate deploy
    ```
 
 5. **Validate Results**
+
    ```bash
    mysql -u root -p ppdb-app < prisma/scripts/post-migration-validation.sql > post-report.txt
    cat post-report.txt | grep -E '❌|⚠️'
@@ -150,12 +169,14 @@ If your production database has the original `ppdb-original.sql` schema:
 After migration, update your application code:
 
 ### 1. Import Statements
+
 ```typescript
 // Prisma Client will have new types
 import { animal, breed, customer, notes } from '@prisma/client'
 ```
 
 ### 2. Column References
+
 ```typescript
 // ❌ Old
 const sex = animal.SEX
@@ -169,6 +190,7 @@ const noteDate = note.note_date
 ```
 
 ### 3. Type Definitions
+
 ```typescript
 // ❌ Old
 interface Customer {
@@ -182,6 +204,7 @@ interface Customer {
 ```
 
 ### 4. Date Handling
+
 ```typescript
 // ❌ Old
 if (animal.lastvisit === '0000-00-00' || !animal.lastvisit) {
@@ -195,13 +218,14 @@ if (animal.lastvisit === null) {
 ```
 
 ### 5. Delete Operations
+
 ```typescript
 // ❌ Old (will fail with new constraints)
 await prisma.customer.delete({ where: { customerID: id } })
 
 // ✅ New (handle dependencies)
-const animalCount = await prisma.animal.count({ 
-  where: { customerID: id } 
+const animalCount = await prisma.animal.count({
+  where: { customerID: id },
 })
 if (animalCount > 0) {
   throw new Error(`Cannot delete customer with ${animalCount} animals`)
@@ -211,22 +235,23 @@ await prisma.customer.delete({ where: { customerID: id } })
 
 ## Estimated Timeline
 
-| Phase | Duration | Activity |
-|-------|----------|----------|
-| Preparation | 1-2 days | Review docs, test in staging |
-| Backup | 5 min | Create and verify backup |
-| Pre-checks | 5 min | Run validation script |
-| Maintenance | 2-5 min | Stop application |
-| Migration | 2-15 min | Apply schema changes (depends on data size) |
-| Validation | 3-5 min | Run validation script |
-| Code Deploy | 5-10 min | Generate client, deploy updated code |
-| Testing | 5-10 min | Smoke tests and verification |
-| Monitoring | 30 min | Watch for issues |
-| **Total** | **30-60 min** | **Active maintenance window** |
+| Phase       | Duration      | Activity                                    |
+| ----------- | ------------- | ------------------------------------------- |
+| Preparation | 1-2 days      | Review docs, test in staging                |
+| Backup      | 5 min         | Create and verify backup                    |
+| Pre-checks  | 5 min         | Run validation script                       |
+| Maintenance | 2-5 min       | Stop application                            |
+| Migration   | 2-15 min      | Apply schema changes (depends on data size) |
+| Validation  | 3-5 min       | Run validation script                       |
+| Code Deploy | 5-10 min      | Generate client, deploy updated code        |
+| Testing     | 5-10 min      | Smoke tests and verification                |
+| Monitoring  | 30 min        | Watch for issues                            |
+| **Total**   | **30-60 min** | **Active maintenance window**               |
 
 ## Success Criteria
 
 Migration is successful when:
+
 - ✅ All validation checks pass (no ❌ or ⚠️)
 - ✅ Record counts match pre-migration baseline
 - ✅ Application starts without errors
@@ -239,6 +264,7 @@ Migration is successful when:
 ## Risk Mitigation
 
 ### What Could Go Wrong?
+
 1. **Orphaned Records**: Animals referencing deleted breeds/customers
    - **Prevention**: Pre-migration checks detect this
    - **Fix**: Resolve orphans before migration
@@ -260,6 +286,7 @@ Migration is successful when:
    - **Fix**: Deploy updated code with column renames
 
 ### Zero Data Loss Design
+
 - Transaction-based migration (rolls back on error)
 - Expands field sizes (never truncates)
 - Cleans invalid dates to NULL (preserves valid data)
@@ -268,15 +295,15 @@ Migration is successful when:
 
 ## Support & Documentation
 
-| Need | Location |
-|------|----------|
-| Quick commands | `prisma/scripts/QUICK_REFERENCE.md` |
-| Step-by-step guide | `prisma/PRODUCTION_MIGRATION.md` |
-| Schema details | `prisma/README.md` |
-| Troubleshooting | `MIGRATION_GUIDE.md` |
-| Pre-checks | `prisma/scripts/pre-migration-checks.sql` |
-| Post-validation | `prisma/scripts/post-migration-validation.sql` |
-| Rollback | `prisma/scripts/rollback.sql` |
+| Need               | Location                                       |
+| ------------------ | ---------------------------------------------- |
+| Quick commands     | `prisma/scripts/QUICK_REFERENCE.md`            |
+| Step-by-step guide | `prisma/PRODUCTION_MIGRATION.md`               |
+| Schema details     | `prisma/README.md`                             |
+| Troubleshooting    | `MIGRATION_GUIDE.md`                           |
+| Pre-checks         | `prisma/scripts/pre-migration-checks.sql`      |
+| Post-validation    | `prisma/scripts/post-migration-validation.sql` |
+| Rollback           | `prisma/scripts/rollback.sql`                  |
 
 ## Next Steps
 
@@ -314,4 +341,3 @@ Migration is successful when:
 Refer to the comprehensive documentation in the `prisma/` folder. All scenarios, issues, and procedures are documented with specific commands and examples.
 
 **Good luck with your migration! 🚀**
-

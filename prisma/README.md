@@ -7,6 +7,7 @@ This directory contains all database schema definitions and migration files for 
 ## Schema Evolution
 
 ### Original Schema (Legacy Production)
+
 - **Engine**: MyISAM
 - **Character Set**: latin1 (latin1_swedish_ci)
 - **Foreign Keys**: None
@@ -15,6 +16,7 @@ This directory contains all database schema definitions and migration files for 
 - **Issues**: No referential integrity, poor Unicode support, suboptimal field sizes
 
 ### Target Schema (Modern)
+
 - **Engine**: InnoDB (ACID compliance, better crash recovery)
 - **Character Set**: utf8mb4 (full Unicode support including emoji)
 - **Foreign Keys**: Full referential integrity with RESTRICT constraints
@@ -78,6 +80,7 @@ See `PRODUCTION_MIGRATION.md` for detailed production deployment instructions.
 ## Key Schema Changes
 
 ### Table: `breed`
+
 - `breedID`: MEDIUMINT → INT UNSIGNED
 - `breedname`: Added UNIQUE constraint
 - `avgtime`: NULL handling fixed (was '00:00:00')
@@ -86,6 +89,7 @@ See `PRODUCTION_MIGRATION.md` for detailed production deployment instructions.
 - Charset: latin1 → utf8mb4
 
 ### Table: `customer`
+
 - `customerID`: MEDIUMINT → INT UNSIGNED
 - `surname`: VARCHAR(20) → VARCHAR(50)
 - `firstname`: VARCHAR(20) → VARCHAR(50)
@@ -99,6 +103,7 @@ See `PRODUCTION_MIGRATION.md` for detailed production deployment instructions.
 - Charset: latin1 → utf8mb4
 
 ### Table: `animal`
+
 - `animalID`: MEDIUMINT → INT UNSIGNED
 - `animalname`: VARCHAR(12) → VARCHAR(50)
 - `breedID`: MEDIUMINT → INT UNSIGNED (with FK constraint)
@@ -114,6 +119,7 @@ See `PRODUCTION_MIGRATION.md` for detailed production deployment instructions.
 - Charset: latin1 → utf8mb4
 
 ### Table: `notes`
+
 - `noteID`: MEDIUMINT → INT UNSIGNED
 - `animalID`: MEDIUMINT → INT UNSIGNED (with FK constraint)
 - `notes` → `note_text`: Column renamed for clarity
@@ -131,6 +137,7 @@ All foreign keys use `RESTRICT` for both UPDATE and DELETE operations:
 - `notes.animalID` → `animal.animalID`
 
 **Important**: This means you cannot delete a breed, customer, or animal that has dependent records. Your application must handle this by either:
+
 1. Preventing deletion with appropriate error messages
 2. Implementing a "soft delete" pattern (adding an `is_active` flag)
 3. Cascading deletes at the application layer after user confirmation
@@ -142,6 +149,7 @@ All foreign keys use `RESTRICT` for both UPDATE and DELETE operations:
 After migration, update references to:
 
 **Column Name Changes:**
+
 ```typescript
 // Before
 animal.SEX
@@ -155,6 +163,7 @@ notes.note_date
 ```
 
 **Type Changes:**
+
 ```typescript
 // Before
 customer.postcode: number
@@ -204,14 +213,15 @@ Before production deployment:
 ## Support and Troubleshooting
 
 Common issues and solutions are documented in:
+
 - `/MIGRATION_GUIDE.md` - General migration guidance
 - `PRODUCTION_MIGRATION.md` - Production-specific procedures
 - `scripts/` - Validation and diagnostic queries
 
 ## Migration History
 
-| Migration | Date | Description |
-|-----------|------|-------------|
+| Migration                           | Date       | Description                                                                              |
+| ----------------------------------- | ---------- | ---------------------------------------------------------------------------------------- |
 | 20251004154300_schema_normalization | 2025-10-04 | Initial migration from legacy schema to normalized InnoDB schema with proper constraints |
 
 ## Future Migrations
@@ -223,4 +233,3 @@ When adding new migrations:
 3. Test with production data copy first
 4. Update this README with migration details
 5. Document any application code changes required
-

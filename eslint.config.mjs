@@ -25,6 +25,7 @@ const eslintConfig = [
       '**/*.d.ts',
       'pnpm-lock.yaml',
       '.pnpm-store/**',
+      '.spectory/**',
     ],
   },
   {

@@ -6,21 +6,21 @@ const prisma = new PrismaClient({
 
 async function main() {
   console.log('\n=== Testing Phone Search ===\n')
-  
+
   // Check if customer 7742 exists and has an animal
   console.log('1. Checking customer 7742 (collins):')
   const customer = await prisma.customer.findUnique({
     where: { customerID: 7742 },
-    include: { animal: true }
+    include: { animal: true },
   })
   console.log('Customer:', {
     customerID: customer?.customerID,
     surname: customer?.surname,
     phone1: customer?.phone1,
     phone2: customer?.phone2,
-    animalCount: customer?.animal.length
+    animalCount: customer?.animal.length,
   })
-  
+
   // Try searching with contains
   console.log('\n2. Searching with Prisma contains "047579573":')
   const results1 = await prisma.animal.findMany({
@@ -28,13 +28,13 @@ async function main() {
       OR: [
         { customer: { phone1: { contains: '047579573' } } },
         { customer: { phone2: { contains: '047579573' } } },
-      ]
+      ],
     },
     include: { customer: true },
-    take: 5
+    take: 5,
   })
   console.log('Results:', results1.length)
-  
+
   // Try searching with contains "0475795732"
   console.log('\n3. Searching with Prisma contains "0475795732":')
   const results2 = await prisma.animal.findMany({
@@ -42,10 +42,10 @@ async function main() {
       OR: [
         { customer: { phone1: { contains: '0475795732' } } },
         { customer: { phone2: { contains: '0475795732' } } },
-      ]
+      ],
     },
     include: { customer: true },
-    take: 5
+    take: 5,
   })
   console.log('Results:', results2.length)
   if (results2[0]) {
@@ -53,10 +53,10 @@ async function main() {
       animalID: results2[0].animalID,
       animalname: results2[0].animalname,
       surname: results2[0].customer.surname,
-      phone1: results2[0].customer.phone1
+      phone1: results2[0].customer.phone1,
     })
   }
-  
+
   // Raw query test
   console.log('\n4. Raw SQL test:')
   const rawResults = await prisma.$queryRaw`

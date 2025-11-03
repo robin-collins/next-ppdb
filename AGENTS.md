@@ -1,7 +1,5 @@
 # Repository Guidelines
 
-@ARCHON.md
-
 ## Project Structure & Module Organization
 
 Core Next.js routes and layouts live in `src/app`, with API handlers nested under `src/app/api`. Reusable UI components sit in `src/components`, domain utilities in `src/lib`, and Zustand stores in `src/store`. Model changes start in `prisma/schema.prisma`; the generated client mirrors them in `src/generated/prisma`. Keep static assets in `public` and long-form notes or data drops in `reference` and `reports` so runtime code stays focused.

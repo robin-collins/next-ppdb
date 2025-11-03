@@ -14,7 +14,7 @@ export async function GET(
       customer: true,
       breed: true,
       notes: {
-        orderBy: { date: 'desc' },
+        orderBy: { note_date: 'desc' },
       },
     },
   })
@@ -29,7 +29,7 @@ export async function GET(
     name: animal.animalname,
     breed: animal.breed.breedname,
     colour: animal.colour,
-    sex: animal.SEX,
+    sex: animal.sex,
     cost: animal.cost,
     lastVisit: animal.lastvisit,
     thisVisit: animal.thisvisit,
@@ -49,8 +49,8 @@ export async function GET(
     serviceNotes: animal.notes.map((note: Prisma.notesGetPayload<object>) => ({
       id: note.noteID,
       animalId: note.animalID,
-      notes: note.notes,
-      serviceDate: note.date,
+      notes: note.note_text,
+      serviceDate: note.note_date,
     })),
   }
 
@@ -80,7 +80,7 @@ export async function PUT(
     where: { animalID: parseInt(id) },
     data: {
       animalname: data.name,
-      SEX: data.sex === 'Male' ? 'Male' : 'Female',
+      sex: data.sex === 'Male' ? 'Male' : 'Female',
       colour: data.colour,
       cost: data.cost,
       lastvisit: data.lastVisit ? new Date(data.lastVisit) : undefined,
@@ -96,7 +96,7 @@ export async function PUT(
     name: animal.animalname,
     breed: animal.breed.breedname,
     colour: animal.colour,
-    sex: animal.SEX,
+    sex: animal.sex,
     cost: animal.cost,
     lastVisit: animal.lastvisit,
     thisVisit: animal.thisvisit,
@@ -116,8 +116,8 @@ export async function PUT(
     serviceNotes: animal.notes.map((note: Prisma.notesGetPayload<object>) => ({
       id: note.noteID,
       animalId: note.animalID,
-      notes: note.notes,
-      serviceDate: note.date,
+      notes: note.note_text,
+      serviceDate: note.note_date,
     })),
   }
 

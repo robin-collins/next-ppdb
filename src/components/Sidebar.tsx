@@ -91,7 +91,11 @@ export default function Sidebar({
       href: '/',
       label: 'Dashboard',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
         </svg>
       ),
@@ -101,7 +105,11 @@ export default function Sidebar({
       href: '/',
       label: 'Search Results',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         </svg>
       ),
@@ -111,7 +119,11 @@ export default function Sidebar({
       href: '/customers/new',
       label: 'Add Customer',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
         </svg>
       ),
@@ -121,7 +133,11 @@ export default function Sidebar({
       href: '/breeds',
       label: 'Manage Breeds',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
       ),
@@ -131,7 +147,11 @@ export default function Sidebar({
       href: '/analytics',
       label: 'Daily Analytics',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z" />
         </svg>
       ),
@@ -141,7 +161,11 @@ export default function Sidebar({
       href: '/history',
       label: 'Customer History',
       icon: (
-        <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
         </svg>
       ),
@@ -163,22 +187,24 @@ export default function Sidebar({
       <nav
         ref={sidebarRef}
         style={{
-          width: isMobile ? `min(${sidebarWidth}px, 80vw)` : `${sidebarWidth}px`,
+          width: isMobile
+            ? `min(${sidebarWidth}px, 80vw)`
+            : `${sidebarWidth}px`,
         }}
-        className={`fixed left-0 top-0 z-[200] flex h-screen flex-col overflow-hidden border-r border-gray-200 bg-white/98 shadow-xl backdrop-blur-[20px] transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-[200] flex h-screen flex-col overflow-hidden border-r border-gray-200 bg-white/98 shadow-xl backdrop-blur-[20px] transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } ${isPinned ? 'relative' : ''}`}
       >
         {/* Resize Handle */}
         <div
           onMouseDown={startResize}
-          className={`absolute right-[-2px] top-0 z-10 h-full w-1 cursor-col-resize bg-transparent transition-colors hover:bg-primary ${
+          className={`hover:bg-primary absolute top-0 right-[-2px] z-10 h-full w-1 cursor-col-resize bg-transparent transition-colors ${
             isResizing ? 'bg-primary' : ''
           }`}
         />
 
         {/* Sidebar Header (matches main header top band) */}
-        <div className="sidebar_indent flex h-[92px] items-center border-b border-gray-200 bg-white pl-[24px] pr-[24px]">
+        <div className="sidebar_indent flex h-[92px] items-center border-b border-gray-200 bg-white pr-[24px] pl-[24px]">
           <div className="flex items-center gap-3 whitespace-nowrap">
             {/* Hamburger, mirrors header */}
             <button
@@ -194,12 +220,19 @@ export default function Sidebar({
             {/* Brand */}
             <div className="brand-header flex cursor-default items-center gap-3 whitespace-nowrap">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z" />
                 </svg>
               </div>
-              <div className="brand-text hidden sm:block whitespace-nowrap">
-                <h3 className="text-xl font-bold text-gray-800">Pampered Pooch</h3>
+              <div className="brand-text hidden whitespace-nowrap sm:block">
+                <h3 className="text-xl font-bold text-gray-800">
+                  Pampered Pooch
+                </h3>
                 <p className="text-xs text-gray-600">Professional Pet Care</p>
               </div>
             </div>
@@ -232,13 +265,13 @@ export default function Sidebar({
 
         {/* Navigation Menu */}
         <div className="sidebar_indent flex-1 overflow-y-auto p-4">
-          {navItems.map((item) => (
+          {navItems.map(item => (
             <div key={item.label} className="mb-1">
               <Link
                 href={item.href}
                 className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
                   item.active
-                    ? 'bg-primary-light font-semibold text-primary'
+                    ? 'bg-primary-light text-primary font-semibold'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
@@ -251,7 +284,7 @@ export default function Sidebar({
 
         {/* Sidebar Footer */}
         <div className="border-t border-gray-200 bg-gray-50 p-4">
-          <div className="rounded-full bg-primary-light px-4 py-2 text-center text-sm font-semibold text-primary">
+          <div className="bg-primary-light text-primary rounded-full px-4 py-2 text-center text-sm font-semibold">
             {sidebarDate}
           </div>
         </div>
@@ -259,4 +292,3 @@ export default function Sidebar({
     </>
   )
 }
-

@@ -7,7 +7,7 @@ export default function EmptyState({ onSuggestionClick }: EmptyStateProps) {
 
   return (
     <div className="flex min-h-[calc(100vh-var(--header-height)-3rem)] items-center justify-center !p-10">
-      <div className="max-w-[560px] text-center space-y-4">
+      <div className="max-w-[560px] space-y-4 text-center">
         <div className="mb-6 flex justify-center text-gray-400">
           <svg
             width="64"
@@ -22,7 +22,7 @@ export default function EmptyState({ onSuggestionClick }: EmptyStateProps) {
           </svg>
         </div>
 
-        <h2 className="mb-3 text-[2rem] font-bold leading-tight text-gray-800">
+        <h2 className="mb-3 text-[2rem] leading-tight font-bold text-gray-800">
           Search for Animals
         </h2>
 
@@ -32,15 +32,15 @@ export default function EmptyState({ onSuggestionClick }: EmptyStateProps) {
         </p>
 
         <div className="rounded-xl border border-gray-200 bg-gray-50 !p-8">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-700">
+          <p className="mb-4 text-xs font-semibold tracking-wider text-gray-700 uppercase">
             Try searching for:
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            {suggestions.map((suggestion) => (
+            {suggestions.map(suggestion => (
               <button
                 key={suggestion}
                 onClick={() => onSuggestionClick(suggestion)}
-                className="cursor-pointer rounded-full border border-gray-300 bg-white !px-4 !py-2 text-sm font-medium text-gray-700 transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary-light hover:text-primary hover:shadow-sm"
+                className="hover:border-primary hover:bg-primary-light hover:text-primary cursor-pointer rounded-full border border-gray-300 bg-white !px-4 !py-2 text-sm font-medium text-gray-700 transition-all hover:-translate-y-1 hover:shadow-sm"
               >
                 {suggestion}
               </button>
@@ -51,4 +51,3 @@ export default function EmptyState({ onSuggestionClick }: EmptyStateProps) {
     </div>
   )
 }
-

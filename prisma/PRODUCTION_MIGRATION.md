@@ -22,7 +22,7 @@ This guide is specifically for migrating a **production database** that currentl
 - **Medium databases** (10,000 - 100,000 records): 5-15 minutes
 - **Large databases** (> 100,000 records): 15-45 minutes
 
-*Actual time depends on hardware, indexes, and data volume.*
+_Actual time depends on hardware, indexes, and data volume._
 
 ## Step-by-Step Production Migration
 
@@ -62,12 +62,14 @@ cat pre-migration-report.txt
 ```
 
 **Review the output carefully:**
+
 - Check for orphaned records (animals with no breed/customer)
 - Check for duplicate breed names
 - Check for data that might be truncated
 - Note any warnings about sentinel dates
 
 **Action Items:**
+
 - Fix any critical issues found
 - Document any warnings for post-migration verification
 
@@ -126,6 +128,7 @@ cat post-migration-report.txt
 ```
 
 **Verify:**
+
 - [ ] All tables converted to InnoDB
 - [ ] All tables using utf8mb4 charset
 - [ ] Foreign keys exist and are named correctly
@@ -200,8 +203,8 @@ if (animal.lastvisit === null) {
 await prisma.customer.delete({ where: { customerID: id } })
 
 // ✅ After (must check for dependencies)
-const animalCount = await prisma.animal.count({ 
-  where: { customerID: id } 
+const animalCount = await prisma.animal.count({
+  where: { customerID: id },
 })
 
 if (animalCount > 0) {
@@ -225,6 +228,7 @@ curl http://localhost:3000/api/animals/1  # Detail view test
 ```
 
 **Manual Testing Checklist:**
+
 - [ ] Application starts without errors
 - [ ] Home page loads
 - [ ] Search functionality works
@@ -266,6 +270,7 @@ mysql -u root -p ppdb-app -e "SHOW ENGINE INNODB STATUS\G"
 ```
 
 **Watch for:**
+
 - Database connection errors
 - Foreign key constraint violations
 - Missing column errors
@@ -320,6 +325,7 @@ mysql -u root -p ppdb-app < prisma/scripts/rollback.sql
 ### Issue: Foreign Key Constraint Violation
 
 **Symptoms:**
+
 ```
 Error: Foreign key constraint fails (ppdb-app.animal, CONSTRAINT fk_animal_breed)
 ```
@@ -327,6 +333,7 @@ Error: Foreign key constraint fails (ppdb-app.animal, CONSTRAINT fk_animal_breed
 **Cause:** Orphaned records exist (animals referencing non-existent breeds/customers)
 
 **Solution:**
+
 ```sql
 -- Find orphaned animals
 SELECT a.animalID, a.animalname, a.breedID, a.customerID
@@ -342,11 +349,13 @@ WHERE b.breedID IS NULL OR c.customerID IS NULL;
 ### Issue: Duplicate Breed Names
 
 **Symptoms:**
+
 ```
 Error: Duplicate entry 'Labrador' for key 'uq_breedname'
 ```
 
 **Solution:**
+
 ```sql
 -- Find duplicates
 SELECT breedname, COUNT(*) as count
@@ -362,6 +371,7 @@ HAVING count > 1;
 ### Issue: Data Truncation
 
 **Symptoms:**
+
 ```
 Warning: Data truncated for column 'animalname' at row 123
 ```
@@ -369,6 +379,7 @@ Warning: Data truncated for column 'animalname' at row 123
 **Cause:** Existing data exceeds new field limits (unlikely given we're expanding sizes)
 
 **Solution:**
+
 ```sql
 -- Find long values
 SELECT animalID, animalname, LENGTH(animalname) as len
@@ -383,6 +394,7 @@ WHERE LENGTH(animalname) > 50;
 **Symptoms:** Special characters display as `�` or `?`
 
 **Solution:**
+
 ```sql
 -- Verify encoding conversion worked
 SELECT * FROM breed WHERE breedname LIKE '%?%' OR breedname LIKE '%�%';
@@ -402,7 +414,7 @@ ANALYZE TABLE animal, breed, customer, notes;
 OPTIMIZE TABLE animal, breed, customer, notes;
 
 -- Check table sizes
-SELECT 
+SELECT
   table_name,
   ROUND(((data_length + index_length) / 1024 / 1024), 2) AS "Size (MB)"
 FROM information_schema.TABLES
@@ -461,4 +473,3 @@ T-1:00  Declare success or initiate rollback
 ```
 
 **Total estimated time: 1 hour (including contingency)**
-

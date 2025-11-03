@@ -88,6 +88,7 @@ ppdb-ts/
 Complete production-ready migration infrastructure for safely upgrading from legacy `ppdb-original.sql` schema:
 
 **Core Migration Files:**
+
 - **prisma/migrations/20251004154300_schema_normalization/migration.sql**: Main migration script
   - Cleans sentinel '0000-00-00' dates to NULL
   - Converts tables to InnoDB with utf8mb4 character set
@@ -101,11 +102,13 @@ Complete production-ready migration infrastructure for safely upgrading from leg
 - **prisma/schema.prisma**: Updated to reflect final normalized schema with proper types, constraints, and indexes
 
 **Documentation:**
+
 - **MIGRATION_GUIDE.md**: General migration guide with step-by-step instructions, rollback procedures, and troubleshooting
 - **prisma/README.md**: Schema evolution documentation, migration strategy, data type mapping, and future migration guidelines
 - **prisma/PRODUCTION_MIGRATION.md**: Detailed production deployment guide with 30+ minute timeline, pre-flight checklist, code changes required, common issues, and success criteria
 
 **Validation Scripts:**
+
 - **prisma/scripts/pre-migration-checks.sql**: 14 comprehensive checks before migration
   - Verifies table existence and record counts (baseline)
   - Detects orphaned records (animals without breed/customer, notes without animal)
@@ -126,6 +129,7 @@ Complete production-ready migration infrastructure for safely upgrading from leg
   - Samples data to verify integrity
 
 **Utility Scripts:**
+
 - **prisma/scripts/rollback.sql**: Emergency rollback script (restoring from backup strongly preferred)
   - Reverts column renames
   - Removes foreign keys and new indexes
