@@ -1,7 +1,33 @@
 // src/store/customersStore.ts
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
-import type { customer, animal } from '../generated/prisma'
+import { devtools, persist } from 'zustand/middleware'
+
+// Define API response types that match the transformed data
+interface Customer {
+  id: number
+  surname: string
+  firstname: string | null
+  address: string | null
+  suburb: string | null
+  postcode: string | null
+  phone1: string | null
+  phone2: string | null
+  phone3: string | null
+  email: string | null
+  animalCount: number
+  animals: {
+    id: number
+    name: string
+    breed: string
+    breedId?: number
+    sex: 'Male' | 'Female'
+    colour?: string
+    cost?: number
+    lastVisit?: Date
+    thisVisit?: Date
+    comments?: string | null
+  }[]
+}
 
 // Define proper types for API data
 interface CreateCustomerData {
@@ -9,7 +35,7 @@ interface CreateCustomerData {
   firstname?: string
   address?: string
   suburb?: string
-  postcode?: string
+  postcode?: string | number
   phone1?: string
   phone2?: string
   phone3?: string
@@ -21,152 +47,257 @@ interface UpdateCustomerData {
   firstname?: string
   address?: string
   suburb?: string
-  postcode?: string
+  postcode?: string | number
   phone1?: string
   phone2?: string
   phone3?: string
   email?: string
 }
 
+interface SearchParams {
+  q?: string
+  page?: number
+  limit?: number
+}
+
+interface PaginationData {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
 interface CustomersState {
-  customers: customer[]
-  selectedCustomer: (customer & { animals: animal[] }) | null
+  // Data
+  customers: Customer[]
+  selectedCustomer: Customer | null
+  pagination: PaginationData
+  searchParams: SearchParams
   loading: boolean
   error: string | null
 
   // Actions
-  setCustomers: (customers: customer[]) => void
-  setSelectedCustomer: (
-    customer: (customer & { animals: animal[] }) | null
-  ) => void
+  setCustomers: (customers: Customer[]) => void
+  setSelectedCustomer: (customer: Customer | null) => void
+  setPagination: (pagination: PaginationData) => void
+  setSearchParams: (params: SearchParams) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
+  clearSearch: () => void
 
   // API Actions
-  searchCustomers: (surname: string) => Promise<void>
+  searchCustomers: (params: SearchParams) => Promise<void>
   fetchCustomer: (id: number) => Promise<void>
-  createCustomer: (data: CreateCustomerData) => Promise<void>
+  createCustomer: (data: CreateCustomerData) => Promise<Customer>
   updateCustomer: (id: number, data: UpdateCustomerData) => Promise<void>
+  deleteCustomer: (id: number) => Promise<void>
 }
 
 export const useCustomersStore = create<CustomersState>()(
   devtools(
-    (set, get) => ({
-      customers: [],
-      selectedCustomer: null,
-      loading: false,
-      error: null,
+    persist(
+      (set, get) => ({
+        // Initial state
+        customers: [],
+        selectedCustomer: null,
+        pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+        searchParams: {},
+        loading: false,
+        error: null,
 
-      setCustomers: customers => set({ customers }),
-      setSelectedCustomer: customer => set({ selectedCustomer: customer }),
-      setLoading: loading => set({ loading }),
-      setError: error => set({ error }),
-
-      searchCustomers: async surname => {
-        set({ loading: true, error: null })
-        try {
-          const response = await fetch(
-            `/api/customers?surname=${encodeURIComponent(surname)}`
-          )
-
-          if (!response.ok) {
-            throw new Error('Failed to search customers')
-          }
-
-          const customers = await response.json()
-          set({ customers })
-        } catch (error) {
+        // Basic setters
+        setCustomers: customers => set({ customers }),
+        setSelectedCustomer: customer => set({ selectedCustomer: customer }),
+        setPagination: pagination => set({ pagination }),
+        setSearchParams: params => set({ searchParams: params }),
+        setLoading: loading => set({ loading }),
+        setError: error => set({ error }),
+        clearSearch: () =>
           set({
-            error: error instanceof Error ? error.message : 'Search failed',
-          })
-        } finally {
-          set({ loading: false })
-        }
-      },
+            searchParams: {},
+            customers: [],
+            pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
+          }),
 
-      fetchCustomer: async id => {
-        set({ loading: true, error: null })
-        try {
-          const response = await fetch(`/api/customers/${id}`)
+        // API Actions
+        searchCustomers: async params => {
+          set({ loading: true, error: null })
+          try {
+            const query = new URLSearchParams({
+              q: params.q || '',
+              page: (params.page || 1).toString(),
+              limit: (params.limit || 20).toString(),
+            }).toString()
 
-          if (!response.ok) {
-            throw new Error('Failed to fetch customer')
+            const response = await fetch(`/api/customers?${query}`)
+
+            if (!response.ok) {
+              throw new Error('Failed to search customers')
+            }
+
+            const data = await response.json()
+
+            set({
+              customers: data.customers,
+              pagination: data.pagination,
+              searchParams: params,
+            })
+          } catch (error) {
+            set({
+              error: error instanceof Error ? error.message : 'Search failed',
+            })
+          } finally {
+            set({ loading: false })
           }
+        },
 
-          const customer = await response.json()
-          set({ selectedCustomer: customer })
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to fetch customer',
-          })
-        } finally {
-          set({ loading: false })
-        }
-      },
+        fetchCustomer: async id => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/customers/${id}`)
 
-      createCustomer: async data => {
-        set({ loading: true, error: null })
-        try {
-          const response = await fetch('/api/customers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          })
+            if (!response.ok) {
+              throw new Error('Failed to fetch customer')
+            }
 
-          if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(errorData.error || 'Failed to create customer')
+            const customer = await response.json()
+            set({ selectedCustomer: customer })
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to fetch customer',
+            })
+          } finally {
+            set({ loading: false })
           }
+        },
 
-          // Optionally refresh customers list
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to create customer',
-          })
-        } finally {
-          set({ loading: false })
-        }
-      },
+        createCustomer: async data => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch('/api/customers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            })
 
-      updateCustomer: async (id, data) => {
-        set({ loading: true, error: null })
-        try {
-          const response = await fetch(`/api/customers/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to create customer')
+            }
 
-          if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(errorData.error || 'Failed to update customer')
+            const newCustomer = await response.json()
+
+            // Refresh the current search
+            const { searchParams } = get()
+            if (Object.keys(searchParams).length > 0) {
+              await get().searchCustomers(searchParams)
+            }
+
+            set({ loading: false })
+            return newCustomer
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to create customer',
+              loading: false,
+            })
+            throw error
           }
+        },
 
-          const updatedCustomer = await response.json()
+        updateCustomer: async (id, data) => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/customers/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            })
 
-          // Update selected customer if it's the one being updated
-          const { selectedCustomer } = get()
-          if (selectedCustomer && selectedCustomer.customerID === id) {
-            set({ selectedCustomer: updatedCustomer })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to update customer')
+            }
+
+            const updatedCustomer = await response.json()
+
+            // Update selected customer if it's the one being updated
+            const { selectedCustomer } = get()
+            if (selectedCustomer && selectedCustomer.id === id) {
+              set({ selectedCustomer: updatedCustomer })
+            }
+
+            // Refresh the current search
+            const { searchParams } = get()
+            if (Object.keys(searchParams).length > 0) {
+              await get().searchCustomers(searchParams)
+            }
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to update customer',
+            })
+            throw error
+          } finally {
+            set({ loading: false })
           }
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to update customer',
-          })
-        } finally {
-          set({ loading: false })
-        }
-      },
-    }),
+        },
+
+        deleteCustomer: async id => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/customers/${id}`, {
+              method: 'DELETE',
+            })
+
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(
+                errorData.error ||
+                  errorData.details ||
+                  'Failed to delete customer'
+              )
+            }
+
+            // Clear selected customer if it's the one being deleted
+            const { selectedCustomer } = get()
+            if (selectedCustomer && selectedCustomer.id === id) {
+              set({ selectedCustomer: null })
+            }
+
+            // Refresh the current search
+            const { searchParams } = get()
+            if (Object.keys(searchParams).length > 0) {
+              await get().searchCustomers(searchParams)
+            }
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to delete customer',
+            })
+            throw error
+          } finally {
+            set({ loading: false })
+          }
+        },
+      }),
+      {
+        name: 'customers-storage',
+        partialize: state => ({
+          searchParams: state.searchParams,
+          selectedCustomer: state.selectedCustomer,
+        }),
+      }
+    ),
     {
       name: 'customers-store',
     }

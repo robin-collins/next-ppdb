@@ -22,7 +22,13 @@
       "Bash(node prisma/scripts/add-date-constraints.mjs:*)",
       "Bash(node prisma/scripts/test-date-validation.mjs)",
       "Bash(node prisma/scripts/audit-schema.mjs:*)",
-      "Bash(node prisma/scripts/comprehensive-cleanup.mjs:*)"
+      "Bash(node prisma/scripts/comprehensive-cleanup.mjs:*)",
+      "Bash(mkdir -p c:/projects/ppdb-ts-oct/src/app/api/customers)",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__select_page",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__wait_for"
     ],
     "deny": [],
     "ask": []

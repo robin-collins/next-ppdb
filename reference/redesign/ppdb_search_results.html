@@ -719,9 +719,6 @@
       }
 
       .card-header {
-        display: flex;
-        align-items: center;
-        justify-content: between;
         margin-bottom: var(--space-3);
       }
 
@@ -729,6 +726,7 @@
         display: flex;
         align-items: center;
         gap: var(--space-3);
+        flex-shrink: 0;
       }
 
       .animal-avatar {
@@ -769,44 +767,138 @@
         margin: 0;
       }
 
-      .status-badge {
-        padding: var(--space-1) var(--space-3);
-        border-radius: var(--radius-full);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-        box-shadow: var(--shadow-sm);
+      .customer-info-section {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        background: linear-gradient(135deg, var(--gray-50) 0%, rgba(255, 255, 255, 0.8) 100%);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--gray-200);
         transition: all 0.3s ease;
       }
 
-      .status-active {
-        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-        color: white;
-        border: 1px solid rgba(16, 185, 129, 0.3);
+      .animal-card:hover .customer-info-section {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+        border-color: rgba(99, 102, 241, 0.2);
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
       }
 
-      .status-inactive {
-        background: var(--gray-100);
+      .animal-name-breed {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        flex-shrink: 0;
+        padding-right: var(--space-4);
+        border-right: 2px solid var(--gray-200);
+      }
+
+      .animal-card:hover .animal-name-breed {
+        border-right-color: rgba(99, 102, 241, 0.3);
+      }
+
+      .animal-name-breed .animal-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1.125rem;
+      }
+
+      .animal-name-breed h3 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+      }
+
+      .animal-name-breed p {
+        font-size: 0.875rem;
         color: var(--gray-600);
-        border: 1px solid var(--gray-300);
+        margin: 0;
       }
 
-      .animal-card:hover .status-active {
-        background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      .customer-details-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
       }
 
-      .animal-card:hover .status-inactive {
-        background: var(--gray-200);
+      .customer-name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        letter-spacing: 0.01em;
+      }
+
+      .customer-address-line {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .customer-address {
+        font-size: 0.8rem;
+        color: var(--gray-600);
+        font-weight: 500;
+      }
+
+      .customer-location {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .location-item {
+        background: white;
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--primary);
+        border: 1px solid var(--primary-light);
+        letter-spacing: 0.02em;
+        transition: all 0.3s ease;
+      }
+
+      .animal-card:hover .location-item {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .customer-phones {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.8rem;
+        color: var(--gray-700);
+        flex-wrap: wrap;
+      }
+
+      .phone-item {
+        font-weight: 600;
+        color: var(--secondary);
+        transition: color 0.3s ease;
+      }
+
+      .animal-card:hover .phone-item {
+        color: var(--primary);
+      }
+
+      .phone-divider {
+        color: var(--gray-300);
+        font-weight: 400;
       }
 
       .card-content {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-4);
+        gap: var(--space-3);
         font-size: 0.875rem;
-        margin-top: var(--space-4);
+        margin-top: var(--space-3);
       }
 
       .info-item {
@@ -1004,6 +1096,34 @@
           font-size: 0.8rem;
           padding: var(--space-2) var(--space-3);
         }
+        /* Mobile customer info adjustments */
+        .customer-info-section {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .animal-name-breed {
+          border-right: none;
+          border-bottom: 2px solid var(--gray-200);
+          padding-right: 0;
+          padding-bottom: var(--space-2);
+          width: 100%;
+        }
+        .animal-card:hover .animal-name-breed {
+          border-bottom-color: rgba(99, 102, 241, 0.3);
+        }
+        .customer-details-wrapper {
+          width: 100%;
+        }
+        .customer-address-line {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .location-item {
+          font-size: 0.85rem;
+        }
+        .customer-location {
+          flex-wrap: wrap;
+        }
       }
 
       @media (max-width: 480px) {
@@ -1020,6 +1140,12 @@
         }
         .sidebar {
           width: min(260px, 85vw);
+        }
+        .card-content {
+          gap: var(--space-2);
+        }
+        .customer-phones {
+          font-size: 0.75rem;
         }
       }
       /* Overlay for dropdown */
@@ -1376,7 +1502,14 @@
             breed: 'Jack Russell Long Coat',
             color: 'White and gold',
             owner: 'James',
-            phone: '0428111261',
+            surname: 'Morrison',
+            firstname: 'James',
+            address: '24 Hillcrest Avenue',
+            suburb: 'Brighton',
+            postcode: '5048',
+            phone1: '0428 111 261',
+            phone2: '08 8296 4532',
+            phone3: '',
             lastVisit: '2021-09-10',
             status: 'active',
             notes: 'Full clip 3 legs 7 short ears & face leave top knot',
@@ -1388,7 +1521,14 @@
             breed: 'Corgi',
             color: 'Black and white',
             owner: 'Chelsea Donhardt',
-            phone: '0428568458',
+            surname: 'Donhardt',
+            firstname: 'Chelsea',
+            address: '156 Ocean Boulevard',
+            suburb: 'Glenelg North',
+            postcode: '5045',
+            phone1: '0428 568 458',
+            phone2: '08 8294 7721',
+            phone3: '0411 223 445',
             lastVisit: '2020-12-03',
             status: 'active',
             notes: 'Regular grooming client',
@@ -1400,7 +1540,14 @@
             breed: 'Shih Tzu',
             color: 'White & Tan',
             owner: 'Pamela Wood',
-            phone: '0435519234',
+            surname: 'Wood',
+            firstname: 'Pamela',
+            address: '8 Rosewood Drive',
+            suburb: 'Blackwood',
+            postcode: '5051',
+            phone1: '0435 519 234',
+            phone2: '',
+            phone3: '',
             lastVisit: '2021-05-15',
             status: 'active',
             notes: 'Sensitive skin, use gentle products',
@@ -1412,7 +1559,14 @@
             breed: 'Maremma',
             color: 'White',
             owner: 'Tracey Ayres',
-            phone: '0428567890',
+            surname: 'Ayres',
+            firstname: 'Tracey',
+            address: '42 Shepherd Street',
+            suburb: 'Mitcham',
+            postcode: '5062',
+            phone1: '0428 567 890',
+            phone2: '08 8271 5543',
+            phone3: '',
             lastVisit: '2021-03-22',
             status: 'active',
             notes: 'Large breed, requires extra time',
@@ -1424,7 +1578,14 @@
             breed: 'Maltese',
             color: 'White',
             owner: 'Pete/Karen Baker/Green',
-            phone: '0428789012',
+            surname: 'Baker-Green',
+            firstname: 'Pete & Karen',
+            address: '17 Maple Terrace',
+            suburb: 'Unley',
+            postcode: '5061',
+            phone1: '0428 789 012',
+            phone2: '0419 334 556',
+            phone3: '',
             lastVisit: '2021-01-18',
             status: 'active',
             notes: 'Show cut preferred',
@@ -1436,7 +1597,14 @@
             breed: 'Maltese',
             color: 'Black',
             owner: 'Summers',
-            phone: '0428901234',
+            surname: 'Summers',
+            firstname: 'Victoria',
+            address: '91 Beach Road',
+            suburb: 'Christies Beach',
+            postcode: '5165',
+            phone1: '0428 901 234',
+            phone2: '',
+            phone3: '',
             lastVisit: '2020-11-08',
             status: 'inactive',
             notes: 'Moved to different area',
@@ -1688,9 +1856,6 @@
 
         // Generate compact animal card
         function createAnimalCard(animal) {
-          const statusClass =
-            animal.status === 'active' ? 'status-active' : 'status-inactive'
-          const statusText = animal.status === 'active' ? 'Active' : 'Inactive'
           const initials = animal.name.charAt(0).toUpperCase()
 
           // Format last visit date
@@ -1701,32 +1866,44 @@
             year: '2-digit',
           })
 
+          // Build phone numbers display
+          const phones = [animal.phone1, animal.phone2, animal.phone3]
+            .filter(p => p && p.trim())
+            .map(p => `<span class="phone-item">${p}</span>`)
+            .join('<span class="phone-divider">|</span>')
+
           return `
                     <div class="animal-card" onclick="viewAnimalDetails(${animal.id})">
                         <div class="card-inner">
                             <div class="card-header">
-                                <div class="animal-info">
-                                    <div class="animal-avatar">${initials}</div>
-                                    <div class="animal-details">
-                                        <h3>${animal.name}</h3>
-                                        <p>${animal.breed}</p>
+                                <div class="customer-info-section">
+                                    <div class="animal-name-breed">
+                                        <div class="animal-avatar">${initials}</div>
+                                        <div class="animal-details">
+                                            <h3>${animal.name}</h3>
+                                            <p>${animal.breed}</p>
+                                        </div>
+                                    </div>
+                                    <div class="customer-details-wrapper">
+                                        <div class="customer-name">${animal.surname}, ${animal.firstname}</div>
+                                        <div class="customer-address-line">
+                                            <span class="customer-address">${animal.address}</span>
+                                            <div class="customer-location">
+                                                <span class="location-item">${animal.suburb}</span>
+                                                <span class="location-item">${animal.postcode}</span>
+                                            </div>
+                                        </div>
+                                        <div class="customer-phones">
+                                            ${phones}
+                                        </div>
                                     </div>
                                 </div>
-                                <span class="status-badge ${statusClass}">${statusText}</span>
                             </div>
                             
                             <div class="card-content">
                                 <div class="info-item">
-                                    <span class="info-label">Owner</span>
-                                    <span class="info-value">${animal.owner}</span>
-                                </div>
-                                <div class="info-item">
                                     <span class="info-label">Color</span>
                                     <span class="info-value">${animal.color}</span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">Phone</span>
-                                    <span class="info-value">${animal.phone}</span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Last Visit</span>
