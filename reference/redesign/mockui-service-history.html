@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete Service History - Pampered Pooch Database</title>
+
+    <!-- Inter Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ===== CSS RESET ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* ===== DESIGN TOKENS ===== */
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --primary-dark: #3730a3;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        /* Spacing Scale */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-10: 2.5rem; /* 40px */
+        --space-12: 3rem; /* 48px */
+        --space-16: 4rem; /* 64px */
+
+        /* Border Radius */
+        --radius-sm: 0.375rem; /* 6px */
+        --radius-md: 0.5rem; /* 8px */
+        --radius-lg: 0.75rem; /* 12px */
+        --radius-xl: 1rem; /* 16px */
+        --radius-2xl: 1.5rem; /* 24px */
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+
+      /* ===== GLOBAL STYLES ===== */
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          repeat;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* ===== HEADER ===== */
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      /* Hamburger Menu */
+      .hamburger-menu {
+        position: relative;
+      }
+
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+        border: none;
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Brand */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+
+      .brand-icon svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+      }
+
+      .brand-text-header {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb-link:hover {
+        color: var(--primary-hover);
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      /* Date Display */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .date-display {
+        padding: var(--space-2) var(--space-4);
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + var(--space-2));
+        left: 0;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+
+      .nav-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-list {
+        list-style: none;
+        padding: var(--space-2);
+      }
+
+      .nav-item {
+        margin: 0;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ===== MAIN CONTENT ===== */
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        margin-top: 0;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      /* ===== PAGE HEADER ===== */
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-8);
+        padding-bottom: var(--space-6);
+        border-bottom: 2px solid var(--gray-200);
+      }
+
+      .page-title-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .animal-avatar-large {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--secondary)
+        );
+        border-radius: var(--radius-2xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 3rem;
+        font-weight: 800;
+        box-shadow: var(--shadow-lg);
+        flex-shrink: 0;
+      }
+
+      .page-title-content h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-5);
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        background: var(--gray-200);
+        transform: translateY(-1px);
+      }
+
+      .back-link svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ===== SERVICE HISTORY ===== */
+      .service-history {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .service-item {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+        opacity: 0;
+        animation: slideInUp 0.4s ease-out forwards;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .service-item:hover {
+        background: var(--primary-light);
+        border-left-color: var(--primary-hover);
+        box-shadow: var(--shadow-md);
+        transform: translateX(4px);
+      }
+
+      .service-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-3);
+      }
+
+      .service-date {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .service-date svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent);
+      }
+
+      .service-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--success);
+      }
+
+      .service-details {
+        font-size: 1rem;
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+
+      .service-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-top: var(--space-2);
+      }
+
+      .service-tech {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-3);
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border-radius: var(--radius-full);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .service-tech svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Stagger animation delays */
+      .service-item:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .service-item:nth-child(2) {
+        animation-delay: 0.05s;
+      }
+      .service-item:nth-child(3) {
+        animation-delay: 0.1s;
+      }
+      .service-item:nth-child(4) {
+        animation-delay: 0.15s;
+      }
+      .service-item:nth-child(5) {
+        animation-delay: 0.2s;
+      }
+      .service-item:nth-child(6) {
+        animation-delay: 0.25s;
+      }
+      .service-item:nth-child(7) {
+        animation-delay: 0.3s;
+      }
+      .service-item:nth-child(8) {
+        animation-delay: 0.35s;
+      }
+      .service-item:nth-child(9) {
+        animation-delay: 0.4s;
+      }
+      .service-item:nth-child(10) {
+        animation-delay: 0.45s;
+      }
+      .service-item:nth-child(n + 11) {
+        animation-delay: 0.5s;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===== STATS CARD ===== */
+      .stats-card {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        margin-bottom: var(--space-6);
+        color: white;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        display: block;
+        margin-bottom: var(--space-1);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        .brand-text-header {
+          display: none;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-4);
+        }
+
+        .page-title-section {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .page-title-content h1 {
+          font-size: 2rem;
+        }
+
+        .animal-avatar-large {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .service-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-2);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <!-- Hamburger Menu -->
+        <div class="hamburger-menu">
+          <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <!-- Navigation Dropdown -->
+          <nav class="nav-dropdown" id="navDropdown">
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                  Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  Search Animals
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                    />
+                  </svg>
+                  Add Customer
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                    />
+                  </svg>
+                  Manage Breeds
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  Daily Analytics
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                  Customer History
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link active">
+                  <svg
+                    class="nav-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Service History
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <!-- Brand -->
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M18 4H6v8l6 4 6-4V4zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2v-2zm0-10h2v8h-2V6z"
+              />
+            </svg>
+          </div>
+          <div class="brand-text-header">Pampered Pooch</div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="#" class="breadcrumb-link">Dashboard</a>
+          <span class="breadcrumb-separator">›</span>
+          <a href="#" class="breadcrumb-link">Animals</a>
+          <span class="breadcrumb-separator">›</span>
+          <a href="#" class="breadcrumb-link">Cody</a>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-current">Service History</span>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <div class="date-display" id="currentDate"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-title-section">
+            <div class="animal-avatar-large">C</div>
+            <div class="page-title-content">
+              <h1>All Notes for Cody</h1>
+              <p class="page-subtitle">Complete service history</p>
+            </div>
+          </div>
+          <a href="#" class="back-link">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Animal Info
+          </a>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="stats-card">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number">11</span>
+              <span class="stat-label">Total Services</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">6+ Years</span>
+              <span class="stat-label">Customer Since</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">$50-$60</span>
+              <span class="stat-label">Price Range</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">Regular</span>
+              <span class="stat-label">Visit Pattern</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service History -->
+        <div class="service-history">
+          <!-- 2021 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                10-09-2021
+              </div>
+              <div class="service-price">$60</div>
+            </div>
+            <div class="service-details">
+              Full clip 3 legs 7 short ears & face leave top knot
+            </div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                CC
+              </span>
+            </div>
+          </div>
+
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                25-05-2021
+              </div>
+            </div>
+            <div class="service-details">full clip 3 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                bb
+              </span>
+            </div>
+          </div>
+
+          <!-- 2020 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                08-12-2020
+              </div>
+              <div class="service-price">$55</div>
+            </div>
+            <div class="service-details">full clip 5 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                BB
+              </span>
+            </div>
+          </div>
+
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                27-08-2020
+              </div>
+            </div>
+            <div class="service-details">full clip 3 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                CC
+              </span>
+            </div>
+          </div>
+
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                10-03-2020
+              </div>
+            </div>
+            <div class="service-details">full clip 3 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                hm
+              </span>
+            </div>
+          </div>
+
+          <!-- 2019 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                08-11-2019
+              </div>
+              <div class="service-price">$55</div>
+            </div>
+            <div class="service-details">full clip 5 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                bb
+              </span>
+            </div>
+          </div>
+
+          <!-- 2017 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                18-12-2017
+              </div>
+            </div>
+            <div class="service-details">full clip 7 short ears and face cc.</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                cc
+              </span>
+            </div>
+          </div>
+
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                11-05-2017
+              </div>
+              <div class="service-price">$50</div>
+            </div>
+            <div class="service-details">full clip 5 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                cc
+              </span>
+            </div>
+          </div>
+
+          <!-- 2016 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                13-10-2016
+              </div>
+            </div>
+            <div class="service-details">full clip 7 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                th
+              </span>
+            </div>
+          </div>
+
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                08-03-2016
+              </div>
+            </div>
+            <div class="service-details">full clip 7 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                cc
+              </span>
+            </div>
+          </div>
+
+          <!-- 2015 Services -->
+          <div class="service-item">
+            <div class="service-header">
+              <div class="service-date">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                14-11-2015
+              </div>
+            </div>
+            <div class="service-details">full clip 7 short ears and face</div>
+            <div class="service-meta">
+              <span class="service-tech">
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                cc
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // ===== HEADER DATE/TIME =====
+      function updateDateTime() {
+        const dateElement = document.getElementById('currentDate')
+        const now = new Date()
+        const options = {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+        dateElement.textContent = now.toLocaleDateString('en-US', options)
+      }
+
+      updateDateTime()
+      setInterval(updateDateTime, 1000)
+
+      // ===== HAMBURGER MENU =====
+      const hamburger = document.getElementById('hamburger')
+      const navDropdown = document.getElementById('navDropdown')
+
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active')
+        navDropdown.classList.toggle('active')
+      })
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (
+          !hamburger.contains(e.target) &&
+          !navDropdown.contains(e.target)
+        ) {
+          hamburger.classList.remove('active')
+          navDropdown.classList.remove('active')
+        }
+      })
+
+      // Close dropdown when clicking a link
+      navDropdown.querySelectorAll('.nav-link').forEach((link) => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('active')
+          navDropdown.classList.remove('active')
+        })
+      })
+    </script>
+  </body>
+</html>
