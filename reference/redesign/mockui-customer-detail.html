@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Detail - Pampered Pooch Database</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===========================
+         DESIGN TOKENS (CSS Custom Properties)
+         =========================== */
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --primary-dark: #3730a3;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        /* Spacing Scale */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-10: 2.5rem; /* 40px */
+        --space-12: 3rem; /* 48px */
+        --space-16: 4rem; /* 64px */
+
+        /* Border Radius */
+        --radius-sm: 0.375rem; /* 6px */
+        --radius-md: 0.5rem; /* 8px */
+        --radius-lg: 0.75rem; /* 12px */
+        --radius-xl: 1rem; /* 16px */
+        --radius-2xl: 1.5rem; /* 24px */
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+
+      /* ===========================
+         GLOBAL RESET & BASE STYLES
+         =========================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          repeat;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===========================
+         HEADER COMPONENT
+         =========================== */
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Hamburger Menu */
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+        border: none;
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Brand Logo */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        text-decoration: none;
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+
+      .brand-text-header {
+        font-weight: 700;
+        color: var(--gray-900);
+        font-size: 1.125rem;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb-link:hover {
+        color: var(--primary-hover);
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      /* Date Display */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .date-display {
+        padding: var(--space-2) var(--space-4);
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + var(--space-2));
+        left: 0;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+
+      .nav-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-radius: var(--radius-lg);
+        margin: var(--space-2);
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ===========================
+         MAIN CONTENT LAYOUT
+         =========================== */
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        margin-top: 0;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      /* Page Title Section */
+      .page-title-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-8);
+        animation: slideInUp 0.4s ease-out forwards;
+      }
+
+      .page-title-section h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .page-title-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: var(--radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      /* Two-Column Grid Layout */
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: var(--space-8);
+        animation: slideInUp 0.4s ease-out 0.1s forwards;
+        opacity: 0;
+      }
+
+      .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+
+      .sidebar-column {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+
+      /* ===========================
+         CARD COMPONENT
+         =========================== */
+      .card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+      }
+
+      .card:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .card-header {
+        padding: var(--space-5) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .card-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--primary);
+      }
+
+      .card-content {
+        padding: var(--space-6);
+      }
+
+      /* ===========================
+         FORM COMPONENTS
+         =========================== */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+
+      .form-input,
+      .form-select,
+      .form-textarea {
+        padding: var(--space-3) var(--space-4);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        font-size: 1rem;
+        font-family: var(--font-family);
+        background: white;
+        transition: all 0.2s ease;
+        color: var(--gray-800);
+      }
+
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      /* ===========================
+         BUTTON COMPONENT
+         =========================== */
+      .btn {
+        padding: var(--space-3) var(--space-5);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+        transform: translateY(-1px);
+      }
+
+      .btn-danger {
+        background: var(--error);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+      }
+
+      .btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: var(--space-3);
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--gray-200);
+      }
+
+      /* ===========================
+         ANIMAL CARD (MINI)
+         =========================== */
+      .animal-mini-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .animal-mini-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: 0;
+      }
+
+      .animal-mini-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+      }
+
+      .animal-mini-card:hover::before {
+        height: 6px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 50%,
+          var(--accent) 100%
+        );
+      }
+
+      .animal-avatar {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.25rem;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+        border: 2px solid white;
+        flex-shrink: 0;
+      }
+
+      .animal-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .animal-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-1) 0;
+      }
+
+      .animal-details {
+        display: flex;
+        gap: var(--space-3);
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        flex-wrap: wrap;
+      }
+
+      .animal-detail-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      .animal-actions {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+      }
+
+      .btn-icon {
+        padding: var(--space-2);
+        width: auto;
+        height: auto;
+        min-width: 36px;
+        min-height: 36px;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--space-8);
+        color: var(--gray-500);
+      }
+
+      .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: var(--space-4);
+        color: var(--gray-300);
+      }
+
+      .empty-state p {
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      /* ===========================
+         RESPONSIVE BEHAVIOR
+         =========================== */
+      @media (max-width: 768px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .brand-text-header {
+          display: none;
+        }
+
+        .header-content {
+          gap: var(--space-4);
+        }
+
+        .page-title-section h1 {
+          font-size: 2rem;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-content">
+        <!-- Hamburger Menu -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Navigation Dropdown -->
+        <nav class="nav-dropdown" id="navDropdown">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Dashboard
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            Search Animals
+          </a>
+          <a href="#" class="nav-link active">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Customer Detail
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add Customer
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            Manage Breeds
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Daily Analytics
+          </a>
+        </nav>
+
+        <!-- Brand Logo -->
+        <a href="#" class="brand-header">
+          <div class="brand-icon">🐕</div>
+          <span class="brand-text-header">Pampered Pooch</span>
+        </a>
+
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+          <a href="#" class="breadcrumb-link">Home</a>
+          <span class="breadcrumb-separator">›</span>
+          <a href="#" class="breadcrumb-link">Customers</a>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-current">James</span>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <div class="date-display" id="currentDate"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <!-- Page Title -->
+        <div class="page-title-section">
+          <div>
+            <h1>
+              <span class="page-title-icon">👤</span>
+              Customer Detail
+            </h1>
+            <p class="page-subtitle">Manage customer information and associated animals</p>
+          </div>
+        </div>
+
+        <!-- Two-Column Grid -->
+        <div class="content-grid">
+          <!-- MAIN COLUMN: Customer Information -->
+          <div class="main-column">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">
+                  <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                  Customer Information
+                </h2>
+              </div>
+              <div class="card-content">
+                <form id="customerForm">
+                  <div class="form-grid">
+                    <!-- First Name -->
+                    <div class="form-group">
+                      <label class="form-label" for="firstName">First Name</label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-input"
+                        placeholder="Enter first name"
+                        value=""
+                      />
+                    </div>
+
+                    <!-- Surname -->
+                    <div class="form-group">
+                      <label class="form-label" for="surname">Surname *</label>
+                      <input
+                        type="text"
+                        id="surname"
+                        class="form-input"
+                        placeholder="Enter surname"
+                        value="James"
+                        required
+                      />
+                    </div>
+
+                    <!-- Address -->
+                    <div class="form-group full-width">
+                      <label class="form-label" for="address">Address</label>
+                      <textarea
+                        id="address"
+                        class="form-textarea"
+                        placeholder="Enter street address"
+                      ></textarea>
+                    </div>
+
+                    <!-- Suburb -->
+                    <div class="form-group">
+                      <label class="form-label" for="suburb">Suburb</label>
+                      <input
+                        type="text"
+                        id="suburb"
+                        class="form-input"
+                        placeholder="Enter suburb/city"
+                        value=""
+                      />
+                    </div>
+
+                    <!-- Postcode -->
+                    <div class="form-group">
+                      <label class="form-label" for="postcode">Postcode</label>
+                      <input
+                        type="text"
+                        id="postcode"
+                        class="form-input"
+                        placeholder="Enter postcode"
+                        value=""
+                      />
+                    </div>
+
+                    <!-- Phone 1 -->
+                    <div class="form-group">
+                      <label class="form-label" for="phone1">Phone 1</label>
+                      <input
+                        type="tel"
+                        id="phone1"
+                        class="form-input"
+                        placeholder="Enter primary phone"
+                        value="0428111261"
+                      />
+                    </div>
+
+                    <!-- Phone 2 -->
+                    <div class="form-group">
+                      <label class="form-label" for="phone2">Phone 2</label>
+                      <input
+                        type="tel"
+                        id="phone2"
+                        class="form-input"
+                        placeholder="Enter secondary phone"
+                        value=""
+                      />
+                    </div>
+
+                    <!-- Phone 3 -->
+                    <div class="form-group">
+                      <label class="form-label" for="phone3">Phone 3</label>
+                      <input
+                        type="tel"
+                        id="phone3"
+                        class="form-input"
+                        placeholder="Enter tertiary phone"
+                        value=""
+                      />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                      <label class="form-label" for="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="Enter email address"
+                        value=""
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      Update Record
+                    </button>
+                    <button type="button" class="btn btn-danger" id="deleteCustomerBtn">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                      Delete Customer
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIDEBAR COLUMN: Associated Animals -->
+          <div class="sidebar-column">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">
+                  <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                  </svg>
+                  Associated Animals
+                </h2>
+                <button class="btn btn-success" id="addAnimalBtn">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add
+                </button>
+              </div>
+              <div class="card-content" id="animalsList">
+                <!-- Animal Mini Card 1 -->
+                <div class="animal-mini-card">
+                  <div class="animal-avatar">C</div>
+                  <div class="animal-info">
+                    <h3 class="animal-name">Cody</h3>
+                    <div class="animal-details">
+                      <span class="animal-detail-item">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        Jack Russell Long Coat
+                      </span>
+                      <span class="animal-detail-item">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                        White and gold
+                      </span>
+                      <span class="animal-detail-item">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Male
+                      </span>
+                    </div>
+                  </div>
+                  <div class="animal-actions">
+                    <button class="btn btn-icon btn-secondary" title="View/Edit Animal" onclick="viewAnimal(1)">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </button>
+                    <button class="btn btn-icon btn-danger" title="Delete Animal" onclick="deleteAnimal(1)">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Empty State (hidden by default when animals exist) -->
+                <!-- <div class="empty-state" style="display: none;">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                  </svg>
+                  <p>No animals associated with this customer</p>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // =============================
+      // DATE & TIME UPDATE
+      // =============================
+      function updateDateTime() {
+        const now = new Date()
+        const options = {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+        document.getElementById('currentDate').textContent = now.toLocaleDateString(
+          'en-US',
+          options
+        )
+      }
+
+      updateDateTime()
+      setInterval(updateDateTime, 1000)
+
+      // =============================
+      // HAMBURGER MENU TOGGLE
+      // =============================
+      const hamburgerBtn = document.getElementById('hamburgerBtn')
+      const navDropdown = document.getElementById('navDropdown')
+
+      hamburgerBtn.addEventListener('click', () => {
+        hamburgerBtn.classList.toggle('active')
+        navDropdown.classList.toggle('active')
+      })
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (
+          !hamburgerBtn.contains(e.target) &&
+          !navDropdown.contains(e.target)
+        ) {
+          hamburgerBtn.classList.remove('active')
+          navDropdown.classList.remove('active')
+        }
+      })
+
+      // =============================
+      // FORM SUBMISSION
+      // =============================
+      document
+        .getElementById('customerForm')
+        .addEventListener('submit', (e) => {
+          e.preventDefault()
+
+          const formData = {
+            firstName: document.getElementById('firstName').value,
+            surname: document.getElementById('surname').value,
+            address: document.getElementById('address').value,
+            suburb: document.getElementById('suburb').value,
+            postcode: document.getElementById('postcode').value,
+            phone1: document.getElementById('phone1').value,
+            phone2: document.getElementById('phone2').value,
+            phone3: document.getElementById('phone3').value,
+            email: document.getElementById('email').value,
+          }
+
+          console.log('Updating customer:', formData)
+          alert('Customer record updated successfully!\n\nThis is a mockup UI. In production, this would save to the database.')
+        })
+
+      // =============================
+      // DELETE CUSTOMER
+      // =============================
+      document
+        .getElementById('deleteCustomerBtn')
+        .addEventListener('click', () => {
+          if (
+            confirm(
+              'Are you sure you want to DELETE this customer?\n\nThis will permanently remove the customer and may affect associated animal records.'
+            )
+          ) {
+            console.log('Deleting customer...')
+            alert('Customer deleted!\n\nThis is a mockup UI. In production, this would remove the customer from the database.')
+          }
+        })
+
+      // =============================
+      // ADD ANIMAL
+      // =============================
+      document.getElementById('addAnimalBtn').addEventListener('click', () => {
+        console.log('Redirecting to Add Animal page with customer ID...')
+        alert('Add Animal\n\nThis is a mockup UI. In production, this would navigate to the Add Animal page with the customer pre-selected.')
+      })
+
+      // =============================
+      // VIEW ANIMAL
+      // =============================
+      function viewAnimal(animalId) {
+        console.log('Viewing animal:', animalId)
+        alert(`View Animal Details\n\nThis is a mockup UI. In production, this would navigate to the animal detail page for ID: ${animalId}`)
+      }
+
+      // =============================
+      // DELETE ANIMAL
+      // =============================
+      function deleteAnimal(animalId) {
+        if (
+          confirm(
+            'Are you sure you want to remove this animal from the customer record?'
+          )
+        ) {
+          console.log('Deleting animal:', animalId)
+          alert(`Animal removed!\n\nThis is a mockup UI. In production, this would remove the animal association.`)
+        }
+      }
+
+      // =============================
+      // STAGGERED ANIMATIONS
+      // =============================
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.animal-mini-card')
+        cards.forEach((card, index) => {
+          card.style.animation = `slideInUp 0.4s ease-out ${index * 0.1}s forwards`
+          card.style.opacity = '0'
+        })
+      }, 100)
+    </script>
+  </body>
+</html>
