@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Animal - Pampered Pooch Database</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       CSS CUSTOM PROPERTIES (Design Tokens)
+       ======================================== */
+    :root {
+      /* Modern Color Palette */
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #e0e7ff;
+      --primary-dark: #3730a3;
+      --secondary: #06b6d4;
+      --secondary-hover: #0891b2;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+
+      /* Neutrals */
+      --white: #ffffff;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+
+      /* Typography */
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Spacing Scale */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* Border Radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    }
+
+    /* ========================================
+       RESET & BASE STYLES
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: linear-gradient(
+        135deg,
+        #667eea 0%,
+        #764ba2 25%,
+        #6366f1 50%,
+        #06b6d4 75%,
+        #10b981 100%
+      );
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      min-height: 100vh;
+      color: var(--gray-800);
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+        repeat;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========================================
+       HEADER
+       ======================================== */
+    .app-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: var(--space-4) var(--space-6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      transition: all 0.2s ease;
+      background: var(--gray-100);
+    }
+
+    .hamburger:hover {
+      background: var(--gray-200);
+    }
+
+    .hamburger span {
+      width: 20px;
+      height: 2px;
+      background: var(--gray-700);
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Brand */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-text-header {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .breadcrumb-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumb-link:hover {
+      color: var(--primary-hover);
+    }
+
+    .breadcrumb-separator {
+      color: var(--gray-400);
+    }
+
+    .breadcrumb-current {
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+
+    /* Date Display */
+    .date-display {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* ========================================
+       MAIN CONTENT
+       ======================================== */
+    .main-content {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      margin: var(--space-6);
+      margin-top: 0;
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: slideInUp 0.4s ease-out forwards;
+    }
+
+    .content-wrapper {
+      padding: var(--space-8);
+    }
+
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin: 0 0 var(--space-2) 0;
+    }
+
+    .page-subtitle {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      margin: 0;
+    }
+
+    /* ========================================
+       CUSTOMER CONTEXT SECTION
+       ======================================== */
+    .customer-context {
+      background: linear-gradient(135deg, var(--primary-light), rgba(6, 182, 212, 0.1));
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      animation: slideInUp 0.4s ease-out 0.1s forwards;
+      opacity: 0;
+    }
+
+    .customer-avatar {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      border: 3px solid white;
+      flex-shrink: 0;
+    }
+
+    .customer-info {
+      flex: 1;
+    }
+
+    .customer-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .customer-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .customer-phone {
+      font-size: 1rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    /* ========================================
+       FORM COMPONENTS
+       ======================================== */
+    .form-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      animation: slideInUp 0.4s ease-out 0.2s forwards;
+      opacity: 0;
+    }
+
+    .form-card-header {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .form-card-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .card-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    .form-card-content {
+      padding: var(--space-6);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .required {
+      color: var(--error);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      padding: var(--space-3) var(--space-4);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      font-size: 1rem;
+      font-family: var(--font-family);
+      background: white;
+      transition: all 0.2s ease;
+      color: var(--gray-800);
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-select {
+      cursor: pointer;
+    }
+
+    /* Date Input Group */
+    .date-input-group {
+      display: flex;
+      gap: var(--space-2);
+      align-items: stretch;
+    }
+
+    .date-input-group .form-input {
+      flex: 1;
+    }
+
+    .calendar-btn {
+      padding: var(--space-3);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      background: var(--gray-50);
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+    }
+
+    .calendar-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .calendar-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: var(--space-3);
+      justify-content: flex-end;
+      margin-top: var(--space-4);
+    }
+
+    .btn {
+      padding: var(--space-3) var(--space-6);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: var(--font-family);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: var(--space-4) var(--space-8);
+      font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1px solid var(--gray-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 768px) {
+      .brand-text-header {
+        display: none;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content-wrapper {
+        padding: var(--space-4);
+      }
+
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .customer-context {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* ========================================
+       HELPER TEXT
+       ======================================== */
+    .helper-text {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: var(--space-1);
+    }
+
+    .cost-badge {
+      display: inline-block;
+      background: var(--success);
+      color: white;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+  <!-- ========================================
+       HEADER
+       ======================================== -->
+  <header class="app-header">
+    <div class="header-content">
+      <!-- Hamburger Menu -->
+      <div class="hamburger" id="hamburgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <!-- Brand -->
+      <div class="brand-header">
+        <div class="brand-icon">🐕</div>
+        <div class="brand-text-header">Pampered Pooch</div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#" class="breadcrumb-link">Customers</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="#" class="breadcrumb-link">James</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Add Animal</span>
+      </div>
+
+      <!-- Date Display -->
+      <div class="date-display" id="currentDate"></div>
+    </div>
+  </header>
+
+  <!-- ========================================
+       MAIN CONTENT
+       ======================================== -->
+  <main class="main-content">
+    <div class="content-wrapper">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Add New Animal</h1>
+        <p class="page-subtitle">Register a new pet for this customer</p>
+      </div>
+
+      <!-- Customer Context -->
+      <div class="customer-context">
+        <div class="customer-avatar">J</div>
+        <div class="customer-info">
+          <div class="customer-label">Adding animal for</div>
+          <div class="customer-name">James</div>
+          <div class="customer-phone">0428111261</div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2 class="form-card-title">
+            <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Animal Information
+          </h2>
+        </div>
+        <div class="form-card-content">
+          <form id="addAnimalForm" class="form-grid">
+            <!-- Animal Name -->
+            <div class="form-group">
+              <label class="form-label" for="animalName">
+                Animal Name <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="animalName"
+                name="animalName"
+                class="form-input"
+                placeholder="Enter pet's name"
+                required
+              />
+            </div>
+
+            <!-- Sex -->
+            <div class="form-group">
+              <label class="form-label" for="sex">
+                Sex <span class="required">*</span>
+              </label>
+              <select id="sex" name="sex" class="form-select" required>
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <!-- Breed -->
+            <div class="form-group">
+              <label class="form-label" for="breed">
+                Breed <span class="required">*</span>
+              </label>
+              <select id="breed" name="breed" class="form-select" required>
+                <option value="Afghan Hound">Afghan Hound</option>
+                <option value="Airedale">Airedale</option>
+                <option value="Alaskan Malamute">Alaskan Malamute</option>
+                <option value="Australian Cattle Dog">Australian Cattle Dog</option>
+                <option value="Australian Shepherd">Australian Shepherd</option>
+                <option value="Australian Silky Terrier">Australian Silky Terrier</option>
+                <option value="Australian Terrier">Australian Terrier</option>
+                <option value="Basenji">Basenji</option>
+                <option value="Basset Hound">Basset Hound</option>
+                <option value="Beagle">Beagle</option>
+                <option value="Bearded Collie">Bearded Collie</option>
+                <option value="Bedlington Terrier">Bedlington Terrier</option>
+                <option value="Bernese Mountain Dog">Bernese Mountain Dog</option>
+                <option value="Bichon Frise">Bichon Frise</option>
+                <option value="Bloodhound">Bloodhound</option>
+                <option value="Border Collie">Border Collie</option>
+                <option value="Border Terrier">Border Terrier</option>
+                <option value="Borzoi">Borzoi</option>
+                <option value="Boston Terrier">Boston Terrier</option>
+                <option value="Bouvier des Flandres">Bouvier des Flandres</option>
+                <option value="Boxer">Boxer</option>
+                <option value="Briard">Briard</option>
+                <option value="Brittany">Brittany</option>
+                <option value="Brussels Griffon">Brussels Griffon</option>
+                <option value="Bull Terrier">Bull Terrier</option>
+                <option value="Bulldog">Bulldog</option>
+                <option value="Bullmastiff">Bullmastiff</option>
+                <option value="Cairn Terrier">Cairn Terrier</option>
+                <option value="Canaan Dog">Canaan Dog</option>
+                <option value="Cardigan Welsh Corgi">Cardigan Welsh Corgi</option>
+                <option value="Cat">Cat</option>
+                <option value="Cavalier King Charles Spaniel">Cavalier King Charles Spaniel</option>
+                <option value="Cavoodle">Cavoodle</option>
+                <option value="Chesapeake Bay Retriever">Chesapeake Bay Retriever</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="Chinese Crested">Chinese Crested</option>
+                <option value="Chow Chow">Chow Chow</option>
+                <option value="Clumber Spaniel">Clumber Spaniel</option>
+                <option value="Cocker Spaniel">Cocker Spaniel</option>
+                <option value="Collie">Collie</option>
+                <option value="Dachshund">Dachshund</option>
+                <option value="Dalmatian">Dalmatian</option>
+                <option value="Doberman Pinscher">Doberman Pinscher</option>
+                <option value="English Cocker Spaniel">English Cocker Spaniel</option>
+                <option value="English Setter">English Setter</option>
+                <option value="English Springer Spaniel">English Springer Spaniel</option>
+                <option value="English Toy Spaniel">English Toy Spaniel</option>
+                <option value="Field Spaniel">Field Spaniel</option>
+                <option value="Finnish Spitz">Finnish Spitz</option>
+                <option value="Flat-Coated Retriever">Flat-Coated Retriever</option>
+                <option value="Fox Terrier">Fox Terrier</option>
+                <option value="Foxhound">Foxhound</option>
+                <option value="French Bulldog">French Bulldog</option>
+                <option value="German Shepherd">German Shepherd</option>
+                <option value="German Shorthaired Pointer">German Shorthaired Pointer</option>
+                <option value="German Wirehaired Pointer">German Wirehaired Pointer</option>
+                <option value="Giant Schnauzer">Giant Schnauzer</option>
+                <option value="Golden Retriever">Golden Retriever</option>
+                <option value="Gordon Setter">Gordon Setter</option>
+                <option value="Great Dane">Great Dane</option>
+                <option value="Great Pyrenees">Great Pyrenees</option>
+                <option value="Greater Swiss Mountain Dog">Greater Swiss Mountain Dog</option>
+                <option value="Greyhound">Greyhound</option>
+                <option value="Groodle">Groodle</option>
+                <option value="Guinea Pig">Guinea Pig</option>
+                <option value="Harrier">Harrier</option>
+                <option value="Havanese">Havanese</option>
+                <option value="Ibizan Hound">Ibizan Hound</option>
+                <option value="Irish Setter">Irish Setter</option>
+                <option value="Irish Terrier">Irish Terrier</option>
+                <option value="Irish Water Spaniel">Irish Water Spaniel</option>
+                <option value="Irish Wolfhound">Irish Wolfhound</option>
+                <option value="Italian Greyhound">Italian Greyhound</option>
+                <option value="Jack Russell Terrier">Jack Russell Terrier</option>
+                <option value="Japanese Chin">Japanese Chin</option>
+                <option value="Keeshond">Keeshond</option>
+                <option value="Kerry Blue Terrier">Kerry Blue Terrier</option>
+                <option value="Komondor">Komondor</option>
+                <option value="Kuvasz">Kuvasz</option>
+                <option value="Labradoodle">Labradoodle</option>
+                <option value="Labrador Retriever">Labrador Retriever</option>
+                <option value="Lakeland Terrier">Lakeland Terrier</option>
+                <option value="Lhasa Apso">Lhasa Apso</option>
+                <option value="Maltese">Maltese</option>
+                <option value="Manchester Terrier">Manchester Terrier</option>
+                <option value="Mastiff">Mastiff</option>
+                <option value="Miniature Bull Terrier">Miniature Bull Terrier</option>
+                <option value="Miniature Pinscher">Miniature Pinscher</option>
+                <option value="Miniature Poodle">Miniature Poodle</option>
+                <option value="Miniature Schnauzer">Miniature Schnauzer</option>
+                <option value="Mixed Breed">Mixed Breed</option>
+                <option value="Moodle">Moodle</option>
+                <option value="Neapolitan Mastiff">Neapolitan Mastiff</option>
+                <option value="Newfoundland">Newfoundland</option>
+                <option value="Norfolk Terrier">Norfolk Terrier</option>
+                <option value="Norwegian Elkhound">Norwegian Elkhound</option>
+                <option value="Norwich Terrier">Norwich Terrier</option>
+                <option value="Old English Sheepdog">Old English Sheepdog</option>
+                <option value="Otterhound">Otterhound</option>
+                <option value="Papillon">Papillon</option>
+                <option value="Pekingese">Pekingese</option>
+                <option value="Pembroke Welsh Corgi">Pembroke Welsh Corgi</option>
+                <option value="Petit Basset Griffon Vendeen">Petit Basset Griffon Vendeen</option>
+                <option value="Pharaoh Hound">Pharaoh Hound</option>
+                <option value="Pointer">Pointer</option>
+                <option value="Pomeranian">Pomeranian</option>
+                <option value="Poodle">Poodle</option>
+                <option value="Portuguese Water Dog">Portuguese Water Dog</option>
+                <option value="Pug">Pug</option>
+                <option value="Puli">Puli</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Rhodesian Ridgeback">Rhodesian Ridgeback</option>
+                <option value="Rottweiler">Rottweiler</option>
+                <option value="Saint Bernard">Saint Bernard</option>
+                <option value="Saluki">Saluki</option>
+                <option value="Samoyed">Samoyed</option>
+                <option value="Schipperke">Schipperke</option>
+                <option value="Scottish Deerhound">Scottish Deerhound</option>
+                <option value="Scottish Terrier">Scottish Terrier</option>
+                <option value="Sealyham Terrier">Sealyham Terrier</option>
+                <option value="Shar Pei">Shar Pei</option>
+                <option value="Shetland Sheepdog">Shetland Sheepdog</option>
+                <option value="Shiba Inu">Shiba Inu</option>
+                <option value="Shih Tzu">Shih Tzu</option>
+                <option value="Siberian Husky">Siberian Husky</option>
+                <option value="Skye Terrier">Skye Terrier</option>
+                <option value="Smooth Fox Terrier">Smooth Fox Terrier</option>
+                <option value="Soft Coated Wheaten Terrier">Soft Coated Wheaten Terrier</option>
+                <option value="Spoodle">Spoodle</option>
+                <option value="Staffordshire Bull Terrier">Staffordshire Bull Terrier</option>
+                <option value="Standard Poodle">Standard Poodle</option>
+                <option value="Standard Schnauzer">Standard Schnauzer</option>
+                <option value="Sussex Spaniel">Sussex Spaniel</option>
+                <option value="Terrier Large">Terrier Large</option>
+                <option value="Terrier Small">Terrier Small</option>
+                <option value="Tibetan Spaniel">Tibetan Spaniel</option>
+                <option value="Tibetan Terrier">Tibetan Terrier</option>
+                <option value="Toy Fox Terrier">Toy Fox Terrier</option>
+                <option value="Toy Poodle">Toy Poodle</option>
+                <option value="Vizsla">Vizsla</option>
+                <option value="Weimaraner">Weimaraner</option>
+                <option value="Welsh Springer Spaniel">Welsh Springer Spaniel</option>
+                <option value="Welsh Terrier">Welsh Terrier</option>
+                <option value="West Highland White Terrier">West Highland White Terrier</option>
+                <option value="Whippet">Whippet</option>
+                <option value="Wire Fox Terrier">Wire Fox Terrier</option>
+                <option value="Wirehaired Pointing Griffon">Wirehaired Pointing Griffon</option>
+                <option value="Yorkshire Terrier">Yorkshire Terrier</option>
+              </select>
+              <div class="helper-text">Select the pet's breed - pricing will adjust automatically</div>
+            </div>
+
+            <!-- Colour -->
+            <div class="form-group">
+              <label class="form-label" for="colour">
+                Colour
+              </label>
+              <input
+                type="text"
+                id="colour"
+                name="colour"
+                class="form-input"
+                placeholder="e.g., Golden, Black & White"
+              />
+            </div>
+
+            <!-- Cost -->
+            <div class="form-group">
+              <label class="form-label" for="cost">
+                Cost ($) <span class="required">*</span>
+              </label>
+              <input
+                type="number"
+                id="cost"
+                name="cost"
+                class="form-input"
+                value="55"
+                step="0.01"
+                min="0"
+                required
+              />
+              <div class="cost-badge">Breed-based pricing</div>
+            </div>
+
+            <!-- Last Visit -->
+            <div class="form-group">
+              <label class="form-label" for="lastVisit">
+                Last Visit
+              </label>
+              <div class="date-input-group">
+                <input
+                  type="date"
+                  id="lastVisit"
+                  name="lastVisit"
+                  class="form-input"
+                  value="2025-06-19"
+                />
+                <button type="button" class="calendar-btn" onclick="document.getElementById('lastVisit').showPicker()">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- This Visit -->
+            <div class="form-group">
+              <label class="form-label" for="thisVisit">
+                This Visit
+              </label>
+              <div class="date-input-group">
+                <input
+                  type="date"
+                  id="thisVisit"
+                  name="thisVisit"
+                  class="form-input"
+                  value="2025-07-31"
+                />
+                <button type="button" class="calendar-btn" onclick="document.getElementById('thisVisit').showPicker()">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="form-group full-width">
+              <label class="form-label" for="comments">
+                Comments
+              </label>
+              <textarea
+                id="comments"
+                name="comments"
+                class="form-textarea"
+                placeholder="Initial service notes, special instructions, or health information..."
+              ></textarea>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Insert Record
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================
+       JAVASCRIPT
+       ======================================== -->
+  <script>
+    // Live Date/Time Update
+    function updateDateTime() {
+      const now = new Date()
+      const options = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options)
+    }
+
+    updateDateTime()
+    setInterval(updateDateTime, 1000)
+
+    // Hamburger Menu Toggle
+    const hamburger = document.getElementById('hamburgerBtn')
+    hamburger.addEventListener('click', function() {
+      this.classList.toggle('active')
+      // In full implementation, this would toggle a sidebar
+      console.log('Hamburger menu toggled')
+    })
+
+    // Breed-based Cost Intelligence
+    const breedPricing = {
+      'Afghan Hound': 65,
+      'Airedale': 70,
+      'Alaskan Malamute': 75,
+      'Australian Cattle Dog': 60,
+      'Australian Shepherd': 65,
+      'Beagle': 55,
+      'Border Collie': 60,
+      'Boxer': 60,
+      'Bulldog': 65,
+      'Cavoodle': 60,
+      'Chihuahua': 45,
+      'Cocker Spaniel': 60,
+      'Dachshund': 50,
+      'Dalmatian': 60,
+      'Doberman Pinscher': 65,
+      'French Bulldog': 55,
+      'German Shepherd': 70,
+      'Golden Retriever': 70,
+      'Great Dane': 85,
+      'Groodle': 75,
+      'Labradoodle': 75,
+      'Labrador Retriever': 70,
+      'Maltese': 50,
+      'Miniature Poodle': 55,
+      'Pomeranian': 50,
+      'Poodle': 65,
+      'Pug': 55,
+      'Rottweiler': 70,
+      'Shih Tzu': 55,
+      'Siberian Husky': 70,
+      'Standard Poodle': 75,
+      'Yorkshire Terrier': 50,
+      'Cat': 45,
+      'Guinea Pig': 35,
+      'Rabbit': 40
+    }
+
+    const breedSelect = document.getElementById('breed')
+    const costInput = document.getElementById('cost')
+
+    breedSelect.addEventListener('change', function() {
+      const selectedBreed = this.value
+      const price = breedPricing[selectedBreed] || 55
+      costInput.value = price
+    })
+
+    // Form Submission
+    const form = document.getElementById('addAnimalForm')
+    form.addEventListener('submit', function(e) {
+      e.preventDefault()
+
+      const formData = {
+        animalName: document.getElementById('animalName').value,
+        breed: document.getElementById('breed').value,
+        sex: document.getElementById('sex').value,
+        colour: document.getElementById('colour').value,
+        cost: document.getElementById('cost').value,
+        lastVisit: document.getElementById('lastVisit').value,
+        thisVisit: document.getElementById('thisVisit').value,
+        comments: document.getElementById('comments').value
+      }
+
+      console.log('Form submitted:', formData)
+
+      // In full implementation, this would make an API call
+      alert('Animal record created successfully!\n\nName: ' + formData.animalName + '\nBreed: ' + formData.breed + '\nCost: $' + formData.cost)
+
+      // Reset form
+      form.reset()
+      costInput.value = '55'
+    })
+
+    // Stagger animation delays
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.customer-context, .form-card')
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`
+      })
+    }, 50)
+  </script>
+</body>
+</html>
