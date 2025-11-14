@@ -1,11 +1,18 @@
 'use client'
 import { useState, useEffect } from 'react'
 
+interface BreadcrumbItem {
+  label: string
+  href?: string
+  current?: boolean
+}
+
 interface HeaderProps {
   onToggleSidebar: () => void
   sidebarOpen: boolean
   onSearch: (query: string) => void
   searchValue: string
+  breadcrumbs?: BreadcrumbItem[]
 }
 
 export default function Header({
@@ -13,6 +20,7 @@ export default function Header({
   sidebarOpen,
   onSearch,
   searchValue,
+  breadcrumbs,
 }: HeaderProps) {
   const [query, setQuery] = useState(searchValue)
   const [dateTime, setDateTime] = useState('')
@@ -64,8 +72,8 @@ export default function Header({
   }
 
   return (
-    <header className="sticky top-0 z-[100] h-[92px] border-b border-gray-200 bg-white pr-[24px] pl-[24px] shadow-md">
-      <div className="mx-auto flex h-full max-w-[1400px] flex-nowrap items-center gap-6">
+    <header className="sticky top-0 z-[100] border-b border-gray-200 bg-white pr-[24px] pl-[24px] shadow-md">
+      <div className="mx-auto flex h-[92px] max-w-[1400px] flex-nowrap items-center gap-6">
         {/* Hamburger Menu */}
         <div className="hamburger-menu">
           <button
@@ -143,6 +151,33 @@ export default function Header({
           {dateTime}
         </div>
       </div>
+
+      {/* Breadcrumbs */}
+      {breadcrumbs && breadcrumbs.length > 0 && (
+        <div className="mx-auto max-w-[1400px] px-6 py-3">
+          <nav className="flex items-center gap-2 text-sm">
+            {breadcrumbs.map((item, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {item.current ? (
+                  <span className="font-medium text-gray-800">
+                    {item.label}
+                  </span>
+                ) : (
+                  <a
+                    href={item.href}
+                    className="text-[var(--primary)] hover:underline"
+                  >
+                    {item.label}
+                  </a>
+                )}
+                {index < breadcrumbs.length - 1 && (
+                  <span className="text-gray-400">›</span>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

@@ -132,3 +132,60 @@ header {
     transform: translateY(0);
   }
 }
+
+/* Card Animations */
+.card {
+  animation: slideInUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.card:nth-child(1) {
+  animation-delay: 0s;
+}
+.card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+/* Animal Card Staggered Animations */
+.animal-card {
+  animation: slideInUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animal-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.animal-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.animal-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.animal-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.animal-card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+.animal-card:nth-child(6) {
+  animation-delay: 0.5s;
+}
+
+/* Card Hover Effects */
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Button Hover Effects */
+.btn:hover {
+  transform: translateY(-1px);
+}
