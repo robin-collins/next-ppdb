@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Customer Detail Page Redesign Specification**: Created comprehensive redesign documentation
+  - **Analysis**: Compared current customer detail page implementation against modern UI mockup
+  - **Browser Testing**: Used Chrome DevTools MCP to navigate localhost:3000, search for "Maltese", and view Adams customer record
+  - **Visual Comparison**: Documented significant gaps between minimal current implementation and rich mockup design
+  - **Specification Document**: Created detailed `reference/redesign/customer_detail_page_component.md` (15 sections, ~500 lines)
+    - Component architecture and file structure (7 new components needed)
+    - Complete layout specifications with two-column grid + 400px sidebar
+    - Customer header with 120px avatar, status badges, meta grid, and action buttons
+    - Main content cards: CustomerInfoCard (editable form grid), AssociatedAnimalsCard (animal grid with detailed cards)
+    - Sidebar cards: ContactDetailsCard (with icons and hover actions), CustomerStatsCard (4-stat grid), QuickActionsCard (5 action buttons)
+    - Design system tokens (colors, typography, spacing, border radius, shadows)
+    - Component hierarchy and data requirements (Prisma queries with relations)
+    - State management updates needed for Zustand stores
+    - Responsive behavior specifications with breakpoints (mobile < 768px, tablet < 1024px)
+    - Animation specifications (slideInUp for cards, staggered delays, hover effects)
+    - Implementation checklist with 8 phases (structure, header, main content, sidebar, data, interactions, polish, testing)
+  - **Key Findings**: Current implementation is minimal viable product; mockup adds glassmorphism, comprehensive data display, rich interactivity
+  - **Gap Summary**: 15+ missing features including persistent header, breadcrumbs, sidebar, status badges, statistics, quick actions, animal detail cards
+
 - **Database Schema Migration System**: Comprehensive Prisma migration infrastructure for production deployment
   - **Migration File**: Created `20251004154300_schema_normalization` for database schema improvements
   - **Schema Updates**: Updated `prisma/schema.prisma` to reflect normalized schema with proper types and constraints
@@ -87,6 +106,15 @@ All notable changes to this project will be documented in this file.
     - Search "0412 345 678" → finds customer with matching phone
 
 ### Fixed
+
+- **Database Schema Alignment**: Fixed Prisma schema to allow NULL values in `animal.colour` field
+  - Updated `prisma/schema.prisma` to define `colour` as `String?` (nullable) instead of `String`
+  - Resolves Prisma error: "Error converting field 'colour' of expected non-nullable type 'String', found incompatible value of 'null'"
+  - Database contains legacy NULL values in colour field despite schema definition indicating NOT NULL
+  - Updated `src/app/api/animals/route.ts` to store NULL instead of empty string when colour is not provided
+  - Aligns with "drop-in replacement philosophy" - handles dirty data in application layer without database modifications
+  - Application now properly handles nullable colour values in all API responses and UI components
+  - Regenerated Prisma client to update TypeScript types
 
 - **Phone Number Search**: Fixed phone number matching to normalize both query and database values
   - Phone fields now strip spaces, dashes, and parentheses before comparison

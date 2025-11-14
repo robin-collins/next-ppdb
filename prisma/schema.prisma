@@ -14,7 +14,7 @@ model animal {
   breedID    Int        @default(0) @db.MediumInt
   customerID Int        @default(0) @db.MediumInt
   SEX        animal_sex @default(Male) @map("SEX")
-  colour     String     @db.Text
+  colour     String?    @db.Text
   cost       Int        @default(0) @db.SmallInt
   lastvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
   thisvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date

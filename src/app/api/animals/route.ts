@@ -419,7 +419,7 @@ export async function POST(request: NextRequest) {
       animalname: data.name,
       breedID: 1, // We need to handle breed lookup properly - for now using default
       sex: data.sex === 'Male' ? 'Male' : 'Female',
-      colour: data.colour || '',
+      colour: data.colour || null,
       cost: data.cost || 0,
       lastvisit: data.lastVisit
         ? new Date(data.lastVisit)
