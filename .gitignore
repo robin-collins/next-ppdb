@@ -47,3 +47,4 @@ reports/
 /src/generated/prisma
 chrome-user-data-dir
 console_output*
+#.specstory 
