@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Customer - Pampered Pooch Database</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Design Tokens */
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --primary-dark: #3730a3;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        /* Spacing Scale */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+
+      /* Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Body */
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          repeat;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* App Container */
+      .app-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Header */
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Hamburger Menu */
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+        border: none;
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Brand Header */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+      }
+
+      .brand-text-header {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb-link:hover {
+        color: var(--primary-hover);
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      /* Header Actions */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .date-display {
+        padding: var(--space-2) var(--space-4);
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + var(--space-2));
+        left: 0;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+
+      .nav-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        border-bottom: 1px solid var(--gray-100);
+      }
+
+      .nav-link:last-child {
+        border-bottom: none;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        margin-top: 0;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        animation: fadeInUp 0.4s ease-out forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      /* Page Header */
+      .page-header {
+        margin-bottom: var(--space-8);
+      }
+
+      .page-title-section h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      /* Card */
+      .card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+      }
+
+      .card-header {
+        padding: var(--space-5) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .card-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--primary);
+      }
+
+      .card-content {
+        padding: var(--space-6);
+      }
+
+      /* Form */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+
+      .form-label .required {
+        color: var(--error);
+        margin-left: var(--space-1);
+      }
+
+      .form-input,
+      .form-textarea {
+        padding: var(--space-3) var(--space-4);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        font-size: 1rem;
+        font-family: var(--font-family);
+        background: white;
+        transition: all 0.2s ease;
+        color: var(--gray-800);
+      }
+
+      .form-input:focus,
+      .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .form-input::placeholder,
+      .form-textarea::placeholder {
+        color: var(--gray-400);
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .form-hint {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        margin-top: var(--space-1);
+      }
+
+      /* Form Actions */
+      .form-actions {
+        display: flex;
+        gap: var(--space-3);
+        justify-content: flex-end;
+        margin-top: var(--space-6);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--gray-200);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: var(--space-3) var(--space-5);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+
+      .btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .brand-text-header {
+          display: none;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-title-section h1 {
+          font-size: 2rem;
+        }
+
+        .content-wrapper {
+          padding: var(--space-6);
+        }
+
+        .form-actions {
+          flex-direction: column-reverse;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-content">
+          <!-- Hamburger Menu -->
+          <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <!-- Navigation Dropdown -->
+          <nav class="nav-dropdown" id="navDropdown">
+            <a href="/" class="nav-link">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+              Dashboard
+            </a>
+            <a href="/search-animals" class="nav-link">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              Search Animals
+            </a>
+            <a href="/add-customer" class="nav-link active">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
+              </svg>
+              Add Customer
+            </a>
+            <a href="/manage-breeds" class="nav-link">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                />
+              </svg>
+              Manage Breeds
+            </a>
+            <a href="/daily-analytics" class="nav-link">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              Daily Analytics
+            </a>
+            <a href="/customer-history" class="nav-link">
+              <svg
+                class="nav-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Customer History
+            </a>
+          </nav>
+
+          <!-- Brand Logo -->
+          <div class="brand-header">
+            <div class="brand-icon">🐕</div>
+            <span class="brand-text-header">Pampered Pooch</span>
+          </div>
+
+          <!-- Breadcrumb -->
+          <div class="breadcrumb">
+            <a href="/" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-current">Add Customer</span>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <div class="date-display" id="currentDate"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- Page Header -->
+          <div class="page-header">
+            <div class="page-title-section">
+              <h1>Add Customer</h1>
+              <p class="page-subtitle">
+                Enter new customer information to create a record in the database
+              </p>
+            </div>
+          </div>
+
+          <!-- Form Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <svg
+                  class="card-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                Customer Information
+              </h2>
+            </div>
+            <div class="card-content">
+              <form id="addCustomerForm">
+                <div class="form-grid">
+                  <!-- Firstname -->
+                  <div class="form-group">
+                    <label for="firstname" class="form-label">
+                      Firstname<span class="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="firstname"
+                      name="firstname"
+                      class="form-input"
+                      placeholder="Enter first name"
+                      required
+                    />
+                  </div>
+
+                  <!-- Surname -->
+                  <div class="form-group">
+                    <label for="surname" class="form-label">
+                      Surname<span class="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="surname"
+                      name="surname"
+                      class="form-input"
+                      placeholder="Enter surname"
+                      required
+                    />
+                  </div>
+
+                  <!-- Address -->
+                  <div class="form-group full-width">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea
+                      id="address"
+                      name="address"
+                      class="form-textarea"
+                      placeholder="Enter street address"
+                      rows="3"
+                    ></textarea>
+                  </div>
+
+                  <!-- Suburb -->
+                  <div class="form-group">
+                    <label for="suburb" class="form-label">Suburb</label>
+                    <input
+                      type="text"
+                      id="suburb"
+                      name="suburb"
+                      class="form-input"
+                      placeholder="Enter suburb/city"
+                    />
+                  </div>
+
+                  <!-- Postcode -->
+                  <div class="form-group">
+                    <label for="postcode" class="form-label">Postcode</label>
+                    <input
+                      type="text"
+                      id="postcode"
+                      name="postcode"
+                      class="form-input"
+                      placeholder="Enter postcode"
+                      maxlength="4"
+                      pattern="[0-9]{4}"
+                    />
+                    <span class="form-hint">4-digit postal code</span>
+                  </div>
+
+                  <!-- Phone1 -->
+                  <div class="form-group">
+                    <label for="phone1" class="form-label">
+                      Phone 1<span class="required">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone1"
+                      name="phone1"
+                      class="form-input"
+                      placeholder="Primary phone number"
+                      required
+                    />
+                  </div>
+
+                  <!-- Phone2 -->
+                  <div class="form-group">
+                    <label for="phone2" class="form-label">Phone 2</label>
+                    <input
+                      type="tel"
+                      id="phone2"
+                      name="phone2"
+                      class="form-input"
+                      placeholder="Secondary phone number"
+                    />
+                  </div>
+
+                  <!-- Phone3 -->
+                  <div class="form-group">
+                    <label for="phone3" class="form-label">Phone 3</label>
+                    <input
+                      type="tel"
+                      id="phone3"
+                      name="phone3"
+                      class="form-input"
+                      placeholder="Tertiary phone number"
+                    />
+                  </div>
+
+                  <!-- Email -->
+                  <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      class="form-input"
+                      placeholder="customer@example.com"
+                    />
+                  </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" id="cancelBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Insert Record
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Live date/time update
+      function updateDateTime() {
+        const now = new Date()
+        const options = {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+        document.getElementById('currentDate').textContent =
+          now.toLocaleDateString('en-US', options)
+      }
+
+      updateDateTime()
+      setInterval(updateDateTime, 1000)
+
+      // Hamburger menu toggle
+      const hamburgerBtn = document.getElementById('hamburgerBtn')
+      const navDropdown = document.getElementById('navDropdown')
+
+      hamburgerBtn.addEventListener('click', () => {
+        hamburgerBtn.classList.toggle('active')
+        navDropdown.classList.toggle('active')
+      })
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (
+          !hamburgerBtn.contains(e.target) &&
+          !navDropdown.contains(e.target)
+        ) {
+          hamburgerBtn.classList.remove('active')
+          navDropdown.classList.remove('active')
+        }
+      })
+
+      // Form handling
+      const form = document.getElementById('addCustomerForm')
+      const cancelBtn = document.getElementById('cancelBtn')
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+
+        // Collect form data
+        const formData = new FormData(form)
+        const customerData = Object.fromEntries(formData.entries())
+
+        // Mock success message
+        alert(
+          `Customer record would be inserted:\n\n${JSON.stringify(
+            customerData,
+            null,
+            2
+          )}`
+        )
+
+        // Reset form
+        form.reset()
+      })
+
+      cancelBtn.addEventListener('click', () => {
+        if (
+          form.checkValidity() === false ||
+          confirm('Are you sure you want to cancel? Any unsaved data will be lost.')
+        ) {
+          window.location.href = '/'
+        }
+      })
+
+      // Form validation enhancement
+      const requiredInputs = form.querySelectorAll('[required]')
+      requiredInputs.forEach((input) => {
+        input.addEventListener('invalid', () => {
+          input.style.borderColor = 'var(--error)'
+        })
+
+        input.addEventListener('input', () => {
+          if (input.validity.valid) {
+            input.style.borderColor = ''
+          }
+        })
+      })
+
+      // Postcode validation
+      const postcodeInput = document.getElementById('postcode')
+      postcodeInput.addEventListener('input', (e) => {
+        // Only allow digits
+        e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4)
+      })
+    </script>
+  </body>
+</html>
