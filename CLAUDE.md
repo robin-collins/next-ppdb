@@ -7,6 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 @.project\steering\pnpm.md
 @.project\steering\report-writing.md
 
+When comparing a mock ui versus a live page, follow the following analysis insructions in the file `MOCKUI_ANALYSIS.md`
+
 ## Project Overview
 
 This is a Next.js 15 pet grooming database application (PPDB) for "Pampered Pooch" that manages customer, animal, breed, and service records. The application features a modern glassmorphic UI with animated gradients, a searchable animal database with relevance-based ranking, and Prisma ORM connected to a MySQL database.

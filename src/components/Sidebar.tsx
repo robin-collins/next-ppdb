@@ -116,7 +116,7 @@ export default function Sidebar({
       active: currentPath === '/' || currentPath === '/search',
     },
     {
-      href: '/customers/new',
+      href: '/customers/add',
       label: 'Add Customer',
       icon: (
         <svg
@@ -127,7 +127,7 @@ export default function Sidebar({
           <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
         </svg>
       ),
-      active: currentPath === '/customers/new',
+      active: currentPath === '/customers/add',
     },
     {
       href: '/breeds',

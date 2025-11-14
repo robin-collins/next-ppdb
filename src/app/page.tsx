@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAnimalsStore } from '@/store/animalsStore'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
@@ -7,6 +8,7 @@ import EmptyState from '@/components/EmptyState'
 import ResultsView from '@/components/ResultsView'
 
 export default function HomePage() {
+  const searchParams = useSearchParams()
   const { animals, loading, searchAnimals } = useAnimalsStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarPinned, setSidebarPinned] = useState(false)
@@ -25,6 +27,15 @@ export default function HomePage() {
       page: 1,
     })
   }
+
+  // Handle URL query parameter on mount
+  useEffect(() => {
+    const urlQuery = searchParams.get('q')
+    if (urlQuery) {
+      handleSearch(urlQuery)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const handleSuggestionClick = (suggestion: string) => {
     handleSearch(suggestion)

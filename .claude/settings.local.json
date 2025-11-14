@@ -29,7 +29,16 @@
       "mcp__chrome-devtools__select_page",
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__wait_for",
-      "mcp__chrome-devtools__fill"
+      "mcp__chrome-devtools__fill",
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm exec tsc:*)",
+      "mcp__chrome-devtools-headful__list_pages",
+      "mcp__chrome-devtools-headful__navigate_page",
+      "mcp__chrome-devtools-headful__take_snapshot",
+      "mcp__chrome-devtools-headful__take_screenshot",
+      "mcp__chrome-devtools-headful__list_console_messages",
+      "mcp__chrome-devtools-headful__list_network_requests",
+      "mcp__chrome-devtools-headful__get_network_request"
     ],
     "deny": [],
     "ask": []

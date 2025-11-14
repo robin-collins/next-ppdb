@@ -6,24 +6,135 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Add Customer Page**: Created modern glassmorphic Add Customer page at `/customers/add`
+  - **File**: `src/app/customers/add/page.tsx` - Full-featured customer creation form
+  - **Navigation**: Updated Sidebar component to link "Add Customer" menu item to `/customers/add`
+  - **Spacing Improvements**: Significantly increased padding/margin throughout for generous breathing room
+    - **Implementation**: Used inline styles due to Tailwind utility classes not being applied correctly
+    - Main wrapper: 64px horizontal, 48px vertical padding
+    - Page header: 48px bottom margin, 8px left padding, 16px title bottom margin
+    - Alert messages: 32px horizontal, 24px vertical padding
+    - Form grid: 32px gaps between fields, 40px bottom margin
+    - Labels: 8px bottom margin for visual separation
+    - Card header: 40px horizontal, 32px vertical padding
+    - Card content: 40px horizontal, 32px vertical padding
+    - Input fields: 24px horizontal, 20px vertical padding (comfortable for placeholder text)
+    - Textarea: Same as inputs + 120px min-height
+    - Buttons: 32px horizontal, 20px vertical padding (generous pill shape)
+    - Button section: 40px top padding
+    - Help text: 32px horizontal, 24px vertical padding
+    - All elements now have substantial spacing from edges and between each other
+    - Removed conflicting `<style jsx global>` block that was preventing Tailwind utilities from working
+  - **Features**:
+    - Form with all customer fields: Firstname, Surname, Address, Suburb, Postcode, Phone1-3, Email
+    - Real-time validation using existing Zod schemas from `src/lib/validations/customer.ts`
+    - Integration with POST `/api/customers` endpoint
+    - Success/error messaging with animations
+    - Auto-redirect to customer detail page after successful creation
+    - Clear form functionality
+    - Responsive design matching STYLE_GUIDE.md specifications
+  - **Design Implementation**:
+    - Follows glassmorphic design system with animated gradient background
+    - Card-based layout with header icons
+    - Two-column form grid (responsive to single column on mobile)
+    - Primary action button: "Insert Record" with loading state
+    - Secondary actions: "Clear Form" and "Cancel"
+    - Inline validation errors with red borders and error messages
+    - Help text section with usage tips
+  - **Styling**: Adheres to STYLE_GUIDE.md color palette, spacing scale, typography, and component patterns
+  - **Integrations**:
+    - Header component with breadcrumb navigation
+    - Sidebar component with pin/unpin functionality
+    - Existing customer API validation and error handling
+  - **Reference**: Based on original PPDB screenshot at `reference/PPDB/screenshots/after-add-customer-click.jpg`
+  - **Purpose**: Replace legacy PHP `add_customer.php` with modern Next.js implementation
+
+- **Mock UI Analysis Methodology**: Created systematic framework for comparing live pages against mockups
+  - **Document**: `MOCKUI_ANALYSIS.md` (17 sections, ~1000 lines) - Rigorous methodology for future page implementations
+  - **10-Phase Analysis Workflow**: Visual → Structural → Computed Styles → Layout → Typography → Colors → Spacing → Interactive → Responsive → Animations
+  - **DevTools MCP Integration**: Leverages Chrome DevTools capabilities for precision:
+    - `evaluate_script` for computed style extraction (window.getComputedStyle, getBoundingClientRect)
+    - `take_snapshot` for accessibility tree and DOM structure analysis
+    - `take_screenshot` for visual comparisons at multiple breakpoints
+    - Automated viewport testing (desktop 1920px, tablet 768px, mobile 375px)
+  - **6 Reusable DevTools Scripts** in appendix:
+    1. Complete Style Extraction - Comprehensive computed styles for any selector
+    2. Color Palette Extraction - All colors used with usage counts
+    3. Typography Audit - Font specifications across all text elements
+    4. Spacing Audit - Margin/padding/gap analysis for design system
+    5. Interactive Elements Inventory - All clickable elements with states
+    6. Layout Tree - Visual hierarchy showing display types and nesting
+  - **Gap Analysis Framework**:
+    - Severity classification (CRITICAL, HIGH, MEDIUM, LOW)
+    - Effort estimation (Low, Medium, High)
+    - Priority matrix (P0-P4) based on severity × effort
+    - Standardized gap documentation template with resolution steps
+  - **Comprehensive Reporting Template**:
+    - Executive summary with completion percentage
+    - Visual comparison with screenshots
+    - Detailed analysis by category (layout, visual, typography, interactive, responsive, animations)
+    - Implementation roadmap with phases
+    - Component checklist (new components + files to update)
+    - Risk assessment (High/Medium/Low with mitigations)
+    - Estimated effort breakdown
+    - Success criteria checklist
+  - **Best Practices & Common Pitfalls**: 10 documented pitfalls with solutions
+    - Trusting visual appearance vs extracting computed values
+    - Missing pseudo-elements (::before, ::after)
+    - Ignoring interactive states (hover, focus, active)
+    - Viewport-specific issues
+    - Hardcoded values vs design system variables
+    - Animation timing precision
+    - Font loading verification
+    - Z-index stacking contexts
+    - Content overflow scenarios
+    - Sub-pixel rendering tolerance
+  - **Time Estimates**: Complete analysis workflow: 2-3 hours per page
+  - **Purpose**: Ensure consistency across all future page implementations, prevent design system drift
+  - **Benefits**: Repeatable process, precise measurements, comprehensive documentation, automated where possible
+
 - **Customer Detail Page Redesign Specification**: Created comprehensive redesign documentation
-  - **Analysis**: Compared current customer detail page implementation against modern UI mockup
-  - **Browser Testing**: Used Chrome DevTools MCP to navigate localhost:3000, search for "Maltese", and view Adams customer record
-  - **Visual Comparison**: Documented significant gaps between minimal current implementation and rich mockup design
-  - **Specification Document**: Created detailed `reference/redesign/customer_detail_page_component.md` (15 sections, ~500 lines)
-    - Component architecture and file structure (7 new components needed)
-    - Complete layout specifications with two-column grid + 400px sidebar
-    - Customer header with 120px avatar, status badges, meta grid, and action buttons
-    - Main content cards: CustomerInfoCard (editable form grid), AssociatedAnimalsCard (animal grid with detailed cards)
-    - Sidebar cards: ContactDetailsCard (with icons and hover actions), CustomerStatsCard (4-stat grid), QuickActionsCard (5 action buttons)
-    - Design system tokens (colors, typography, spacing, border radius, shadows)
-    - Component hierarchy and data requirements (Prisma queries with relations)
-    - State management updates needed for Zustand stores
-    - Responsive behavior specifications with breakpoints (mobile < 768px, tablet < 1024px)
-    - Animation specifications (slideInUp for cards, staggered delays, hover effects)
-    - Implementation checklist with 8 phases (structure, header, main content, sidebar, data, interactions, polish, testing)
-  - **Key Findings**: Current implementation is minimal viable product; mockup adds glassmorphism, comprehensive data display, rich interactivity
-  - **Gap Summary**: 15+ missing features including persistent header, breadcrumbs, sidebar, status badges, statistics, quick actions, animal detail cards
+  - **Initial Analysis (Round 1)**: Compared current customer detail page implementation against modern UI mockup
+    - **Browser Testing**: Used Chrome DevTools MCP to navigate localhost:3000, search for "Maltese", and view Adams customer record
+    - **Visual Comparison**: Documented significant gaps between minimal current implementation and rich mockup design
+    - **Specification Document**: Created detailed `reference/redesign/customer_detail_page_component.md` (15 sections, ~500 lines)
+      - Component architecture and file structure (7 new components needed)
+      - Complete layout specifications with two-column grid + 400px sidebar
+      - Customer header with 120px avatar, status badges, meta grid, and action buttons
+      - Main content cards: CustomerInfoCard (editable form grid), AssociatedAnimalsCard (animal grid with detailed cards)
+      - Sidebar cards: ContactDetailsCard (with icons and hover actions), CustomerStatsCard (4-stat grid), QuickActionsCard (5 action buttons)
+      - Design system tokens (colors, typography, spacing, border radius, shadows)
+      - Component hierarchy and data requirements (Prisma queries with relations)
+      - State management updates needed for Zustand stores
+      - Responsive behavior specifications with breakpoints (mobile < 768px, tablet < 1024px)
+      - Animation specifications (slideInUp for cards, staggered delays, hover effects)
+      - Implementation checklist with 8 phases (structure, header, main content, sidebar, data, interactions, polish, testing)
+    - **Key Findings**: Current implementation is minimal viable product; mockup adds glassmorphism, comprehensive data display, rich interactivity
+    - **Gap Summary**: 15+ missing features including persistent header, breadcrumbs, sidebar, status badges, statistics, quick actions, animal detail cards
+  - **Detailed Gap Analysis (Round 2)**: Fresh evaluation with actionable implementation roadmap
+    - **Document**: Created `reference/redesign/customer_detail_page_component_round2.md` (14 sections, ~900 lines)
+    - **Executive Summary**: Current implementation at ~5% completion vs target mockup
+    - **Visual Comparison**: Side-by-side ASCII diagrams showing current (simple card) vs target (rich two-column layout)
+    - **12 Detailed Gap Sections** with current state, target state, specific gaps, and resolution steps:
+      1. Page Layout Structure - Two-column grid vs single column
+      2. Persistent Header with Breadcrumbs - Navigation path missing
+      3. Customer Header Section - Large avatar, status badge, meta grid (4 items), 3 action buttons
+      4. Customer Information Card - Form grid (2-column, 9 fields) vs plain text list
+      5. Associated Animals Card - Rich animal cards with avatars vs plain text
+      6. Contact Details Card (Sidebar) - 4 contact items with hover actions (completely missing)
+      7. Customer Statistics Card (Sidebar) - 2x2 grid with 4 metrics (completely missing)
+      8. Quick Actions Card (Sidebar) - 5 color-coded action buttons (completely missing)
+      9. Visual Design System - Shadows, gradients, colors, typography hierarchy
+      10. Animations and Interactions - slideInUp entrance, hover effects, transitions
+      11. Data Requirements - Additional fields needed (forename, phone2/3, email, visits, costs)
+      12. Responsive Behavior - Breakpoint definitions and mobile layout changes
+    - **Implementation Priority**: 6-phase roadmap (Foundation → Main Content → Sidebar → Polish → Data → Final Touches)
+    - **Component File Checklist**: 7 new components to create, 5 files to update
+    - **Success Criteria**: Visual fidelity, functionality, design system, performance metrics
+    - **Estimated Effort**: 16-20 hours broken down by task
+    - **Risk Assessment**: High (data availability, schema issues), Medium (edit mode, responsive), Low (CSS, icons)
+    - **Completion Percentage**: Quantified current implementation at 5% vs target
+    - **Next Steps**: Clear 7-step implementation path from layout to testing
 
 - **Database Schema Migration System**: Comprehensive Prisma migration infrastructure for production deployment
   - **Migration File**: Created `20251004154300_schema_normalization` for database schema improvements
@@ -107,6 +218,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **Add Customer Page lint**: Replaced `any` with a typed `ValidationDetail` helper and escaped the apostrophe in the tips list so `/customers/add` passes ESLint.
 - **Database Schema Alignment**: Fixed Prisma schema to allow NULL values in `animal.colour` field
   - Updated `prisma/schema.prisma` to define `colour` as `String?` (nullable) instead of `String`
   - Resolves Prisma error: "Error converting field 'colour' of expected non-nullable type 'String', found incompatible value of 'null'"

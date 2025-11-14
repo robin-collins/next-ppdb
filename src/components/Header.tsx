@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 
 interface BreadcrumbItem {
   label: string
@@ -22,6 +23,8 @@ export default function Header({
   searchValue,
   breadcrumbs,
 }: HeaderProps) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [query, setQuery] = useState(searchValue)
   const [dateTime, setDateTime] = useState('')
 
@@ -57,11 +60,26 @@ export default function Header({
 
   const handleClear = () => {
     setQuery('')
-    onSearch('')
+    // If not on home page, navigate to home with empty search
+    if (pathname !== '/') {
+      router.push('/')
+    } else {
+      onSearch('')
+    }
   }
 
   const handleSearchClick = () => {
-    onSearch(query)
+    // If not on home page, navigate to home with query parameter
+    if (pathname !== '/') {
+      if (query.trim()) {
+        router.push(`/?q=${encodeURIComponent(query)}`)
+      } else {
+        router.push('/')
+      }
+    } else {
+      // On home page, use the provided callback
+      onSearch(query)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
