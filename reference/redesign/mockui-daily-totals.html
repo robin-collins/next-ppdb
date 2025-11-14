@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Totals/Analytics - Pampered Pooch Database</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ========================================
+         DESIGN TOKENS (from STYLE_GUIDE.md)
+         ======================================== */
+      :root {
+        /* Modern Color Palette */
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: #e0e7ff;
+        --primary-dark: #3730a3;
+        --secondary: #06b6d4;
+        --secondary-hover: #0891b2;
+        --accent: #f59e0b;
+        --accent-hover: #d97706;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+
+        /* Neutrals */
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Typography */
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        /* Spacing Scale */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+
+        /* Border Radius */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      }
+
+      /* ========================================
+         RESET & BASE STYLES
+         ======================================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 25%,
+          #6366f1 50%,
+          #06b6d4 75%,
+          #10b981 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          repeat;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ========================================
+         HEADER NAVIGATION BAR
+         ======================================== */
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Hamburger Menu */
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: var(--space-3);
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+        border: none;
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Brand Logo */
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+      }
+
+      .brand-text-header {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      /* Breadcrumb */
+      .breadcrumb {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .breadcrumb-link:hover {
+        color: var(--primary-hover);
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      /* Header Actions */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .date-display {
+        padding: var(--space-2) var(--space-4);
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        position: absolute;
+        top: calc(100% + var(--space-2));
+        left: 0;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 200;
+      }
+
+      .nav-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-list {
+        list-style: none;
+        padding: var(--space-2);
+      }
+
+      .nav-item {
+        margin: 0;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ========================================
+         MAIN CONTENT CONTAINER
+         ======================================== */
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        margin-top: 0;
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      /* ========================================
+         PAGE TITLE SECTION
+         ======================================== */
+      .page-title-section {
+        margin-bottom: var(--space-8);
+        animation: fadeInDown 0.5s ease-out;
+      }
+
+      .page-title-section h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+      }
+
+      .page-subtitle {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ========================================
+         STATS GRID (Primary Metrics)
+         ======================================== */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .stat-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        animation: slideInUp 0.4s ease-out forwards;
+        opacity: 0;
+      }
+
+      .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+
+      .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+      }
+
+      .stat-card.revenue::before {
+        background: linear-gradient(
+          135deg,
+          var(--success) 0%,
+          var(--secondary) 100%
+        );
+      }
+
+      .stat-card.date::before {
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--primary) 100%
+        );
+      }
+
+      .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-4);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gray-500);
+      }
+
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-light);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+      }
+
+      .stat-card.revenue .stat-icon {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .stat-card.date .stat-icon {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent);
+      }
+
+      .stat-value {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        line-height: 1;
+        margin-bottom: var(--space-2);
+      }
+
+      .stat-value.currency::before {
+        content: '$';
+        font-size: 2rem;
+        margin-right: var(--space-2);
+        color: var(--success);
+      }
+
+      .stat-subtext {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 500;
+      }
+
+      .stat-change {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: var(--space-2);
+      }
+
+      .stat-change.negative {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+      }
+
+      /* ========================================
+         CHARTS SECTION
+         ======================================== */
+      .charts-section {
+        margin-bottom: var(--space-8);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-6);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+      }
+
+      .view-toggle {
+        display: flex;
+        gap: var(--space-2);
+        background: var(--gray-100);
+        padding: var(--space-1);
+        border-radius: var(--radius-lg);
+      }
+
+      .toggle-btn {
+        padding: var(--space-2) var(--space-4);
+        border: none;
+        background: transparent;
+        color: var(--gray-600);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .toggle-btn.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .toggle-btn:hover:not(.active) {
+        background: var(--gray-200);
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .chart-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+      }
+
+      .chart-card:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .chart-header {
+        padding: var(--space-5) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .chart-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .chart-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--primary);
+      }
+
+      .chart-content {
+        padding: var(--space-6);
+      }
+
+      .chart-placeholder {
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(
+          135deg,
+          var(--gray-50) 0%,
+          var(--primary-light) 100%
+        );
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-500);
+        font-style: italic;
+        border: 2px dashed var(--gray-300);
+      }
+
+      /* ========================================
+         WEEKLY/MONTHLY TABLE
+         ======================================== */
+      .table-section {
+        animation: fadeInUp 0.5s ease-out 0.4s backwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .table-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .table-header {
+        padding: var(--space-5) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table thead {
+        background: var(--gray-50);
+      }
+
+      .data-table th {
+        padding: var(--space-4);
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+      }
+
+      .data-table td {
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+        font-size: 0.875rem;
+      }
+
+      .data-table tr:hover {
+        background: var(--gray-50);
+      }
+
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .table-date {
+        font-weight: 600;
+        color: var(--gray-800);
+      }
+
+      .table-number {
+        font-weight: 600;
+        color: var(--gray-900);
+      }
+
+      .table-currency {
+        font-weight: 700;
+        color: var(--success);
+      }
+
+      .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .trend-indicator.up {
+        color: var(--success);
+      }
+
+      .trend-indicator.down {
+        color: var(--error);
+      }
+
+      /* ========================================
+         RESPONSIVE STYLES
+         ======================================== */
+      @media (max-width: 768px) {
+        .brand-text-header {
+          display: none;
+        }
+
+        .breadcrumb {
+          display: none;
+        }
+
+        .header-content {
+          gap: var(--space-3);
+        }
+
+        .page-title-section h1 {
+          font-size: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .table-card {
+          overflow-x: auto;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .view-toggle {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .toggle-btn {
+          width: 100%;
+        }
+
+        .section-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-4);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========================================
+         HEADER NAVIGATION BAR
+         ======================================== -->
+    <header class="app-header">
+      <div class="header-content">
+        <!-- Hamburger Menu -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Navigation Dropdown -->
+        <nav class="nav-dropdown" id="navDropdown">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                Search Animals
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <line x1="19" y1="8" x2="19" y2="14"></line>
+                  <line x1="22" y1="11" x2="16" y2="11"></line>
+                </svg>
+                Add Customer
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Manage Breeds
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Daily Analytics
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Customer History
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Brand Logo -->
+        <div class="brand-header">
+          <div class="brand-icon">🐕</div>
+          <span class="brand-text-header">Pampered Pooch</span>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+          <a href="#" class="breadcrumb-link">Home</a>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-current">Daily Totals</span>
+        </nav>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <div class="date-display" id="currentDate"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================
+         MAIN CONTENT
+         ======================================== -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <!-- Page Title Section -->
+        <div class="page-title-section">
+          <h1>Daily Totals / Analytics</h1>
+          <p class="page-subtitle">
+            Real-time dashboard for today's business metrics and historical trends
+          </p>
+        </div>
+
+        <!-- Primary Stats Grid -->
+        <div class="stats-grid">
+          <!-- Current Date/Time Card -->
+          <div class="stat-card date">
+            <div class="stat-header">
+              <span class="stat-label">Report Generated</span>
+              <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-value" id="reportDateTime" style="font-size: 1.5rem; font-weight: 700;">
+              July 31, 2025, 4:09 pm
+            </div>
+            <div class="stat-subtext">Live updated every second</div>
+          </div>
+
+          <!-- Total Animals Card -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Total Animals</span>
+              <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="5"></circle>
+                  <path d="M3 21c0-3.5 3-6 9-6s9 2.5 9 6"></path>
+                  <path d="M12 11c1.5 0 2.5-1.5 2.5-3s-1-3-2.5-3-2.5 1.5-2.5 3 1 3 2.5 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-value" id="totalAnimals">12</div>
+            <div class="stat-subtext">
+              Processed today
+              <span class="stat-change">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                +3
+              </span>
+            </div>
+          </div>
+
+          <!-- Total Revenue Card -->
+          <div class="stat-card revenue">
+            <div class="stat-header">
+              <span class="stat-label">Total Revenue</span>
+              <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="stat-value currency" id="totalRevenue">845.00</div>
+            <div class="stat-subtext">
+              Earned today
+              <span class="stat-change">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                +$215
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+          <div class="section-header">
+            <h2 class="section-title">Trends & Analytics</h2>
+            <div class="view-toggle">
+              <button class="toggle-btn active" data-period="daily">Daily</button>
+              <button class="toggle-btn" data-period="weekly">Weekly</button>
+              <button class="toggle-btn" data-period="monthly">Monthly</button>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <!-- Revenue Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">
+                  <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  Revenue Over Time
+                </h3>
+              </div>
+              <div class="chart-content">
+                <div class="chart-placeholder">
+                  Chart: Line graph showing daily revenue trends
+                </div>
+              </div>
+            </div>
+
+            <!-- Animal Count Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title">
+                  <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                  </svg>
+                  Animals Processed
+                </h3>
+              </div>
+              <div class="chart-content">
+                <div class="chart-placeholder">
+                  Chart: Bar graph showing animal counts by day
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Weekly/Monthly Table -->
+        <section class="table-section">
+          <div class="table-card">
+            <div class="table-header">
+              <h2 class="chart-title">
+                <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Last 7 Days Summary
+              </h2>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Day</th>
+                  <th>Animals</th>
+                  <th>Revenue</th>
+                  <th>Avg/Animal</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="table-date">Jul 31, 2025</td>
+                  <td>Thursday</td>
+                  <td class="table-number">12</td>
+                  <td class="table-currency">$845.00</td>
+                  <td class="table-number">$70.42</td>
+                  <td>
+                    <span class="trend-indicator up">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      +25%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 30, 2025</td>
+                  <td>Wednesday</td>
+                  <td class="table-number">9</td>
+                  <td class="table-currency">$630.00</td>
+                  <td class="table-number">$70.00</td>
+                  <td>
+                    <span class="trend-indicator down">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                      -10%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 29, 2025</td>
+                  <td>Tuesday</td>
+                  <td class="table-number">10</td>
+                  <td class="table-currency">$715.00</td>
+                  <td class="table-number">$71.50</td>
+                  <td>
+                    <span class="trend-indicator up">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      +5%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 28, 2025</td>
+                  <td>Monday</td>
+                  <td class="table-number">8</td>
+                  <td class="table-currency">$560.00</td>
+                  <td class="table-number">$70.00</td>
+                  <td>
+                    <span class="trend-indicator up">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      +15%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 27, 2025</td>
+                  <td>Sunday</td>
+                  <td class="table-number">3</td>
+                  <td class="table-currency">$210.00</td>
+                  <td class="table-number">$70.00</td>
+                  <td>
+                    <span class="trend-indicator down">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                      -50%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 26, 2025</td>
+                  <td>Saturday</td>
+                  <td class="table-number">14</td>
+                  <td class="table-currency">$980.00</td>
+                  <td class="table-number">$70.00</td>
+                  <td>
+                    <span class="trend-indicator up">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      +40%
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="table-date">Jul 25, 2025</td>
+                  <td>Friday</td>
+                  <td class="table-number">11</td>
+                  <td class="table-currency">$770.00</td>
+                  <td class="table-number">$70.00</td>
+                  <td>
+                    <span class="trend-indicator up">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      +10%
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+    <script>
+      // ========================================
+      // HAMBURGER MENU TOGGLE
+      // ========================================
+      const hamburgerBtn = document.getElementById('hamburgerBtn')
+      const navDropdown = document.getElementById('navDropdown')
+
+      hamburgerBtn.addEventListener('click', () => {
+        hamburgerBtn.classList.toggle('active')
+        navDropdown.classList.toggle('active')
+      })
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (
+          !hamburgerBtn.contains(e.target) &&
+          !navDropdown.contains(e.target)
+        ) {
+          hamburgerBtn.classList.remove('active')
+          navDropdown.classList.remove('active')
+        }
+      })
+
+      // ========================================
+      // LIVE DATE/TIME UPDATE
+      // ========================================
+      function updateDateTime() {
+        const now = new Date()
+        const options = {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }
+        const formattedDate = now.toLocaleDateString('en-US', options)
+
+        // Update header date display
+        document.getElementById('currentDate').textContent = formattedDate
+
+        // Update report date/time with full format
+        const fullOptions = {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        }
+        const fullFormatted = now
+          .toLocaleDateString('en-US', fullOptions)
+          .replace(',', ', ')
+        document.getElementById('reportDateTime').textContent = fullFormatted
+      }
+
+      // Update immediately and then every second
+      updateDateTime()
+      setInterval(updateDateTime, 1000)
+
+      // ========================================
+      // VIEW TOGGLE (Daily/Weekly/Monthly)
+      // ========================================
+      const toggleBtns = document.querySelectorAll('.toggle-btn')
+
+      toggleBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          // Remove active class from all buttons
+          toggleBtns.forEach((b) => b.classList.remove('active'))
+
+          // Add active class to clicked button
+          btn.classList.add('active')
+
+          // Get selected period
+          const period = btn.dataset.period
+
+          // In a real app, this would fetch different data
+          console.log(`Switching to ${period} view`)
+
+          // Update table header based on period
+          const tableHeader = document.querySelector('.table-header .chart-title')
+          if (period === 'daily') {
+            tableHeader.innerHTML = `
+              <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Last 7 Days Summary
+            `
+          } else if (period === 'weekly') {
+            tableHeader.innerHTML = `
+              <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Last 4 Weeks Summary
+            `
+          } else if (period === 'monthly') {
+            tableHeader.innerHTML = `
+              <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Last 12 Months Summary
+            `
+          }
+        })
+      })
+
+      // ========================================
+      // SIMULATE LIVE DATA UPDATES (Optional)
+      // ========================================
+      // In a real application, this would fetch from API
+      function simulateDataUpdate() {
+        // Randomly update animal count (for demo purposes)
+        const currentCount = parseInt(
+          document.getElementById('totalAnimals').textContent
+        )
+        // Small chance of increment during business hours
+        if (Math.random() > 0.95) {
+          const newCount = currentCount + 1
+          document.getElementById('totalAnimals').textContent = newCount
+
+          // Update revenue proportionally
+          const avgPrice = 70
+          const newRevenue = (newCount * avgPrice).toFixed(2)
+          document.getElementById('totalRevenue').textContent = newRevenue
+        }
+      }
+
+      // Uncomment to enable live updates every 10 seconds
+      // setInterval(simulateDataUpdate, 10000)
+    </script>
+  </body>
+</html>
