@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Animal - Pampered Pooch Database</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ========================================
        CSS CUSTOM PROPERTIES (Design Tokens)
        ======================================== */
     :root {
       /* === TYPOGRAPHY === */
-      --font-display: 'Cormorant', Georgia, serif;
-      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-accent: 'Outfit', -apple-system, sans-serif;
+      --font-display: 'Lora', Georgia, serif;
+      --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-accent: 'Rubik', -apple-system, sans-serif;
       --font-family: var(--font-body); /* Legacy fallback */
 
       /* === PRIMARY COLORS (From Logo - Golden Brown) === */
@@ -714,7 +714,15 @@
 
       <!-- Brand -->
       <div class="brand-header">
-        <div class="brand-icon">🐕</div>
+        <div class="brand-icon-header" aria-hidden="true">
+        <img
+          src="images/logo-tiny.png"
+          alt="Pampered Pooch Logo"
+          width="40"
+          height="40"
+          style="border-radius: var(--radius-lg);"
+        />
+      </div>
         <div class="brand-text-header">Pampered Pooch</div>
       </div>
 

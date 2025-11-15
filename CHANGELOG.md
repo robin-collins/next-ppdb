@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **MockUI Font Updates**: Updated all 11 mockui HTML files to use new font specifications (2025-11-15)
+  - **Changed From**: Cormorant (display), DM Sans (body), Outfit (accent)
+  - **Changed To**: Lora (display), Rubik (body & accent)
+  - **Files Updated**:
+    - `reference/redesign/breed_management_modern.html`
+    - `reference/redesign/cody-animal-record-complete.html`
+    - `reference/redesign/customer-record-modern.html`
+    - `reference/redesign/mockui-add-animal.html`
+    - `reference/redesign/mockui-add-customer.html`
+    - `reference/redesign/mockui-animal-detail.html`
+    - `reference/redesign/mockui-customer-detail.html`
+    - `reference/redesign/mockui-customer-history.html`
+    - `reference/redesign/mockui-daily-totals.html`
+    - `reference/redesign/mockui-service-history.html`
+    - `reference/redesign/ppdb_search_results.html`
+  - **Scope**: Updated both Google Fonts imports and CSS custom properties for consistent typography
+  - **Compliance**: All files now align with STYLE_GUIDE.md typography specifications
+
+- **MockUI Header Standardization**: Unified header navbar and hamburger menu across all 11 mockui files (2025-11-15)
+  - **Logo Updates**: Replaced all SVG icons and emoji placeholders with `images/logo-tiny.png`
+  - **Path Format**: Using relative paths (no leading slash) for WSL/Windows 11 compatibility
+  - **Logo Locations**: Both dropdown brand icon (35x35px) and main header logo (40x40px)
+  - **Uniform Structure**: All files now have consistent hamburger menu dropdown navigation
+  - **Breadcrumb Positioning**: Breadcrumbs properly positioned without removing search functionality
+  - **Search Preservation**: ppdb_search_results.html maintains search box in header
+  - **Accessibility**: Added aria-hidden attributes to logo containers for screen readers
+
 ### Added
 
 - **Mock UI prompt pack**: Added `update_mockui_prompts.md` with 13 ready-to-use prompt templates (2025-11-15)

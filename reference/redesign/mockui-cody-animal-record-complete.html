@@ -3,18 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>James - Customer Record - Pampered Pooch Database</title>
+    <title>Cody - Animal Record - Pampered Pooch Database</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       /* Design System Variables */
       :root {
         /* === TYPOGRAPHY === */
-        --font-display: 'Cormorant', Georgia, serif;
-        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        --font-accent: 'Outfit', -apple-system, sans-serif;
+        --font-display: 'Lora', Georgia, serif;
+        --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-accent: 'Rubik', -apple-system, sans-serif;
         --font-family: var(--font-body); /* Legacy fallback */
 
         /* === PRIMARY COLORS (From Logo - Golden Brown) === */
@@ -84,15 +84,11 @@
 
         /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md:
-          0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         --shadow-lg:
-          0 10px 15px -3px rgb(0 0 0 / 0.1),
-          0 4px 6px -4px rgb(0 0 0 / 0.1);
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         --shadow-xl:
-          0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 
         /* Brand-colored shadows for special elements */
@@ -158,9 +154,10 @@
         min-height: 100vh;
         color: var(--gray-800);
         overflow-x: hidden;
+        position: relative;
       }
 
-      /* Paw Print Pattern Overlay */
+      /* Paw print pattern overlay */
       body::after {
         content: '';
         position: fixed;
@@ -184,7 +181,7 @@
         }
       }
 
-      /* Typography Application */
+      /* Headings use elegant serif */
       h1,
       h2,
       h3,
@@ -199,7 +196,6 @@
       }
 
       /* Body text uses warm sans-serif */
-      body,
       p,
       li,
       td,
@@ -235,11 +231,14 @@
       .app-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding: var(--space-4) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        padding: var(--space-6);
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: var(--z-sticky);
         box-shadow: var(--shadow-md);
       }
 
@@ -268,7 +267,12 @@
       }
 
       .hamburger:hover {
-        background: var(--gray-200);
+        background: var(--primary-light);
+      }
+
+      .hamburger:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .hamburger span {
@@ -276,7 +280,7 @@
         height: 2px;
         background: var(--gray-700);
         border-radius: 1px;
-        transition: all var(--duration-normal) var(--ease-smooth);
+        transition: all 0.3s ease;
       }
 
       .hamburger.active span:nth-child(1) {
@@ -304,8 +308,8 @@
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        z-index: var(--z-sidebar);
+        transition: all 0.3s ease;
+        z-index: 200;
       }
 
       .nav-dropdown.active {
@@ -418,7 +422,6 @@
         font-weight: 700;
         margin: 0;
         color: var(--gray-800);
-        letter-spacing: -0.02em;
       }
 
       .brand-text-header p {
@@ -434,12 +437,12 @@
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-family: var(--font-body);
         font-size: 0.875rem;
         color: var(--gray-600);
       }
 
       .breadcrumb-link {
+        font-family: var(--font-body);
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
@@ -494,8 +497,8 @@
         padding: var(--space-8);
       }
 
-      /* Customer Header */
-      .customer-header {
+      /* Animal Header */
+      .animal-header {
         display: flex;
         align-items: flex-start;
         gap: var(--space-6);
@@ -504,7 +507,7 @@
         border-bottom: 1px solid var(--gray-200);
       }
 
-      .customer-avatar-large {
+      .animal-avatar-large {
         width: 120px;
         height: 120px;
         background: linear-gradient(135deg, var(--primary-light), var(--accent));
@@ -513,24 +516,25 @@
         align-items: center;
         justify-content: center;
         color: var(--primary-dark);
+        font-family: var(--font-accent);
         font-size: 3rem;
         font-weight: 800;
         box-shadow: var(--shadow-lg);
         flex-shrink: 0;
       }
 
-      .customer-info {
+      .animal-info {
         flex: 1;
       }
 
-      .customer-title {
+      .animal-title {
         display: flex;
         align-items: center;
         gap: var(--space-4);
         margin-bottom: var(--space-4);
       }
 
-      .customer-name {
+      .animal-name {
         font-family: var(--font-display);
         font-size: 2.5rem;
         font-weight: 700;
@@ -557,12 +561,22 @@
         color: white;
       }
 
-      .status-legacy {
+      .status-inactive {
+        background: var(--gray-200);
+        color: var(--gray-700);
+      }
+
+      .status-pending {
         background: var(--warning);
         color: white;
       }
 
-      .customer-meta {
+      .status-error {
+        background: var(--error);
+        color: white;
+      }
+
+      .animal-meta {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: var(--space-4);
@@ -591,7 +605,7 @@
         color: var(--gray-800);
       }
 
-      .customer-actions {
+      .animal-actions {
         display: flex;
         gap: var(--space-3);
         flex-wrap: wrap;
@@ -661,7 +675,7 @@
         padding: var(--space-6);
       }
 
-      /* Customer Details Form */
+      /* Animal Details Form */
       .form-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -685,17 +699,21 @@
         color: var(--gray-700);
       }
 
+      .form-label.required::after {
+        content: ' *';
+        color: var(--error);
+      }
+
       .form-input,
       .form-select,
       .form-textarea {
         padding: var(--space-3) var(--space-4);
         border: 2px solid var(--gray-200);
         border-radius: var(--radius-lg);
-        font-family: var(--font-body);
         font-size: 1rem;
+        font-family: var(--font-family);
         background: white;
-        transition: all var(--duration-fast) var(--ease-smooth);
-        color: var(--gray-800);
+        transition: all 0.2s ease;
       }
 
       .form-input:focus,
@@ -706,132 +724,111 @@
         box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
       }
 
+      .form-input.error,
+      .form-select.error,
+      .form-textarea.error {
+        border-color: var(--error);
+      }
+
+      .form-input.error:focus,
+      .form-select.error:focus,
+      .form-textarea.error:focus {
+        box-shadow: 0 0 0 3px rgba(217, 102, 102, 0.1);
+      }
+
       .form-textarea {
         resize: vertical;
         min-height: 100px;
       }
 
-      .empty-state {
-        color: var(--gray-500);
-        font-style: italic;
+      .date-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
       }
 
-      /* Animals Grid */
-      .animals-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      .date-picker-btn {
+        position: absolute;
+        right: var(--space-3);
+        background: none;
+        border: none;
+        color: var(--gray-400);
+        cursor: pointer;
+        padding: var(--space-1);
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+      }
+
+      .date-picker-btn:hover {
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+
+      /* Service History */
+      .service-history {
+        display: flex;
+        flex-direction: column;
         gap: var(--space-4);
       }
 
-      .animal-card {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
+      .service-item {
+        display: flex;
+        gap: var(--space-4);
         padding: var(--space-4);
-        transition: all var(--duration-slow) var(--ease-bounce);
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        border-left: 4px solid var(--primary);
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
-      .animal-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 0;
-        transition: height var(--duration-normal) var(--ease-smooth);
+      .service-item:hover {
+        background: var(--primary-light);
+        border-left-color: var(--primary-hover);
+        transform: translateX(4px);
       }
 
-      .animal-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: var(--shadow-primary);
-        border-color: var(--primary);
-      }
-
-      .animal-card:hover::before {
-        height: 6px;
-      }
-
-      .animal-card:hover .animal-avatar {
-        transform: rotate(-5deg) scale(1.1);
-      }
-
-      .animal-card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: var(--space-3);
-      }
-
-      .animal-info {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .animal-avatar {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: var(--radius-full);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-family: var(--font-accent);
-        font-weight: 700;
-        font-size: 1.25rem;
-        box-shadow: var(--shadow-primary);
-        transition: all var(--duration-normal) var(--ease-bounce);
-        border: 2px solid white;
-      }
-
-      .animal-details h4 {
-        font-family: var(--font-display);
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--gray-800);
-        margin: 0;
-      }
-
-      .animal-details p {
-        font-family: var(--font-body);
+      .service-date {
+        width: 80px;
+        flex-shrink: 0;
         font-size: 0.875rem;
-        color: var(--gray-600);
-        margin: 0;
-      }
-
-      .animal-card-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-3);
-        font-size: 0.875rem;
-      }
-
-      .info-item {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-
-      .info-label {
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+        color: var(--primary);
+      }
+
+      .service-details {
+        flex: 1;
+      }
+
+      .service-description {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        margin-bottom: var(--space-1);
+      }
+
+      .service-meta {
+        font-size: 0.75rem;
         color: var(--gray-500);
       }
 
-      .info-value {
-        font-family: var(--font-body);
-        font-weight: 600;
-        color: var(--gray-800);
+      .service-cost {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--success);
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .service-actions {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+      }
+
+      /* Add Service Form */
+      .add-service-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
       }
 
       /* Buttons */
@@ -850,71 +847,51 @@
         justify-content: center;
         text-decoration: none;
         white-space: nowrap;
+        box-shadow: var(--shadow-sm);
       }
 
       .btn:hover {
         transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
       }
 
       .btn:active {
         transform: translateY(0);
       }
 
+      .btn:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
       /* Primary (Golden Brown) */
       .btn-primary {
         background: var(--primary);
         color: white;
-        box-shadow: var(--shadow-sm);
       }
 
       .btn-primary:hover {
         background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
       }
 
       /* Secondary (Teal Green) */
       .btn-secondary {
         background: var(--secondary);
         color: white;
-        box-shadow: var(--shadow-sm);
       }
 
       .btn-secondary:hover {
         background: var(--secondary-hover);
-        box-shadow: var(--shadow-md);
       }
 
       /* Accent (Bright Teal - CTAs) */
       .btn-accent {
         background: var(--accent);
         color: white;
-        box-shadow: var(--shadow-sm);
       }
 
       .btn-accent:hover {
         background: var(--accent-hover);
-        box-shadow: var(--shadow-md);
-      }
-
-      /* Outline */
-      .btn-outline {
-        background: transparent;
-        color: var(--primary);
-        border: 2px solid var(--primary);
-      }
-
-      .btn-outline:hover {
-        background: var(--primary-light);
-      }
-
-      /* Ghost */
-      .btn-ghost {
-        background: var(--gray-100);
-        color: var(--gray-700);
-      }
-
-      .btn-ghost:hover {
-        background: var(--gray-200);
       }
 
       /* Success */
@@ -934,7 +911,7 @@
       }
 
       .btn-danger:hover {
-        background: #c66056;
+        background: #c45d54;
       }
 
       /* Warning */
@@ -944,12 +921,99 @@
       }
 
       .btn-warning:hover {
-        background: #d4a360;
+        background: var(--tan);
+      }
+
+      /* Ghost */
+      .btn-ghost {
+        background: var(--gray-100);
+        color: var(--gray-700);
+      }
+
+      .btn-ghost:hover {
+        background: var(--gray-200);
       }
 
       .btn-small {
         padding: var(--space-2) var(--space-3);
         font-size: 0.75rem;
+      }
+
+      .btn-large {
+        padding: var(--space-4) var(--space-6);
+        font-size: 1rem;
+      }
+
+      /* Customer Info Card */
+      .customer-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .customer-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .customer-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-family: var(--font-accent);
+        font-weight: 700;
+        font-size: 1.25rem;
+        box-shadow: var(--shadow-primary);
+        transition: all var(--duration-normal) var(--ease-bounce);
+        border: 2px solid white;
+      }
+
+      .customer-details h3 {
+        font-family: var(--font-display);
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+      }
+
+      .customer-details p {
+        font-family: var(--font-body);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .contact-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+        transition: background var(--duration-fast) var(--ease-smooth);
+      }
+
+      .contact-item:hover {
+        background: var(--primary-light);
+        cursor: pointer;
+      }
+
+      .contact-icon {
+        width: 16px;
+        height: 16px;
+        color: var(--gray-400);
       }
 
       /* Quick Stats */
@@ -968,9 +1032,9 @@
       }
 
       .stat-number {
-        font-family: var(--font-display);
+        font-family: var(--font-accent);
         font-size: 1.5rem;
-        font-weight: 700;
+        font-weight: 800;
         color: var(--primary);
         display: block;
       }
@@ -982,54 +1046,6 @@
         text-transform: uppercase;
         letter-spacing: 0.1em;
         font-weight: 600;
-      }
-
-      /* Contact List */
-      .contact-list {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3);
-      }
-
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-3);
-        border-radius: var(--radius-md);
-        transition: background var(--duration-fast) var(--ease-smooth);
-      }
-
-      .contact-item:hover {
-        background: var(--primary-light);
-      }
-
-      .contact-icon {
-        width: 16px;
-        height: 16px;
-        color: var(--gray-400);
-      }
-
-      .contact-text {
-        flex: 1;
-        font-family: var(--font-body);
-        font-size: 0.875rem;
-        color: var(--gray-700);
-      }
-
-      .contact-action {
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-        opacity: 0;
-        transition: opacity var(--duration-fast) var(--ease-smooth);
-      }
-
-      .contact-item:hover .contact-action {
-        opacity: 1;
       }
 
       /* Overlay for dropdown */
@@ -1066,12 +1082,12 @@
           grid-template-columns: 1fr;
         }
 
-        .customer-header {
+        .animal-header {
           flex-direction: column;
           text-align: center;
         }
 
-        .customer-name {
+        .animal-name {
           font-size: 2rem;
         }
 
@@ -1079,15 +1095,11 @@
           grid-template-columns: 1fr;
         }
 
-        .customer-actions {
+        .animal-actions {
           justify-content: center;
         }
 
         .quick-stats {
-          grid-template-columns: 1fr;
-        }
-
-        .animals-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -1116,6 +1128,36 @@
         }
       }
 
+      /* Fade in from above */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Shimmer effect (for loading, highlights) */
+      @keyframes shimmer {
+        0%,
+        100% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        50% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      /* Spin (loading indicators) */
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       /* Bounce (playful elements, mascot) */
       @keyframes bounce {
         0%,
@@ -1124,17 +1166,6 @@
         }
         50% {
           transform: translateY(-20px);
-        }
-      }
-
-      /* Float (decorative elements) */
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
         }
       }
 
@@ -1151,16 +1182,19 @@
         }
       }
 
-      /* Spin (loading indicators) */
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
+      /* Float (decorative elements) */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
         }
       }
 
       .card {
         animation: slideInUp 0.4s var(--ease-out) forwards;
-        opacity: 0;
       }
 
       .card:nth-child(1) {
@@ -1181,21 +1215,6 @@
       .card:nth-child(6) {
         animation-delay: 0.5s;
       }
-
-      .animal-card {
-        animation: slideInUp 0.4s var(--ease-out) forwards;
-        opacity: 0;
-      }
-
-      .animal-card:nth-child(1) {
-        animation-delay: 0s;
-      }
-      .animal-card:nth-child(2) {
-        animation-delay: 0.1s;
-      }
-      .animal-card:nth-child(3) {
-        animation-delay: 0.2s;
-      }
     </style>
   </head>
   <body>
@@ -1215,17 +1234,14 @@
             <div class="nav-dropdown" id="navDropdown">
               <div class="dropdown-header">
                 <div class="dropdown-brand">
-                  <div class="brand-icon-dropdown">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
-                      />
-                    </svg>
+                  <div class="brand-icon-dropdown" aria-hidden="true">
+                    <img
+                      src="images/logo-tiny.png"
+                      alt="Pampered Pooch Logo"
+                      width="35"
+                      height="35"
+                      style="border-radius: var(--radius-lg);"
+                    />
                   </div>
                   <div class="brand-text-dropdown">
                     <h3>Pampered Pooch</h3>
@@ -1235,6 +1251,34 @@
               </div>
 
               <div class="nav-menu">
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('dashboard')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                      />
+                    </svg>
+                    Dashboard
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a href="#" class="nav-link" onclick="navigate('search')">
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                      />
+                    </svg>
+                    Search Animals
+                  </a>
+                </div>
                 <div class="nav-item">
                   <a href="#" class="nav-link" onclick="navigate('customers')">
                     <svg
@@ -1287,10 +1331,10 @@
                       fill="currentColor"
                     >
                       <path
-                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
                       />
                     </svg>
-                    Customer Records
+                    Animal Records
                   </a>
                 </div>
               </div>
@@ -1299,17 +1343,14 @@
 
           <!-- Brand Logo -->
           <div class="brand-header" onclick="navigate('dashboard')">
-            <div class="brand-icon-header">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
-                />
-              </svg>
+            <div class="brand-icon-header" aria-hidden="true">
+              <img
+                src="images/logo-tiny.png"
+                alt="Pampered Pooch Logo"
+                width="40"
+                height="40"
+                style="border-radius: var(--radius-lg);"
+              />
             </div>
             <div class="brand-text-header">
               <h1>Pampered Pooch</h1>
@@ -1323,11 +1364,11 @@
               >Dashboard</a
             >
             <span class="breadcrumb-separator">›</span>
-            <a href="#" class="breadcrumb-link" onclick="navigate('customers')"
-              >Customers</a
+            <a href="#" class="breadcrumb-link" onclick="navigate('search')"
+              >Search</a
             >
             <span class="breadcrumb-separator">›</span>
-            <span class="breadcrumb-current">James</span>
+            <span class="breadcrumb-current">Cody</span>
           </div>
 
           <!-- Header Actions -->
@@ -1343,27 +1384,27 @@
       <!-- Main Content -->
       <main class="main-content">
         <div class="content-wrapper">
-          <!-- Customer Header -->
-          <div class="customer-header">
-            <div class="customer-avatar-large">J</div>
-            <div class="customer-info">
-              <div class="customer-title">
-                <h1 class="customer-name">James</h1>
-                <span class="status-badge status-legacy">Legacy Customer</span>
+          <!-- Animal Header -->
+          <div class="animal-header">
+            <div class="animal-avatar-large">C</div>
+            <div class="animal-info">
+              <div class="animal-title">
+                <h1 class="animal-name">Cody</h1>
+                <span class="status-badge status-active">Active</span>
               </div>
 
-              <div class="customer-meta">
+              <div class="animal-meta">
                 <div class="meta-item">
-                  <span class="meta-label">Customer Since</span>
-                  <span class="meta-value">2015</span>
+                  <span class="meta-label">Breed</span>
+                  <span class="meta-value">Jack Russell Long Coat</span>
                 </div>
                 <div class="meta-item">
-                  <span class="meta-label">Primary Phone</span>
-                  <span class="meta-value">0428111261</span>
+                  <span class="meta-label">Color</span>
+                  <span class="meta-value">White and gold</span>
                 </div>
                 <div class="meta-item">
-                  <span class="meta-label">Animals</span>
-                  <span class="meta-value">1 Pet</span>
+                  <span class="meta-label">Owner</span>
+                  <span class="meta-value">James</span>
                 </div>
                 <div class="meta-item">
                   <span class="meta-label">Last Visit</span>
@@ -1371,8 +1412,8 @@
                 </div>
               </div>
 
-              <div class="customer-actions">
-                <button class="btn btn-primary" onclick="editCustomer()">
+              <div class="animal-actions">
+                <button class="btn btn-primary" onclick="editAnimal()">
                   <svg
                     width="16"
                     height="16"
@@ -1383,9 +1424,9 @@
                       d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
                     />
                   </svg>
-                  Edit Customer
+                  Edit Details
                 </button>
-                <button class="btn btn-success" onclick="addAnimal()">
+                <button class="btn btn-success" onclick="addService()">
                   <svg
                     width="16"
                     height="16"
@@ -1394,7 +1435,7 @@
                   >
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
-                  Add Animal
+                  Add Service
                 </button>
                 <button class="btn btn-secondary" onclick="viewHistory()">
                   <svg
@@ -1417,7 +1458,7 @@
           <div class="content-grid">
             <!-- Main Column -->
             <div class="main-column">
-              <!-- Customer Details Card -->
+              <!-- Animal Details Card -->
               <div class="card">
                 <div class="card-header">
                   <h2 class="card-title">
@@ -1427,14 +1468,14 @@
                       fill="currentColor"
                     >
                       <path
-                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                        d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
                       />
                     </svg>
-                    Customer Information
+                    Animal Details
                   </h2>
                   <button
                     class="btn btn-secondary btn-small"
-                    onclick="editCustomer()"
+                    onclick="editAnimal()"
                   >
                     <svg
                       width="14"
@@ -1452,96 +1493,103 @@
                 <div class="card-content">
                   <div class="form-grid">
                     <div class="form-group">
-                      <label class="form-label">First Name</label>
+                      <label class="form-label">Animal Name</label>
                       <input
                         type="text"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="Not provided"
+                        class="form-input"
+                        value="Cody"
                         readonly
                       />
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Surname</label>
+                      <label class="form-label">Breed</label>
+                      <select class="form-select" disabled>
+                        <option selected>Jack Russell Long Coat</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Sex</label>
+                      <select class="form-select" disabled>
+                        <option selected>Male</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Color</label>
                       <input
                         type="text"
                         class="form-input"
-                        value="James"
+                        value="White and gold"
                         readonly
                       />
                     </div>
+                    <div class="form-group">
+                      <label class="form-label">Cost ($)</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        value="60"
+                        readonly
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Last Visit</label>
+                      <div class="date-input-group">
+                        <input
+                          type="text"
+                          class="form-input"
+                          value="25-05-2021"
+                          readonly
+                        />
+                        <button class="date-picker-btn" disabled>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">This Visit</label>
+                      <div class="date-input-group">
+                        <input
+                          type="text"
+                          class="form-input"
+                          value="10-09-2021"
+                          readonly
+                        />
+                        <button class="date-picker-btn" disabled>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                     <div class="form-group full-width">
-                      <label class="form-label">Address</label>
+                      <label class="form-label">Comments</label>
                       <textarea
-                        class="form-textarea empty-state"
-                        placeholder="No address provided"
+                        class="form-textarea"
                         readonly
+                        placeholder="No comments yet..."
                       ></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Suburb</label>
-                      <input
-                        type="text"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="Not provided"
-                        readonly
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Postcode</label>
-                      <input
-                        type="text"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="Not provided"
-                        readonly
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Phone 1</label>
-                      <input
-                        type="text"
-                        class="form-input"
-                        value="0428111261"
-                        readonly
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Phone 2</label>
-                      <input
-                        type="text"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="Not provided"
-                        readonly
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Phone 3</label>
-                      <input
-                        type="text"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="Not provided"
-                        readonly
-                      />
-                    </div>
-                    <div class="form-group full-width">
-                      <label class="form-label">Email</label>
-                      <input
-                        type="email"
-                        class="form-input empty-state"
-                        value=""
-                        placeholder="No email provided"
-                        readonly
-                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Associated Animals Card -->
+              <!-- Service History Card -->
               <div class="card">
                 <div class="card-header">
                   <h2 class="card-title">
@@ -1551,14 +1599,14 @@
                       fill="currentColor"
                     >
                       <path
-                        d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                        d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
                       />
                     </svg>
-                    Associated Animals (1)
+                    Recent Service History
                   </h2>
                   <button
-                    class="btn btn-success btn-small"
-                    onclick="addAnimal()"
+                    class="btn btn-secondary btn-small"
+                    onclick="viewHistory()"
                   >
                     <svg
                       width="14"
@@ -1566,25 +1614,28 @@
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
-                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                      />
                     </svg>
-                    Add Animal
+                    View All
                   </button>
                 </div>
                 <div class="card-content">
-                  <div class="animals-grid">
-                    <div class="animal-card" onclick="viewAnimal(1)">
-                      <div class="animal-card-header">
-                        <div class="animal-info">
-                          <div class="animal-avatar">C</div>
-                          <div class="animal-details">
-                            <h4>Cody</h4>
-                            <p>Jack Russell Long Coat</p>
-                          </div>
+                  <div class="service-history">
+                    <div class="service-item">
+                      <div class="service-date">10-09-2021</div>
+                      <div class="service-details">
+                        <div class="service-description">
+                          Full clip 3 legs 7 short ears & face leave top knot
                         </div>
+                        <div class="service-meta">Technician: CC</div>
+                      </div>
+                      <div class="service-cost">$60</div>
+                      <div class="service-actions">
                         <button
                           class="btn btn-danger btn-small"
-                          onclick="deleteAnimal(1, event)"
+                          onclick="deleteService(1)"
                         >
                           <svg
                             width="12"
@@ -1593,31 +1644,134 @@
                             fill="currentColor"
                           >
                             <path
-                              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
                             />
                           </svg>
                         </button>
                       </div>
+                    </div>
 
-                      <div class="animal-card-content">
-                        <div class="info-item">
-                          <span class="info-label">Color</span>
-                          <span class="info-value">White and gold</span>
+                    <div class="service-item">
+                      <div class="service-date">25-05-2021</div>
+                      <div class="service-details">
+                        <div class="service-description">
+                          Full clip 3 short ears and face
                         </div>
-                        <div class="info-item">
-                          <span class="info-label">Sex</span>
-                          <span class="info-value">Male</span>
-                        </div>
-                        <div class="info-item">
-                          <span class="info-label">Last Visit</span>
-                          <span class="info-value">Sep 10, 2021</span>
-                        </div>
-                        <div class="info-item">
-                          <span class="info-label">Service Cost</span>
-                          <span class="info-value">$60</span>
-                        </div>
+                        <div class="service-meta">Technician: bb</div>
+                      </div>
+                      <div class="service-cost">-</div>
+                      <div class="service-actions">
+                        <button
+                          class="btn btn-danger btn-small"
+                          onclick="deleteService(2)"
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
+
+                    <div class="service-item">
+                      <div class="service-date">08-12-2020</div>
+                      <div class="service-details">
+                        <div class="service-description">
+                          Full clip 5 short ears and face
+                        </div>
+                        <div class="service-meta">Technician: BB</div>
+                      </div>
+                      <div class="service-cost">-</div>
+                      <div class="service-actions">
+                        <button
+                          class="btn btn-danger btn-small"
+                          onclick="deleteService(3)"
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="service-item">
+                      <div class="service-date">08-11-2019</div>
+                      <div class="service-details">
+                        <div class="service-description">
+                          Full clip 5 short ears and face
+                        </div>
+                        <div class="service-meta">Technician: bb</div>
+                      </div>
+                      <div class="service-cost">$55</div>
+                      <div class="service-actions">
+                        <button
+                          class="btn btn-danger btn-small"
+                          onclick="deleteService(4)"
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add New Service Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <svg
+                      class="card-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                    Add New Service Note
+                  </h2>
+                </div>
+                <div class="card-content">
+                  <div class="add-service-form">
+                    <div class="form-group">
+                      <label class="form-label">Service Details</label>
+                      <textarea
+                        class="form-textarea"
+                        placeholder="Enter detailed service notes (e.g., Full clip 3 short ears and face, leave top knot)"
+                      ></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="addServiceNote()">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                      </svg>
+                      Insert Service Note
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1625,7 +1779,7 @@
 
             <!-- Sidebar Column -->
             <div class="sidebar-column">
-              <!-- Contact Information Card -->
+              <!-- Customer Information Card -->
               <div class="card">
                 <div class="card-header">
                   <h2 class="card-title">
@@ -1635,10 +1789,10 @@
                       fill="currentColor"
                     >
                       <path
-                        d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
                       />
                     </svg>
-                    Contact Details
+                    Owner Information
                   </h2>
                   <button
                     class="btn btn-secondary btn-small"
@@ -1658,66 +1812,71 @@
                   </button>
                 </div>
                 <div class="card-content">
-                  <ul class="contact-list">
-                    <li class="contact-item">
+                  <div class="customer-info">
+                    <div class="customer-header">
+                      <div class="customer-avatar">J</div>
+                      <div class="customer-details">
+                        <h3>James</h3>
+                        <p>Customer since 2015</p>
+                      </div>
+                    </div>
+
+                    <ul class="contact-list">
+                      <li class="contact-item">
+                        <svg
+                          class="contact-icon"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                          />
+                        </svg>
+                        <span>0428111261</span>
+                      </li>
+                      <li class="contact-item">
+                        <svg
+                          class="contact-icon"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                          />
+                        </svg>
+                        <span>Address not provided</span>
+                      </li>
+                      <li class="contact-item">
+                        <svg
+                          class="contact-icon"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                          />
+                        </svg>
+                        <span>Email not provided</span>
+                      </li>
+                    </ul>
+
+                    <button
+                      class="btn btn-primary"
+                      onclick="viewCustomerProfile()"
+                    >
                       <svg
-                        class="contact-icon"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                       >
                         <path
-                          d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
                         />
                       </svg>
-                      <span class="contact-text">0428111261</span>
-                      <a href="tel:0428111261" class="contact-action">Call</a>
-                    </li>
-                    <li class="contact-item">
-                      <svg
-                        class="contact-icon"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.2c.27-.28.35-.67.24-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM19 12h2c0-4.97-4.03-9-9-9v2c3.87 0 7 3.13 7 7z"
-                        />
-                      </svg>
-                      <span class="contact-text">No secondary phone</span>
-                      <span class="contact-action" style="opacity: 0.5"
-                        >Add</span
-                      >
-                    </li>
-                    <li class="contact-item">
-                      <svg
-                        class="contact-icon"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                        />
-                      </svg>
-                      <span class="contact-text">No address provided</span>
-                      <span class="contact-action" style="opacity: 0.5"
-                        >Add</span
-                      >
-                    </li>
-                    <li class="contact-item">
-                      <svg
-                        class="contact-icon"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
-                        />
-                      </svg>
-                      <span class="contact-text">No email provided</span>
-                      <span class="contact-action" style="opacity: 0.5"
-                        >Add</span
-                      >
-                    </li>
-                  </ul>
+                      View Full Profile
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1734,32 +1893,32 @@
                         d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
                       />
                     </svg>
-                    Customer Statistics
+                    Quick Stats
                   </h2>
                 </div>
                 <div class="card-content">
                   <div class="quick-stats">
                     <div class="stat-item">
-                      <span class="stat-number">10+</span>
-                      <span class="stat-label">Years Active</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number">1</span>
-                      <span class="stat-label">Animals</span>
-                    </div>
-                    <div class="stat-item">
-                      <span class="stat-number">15+</span>
+                      <span class="stat-number">15</span>
                       <span class="stat-label">Total Visits</span>
                     </div>
                     <div class="stat-item">
-                      <span class="stat-number">$850+</span>
-                      <span class="stat-label">Total Spent</span>
+                      <span class="stat-number">6.2</span>
+                      <span class="stat-label">Years Active</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">$57</span>
+                      <span class="stat-label">Avg Cost</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-number">92d</span>
+                      <span class="stat-label">Days Since</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Quick Actions Card -->
+              <!-- Action Buttons Card -->
               <div class="card">
                 <div class="card-header">
                   <h2 class="card-title">
@@ -1783,7 +1942,7 @@
                       gap: var(--space-3);
                     "
                   >
-                    <button class="btn btn-primary" onclick="updateCustomer()">
+                    <button class="btn btn-warning" onclick="updateRecords()">
                       <svg
                         width="16"
                         height="16"
@@ -1796,21 +1955,7 @@
                       </svg>
                       Update Record
                     </button>
-                    <button class="btn btn-success" onclick="addAnimal()">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                      </svg>
-                      Add New Animal
-                    </button>
-                    <button
-                      class="btn btn-secondary"
-                      onclick="viewAllAnimals()"
-                    >
+                    <button class="btn btn-secondary" onclick="changeDates()">
                       <svg
                         width="16"
                         height="16"
@@ -1818,12 +1963,12 @@
                         fill="currentColor"
                       >
                         <path
-                          d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z"
+                          d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
                         />
                       </svg>
-                      View All Animals
+                      Change Dates
                     </button>
-                    <button class="btn btn-warning" onclick="customerHistory()">
+                    <button class="btn btn-primary" onclick="viewAllNotes()">
                       <svg
                         width="16"
                         height="16"
@@ -1831,23 +1976,10 @@
                         fill="currentColor"
                       >
                         <path
-                          d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+                          d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"
                         />
                       </svg>
-                      Customer History
-                    </button>
-                    <button class="btn btn-danger" onclick="deleteCustomer()">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path
-                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
-                        />
-                      </svg>
-                      Delete Customer
+                      All Animal Notes
                     </button>
                   </div>
                 </div>
@@ -1914,8 +2046,8 @@
         alert(`Navigating to ${section}...`)
       }
 
-      // Customer management functions
-      function editCustomer() {
+      // Animal management functions
+      function editAnimal() {
         // Enable form fields for editing
         const inputs = document.querySelectorAll(
           '.form-input, .form-select, .form-textarea'
@@ -1925,81 +2057,113 @@
           input.removeAttribute('disabled')
         })
 
-        alert('Edit mode enabled. You can now modify the customer details.')
+        // Enable date picker buttons
+        const dateButtons = document.querySelectorAll('.date-picker-btn')
+        dateButtons.forEach(btn => {
+          btn.removeAttribute('disabled')
+        })
+
+        alert('Edit mode enabled. You can now modify the animal details.')
       }
 
-      function addAnimal() {
-        alert(
-          'Opening Add Animal form for James...\n\nThis would allow adding a new pet to this customer record with:\n• Animal name and breed selection\n• Physical characteristics\n• Initial service details\n• Visit scheduling'
-        )
+      function addService() {
+        const textarea = document.querySelector('.add-service-form textarea')
+        textarea.focus()
+        textarea.placeholder =
+          'Enter service details (e.g., Full clip 3 short ears and face leave top knot CC $60)'
       }
 
       function viewHistory() {
         alert(
-          'Opening complete customer history for James...\n\nThis would display:\n• All animals owned\n• Complete visit timeline\n• Service history across all pets\n• Payment records\n• Customer relationship timeline'
+          'Opening complete service history for Cody...\n\nThis would display all historical service records from 2015 to present.'
         )
       }
 
-      function viewAnimal(animalId) {
-        alert(
-          'Opening detailed animal record for Cody...\n\nThis would display:\n• Complete animal profile\n• Full service history (2015-2021)\n• Grooming specifications\n• Visit scheduling\n• Service notes and pricing'
-        )
-      }
+      function addServiceNote() {
+        const textarea = document.querySelector('.add-service-form textarea')
+        const serviceText = textarea.value.trim()
 
-      function deleteAnimal(animalId, event) {
-        event.stopPropagation() // Prevent card click
-
-        if (
-          confirm(
-            "Are you sure you want to remove Cody from this customer record?\n\nThis will:\n• Remove the animal from James' account\n• Preserve service history\n• Allow reassignment to another customer if needed"
-          )
-        ) {
-          alert('Animal removed from customer record.')
+        if (!serviceText) {
+          alert('Please enter service details before adding.')
+          return
         }
+
+        // Get current date
+        const now = new Date()
+        const dateStr = now.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+
+        // Create new service item
+        const serviceHistory = document.querySelector('.service-history')
+        const newService = document.createElement('div')
+        newService.className = 'service-item'
+        newService.innerHTML = `
+                <div class="service-date">${dateStr}</div>
+                <div class="service-details">
+                    <div class="service-description">${serviceText}</div>
+                    <div class="service-meta">Technician: Current User</div>
+                </div>
+                <div class="service-cost">-</div>
+                <div class="service-actions">
+                    <button class="btn btn-danger btn-small" onclick="deleteService(this)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+            `
+
+        // Insert at the beginning of service history
+        serviceHistory.insertBefore(newService, serviceHistory.firstChild)
+
+        // Clear the textarea
+        textarea.value = ''
+
+        // Show success message
+        alert('Service note added successfully!')
+      }
+
+      function deleteService(element) {
+        if (confirm('Are you sure you want to delete this service record?')) {
+          const serviceItem = element.closest('.service-item')
+          serviceItem.remove()
+          alert('Service record deleted.')
+        }
+      }
+
+      // Customer functions
+      function editCustomer() {
+        alert(
+          'Opening customer edit form for James...\n\nThis would allow editing customer contact information.'
+        )
+      }
+
+      function viewCustomerProfile() {
+        alert(
+          'Opening full customer profile for James...\n\nThis would display:\n• Complete contact information\n• All associated animals\n• Visit history\n• Payment records'
+        )
       }
 
       // Action functions
-      function updateCustomer() {
+      function updateRecords() {
         alert(
-          'Updating customer record...\n\nThis would save any changes made to:\n• Contact information\n• Address details\n• Phone numbers\n• Email address'
+          'Updating animal record...\n\nThis would save any changes made to the animal details.'
         )
       }
 
-      function viewAllAnimals() {
+      function changeDates() {
         alert(
-          'Viewing all animals for James...\n\nCurrently showing:\n• Cody (Jack Russell Long Coat)\n\nThis would display detailed cards for all associated pets.'
+          'Opening date change interface...\n\nThis would allow updating Last Visit and This Visit dates with calendar pickers.'
         )
       }
 
-      function customerHistory() {
+      function viewAllNotes() {
         alert(
-          'Opening comprehensive customer history...\n\nDisplaying:\n• 10+ years of service records\n• Multiple visit timeline\n• Revenue history ($850+ total)\n• Loyalty tracking\n• Service preferences'
+          'Opening complete service history...\n\nDisplaying all service notes for Cody from 2015-2021:\n\n• 15+ service records\n• Detailed grooming specifications\n• Cost history\n• Technician tracking'
         )
-      }
-
-      function deleteCustomer() {
-        if (
-          confirm(
-            '⚠️ WARNING: Delete Customer Record\n\nThis will permanently delete:\n• Customer contact information\n• All associated animals (1 pet)\n• Complete service history\n• 10+ years of business records\n\nThis action CANNOT be undone.\n\nAre you absolutely sure?'
-          )
-        ) {
-          if (
-            confirm(
-              'FINAL CONFIRMATION\n\nYou are about to delete James and all associated records.\n\nType "DELETE" in the next prompt to confirm this permanent action.'
-            )
-          ) {
-            const confirmation = prompt(
-              'Type "DELETE" to permanently remove this customer:'
-            )
-            if (confirmation === 'DELETE') {
-              alert(
-                'Customer record has been permanently deleted.\n\nAll associated data has been removed from the system.'
-              )
-            } else {
-              alert('Deletion cancelled - confirmation text did not match.')
-            }
-          }
-        }
       }
 
       // Close dropdown when clicking outside
@@ -2013,7 +2177,19 @@
       document.addEventListener('DOMContentLoaded', function () {
         updateDate()
 
-        // Add click handlers for contact items
+        // Add hover effects to service items
+        const serviceItems = document.querySelectorAll('.service-item')
+        serviceItems.forEach(item => {
+          item.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateX(4px)'
+          })
+
+          item.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateX(0)'
+          })
+        })
+
+        // Add click handlers for customer contact items
         const contactItems = document.querySelectorAll('.contact-item')
         contactItems.forEach(item => {
           item.addEventListener('click', function () {
@@ -2023,18 +2199,6 @@
             } else if (text.includes('@')) {
               window.location.href = 'mailto:' + text
             }
-          })
-        })
-
-        // Add hover effects to animal cards
-        const animalCards = document.querySelectorAll('.animal-card')
-        animalCards.forEach(card => {
-          card.addEventListener('mouseenter', function () {
-            this.style.transform = 'translateY(-4px)'
-          })
-
-          card.addEventListener('mouseleave', function () {
-            this.style.transform = 'translateY(-2px)'
           })
         })
       })
@@ -2047,13 +2211,13 @@
         // Ctrl/Cmd + E for edit mode
         if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
           e.preventDefault()
-          editCustomer()
+          editAnimal()
         }
 
-        // Ctrl/Cmd + A for add animal
-        if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+        // Ctrl/Cmd + S for add service
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
           e.preventDefault()
-          addAnimal()
+          addService()
         }
 
         // Ctrl/Cmd + H for history
