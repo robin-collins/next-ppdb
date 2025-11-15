@@ -1,31 +1,88 @@
 # Pampered Pooch Database - UI Style Guide
 
-**Version:** 1.0
-**Last Updated:** 2025-11-14
-**Purpose:** Comprehensive design system and implementation guidelines for consistent UI across all pages
+**Version:** 2.0 (Option B: "Soft Luxury" Rebrand)
+**Last Updated:** 2025-11-15
+**Purpose:** Definitive design system and implementation guidelines for creating a warm, playful, premium pet care experience
+
+---
+
+## 🎨 Design Vision
+
+### Brand Identity: "Premium Pet Spa Meets Playful Excellence"
+
+The Pampered Pooch is not just a grooming database—it's a celebration of the joy, care, and love we have for our furry friends. Our design reflects:
+
+- **Warmth & Care** - Like a cozy spa for beloved pets
+- **Professionalism** - Trust and reliability for business operations
+- **Playfulness** - Celebrating the joy pets bring to our lives
+- **Premium Quality** - Reflecting the high-end grooming service experience
+
+This design system escapes generic "tech startup" aesthetics and creates a memorable, contextually appropriate experience for a luxury pet care business.
 
 ---
 
 ## Table of Contents
 
-1. [Design Philosophy](#design-philosophy)
-2. [Constant Elements](#constant-elements)
-3. [Design Tokens](#design-tokens)
-4. [Layout System](#layout-system)
-5. [Component Library](#component-library)
-6. [Typography](#typography)
-7. [Color System](#color-system)
-8. [Spacing & Sizing](#spacing--sizing)
-9. [Shadows & Elevation](#shadows--elevation)
-10. [Animations & Transitions](#animations--transitions)
-11. [Responsive Behavior](#responsive-behavior)
-12. [Glassmorphism Effects](#glassmorphism-effects)
-13. [Interactive States](#interactive-states)
-14. [Icons & Graphics](#icons--graphics)
-15. [Forms & Inputs](#forms--inputs)
-16. [Data Display Patterns](#data-display-patterns)
-17. [Accessibility Guidelines](#accessibility-guidelines)
-18. [Implementation Checklist](#implementation-checklist)
+1. [Brand Assets & Mascot](#brand-assets--mascot)
+2. [Design Philosophy](#design-philosophy)
+3. [**MANDATORY** Universal Elements](#mandatory-universal-elements)
+4. [Design Tokens (Complete Reference)](#design-tokens-complete-reference)
+5. [Typography System](#typography-system)
+6. [Color System](#color-system)
+7. [Layout System](#layout-system)
+8. [Component Library](#component-library)
+9. [Spacing & Sizing](#spacing--sizing)
+10. [Shadows & Elevation](#shadows--elevation)
+11. [Animations & Transitions](#animations--transitions)
+12. [Responsive Behavior](#responsive-behavior)
+13. [Glassmorphism Effects](#glassmorphism-effects)
+14. [Interactive States](#interactive-states)
+15. [Icons & Graphics](#icons--graphics)
+16. [Forms & Inputs](#forms--inputs)
+17. [Data Display Patterns](#data-display-patterns)
+18. [Cartoon Dog Usage Guide](#cartoon-dog-usage-guide)
+19. [Accessibility Guidelines](#accessibility-guidelines)
+20. [Implementation Checklist](#implementation-checklist)
+
+---
+
+## Brand Assets & Mascot
+
+### Primary Logo
+
+**Location:** `/images/logo.png`
+
+![Pampered Pooch Logo](/images/logo.png)
+
+**Usage:**
+
+- Header branding (display at 120px width on desktop, 100px on mobile)
+- Marketing materials
+- Loading screens
+- Email signatures
+
+**Color Extraction from Logo:**
+
+- Golden brown dog: `#d9944a`, `#c97d3d`, `#8b5a2b`
+- Teal green text: `#1b9e7e`, `#2db894`
+- Light aqua bubbles: `#a8e6f0`, `#d4f4f8`
+- Cream accents: `#f4d19b`, `#e8b876`
+
+### Cartoon Dog Mascot
+
+**Available Poses:** 7 unique poses in `/images/` folder
+
+| Pose                       | Filename            | Emotion            | Use Case              |
+| -------------------------- | ------------------- | ------------------ | --------------------- |
+| Relaxed laying             | `CARTOON_DOG_1.png` | Calm, relaxed      | Empty states, waiting |
+| Happy sitting (tongue out) | `CARTOON_DOG_2.png` | Joyful, friendly   | Welcome, success      |
+| Excited sitting            | `CARTOON_DOG_3.png` | Eager, happy       | Confirmation, alerts  |
+| Running/jumping            | `CARTOON_DOG_4.png` | Energetic, playful | Loading, processing   |
+| Playful laying             | `CARTOON_DOG_5.png` | Content, resting   | Idle states           |
+| Running fast               | `CARTOON_DOG_6.png` | Active, busy       | Background processes  |
+| Standing happy             | `CARTOON_DOG_7.png` | Welcoming, ready   | CTAs, invitations     |
+
+See [Cartoon Dog Usage Guide](#cartoon-dog-usage-guide) for detailed implementation patterns.
 
 ---
 
@@ -33,193 +90,198 @@
 
 ### Core Principles
 
-1. **Modern Glassmorphic Aesthetic**
-   - Semi-transparent surfaces with backdrop blur
-   - Layered depth through shadows and transparency
-   - Vibrant animated gradient background
+1. **Warm Luxury Aesthetic**
+   - Soft, welcoming color palette derived from logo
+   - Organic, rounded shapes (no harsh angles)
+   - Gentle animations with bouncy easing
+   - Generous spacing that feels premium
 
 2. **Professional Yet Approachable**
-   - Clean, spacious layouts
-   - Friendly rounded corners throughout
-   - Subtle animations that enhance UX without distraction
+   - Clean layouts with clear hierarchy
+   - Trustworthy teal greens for business actions
+   - Playful golden browns for delight moments
+   - Typography that's elegant but readable
 
-3. **Information Hierarchy**
-   - Clear visual distinction between primary, secondary, and tertiary content
-   - Consistent use of spacing to group related information
-   - Strategic use of color to highlight important actions
+3. **Pet-Centric Design Language**
+   - Cartoon dog mascot brings personality
+   - Paw print patterns (subtle, tasteful)
+   - Organic shapes reminiscent of bubbles (grooming theme)
+   - Warm, nurturing color temperature
 
-4. **Consistency First**
-   - Shared design tokens across all pages
+4. **Consistency Through Tokens**
+   - All design values defined as CSS variables
    - Reusable component patterns
+   - Mandatory elements on every page
    - Predictable interaction behaviors
+
+### Design Differentiation
+
+**What makes this NOT generic:**
+
+- ✅ Distinctive typography (Cormorant + DM Sans, NOT Inter)
+- ✅ Brand-authentic colors from actual logo
+- ✅ Contextual mascot usage throughout
+- ✅ Warm, organic aesthetic (not cold corporate)
+- ✅ Playful micro-interactions
+- ✅ Pet spa theme (bubbles, paws, warmth)
+
+**What we avoid:**
+
+- ❌ Overused tech fonts (Inter, Roboto, System UI)
+- ❌ Purple-blue gradients (generic SaaS look)
+- ❌ Cold, clinical layouts
+- ❌ Cookie-cutter component libraries
+- ❌ Predictable, boring interactions
 
 ---
 
-## Constant Elements
+## MANDATORY Universal Elements
 
-### Elements That MUST Remain Consistent Across All Pages
+### ⚠️ CRITICAL: Required on EVERY Page
+
+The following elements MUST appear on every single page of the application. No exceptions.
 
 #### 1. Header Navigation Bar
 
+**Status:** MANDATORY - Must be included in every page layout
+**Component:** `src/components/Header.tsx`
+
+**Features:**
+
+- Hamburger menu toggle (left side)
+- Brand logo (clickable, returns to home)
+- Search bar (contextual, may be read-only on some pages)
+- Live date/time display (updates every second)
+- Breadcrumb navigation (page-specific)
+
 **Structure:**
 
-```html
-<header class="app-header">
-  <div class="header-content">
-    <!-- Hamburger Menu -->
-    <div class="hamburger-menu">...</div>
+```tsx
+import Header from '@/components/Header'
 
-    <!-- Brand Logo -->
-    <div class="brand-header">...</div>
+export default function YourPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
-    <!-- Breadcrumb (page-specific) -->
-    <div class="breadcrumb">...</div>
+  return (
+    <div className="flex min-h-screen flex-col">
+      {/* MANDATORY: Header must be first */}
+      <Header
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        sidebarOpen={sidebarOpen}
+        onSearch={handleSearch}
+        searchValue={searchQuery}
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Current Page', current: true },
+        ]}
+      />
 
-    <!-- Header Actions -->
-    <div class="header-actions">
-      <div class="date-display" id="currentDate"></div>
+      {/* Rest of page content */}
     </div>
-  </div>
-</header>
-```
-
-**Styling:**
-
-```css
-.app-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding: var(--space-4) var(--space-6);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-md);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  max-width: 1400px;
-  margin: 0 auto;
+  )
 }
 ```
 
-**Components:**
+**Visual Requirements:**
 
-- **Hamburger Button:** 3-line icon, 20px wide, 2px height per line, 4px gap
-- **Brand Logo:** 40px × 40px gradient circle with dog icon, "Pampered Pooch" text beside
-- **Breadcrumb:** Dynamic navigation path with `›` separators
-- **Date Display:** Live updating date/time in pill shape with primary-light background
+- Height: `92px` (fixed, consistent across all pages)
+- Background: White with `backdrop-filter: blur(20px)`
+- Position: `sticky` to top, `z-index: 100`
+- Border bottom: `1px solid var(--gray-200)`
+- Box shadow: `var(--shadow-md)`
 
-#### 2. Hamburger Menu & Sidebar
+#### 2. Hamburger Menu Sidebar
 
-**Hamburger Animation:**
+**Status:** MANDATORY - Must be included in every page layout
+**Component:** `src/components/Sidebar.tsx`
 
-```css
-.hamburger {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  cursor: pointer;
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  transition: all 0.2s ease;
-  background: var(--gray-100);
-}
+**Features:**
 
-.hamburger span {
-  width: 20px;
-  height: 2px;
-  background: var(--gray-700);
-  border-radius: 1px;
-  transition: all 0.3s ease;
-}
+- Collapsible navigation menu
+- Pinnable on desktop (shifts content)
+- Overlay mode on mobile
+- Resizable width (200px - 500px)
+- 6 navigation items (Dashboard, Search, Add Customer, Breeds, Analytics, History)
+- Active state highlighting
+- Live date display at bottom
 
-/* Active state (X icon) */
-.hamburger.active span:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
-}
+**Structure:**
 
-.hamburger.active span:nth-child(2) {
-  opacity: 0;
-}
+```tsx
+import Sidebar from '@/components/Sidebar'
 
-.hamburger.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
-}
-```
+export default function YourPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarPinned, setSidebarPinned] = useState(false)
 
-**Sidebar Dropdown:**
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header {...} />
 
-```css
-.nav-dropdown {
-  position: absolute;
-  top: calc(100% + var(--space-2));
-  left: 0;
-  background: white;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  min-width: 280px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  z-index: 200;
-}
+      {/* MANDATORY: Sidebar must be after header */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        isPinned={sidebarPinned}
+        onClose={() => setSidebarOpen(false)}
+        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        currentPath="/your-page-path"
+      />
 
-.nav-dropdown.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+      {/* Main content shifts when pinned */}
+      <main className={sidebarPinned ? 'ml-[calc(var(--sidebar-width)+1.5rem)]' : ''}>
+        {/* Page content */}
+      </main>
+    </div>
+  )
 }
 ```
 
-**Navigation Links:**
+**Visual Requirements:**
 
-- 6 standard menu items (Dashboard, Search Animals, Add Customer, Manage Breeds, Daily Analytics, Customer History)
-- Active state: `background: var(--primary-light)`, `color: var(--primary)`, `font-weight: 600`
-- Hover state: `background: var(--gray-100)`, `color: var(--gray-900)`
-- Icon + text layout with 18px × 18px icons
+- Default width: `280px` (resizable)
+- Background: White `rgba(255, 255, 255, 0.98)` with `backdrop-filter: blur(20px)`
+- Border right: `1px solid var(--gray-200)`
+- Shadow: `var(--shadow-xl)`
+- Header matches main header height: `92px`
 
-#### 3. Background Gradient
+#### 3. Animated Gradient Background
 
-**MUST be present on all pages:**
+**Status:** MANDATORY - Must be on body element of every page
+**Location:** `src/app/globals.css`
+
+**Implementation:**
 
 ```css
 body {
-  font-family: var(--font-family);
+  font-family: var(--font-body);
   background: linear-gradient(
-    135deg,
-    #667eea 0%,
-    #764ba2 25%,
-    #6366f1 50%,
-    #06b6d4 75%,
-    #10b981 100%
+    160deg,
+    #fef9f5 0%,
+    /* Warm cream */ #f8f2ec 25%,
+    /* Peachy beige */ #f0ebe6 50%,
+    /* Soft tan */ #e8f4f2 75%,
+    /* Pale mint */ #f5fbfa 100% /* Light aqua */
   );
   background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  animation: gradientShift 20s ease infinite;
   min-height: 100vh;
   color: var(--gray-800);
   overflow-x: hidden;
 }
 
 @keyframes gradientShift {
-  0% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
   }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 ```
 
-**Background Pattern Overlay:**
+**Pattern Overlay:**
 
 ```css
 body::after {
@@ -229,53 +291,74 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-    repeat;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 0;
+  opacity: 0.6;
 }
 ```
 
+_Note: The pattern overlay uses subtle paw prints in teal, matching brand identity._
+
 ---
 
-## Design Tokens
+## Design Tokens (Complete Reference)
 
 ### CSS Custom Properties
 
-**MUST be included in `:root` of every page:**
+**Location:** `src/app/globals.css` (must be in `:root` selector)
 
 ```css
 :root {
-  /* Modern Color Palette */
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-light: #e0e7ff;
-  --primary-dark: #3730a3;
-  --secondary: #06b6d4;
-  --secondary-hover: #0891b2;
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  /* === TYPOGRAPHY === */
+  --font-display: 'Cormorant', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Outfit', -apple-system, sans-serif;
+  --font-family: var(--font-body); /* Legacy fallback */
 
-  /* Neutrals */
+  /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+  --primary: #d9944a; /* Golden brown - main brand color */
+  --primary-hover: #c97d3d; /* Darker brown on hover */
+  --primary-light: #fef4e8; /* Very light peach for backgrounds */
+  --primary-dark: #8b5a2b; /* Deep brown for contrast */
+
+  /* === SECONDARY COLORS (From Logo - Teal Green) === */
+  --secondary: #1b9e7e; /* Teal green - trust, nature */
+  --secondary-hover: #178a6c; /* Darker teal on hover */
+  --secondary-light: #e6f7f3; /* Pale mint for backgrounds */
+  --secondary-dark: #0f6652; /* Deep teal for text */
+
+  /* === ACCENT COLORS (From Logo - Light Aqua) === */
+  --accent: #2db894; /* Bright teal - CTAs, highlights */
+  --accent-hover: #24a382; /* Darker on hover */
+  --accent-light: #d4f4f8; /* Pale aqua - subtle backgrounds */
+  --accent-bubbles: #a8e6f0; /* Bubble effect color */
+
+  /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+  --cream: #f4d19b; /* Warm cream */
+  --tan: #e8b876; /* Golden tan */
+  --peach: #f9e5d0; /* Soft peach */
+
+  /* === SEMANTIC COLORS === */
+  --success: #2db894; /* Use accent teal for success */
+  --warning: #e8b876; /* Use tan for warnings */
+  --error: #d97066; /* Muted coral red */
+  --info: #a8e6f0; /* Light aqua for info */
+
+  /* === NEUTRAL COLORS (Warmer Grays) === */
   --white: #ffffff;
-  --gray-50: #f8fafc;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1e293b;
-  --gray-900: #0f172a;
+  --gray-50: #faf8f6; /* Warm white */
+  --gray-100: #f2ebe5; /* Cream beige */
+  --gray-200: #e8dfd7; /* Light tan */
+  --gray-300: #d4c7bb; /* Medium tan */
+  --gray-400: #a89b8f; /* Warm gray */
+  --gray-500: #7d7169; /* Medium brown-gray */
+  --gray-600: #5d544d; /* Dark brown-gray */
+  --gray-700: #3d3935; /* Very dark brown */
+  --gray-800: #2a2622; /* Almost black brown */
+  --gray-900: #1a1614; /* Darkest brown */
 
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-  /* Spacing Scale */
+  /* === SPACING SCALE === */
   --space-1: 0.25rem; /* 4px */
   --space-2: 0.5rem; /* 8px */
   --space-3: 0.75rem; /* 12px */
@@ -286,16 +369,19 @@ body::after {
   --space-10: 2.5rem; /* 40px */
   --space-12: 3rem; /* 48px */
   --space-16: 4rem; /* 64px */
+  --space-20: 5rem; /* 80px */
+  --space-24: 6rem; /* 96px */
 
-  /* Border Radius */
-  --radius-sm: 0.375rem; /* 6px */
-  --radius-md: 0.5rem; /* 8px */
-  --radius-lg: 0.75rem; /* 12px */
-  --radius-xl: 1rem; /* 16px */
-  --radius-2xl: 1.5rem; /* 24px */
-  --radius-full: 9999px;
+  /* === BORDER RADIUS (Softer, More Organic) === */
+  --radius-sm: 0.5rem; /* 8px - was 6px */
+  --radius-md: 0.75rem; /* 12px - was 8px */
+  --radius-lg: 1rem; /* 16px - was 12px */
+  --radius-xl: 1.5rem; /* 24px - was 16px */
+  --radius-2xl: 2rem; /* 32px - was 24px */
+  --radius-3xl: 2.5rem; /* 40px - new! */
+  --radius-full: 9999px; /* Full pill shape */
 
-  /* Shadows */
+  /* === SHADOWS & ELEVATION === */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg:
@@ -303,7 +389,282 @@ body::after {
   --shadow-xl:
     0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Brand-colored shadows for special elements */
+  --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+  --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+  --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+
+  /* === LAYOUT CONSTANTS === */
+  --sidebar-width: 280px;
+  --header-height: 92px;
+  --max-content-width: 1400px;
+
+  /* === ANIMATION DURATIONS === */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  /* === ANIMATION EASINGS === */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* === Z-INDEX SCALE === */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 100;
+  --z-overlay: 150;
+  --z-sidebar: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
 }
+```
+
+---
+
+## Typography System
+
+### Font Stack
+
+**Display Font (Headings):** Cormorant
+**Body Font:** DM Sans
+**UI/Accent Font:** Outfit
+
+**Import (in `src/app/globals.css`):**
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+```
+
+### Typography Application
+
+```css
+/* Headings use elegant serif */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+/* Body text uses warm sans-serif */
+body,
+p,
+li,
+td,
+th {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+/* UI elements (buttons, badges, labels) use geometric sans */
+button,
+.btn,
+.badge,
+label,
+input,
+select,
+textarea {
+  font-family: var(--font-accent);
+  letter-spacing: 0.01em;
+}
+```
+
+### Type Scale
+
+| Element           | Font      | Size            | Weight | Line Height | Use Case                  |
+| ----------------- | --------- | --------------- | ------ | ----------- | ------------------------- |
+| **Page Title**    | Cormorant | 2.5rem (40px)   | 700    | 1.2         | Main page headers         |
+| **Large Title**   | Cormorant | 2rem (32px)     | 600    | 1.3         | Section headers           |
+| **Section Title** | Cormorant | 1.5rem (24px)   | 600    | 1.4         | Card headers, subsections |
+| **Subsection**    | Cormorant | 1.25rem (20px)  | 600    | 1.4         | Card titles               |
+| **Body Large**    | DM Sans   | 1.125rem (18px) | 500    | 1.6         | Important body text       |
+| **Body**          | DM Sans   | 1rem (16px)     | 400    | 1.6         | Standard body text        |
+| **Body Bold**     | DM Sans   | 1rem (16px)     | 600    | 1.6         | Emphasized text           |
+| **Small**         | Outfit    | 0.875rem (14px) | 500    | 1.5         | Labels, metadata          |
+| **Extra Small**   | Outfit    | 0.75rem (12px)  | 600    | 1.4         | Tags, badges, captions    |
+
+### Typography Patterns
+
+**Page Headers:**
+
+```css
+.page-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 var(--space-2) 0;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--gray-600);
+  margin: 0;
+}
+```
+
+**Card Titles:**
+
+```css
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0;
+}
+```
+
+**Meta Information:**
+
+```css
+.meta-label {
+  font-family: var(--font-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-500);
+}
+
+.meta-value {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+```
+
+---
+
+## Color System
+
+### Primary Palette (Golden Brown - From Logo)
+
+**Source:** Cartoon dog fur in logo
+
+| Variable          | Hex     | RGB                | Use Case                                     |
+| ----------------- | ------- | ------------------ | -------------------------------------------- |
+| `--primary`       | #d9944a | rgb(217, 148, 74)  | Primary buttons, active states, warm accents |
+| `--primary-hover` | #c97d3d | rgb(201, 125, 61)  | Hover states for primary elements            |
+| `--primary-light` | #fef4e8 | rgb(254, 244, 232) | Subtle backgrounds, highlights               |
+| `--primary-dark`  | #8b5a2b | rgb(139, 90, 43)   | Dark text on light backgrounds               |
+
+**Usage:**
+
+- Primary action buttons
+- Active navigation items
+- Decorative accents
+- Loading indicators
+- Success highlights (warm variant)
+
+### Secondary Palette (Teal Green - From Logo)
+
+**Source:** "The Pampered Pooch" text in logo
+
+| Variable            | Hex     | RGB                | Use Case                          |
+| ------------------- | ------- | ------------------ | --------------------------------- |
+| `--secondary`       | #1b9e7e | rgb(27, 158, 126)  | Secondary buttons, trust elements |
+| `--secondary-hover` | #178a6c | rgb(23, 138, 108)  | Hover states                      |
+| `--secondary-light` | #e6f7f3 | rgb(230, 247, 243) | Pale mint backgrounds             |
+| `--secondary-dark`  | #0f6652 | rgb(15, 102, 82)   | Dark text, borders                |
+
+**Usage:**
+
+- Secondary actions
+- Data visualization
+- Trust indicators (verified, secure)
+- Professional elements
+- Information badges
+
+### Accent Palette (Bright Teal - From Logo)
+
+**Source:** Bubbles and bright highlights in logo
+
+| Variable           | Hex     | RGB                | Use Case                           |
+| ------------------ | ------- | ------------------ | ---------------------------------- |
+| `--accent`         | #2db894 | rgb(45, 184, 148)  | CTAs, highlights, playful elements |
+| `--accent-hover`   | #24a382 | rgb(36, 163, 130)  | Hover states                       |
+| `--accent-light`   | #d4f4f8 | rgb(212, 244, 248) | Pale aqua backgrounds              |
+| `--accent-bubbles` | #a8e6f0 | rgb(168, 230, 240) | Bubble effects, overlays           |
+
+**Usage:**
+
+- Important CTAs ("Book Now", "Add New")
+- Success messages
+- Playful decorative elements
+- Bubble effects (theme-appropriate)
+- Links and interactive text
+
+### Gradient Combinations
+
+**Primary Gradient (Golden Warmth):**
+
+```css
+background: linear-gradient(
+  135deg,
+  var(--primary) 0%,
+  var(--primary-dark) 100%
+);
+```
+
+**Secondary Gradient (Teal Trust):**
+
+```css
+background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+```
+
+**Accent Gradient (Aqua Sparkle):**
+
+```css
+background: linear-gradient(
+  135deg,
+  var(--accent-light) 0%,
+  var(--accent-bubbles) 100%
+);
+```
+
+**Brand Gradient (Logo-Inspired Multi-Color):**
+
+```css
+background: linear-gradient(
+  135deg,
+  var(--primary) 0%,
+  var(--accent) 50%,
+  var(--secondary) 100%
+);
+```
+
+**Background Gradient (Subtle Warmth):**
+
+```css
+background: linear-gradient(
+  160deg,
+  #fef9f5 0%,
+  /* Warm cream */ #f8f2ec 25%,
+  /* Peachy beige */ #f0ebe6 50%,
+  /* Soft tan */ #e8f4f2 75%,
+  /* Pale mint */ #f5fbfa 100% /* Light aqua */
+);
+background-size: 400% 400%;
+animation: gradientShift 20s ease infinite;
 ```
 
 ---
@@ -324,10 +685,28 @@ body::after {
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
+  transition: margin-left var(--duration-normal) var(--ease-smooth);
+}
+
+/* When sidebar is pinned */
+.main-content.sidebar-pinned {
+  margin-left: calc(var(--sidebar-width) + var(--space-6));
 }
 
 .content-wrapper {
   padding: var(--space-8);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin: var(--space-4);
+    border-radius: var(--radius-xl);
+  }
+
+  .content-wrapper {
+    padding: var(--space-6);
+  }
 }
 ```
 
@@ -374,18 +753,19 @@ body::after {
   gap: var(--space-4);
 }
 
-/* Responsive: Single column on mobile */
-@media (max-width: 768px) {
-  .results-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* Three-column for smaller items */
 .animals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-4);
+}
+
+/* Responsive: Single column on mobile */
+@media (max-width: 768px) {
+  .results-grid,
+  .animals-grid {
+    grid-template-columns: 1fr;
+  }
 }
 ```
 
@@ -404,11 +784,12 @@ body::after {
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
+  transition: all var(--duration-normal) var(--ease-smooth);
 }
 
 .card:hover {
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 ```
 
@@ -425,8 +806,9 @@ body::after {
 }
 
 .card-title {
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--gray-900);
   margin: 0;
   display: flex;
@@ -449,7 +831,7 @@ body::after {
 }
 ```
 
-**Interactive Card (clickable):**
+**Interactive Card (with brand accent):**
 
 ```css
 .animal-card {
@@ -457,14 +839,14 @@ body::after {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-xl);
   padding: 0;
-  transition: all 0.3s ease;
+  transition: all var(--duration-slow) var(--ease-bounce);
   cursor: pointer;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
 
-/* Accent bar on top */
+/* Accent bar on top - using primary gradient */
 .animal-card::before {
   content: '';
   position: absolute;
@@ -472,24 +854,24 @@ body::after {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   border-radius: 0;
+  transition: height var(--duration-normal) var(--ease-smooth);
 }
 
 .animal-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-primary);
   border-color: var(--primary);
 }
 
 .animal-card:hover::before {
   height: 6px;
-  background: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--secondary) 50%,
-    var(--accent) 100%
-  );
+}
+
+/* Playful avatar rotation on hover */
+.animal-card:hover .animal-avatar {
+  transform: rotate(-5deg) scale(1.1);
 }
 ```
 
@@ -502,41 +884,85 @@ body::after {
   padding: var(--space-3) var(--space-5);
   border: none;
   border-radius: var(--radius-lg);
-  font-family: var(--font-family);
+  font-family: var(--font-accent);
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
+  transition: all var(--duration-normal) var(--ease-smooth);
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   justify-content: center;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 ```
 
 **Button Variants:**
 
 ```css
-/* Primary */
+/* Primary (Golden Brown) */
 .btn-primary {
   background: var(--primary);
   color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Secondary */
+/* Secondary (Teal Green) */
 .btn-secondary {
-  background: var(--gray-100);
-  color: var(--gray-700);
-  border: 1px solid var(--gray-300);
+  background: var(--secondary);
+  color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
+  background: var(--secondary-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* Accent (Bright Teal - CTAs) */
+.btn-accent {
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* Outline */
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary-light);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.btn-ghost:hover {
   background: var(--gray-200);
 }
 
@@ -546,28 +972,16 @@ body::after {
   color: white;
 }
 
-.btn-success:hover {
-  background: #059669;
-}
-
 /* Danger */
 .btn-danger {
   background: var(--error);
   color: white;
 }
 
-.btn-danger:hover {
-  background: #dc2626;
-}
-
 /* Warning */
 .btn-warning {
   background: var(--warning);
   color: white;
-}
-
-.btn-warning:hover {
-  background: var(--accent-hover);
 }
 ```
 
@@ -579,48 +993,71 @@ body::after {
   font-size: 0.75rem;
 }
 
+.btn-large {
+  padding: var(--space-4) var(--space-6);
+  font-size: 1rem;
+}
+
 .btn-icon {
   padding: var(--space-2);
   width: auto;
   height: auto;
+  aspect-ratio: 1;
 }
 ```
 
 ### 3. Avatar Component
 
-**Circular Avatar:**
+**Letter Avatars (with brand gradient):**
 
 ```css
 .animal-avatar {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  font-family: var(--font-accent);
   font-weight: 700;
   font-size: 1.25rem;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-primary);
+  transition: all var(--duration-normal) var(--ease-bounce);
   border: 2px solid white;
 }
 
-/* Large avatar (for headers) */
+/* Large avatar for headers */
 .animal-avatar-large {
   width: 120px;
   height: 120px;
-  background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+  background: linear-gradient(135deg, var(--primary-light), var(--accent));
   border-radius: var(--radius-2xl);
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+}
+
+/* Mascot avatar - uses cartoon dog image */
+.mascot-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: white;
+  padding: var(--space-2);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary);
-  font-size: 3rem;
-  font-weight: 800;
-  box-shadow: var(--shadow-lg);
-  flex-shrink: 0;
+}
+
+.mascot-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 ```
 
@@ -632,10 +1069,14 @@ body::after {
 .status-badge {
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
+  font-family: var(--font-accent);
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 
 .status-active {
@@ -648,8 +1089,13 @@ body::after {
   color: var(--gray-700);
 }
 
-.status-legacy {
+.status-pending {
   background: var(--warning);
+  color: white;
+}
+
+.status-error {
+  background: var(--error);
   color: white;
 }
 ```
@@ -657,34 +1103,28 @@ body::after {
 **Category Badge:**
 
 ```css
-.breed-category {
-  display: inline-block;
-  padding: var(--space-1) var(--space-2);
-  background: var(--secondary);
-  color: white;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.badge-primary {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
 }
 
-.breed-category.dogs {
-  background: var(--primary);
+.badge-secondary {
+  background: var(--secondary-light);
+  color: var(--secondary-dark);
+  border: 1px solid var(--secondary);
 }
 
-.breed-category.cats {
-  background: var(--accent);
-}
-
-.breed-category.other {
-  background: var(--gray-500);
+.badge-accent {
+  background: var(--accent-light);
+  color: var(--secondary-dark);
+  border: 1px solid var(--accent);
 }
 ```
 
 ### 5. Search Component
 
-**Search Bar:**
+**Enhanced Search Bar (Header Style):**
 
 ```css
 .search-bar {
@@ -694,14 +1134,15 @@ body::after {
   background: white;
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-xl);
-  transition: all 0.3s ease;
+  transition: all var(--duration-normal) var(--ease-smooth);
   box-shadow: var(--shadow-sm);
+  height: 53px;
 }
 
 .search-bar:focus-within {
   border-color: var(--primary);
   box-shadow:
-    0 0 0 4px rgba(99, 102, 241, 0.1),
+    0 0 0 4px rgba(217, 148, 74, 0.1),
     var(--shadow-md);
 }
 
@@ -718,47 +1159,15 @@ body::after {
   padding: var(--space-4);
   border: none;
   outline: none;
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 500;
   background: transparent;
   color: var(--gray-800);
-  font-family: var(--font-family);
-}
-```
-
-**Enhanced Search (Landing Page):**
-
-```css
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.98);
-  border: 3px solid transparent;
-  border-radius: var(--radius-2xl);
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-xl);
-  backdrop-filter: blur(10px);
 }
 
-.search-input-wrapper:focus-within {
-  border-color: var(--primary);
-  box-shadow:
-    0 0 0 6px rgba(99, 102, 241, 0.15),
-    var(--shadow-2xl);
-  transform: translateY(-2px);
-}
-
-.smart-search-input {
-  flex: 1;
-  padding: var(--space-6) var(--space-5);
-  border: none;
-  outline: none;
-  font-size: 1.375rem;
-  font-weight: 500;
-  background: transparent;
-  color: var(--gray-800);
-  font-family: var(--font-family);
+.search-input::placeholder {
+  color: var(--gray-400);
 }
 ```
 
@@ -778,9 +1187,15 @@ body::after {
 }
 
 .form-label {
+  font-family: var(--font-accent);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--gray-700);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--error);
 }
 ```
 
@@ -793,10 +1208,11 @@ body::after {
   padding: var(--space-3) var(--space-4);
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-lg);
+  font-family: var(--font-body);
   font-size: 1rem;
-  font-family: var(--font-family);
   background: white;
-  transition: all 0.2s ease;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  color: var(--gray-800);
 }
 
 .form-input:focus,
@@ -804,12 +1220,34 @@ body::after {
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+}
+
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: var(--error);
+}
+
+.form-input.error:focus,
+.form-select.error:focus,
+.form-textarea.error:focus {
+  box-shadow: 0 0 0 3px rgba(217, 102, 102, 0.1);
 }
 
 .form-textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+.error-message {
+  color: var(--error);
+  font-family: var(--font-accent);
+  font-size: 0.875rem;
+  margin-top: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 ```
 
@@ -822,7 +1260,6 @@ body::after {
   gap: var(--space-4);
 }
 
-/* Mobile: Single column */
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
@@ -832,39 +1269,44 @@ body::after {
 
 ### 7. Table Component
 
-**Base Table:**
-
 ```css
-.breed-table {
+.data-table {
   width: 100%;
   border-collapse: collapse;
+  font-family: var(--font-body);
 }
 
-.breed-table th {
+.data-table th {
   background: var(--gray-50);
   padding: var(--space-4);
   text-align: left;
+  font-family: var(--font-accent);
   font-weight: 600;
   font-size: 0.875rem;
   color: var(--gray-700);
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 2px solid var(--gray-200);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.breed-table td {
+.data-table td {
   padding: var(--space-4);
   border-bottom: 1px solid var(--gray-100);
   vertical-align: middle;
+  color: var(--gray-800);
 }
 
-.breed-table tr:hover {
-  background: var(--gray-50);
+.data-table tr:hover {
+  background: var(--primary-light);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
 }
 ```
 
 ### 8. Empty State Component
-
-**Empty State:**
 
 ```css
 .empty-state {
@@ -877,7 +1319,7 @@ body::after {
 
 .empty-state-content {
   text-align: center;
-  max-width: 500px;
+  max-width: 560px;
 }
 
 .empty-icon {
@@ -887,14 +1329,23 @@ body::after {
   justify-content: center;
 }
 
+/* Use cartoon dog for empty state */
+.empty-icon img {
+  width: 120px;
+  height: auto;
+  opacity: 0.6;
+}
+
 .empty-state h2 {
+  font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--gray-800);
   margin-bottom: var(--space-3);
 }
 
 .empty-state p {
+  font-family: var(--font-body);
   font-size: 1.125rem;
   color: var(--gray-600);
   margin-bottom: var(--space-8);
@@ -902,38 +1353,54 @@ body::after {
 }
 ```
 
-### 9. Stat Display Component
-
-**Stat Item:**
+### 9. Loading State Component
 
 ```css
-.stat-item {
-  text-align: center;
-  padding: var(--space-4);
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--gray-200);
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: var(--space-6);
 }
 
-.stat-number {
-  font-size: 1.5rem;
-  font-weight: 800;
+/* Use running dog cartoon for loading */
+.loading-mascot {
+  width: 100px;
+  height: auto;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.loading-text {
+  font-family: var(--font-accent);
+  font-size: 1.125rem;
+  font-weight: 500;
   color: var(--primary);
-  display: block;
 }
 
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 600;
+/* Spinner alternative */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--primary-light);
+  border-top-color: var(--primary);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
 }
 ```
 
 ### 10. Breadcrumb Component
-
-**Breadcrumb Navigation:**
 
 ```css
 .breadcrumb {
@@ -941,6 +1408,7 @@ body::after {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: var(--gray-600);
 }
@@ -949,11 +1417,12 @@ body::after {
   color: var(--primary);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: color var(--duration-fast) var(--ease-smooth);
 }
 
 .breadcrumb-link:hover {
   color: var(--primary-hover);
+  text-decoration: underline;
 }
 
 .breadcrumb-separator {
@@ -968,200 +1437,36 @@ body::after {
 
 ---
 
-## Typography
-
-### Font Stack
-
-**Primary Font:**
-
-```css
---font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-```
-
-**Load Inter Font:**
-
-```html
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-  rel="stylesheet"
-/>
-```
-
-### Type Scale
-
-| Element       | Size            | Weight  | Line Height | Use Case                     |
-| ------------- | --------------- | ------- | ----------- | ---------------------------- |
-| Page Title    | 2.5rem (40px)   | 800     | 1.2         | Main page headers            |
-| Large Title   | 2rem (32px)     | 700     | 1.3         | Section headers, large cards |
-| Section Title | 1.5rem (24px)   | 700     | 1.4         | Card headers, subsections    |
-| Subsection    | 1.25rem (20px)  | 700     | 1.4         | Card titles                  |
-| Body Large    | 1.125rem (18px) | 500     | 1.6         | Important body text          |
-| Body          | 1rem (16px)     | 400-500 | 1.6         | Standard body text           |
-| Small         | 0.875rem (14px) | 500-600 | 1.5         | Labels, metadata             |
-| Extra Small   | 0.75rem (12px)  | 600     | 1.4         | Tags, badges, captions       |
-
-### Typography Patterns
-
-**Page Headers:**
-
-```css
-.page-title-section h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--gray-900);
-  margin: 0 0 var(--space-2) 0;
-}
-
-.page-subtitle {
-  font-size: 1.125rem;
-  color: var(--gray-600);
-  margin: 0;
-}
-```
-
-**Card Titles:**
-
-```css
-.card-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin: 0;
-}
-```
-
-**Meta Information:**
-
-```css
-.meta-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gray-500);
-}
-
-.meta-value {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--gray-800);
-}
-```
-
----
-
-## Color System
-
-### Primary Colors
-
-| Variable          | Hex     | RGB                | Use Case                              |
-| ----------------- | ------- | ------------------ | ------------------------------------- |
-| `--primary`       | #6366f1 | rgb(99, 102, 241)  | Primary buttons, links, active states |
-| `--primary-hover` | #4f46e5 | rgb(79, 70, 229)   | Hover states for primary elements     |
-| `--primary-light` | #e0e7ff | rgb(224, 231, 255) | Backgrounds, subtle highlights        |
-| `--primary-dark`  | #3730a3 | rgb(55, 48, 163)   | Dark mode, deep accents               |
-
-### Secondary Colors
-
-| Variable            | Hex     | RGB              | Use Case                   |
-| ------------------- | ------- | ---------------- | -------------------------- |
-| `--secondary`       | #06b6d4 | rgb(6, 182, 212) | Secondary actions, accents |
-| `--secondary-hover` | #0891b2 | rgb(8, 145, 178) | Hover states               |
-
-### Semantic Colors
-
-| Variable    | Hex     | RGB               | Use Case                      |
-| ----------- | ------- | ----------------- | ----------------------------- |
-| `--success` | #10b981 | rgb(16, 185, 129) | Success states, active status |
-| `--warning` | #f59e0b | rgb(245, 158, 11) | Warnings, pending states      |
-| `--error`   | #ef4444 | rgb(239, 68, 68)  | Errors, delete actions        |
-| `--accent`  | #f59e0b | rgb(245, 158, 11) | Highlights, special features  |
-
-### Neutral Palette
-
-| Variable     | Hex     | RGB                | Use Case                   |
-| ------------ | ------- | ------------------ | -------------------------- |
-| `--gray-50`  | #f8fafc | rgb(248, 250, 252) | Subtle backgrounds         |
-| `--gray-100` | #f1f5f9 | rgb(241, 245, 249) | Card headers, secondary bg |
-| `--gray-200` | #e2e8f0 | rgb(226, 232, 240) | Borders, dividers          |
-| `--gray-300` | #cbd5e1 | rgb(203, 213, 225) | Disabled borders           |
-| `--gray-400` | #94a3b8 | rgb(148, 163, 184) | Placeholder text, icons    |
-| `--gray-500` | #64748b | rgb(100, 116, 139) | Labels, secondary text     |
-| `--gray-600` | #475569 | rgb(71, 85, 105)   | Body text                  |
-| `--gray-700` | #334155 | rgb(51, 65, 85)    | Primary text               |
-| `--gray-800` | #1e293b | rgb(30, 41, 59)    | Headings, emphasis         |
-| `--gray-900` | #0f172a | rgb(15, 23, 42)    | Strongest text             |
-
-### Gradient Combinations
-
-**Primary Gradient:**
-
-```css
-background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-```
-
-**Accent Gradient:**
-
-```css
-background: linear-gradient(
-  135deg,
-  var(--primary) 0%,
-  var(--secondary) 50%,
-  var(--accent) 100%
-);
-```
-
-**Light Gradient:**
-
-```css
-background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-```
-
----
-
 ## Spacing & Sizing
 
 ### Spacing Scale
 
-| Token        | Value   | Pixels | Use Case                       |
-| ------------ | ------- | ------ | ------------------------------ |
-| `--space-1`  | 0.25rem | 4px    | Tight spacing, badges          |
-| `--space-2`  | 0.5rem  | 8px    | Small gaps, compact layouts    |
-| `--space-3`  | 0.75rem | 12px   | Button padding, small elements |
-| `--space-4`  | 1rem    | 16px   | Standard padding, gaps         |
-| `--space-5`  | 1.25rem | 20px   | Card padding                   |
-| `--space-6`  | 1.5rem  | 24px   | Section spacing                |
-| `--space-8`  | 2rem    | 32px   | Large sections                 |
-| `--space-10` | 2.5rem  | 40px   | Page margins                   |
-| `--space-12` | 3rem    | 48px   | Hero sections                  |
-| `--space-16` | 4rem    | 64px   | Major sections                 |
+| Token        | Value   | Pixels | Use Case                        |
+| ------------ | ------- | ------ | ------------------------------- |
+| `--space-1`  | 0.25rem | 4px    | Tight spacing, icon gaps        |
+| `--space-2`  | 0.5rem  | 8px    | Small gaps, badge padding       |
+| `--space-3`  | 0.75rem | 12px   | Button padding, compact layouts |
+| `--space-4`  | 1rem    | 16px   | Standard padding, gaps          |
+| `--space-5`  | 1.25rem | 20px   | Card padding                    |
+| `--space-6`  | 1.5rem  | 24px   | Section spacing                 |
+| `--space-8`  | 2rem    | 32px   | Large sections, content wrapper |
+| `--space-10` | 2.5rem  | 40px   | Page margins                    |
+| `--space-12` | 3rem    | 48px   | Hero sections                   |
+| `--space-16` | 4rem    | 64px   | Major sections                  |
+| `--space-20` | 5rem    | 80px   | Extra large spacing             |
+| `--space-24` | 6rem    | 96px   | Maximum spacing                 |
 
 ### Border Radius Scale
 
-| Token           | Value    | Pixels | Use Case               |
-| --------------- | -------- | ------ | ---------------------- |
-| `--radius-sm`   | 0.375rem | 6px    | Badges, small elements |
-| `--radius-md`   | 0.5rem   | 8px    | Inputs, buttons        |
-| `--radius-lg`   | 0.75rem  | 12px   | Cards, panels          |
-| `--radius-xl`   | 1rem     | 16px   | Large cards            |
-| `--radius-2xl`  | 1.5rem   | 24px   | Main content container |
-| `--radius-full` | 9999px   | Full   | Avatars, pills, badges |
-
-### Common Measurements
-
-**Container Widths:**
-
-- Max content width: `1400px`
-- Sidebar width: `280px` (resizable 200-500px)
-- Sidebar column (detail pages): `400px`
-
-**Element Sizes:**
-
-- Small avatar: `32px` × `32px`
-- Medium avatar: `48px` × `48px`
-- Large avatar: `120px` × `120px`
-- Icon size: `16-24px` (typically 18px, 20px)
-- Brand icon: `40px` × `40px`
+| Token           | Value   | Pixels | Use Case               |
+| --------------- | ------- | ------ | ---------------------- |
+| `--radius-sm`   | 0.5rem  | 8px    | Badges, small elements |
+| `--radius-md`   | 0.75rem | 12px   | Inputs, buttons        |
+| `--radius-lg`   | 1rem    | 16px   | Cards, panels          |
+| `--radius-xl`   | 1.5rem  | 24px   | Large cards            |
+| `--radius-2xl`  | 2rem    | 32px   | Main content container |
+| `--radius-3xl`  | 2.5rem  | 40px   | Extra large containers |
+| `--radius-full` | 9999px  | Full   | Avatars, pills, badges |
 
 ---
 
@@ -1169,24 +1474,27 @@ background: linear-gradient(135deg, var(--primary-light), var(--secondary));
 
 ### Shadow Scale
 
-**Purpose:** Create depth and hierarchy through layered shadows.
-
 ```css
 /* Subtle shadow for cards at rest */
 --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 
-/* Medium shadow for hovered cards, dropdowns */
+/* Medium shadow for hovered cards */
 --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
 /* Large shadow for elevated panels */
 --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-/* Extra large shadow for modals, popovers */
+/* Extra large shadow for modals */
 --shadow-xl:
   0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
 /* Maximum shadow for critical overlays */
 --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+/* Brand-colored shadows for special moments */
+--shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+--shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+--shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
 ```
 
 ### Elevation Hierarchy
@@ -1206,29 +1514,26 @@ background: linear-gradient(135deg, var(--primary-light), var(--secondary));
 
 ### Standard Transitions
 
-**Default Transition:**
-
 ```css
-transition: all 0.2s ease;
-```
+/* Default transition */
+transition: all var(--duration-normal) var(--ease-smooth);
 
-**Hover Effects:**
+/* Hover effects */
+transition: all var(--duration-slow) var(--ease-bounce);
 
-```css
-transition: all 0.3s ease;
-```
+/* Transform transitions */
+transition: transform var(--duration-normal) var(--ease-smooth);
 
-**Transform Transitions:**
-
-```css
-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Fast color changes */
+transition: background-color var(--duration-fast) var(--ease-smooth);
 ```
 
 ### Keyframe Animations
 
-**Slide In Up (Entry Animation):**
+**Required animations in `globals.css`:**
 
 ```css
+/* Slide in from below */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -1240,38 +1545,7 @@ transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-/* Usage */
-.card {
-  animation: slideInUp 0.4s ease-out forwards;
-}
-
-/* Stagger delays */
-.card:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.card:nth-child(3) {
-  animation-delay: 0.2s;
-}
-```
-
-**Fade In Down:**
-
-```css
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-```
-
-**Fade In Up:**
-
-```css
+/* Fade in from below */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1282,46 +1556,80 @@ transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateY(0);
   }
 }
-```
 
-**Gradient Shift (Background):**
+/* Fade in from above */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-```css
+/* Background gradient shift */
 @keyframes gradientShift {
-  0% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
   }
-  100% {
-    background-position: 0% 50%;
-  }
 }
-```
 
-**Shimmer Effect:**
-
-```css
+/* Shimmer effect (for loading, highlights) */
 @keyframes shimmer {
-  0% {
+  0%,
+  100% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
   50% {
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
-  100% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
 }
-```
 
-**Spin (Loading):**
-
-```css
+/* Spin (loading indicators) */
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Bounce (playful elements, mascot) */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Gentle pulse (attention grabbers) */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Float (decorative elements) */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 ```
@@ -1330,21 +1638,51 @@ transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 **Staggered Entry:**
 
-```javascript
-// Add delays dynamically
-setTimeout(() => {
-  const cards = document.querySelectorAll('.animal-card, .list-item')
-  cards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.05}s`
-  })
-}, 50)
+```css
+.card {
+  animation: slideInUp 0.4s var(--ease-out) forwards;
+  opacity: 0;
+}
+
+.card:nth-child(1) {
+  animation-delay: 0s;
+}
+.card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+.card:nth-child(6) {
+  animation-delay: 0.5s;
+}
 ```
 
-**Hover Lift:**
+**Playful Hover (Cards):**
 
 ```css
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px) scale(1.02);
+  transition: all var(--duration-slow) var(--ease-bounce);
+}
+
+.card:hover .avatar {
+  transform: rotate(-5deg) scale(1.1);
+  transition: transform var(--duration-normal) var(--ease-bounce);
+}
+```
+
+**Mascot Animation:**
+
+```css
+.mascot {
+  animation: float 3s ease-in-out infinite;
 }
 ```
 
@@ -1381,39 +1719,48 @@ setTimeout(() => {
 }
 ```
 
-**Header Simplification:**
+**Typography Scaling:**
 
 ```css
-/* Desktop: Full branding */
-.brand-text-header {
-  display: block;
+/* Desktop */
+.page-title {
+  font-size: 2.5rem;
 }
 
-/* Mobile: Hide text, show icon only */
+/* Tablet */
 @media (max-width: 768px) {
-  .brand-text-header {
-    display: none;
+  .page-title {
+    font-size: 2rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.75rem;
   }
 }
 ```
 
-**Sidebar Behavior:**
+**Spacing Reduction:**
 
 ```css
-/* Desktop: Sidebar can be pinned */
-.sidebar.pinned {
-  position: relative;
-  transform: translateX(0);
+/* Desktop */
+.content-wrapper {
+  padding: var(--space-8);
 }
 
-/* Mobile: Sidebar always overlays */
+/* Tablet */
 @media (max-width: 768px) {
-  .sidebar {
-    width: min(280px, 80vw);
+  .content-wrapper {
+    padding: var(--space-6);
   }
+}
 
-  .sidebar.pinned {
-    position: fixed; /* Override pinning on mobile */
+/* Mobile */
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: var(--space-4);
   }
 }
 ```
@@ -1423,8 +1770,6 @@ setTimeout(() => {
 ## Glassmorphism Effects
 
 ### Core Glassmorphic Pattern
-
-**Semi-transparent background with blur:**
 
 ```css
 background: rgba(255, 255, 255, 0.95);
@@ -1456,33 +1801,15 @@ box-shadow: var(--shadow-xl);
 }
 ```
 
-**3. Search Input (Enhanced):**
+**3. Sidebar:**
 
 ```css
-.search-input-wrapper {
+.sidebar {
   background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: var(--shadow-xl);
 }
-```
-
-**4. Brand Icon:**
-
-```css
-.brand-icon {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 2px solid var(--glass-border);
-  box-shadow: var(--shadow-2xl);
-}
-```
-
-### Glass Variables (Optional)
-
-```css
---glass-bg: rgba(255, 255, 255, 0.1);
---glass-border: rgba(255, 255, 255, 0.2);
---glass-blur: blur(20px);
 ```
 
 ---
@@ -1496,7 +1823,7 @@ box-shadow: var(--shadow-xl);
 ```css
 .card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 ```
 
@@ -1505,10 +1832,7 @@ box-shadow: var(--shadow-xl);
 ```css
 .btn:hover {
   transform: translateY(-1px);
-}
-
-.btn-primary:hover {
-  background: var(--primary-hover);
+  box-shadow: var(--shadow-md);
 }
 ```
 
@@ -1516,8 +1840,8 @@ box-shadow: var(--shadow-xl);
 
 ```css
 .nav-link:hover {
-  background: var(--gray-100);
-  color: var(--gray-900);
+  background: var(--primary-light);
+  color: var(--primary-dark);
 }
 ```
 
@@ -1529,18 +1853,16 @@ box-shadow: var(--shadow-xl);
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
 }
 ```
 
-**Search Bar:**
+**Buttons:**
 
 ```css
-.search-bar:focus-within {
-  border-color: var(--primary);
-  box-shadow:
-    0 0 0 4px rgba(99, 102, 241, 0.1),
-    var(--shadow-md);
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 ```
 
@@ -1551,16 +1873,8 @@ box-shadow: var(--shadow-xl);
 ```css
 .nav-link.active {
   background: var(--primary-light);
-  color: var(--primary);
+  color: var(--primary-dark);
   font-weight: 600;
-}
-```
-
-**Buttons:**
-
-```css
-.btn:active {
-  transform: translateY(0);
 }
 ```
 
@@ -1572,6 +1886,7 @@ box-shadow: var(--shadow-xl);
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 ```
 
@@ -1580,31 +1895,8 @@ box-shadow: var(--shadow-xl);
 ```css
 .form-input:disabled {
   background: var(--gray-100);
+  color: var(--gray-500);
   cursor: not-allowed;
-}
-```
-
-### Loading States
-
-```css
-.loading {
-  opacity: 0.7;
-  pointer-events: none;
-  position: relative;
-}
-
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
 }
 ```
 
@@ -1614,66 +1906,48 @@ box-shadow: var(--shadow-xl);
 
 ### Icon Sources
 
-**Material Design Icons (via inline SVG):**
-
-- All icons are embedded as inline SVG in HTML
-- Size: 16px-24px (most commonly 18px, 20px)
-- Color: Inherits from parent or uses CSS variables
+- **Material Design Icons** (inline SVG)
+- **Heroicons** (inline SVG)
+- **Custom mascot illustrations** (`/images/`)
 
 ### Common Icons
 
-| Icon             | Use Case                    | Size      |
-| ---------------- | --------------------------- | --------- |
-| Dog              | Brand logo, animal records  | 20px-40px |
-| Search           | Search bars, search actions | 16px-20px |
-| Plus             | Add actions                 | 14px-16px |
-| Edit/Pencil      | Edit actions                | 14px      |
-| Delete/Trash     | Delete actions              | 14px      |
-| Check            | Success, complete           | 14px-16px |
-| Close/X          | Close actions, clear        | 12px-16px |
-| Star             | Favorites, breeds           | 18px      |
-| Chart            | Analytics, stats            | 18px      |
-| History/Clock    | History, time-based         | 18px      |
-| User             | Customer records            | 18px      |
-| Menu (hamburger) | Navigation toggle           | 20px      |
+| Icon          | Use Case                | Size      |
+| ------------- | ----------------------- | --------- |
+| Search        | Search bars             | 16px-20px |
+| Plus          | Add actions             | 14px-16px |
+| Edit/Pencil   | Edit actions            | 14px      |
+| Delete/Trash  | Delete actions          | 14px      |
+| Check         | Success, complete       | 14px-16px |
+| Close/X       | Close actions           | 12px-16px |
+| Star          | Favorites, breeds       | 18px      |
+| Chart         | Analytics               | 18px      |
+| History/Clock | Time-based              | 18px      |
+| User          | Customer records        | 18px      |
+| Menu          | Navigation toggle       | 20px      |
+| **Paw**       | Brand icon, pet-related | 18px-24px |
 
 ### Icon Styling
 
-**Standard Icon in Button:**
-
 ```css
-.btn svg {
-  width: 16px;
-  height: 16px;
-}
-```
-
-**Navigation Icons:**
-
-```css
-.nav-icon {
+.icon {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  color: currentColor;
 }
-```
 
-**Card Header Icons:**
-
-```css
-.card-icon {
-  width: 20px;
-  height: 20px;
+.icon-primary {
   color: var(--primary);
 }
-```
 
-### Avatar Initials
+.icon-secondary {
+  color: var(--secondary);
+}
 
-**Instead of photos, use letter avatars:**
-
-```html
-<div class="animal-avatar">C</div>
+.icon-accent {
+  color: var(--accent);
+}
 ```
 
 ---
@@ -1684,53 +1958,37 @@ box-shadow: var(--shadow-xl);
 
 **Text Input:**
 
-```css
-.form-input {
-  padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  font-size: 1rem;
-  font-family: var(--font-family);
-  background: white;
-  transition: all 0.2s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
+```html
+<div class="form-group">
+  <label class="form-label required" for="name">Name</label>
+  <input type="text" id="name" class="form-input" placeholder="Enter name..." />
+  <span class="error-message">This field is required</span>
+</div>
 ```
 
 **Select Dropdown:**
 
-```css
-.form-select {
-  padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  font-size: 1rem;
-  font-family: var(--font-family);
-  background: white;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
+```html
+<div class="form-group">
+  <label class="form-label" for="breed">Breed</label>
+  <select id="breed" class="form-select">
+    <option value="">Select breed...</option>
+    <option value="1">Labrador</option>
+  </select>
+</div>
 ```
 
 **Textarea:**
 
-```css
-.form-textarea {
-  padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  font-size: 1rem;
-  font-family: var(--font-family);
-  background: white;
-  transition: all 0.2s ease;
-  resize: vertical;
-  min-height: 100px;
-}
+```html
+<div class="form-group full-width">
+  <label class="form-label" for="notes">Notes</label>
+  <textarea
+    id="notes"
+    class="form-textarea"
+    placeholder="Enter notes..."
+  ></textarea>
+</div>
 ```
 
 ### Validation States
@@ -1743,13 +2001,17 @@ box-shadow: var(--shadow-xl);
 }
 
 .form-input.error:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 0 3px rgba(217, 102, 102, 0.1);
 }
 
 .error-message {
   color: var(--error);
+  font-family: var(--font-accent);
   font-size: 0.875rem;
   margin-top: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 ```
 
@@ -1759,6 +2021,10 @@ box-shadow: var(--shadow-xl);
 .form-input.success {
   border-color: var(--success);
 }
+
+.form-input.success:focus {
+  box-shadow: 0 0 0 3px rgba(45, 184, 148, 0.1);
+}
 ```
 
 ---
@@ -1767,13 +2033,12 @@ box-shadow: var(--shadow-xl);
 
 ### Info Grid
 
-**Two-column info display:**
-
 ```css
-.card-content {
+.info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
+  font-family: var(--font-body);
   font-size: 0.875rem;
 }
 
@@ -1784,6 +2049,7 @@ box-shadow: var(--shadow-xl);
 }
 
 .info-label {
+  font-family: var(--font-accent);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -1792,32 +2058,7 @@ box-shadow: var(--shadow-xl);
 }
 
 .info-value {
-  font-weight: 600;
-  color: var(--gray-800);
-}
-```
-
-### Meta Display
-
-**Key-value pairs:**
-
-```css
-.meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.meta-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gray-500);
-}
-
-.meta-value {
-  font-size: 1rem;
+  font-family: var(--font-body);
   font-weight: 600;
   color: var(--gray-800);
 }
@@ -1825,24 +2066,259 @@ box-shadow: var(--shadow-xl);
 
 ### List Display
 
-**Service History:**
-
 ```css
-.service-item {
+.list-item {
   display: flex;
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--gray-50);
   border-radius: var(--radius-lg);
   border-left: 4px solid var(--primary);
-  transition: all 0.2s ease;
+  transition: all var(--duration-normal) var(--ease-smooth);
 }
 
-.service-item:hover {
+.list-item:hover {
   background: var(--primary-light);
   border-left-color: var(--primary-hover);
+  transform: translateX(4px);
 }
 ```
+
+---
+
+## Cartoon Dog Usage Guide
+
+### Available Poses & Strategic Usage
+
+#### 1. CARTOON_DOG_1.png - Relaxed Laying
+
+**Emotion:** Calm, content, resting
+**Use Cases:**
+
+- Empty states ("No results found - relax, try another search")
+- Idle waiting screens
+- "Nothing to do" states
+- End of workflow confirmations
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_1.png"
+  alt="Pampered Pooch mascot relaxing"
+  className="mascot-empty"
+/>
+```
+
+#### 2. CARTOON_DOG_2.png - Happy Sitting (Tongue Out)
+
+**Emotion:** Joyful, friendly, welcoming
+**Use Cases:**
+
+- Success messages
+- Welcome screens
+- Confirmation dialogs ("Success! Your record has been added")
+- Homepage greeting
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_2.png"
+  alt="Happy Pampered Pooch"
+  className="mascot-success"
+/>
+```
+
+#### 3. CARTOON_DOG_3.png - Excited Sitting
+
+**Emotion:** Eager, enthusiastic, happy
+**Use Cases:**
+
+- Call-to-action prompts
+- Encouraging messages
+- Feature highlights
+- Onboarding steps
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_3.png"
+  alt="Excited Pampered Pooch"
+  className="mascot-cta"
+/>
+```
+
+#### 4. CARTOON_DOG_4.png - Running/Jumping
+
+**Emotion:** Energetic, active, playful
+**Use Cases:**
+
+- Loading states (short duration < 3 seconds)
+- Active processing indicators
+- "Working on it" messages
+- Quick actions in progress
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_4.png"
+  alt="Pampered Pooch working"
+  className="mascot-loading"
+/>
+```
+
+#### 5. CARTOON_DOG_5.png - Playful Laying
+
+**Emotion:** Content, playful, at ease
+**Use Cases:**
+
+- Secondary empty states
+- "Take a break" messages
+- Maintenance mode screens
+- Off-hours notices
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_5.png"
+  alt="Pampered Pooch at rest"
+  className="mascot-idle"
+/>
+```
+
+#### 6. CARTOON_DOG_6.png - Running Fast
+
+**Emotion:** Very active, urgent, busy
+**Use Cases:**
+
+- Loading states (longer duration > 3 seconds)
+- Background processing
+- Data imports/exports
+- Batch operations
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_6.png"
+  alt="Pampered Pooch processing"
+  className="mascot-processing"
+/>
+```
+
+#### 7. CARTOON_DOG_7.png - Standing Happy
+
+**Emotion:** Ready, welcoming, available
+**Use Cases:**
+
+- "Get started" prompts
+- Form introductions
+- Available features
+- Navigation highlights
+
+```tsx
+<img
+  src="/images/CARTOON_DOG_7.png"
+  alt="Pampered Pooch ready to help"
+  className="mascot-ready"
+/>
+```
+
+### Implementation Patterns
+
+**Loading State with Mascot:**
+
+```tsx
+function LoadingState({ message = 'Fetching data...' }: { message?: string }) {
+  return (
+    <div className="loading-state">
+      <img
+        src="/images/CARTOON_DOG_6.png"
+        alt="Loading"
+        className="mascot-processing"
+      />
+      <p className="loading-text">{message}</p>
+    </div>
+  )
+}
+```
+
+**Empty State with Mascot:**
+
+```tsx
+function EmptyState({ title, message }: { title: string; message: string }) {
+  return (
+    <div className="empty-state">
+      <img
+        src="/images/CARTOON_DOG_1.png"
+        alt="No results"
+        className="mascot-empty"
+      />
+      <h2>{title}</h2>
+      <p>{message}</p>
+    </div>
+  )
+}
+```
+
+**Success Toast with Mascot:**
+
+```tsx
+function SuccessToast({ message }: { message: string }) {
+  return (
+    <div className="toast toast-success">
+      <img
+        src="/images/CARTOON_DOG_2.png"
+        alt="Success"
+        className="toast-icon"
+      />
+      <span>{message}</span>
+    </div>
+  )
+}
+```
+
+### Mascot Styling
+
+```css
+/* Base mascot styles */
+.mascot-empty,
+.mascot-success,
+.mascot-cta,
+.mascot-loading,
+.mascot-idle,
+.mascot-processing,
+.mascot-ready {
+  width: 100px;
+  height: auto;
+  opacity: 0.9;
+}
+
+/* Animated mascots */
+.mascot-loading,
+.mascot-processing {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.mascot-cta,
+.mascot-ready {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Sizes */
+.mascot-small {
+  width: 60px;
+}
+
+.mascot-medium {
+  width: 100px;
+}
+
+.mascot-large {
+  width: 150px;
+}
+```
+
+### Best Practices
+
+1. **Don't Overuse:** Mascot should appear at key moments, not everywhere
+2. **Match Emotion:** Choose pose that matches the context (don't show excited dog for errors)
+3. **Consistent Sizing:** Keep mascot size proportional to importance of message
+4. **Accessibility:** Always include descriptive alt text
+5. **Performance:** Optimize images (already done, but verify file sizes)
+6. **Brand Consistency:** Mascot reinforces playful, caring brand identity
 
 ---
 
@@ -1853,7 +2329,8 @@ box-shadow: var(--shadow-xl);
 **Always provide visible focus states:**
 
 ```css
-.btn:focus-visible {
+.btn:focus-visible,
+.form-input:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
@@ -1861,11 +2338,12 @@ box-shadow: var(--shadow-xl);
 
 ### Color Contrast
 
-**Ensure WCAG AA compliance:**
+**Ensure WCAG AA compliance (4.5:1 for normal text, 3:1 for large text):**
 
 - Text on white: Use `--gray-700` or darker
-- Small text: Use `--gray-800` or darker
-- Links: `--primary` provides sufficient contrast
+- Small text: Use `--gray-800` or `--gray-900`
+- Links: `--primary` (#d9944a) provides sufficient contrast on white
+- Buttons: White text on `--primary` / `--secondary` / `--accent` all pass
 
 ### Semantic HTML
 
@@ -1897,6 +2375,17 @@ box-shadow: var(--shadow-xl);
 - Enter to activate buttons
 - Escape to close modals/dropdowns
 - Arrow keys for list navigation
+- Space to toggle checkboxes
+
+### Screen Reader Support
+
+**Provide context for dynamic content:**
+
+```html
+<div role="alert" aria-live="polite">Record successfully added!</div>
+
+<button aria-expanded="false" aria-controls="dropdown-menu">Options</button>
+```
 
 ---
 
@@ -1906,79 +2395,144 @@ box-shadow: var(--shadow-xl);
 
 When creating a new page, ensure:
 
-- [ ] **Design Tokens**
-  - [ ] Import Inter font from Google Fonts
-  - [ ] Include all CSS custom properties in `:root`
-  - [ ] Use design tokens instead of hardcoded values
+**Required Elements:**
 
-- [ ] **Layout Structure**
-  - [ ] Include standard header (`.app-header`)
-  - [ ] Include hamburger menu and navigation dropdown
-  - [ ] Include animated gradient background
-  - [ ] Include background pattern overlay
-  - [ ] Wrap content in `.main-content` container
-  - [ ] Use `.content-wrapper` for padding
+- [ ] Header component included (`.app-header`)
+- [ ] Sidebar component included (`.sidebar`)
+- [ ] Animated gradient background on body
+- [ ] Paw print pattern overlay (body::after)
+- [ ] Main content container (`.main-content`)
+- [ ] Content wrapper with proper padding (`.content-wrapper`)
 
-- [ ] **Components**
-  - [ ] Use standard card structure (`.card`, `.card-header`, `.card-content`)
-  - [ ] Use button variants (`.btn-primary`, `.btn-secondary`, etc.)
-  - [ ] Use avatar component for user/animal initials
-  - [ ] Use badge component for status indicators
+**Design Tokens:**
 
-- [ ] **Typography**
-  - [ ] Follow type scale for headings and body text
-  - [ ] Use proper font weights (400, 500, 600, 700, 800)
-  - [ ] Set line heights appropriately
+- [ ] Import all fonts (Cormorant, DM Sans, Outfit)
+- [ ] Include all CSS custom properties in `:root`
+- [ ] Use design tokens (not hardcoded values)
+- [ ] Apply correct font families to elements
 
-- [ ] **Spacing**
-  - [ ] Use spacing scale variables (`--space-*`)
-  - [ ] Consistent gaps in grids (typically `--space-4` to `--space-8`)
-  - [ ] Appropriate padding in cards (`--space-6`)
+**Typography:**
 
-- [ ] **Interactions**
-  - [ ] Add hover states to interactive elements
-  - [ ] Add focus states to form inputs
-  - [ ] Include loading states where applicable
-  - [ ] Add transition effects (`transition: all 0.2s ease`)
+- [ ] Page title uses Cormorant display font
+- [ ] Body text uses DM Sans
+- [ ] Buttons/UI use Outfit accent font
+- [ ] Proper type scale (sizes, weights, line heights)
+- [ ] Letter spacing applied correctly
 
-- [ ] **Animations**
-  - [ ] Use `slideInUp` for entry animations
-  - [ ] Add stagger delays for lists (0.05s per item)
-  - [ ] Include gradient shift animation on background
+**Colors:**
 
-- [ ] **Responsive**
-  - [ ] Test at 480px (mobile)
-  - [ ] Test at 768px (tablet)
-  - [ ] Test at 1024px+ (desktop)
-  - [ ] Grid collapses appropriately
-  - [ ] Sidebar behavior correct on mobile
+- [ ] Use brand colors from logo (golden, teal, aqua)
+- [ ] Primary actions use `--primary` (golden brown)
+- [ ] Secondary actions use `--secondary` (teal green)
+- [ ] CTAs use `--accent` (bright teal)
+- [ ] Semantic colors for status (success, error, warning)
+- [ ] Consistent use of warm grays for neutrals
 
-- [ ] **Accessibility**
-  - [ ] Proper semantic HTML
-  - [ ] ARIA labels where needed
-  - [ ] Keyboard navigation works
-  - [ ] Focus indicators visible
-  - [ ] Color contrast meets WCAG AA
+**Layout:**
 
-- [ ] **JavaScript**
-  - [ ] Live date/time in header updates every second
-  - [ ] Hamburger menu toggles sidebar
-  - [ ] Navigation links update active state
-  - [ ] Form validations work correctly
+- [ ] Uses standard card structure where appropriate
+- [ ] Proper spacing scale (`--space-*` variables)
+- [ ] Responsive grid layouts
+- [ ] Glassmorphic effects applied
+- [ ] Proper elevation/shadows
+
+**Components:**
+
+- [ ] Button variants used correctly
+- [ ] Form inputs follow design system
+- [ ] Badges for status indicators
+- [ ] Avatars for user/animal representation
+- [ ] Mascot cartoon dog for appropriate contexts
+
+**Interactions:**
+
+- [ ] Hover states on interactive elements
+- [ ] Focus states on form inputs
+- [ ] Loading states (with mascot if appropriate)
+- [ ] Transitions use design system easings
+- [ ] Bouncy easing for playful elements
+
+**Animations:**
+
+- [ ] Entry animations (`slideInUp` with stagger)
+- [ ] Gradient background animation
+- [ ] Mascot animations where used
+- [ ] Smooth transitions throughout
+
+**Responsive:**
+
+- [ ] Test at 480px (mobile)
+- [ ] Test at 768px (tablet)
+- [ ] Test at 1024px+ (desktop)
+- [ ] Grid collapses appropriately
+- [ ] Typography scales down
+- [ ] Spacing reduces on smaller screens
+- [ ] Sidebar behavior correct (overlay on mobile)
+
+**Accessibility:**
+
+- [ ] Semantic HTML elements
+- [ ] ARIA labels where needed
+- [ ] Keyboard navigation works
+- [ ] Focus indicators visible
+- [ ] Color contrast meets WCAG AA
+- [ ] Screen reader friendly
+- [ ] Alt text for all images (including mascot)
+
+**Mascot Usage (if applicable):**
+
+- [ ] Correct pose for context
+- [ ] Appropriate size
+- [ ] Descriptive alt text
+- [ ] Animation if needed
+- [ ] Not overused
 
 ---
 
 ## Version History
 
-| Version | Date       | Changes                                          |
-| ------- | ---------- | ------------------------------------------------ |
-| 1.0     | 2025-11-14 | Initial style guide created from mockui analysis |
+| Version | Date       | Changes                                                                                                                                                                                                     |
+| ------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2025-11-14 | Initial style guide based on generic design                                                                                                                                                                 |
+| 2.0     | 2025-11-15 | **Option B Rebrand:** Logo-based colors, Cormorant/DM Sans/Outfit typography, cartoon dog mascot integration, mandatory navbar/sidebar specification, complete design token system, pet-themed enhancements |
 
 ---
 
 ## Notes
 
-- This style guide is a living document and should be updated as the design system evolves
-- When adding new patterns, update this document to maintain consistency
-- Reference mockui files in `reference/redesign/` for complete implementation examples
-- Prioritize reusable components over one-off solutions
+- **This is the definitive source of truth** for all design decisions
+- All new pages **MUST** include Header and Sidebar components
+- Use actual brand colors extracted from logo (not theoretical palettes)
+- Cartoon dog mascot adds personality - use strategically
+- Typography choices are deliberate to escape generic AI aesthetics
+- When in doubt, reference this guide before implementing
+- Update this document when adding new patterns
+- Maintain consistency above all else
+
+---
+
+## Quick Reference
+
+**Primary Color:** `#d9944a` (Golden brown - from logo)
+**Secondary Color:** `#1b9e7e` (Teal green - from logo)
+**Accent Color:** `#2db894` (Bright teal - from logo)
+
+**Display Font:** Cormorant (serif)
+**Body Font:** DM Sans (sans-serif)
+**UI Font:** Outfit (sans-serif)
+
+**Mandatory on Every Page:**
+
+1. Header component (`src/components/Header.tsx`)
+2. Sidebar component (`src/components/Sidebar.tsx`)
+3. Animated gradient background
+4. Paw print pattern overlay
+
+**Mascot Location:** `/images/CARTOON_DOG_1.png` through `CARTOON_DOG_7.png`
+
+**Logo Location:** `/images/logo.png`
+
+---
+
+**Style Guide v2.0 Complete** ✨
+Ready for Option B implementation!

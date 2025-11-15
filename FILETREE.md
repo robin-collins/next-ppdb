@@ -14,6 +14,13 @@ ppdb-ts/
 ├── MIGRATION_GUIDE.md              # Database migration instructions (created)
 ├── PRODUCTION_DEPLOYMENT.md        # Production migration overview (created)
 ├── SCORES.md                       # Search scoring algorithm documentation (created)
+├── SKILLS/                         # Skills directory (created)
+│   ├── changelog/                  # Changelog management skill package
+│   │   └── SKILL.md                # Documentation standards and changelog format guidelines
+│   └── report-writing/             # Report writing skill package
+│       ├── SKILL.md                # Skill definition with frontmatter and instructions
+│       └── references/
+│           └── report-template.md  # Comprehensive report template with all sections
 ├── e2e/
 │   └── homepage.spec.ts            # Enhanced with Next.js dev compilation handling
 ├── eslint.config.mjs
@@ -43,6 +50,7 @@ ppdb-ts/
 │   ├── vercel.svg
 │   └── window.svg
 ├── README.md
+├── update_mockui_prompts.md         # Prompt templates for redesign updates (created)
 ├── reference/
 │   └── redesign/
 │       ├── ppdb_search_results.html        # Reference HTML prototype

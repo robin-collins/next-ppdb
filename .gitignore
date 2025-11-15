@@ -48,3 +48,4 @@ reports/
 chrome-user-data-dir
 console_output*
 #.specstory 
+*.log

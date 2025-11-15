@@ -38,7 +38,10 @@
       "mcp__chrome-devtools-headful__take_screenshot",
       "mcp__chrome-devtools-headful__list_console_messages",
       "mcp__chrome-devtools-headful__list_network_requests",
-      "mcp__chrome-devtools-headful__get_network_request"
+      "mcp__chrome-devtools-headful__get_network_request",
+      "Skill(example-skills:frontend-design)",
+      "Skill(example-skills:skill-creator)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

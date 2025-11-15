@@ -6,6 +6,230 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Mock UI prompt pack**: Added `update_mockui_prompts.md` with 13 ready-to-use prompt templates (2025-11-15)
+  - **Purpose**: Provides consistent instructions for updating each mock UI HTML reference to match `STYLE_GUIDE.md`
+  - **Coverage**: Includes breed management, animal/customer detail, add-record forms, service history, daily totals, and search results prototypes under `reference/redesign/`
+  - **Usage**: Copy the relevant block to quickly brief designers or AI agents on required compliance work
+
+- **Report Writing Skill**: Created standardized skill for task completion documentation (2025-11-15)
+  - **Location**: `SKILLS/report-writing/` - Structured skill package following skill-creator best practices
+  - **Purpose**: Provides protocol for generating dual-format task completion reports (chat summary + detailed documentation file)
+  - **Core Files**:
+    - `SKILL.md` - Main skill definition with YAML frontmatter, workflow instructions, and quality assurance checklist
+    - `references/report-template.md` - Comprehensive template with all required sections and placeholders
+  - **When to Use**: Invoke upon completing tasks requiring formal documentation, audit trails, or reproducible records
+  - **Two Synchronized Outputs**:
+    1. **Chat Interface Report**: Concise user-friendly summary delivered immediately
+    2. **Detailed Documentation File**: `reports/{spec_name}/task_{number}_completed.md` with 6 required sections
+  - **Required Documentation Sections**:
+    - Chat Interface Output (verbatim reproduction for consistency)
+    - Task Overview (description, objectives, success criteria, context)
+    - Execution Timeline (chronological timestamped actions with decision reasoning)
+    - Inputs/Outputs (files, APIs, databases, configuration, artifacts generated)
+    - Error Handling (warnings, errors, edge cases discovered, resolution steps)
+    - Final Status (success confirmation, deliverables, limitations, follow-up items, related resources)
+  - **Quality Assurance**: Ensures consistency between outputs, timestamp accuracy, reproducibility detail, traceability
+  - **File Organization**: Hierarchical `reports/{specification-name}/` structure with standardized naming
+  - **Naming Convention**: `task_{number}_completed.md` or `task_{number}_{subnumber}_completed.md`
+  - **Writing Style**: Active voice, specific tool/command/path references, exact error messages, code blocks for technical content
+  - **Use Cases**: API implementation, database migrations, feature development, specification-driven workflows
+  - **Skill Creation Process**: Used `example-skills:skill-creator` skill following 6-step methodology
+  - **Implementation**: Imperative/infinitive form instructions, clear triggering conditions, comprehensive template reference
+
+- **Changelog Management Skill**: Created standardized skill for maintaining project documentation (2025-11-15)
+  - **Location**: `SKILLS/changelog/` - Skill package for CHANGELOG.md, FILETREE.md, and FAILURELOG.md maintenance
+  - **Purpose**: Provides systematic guidance for tracking code changes, structural modifications, and debugging attempts
+  - **Core File**: `SKILL.md` - Complete documentation standards with YAML frontmatter and comprehensive instructions
+  - **When to Use**: Invoke when making code changes, adding features, fixing bugs, restructuring files, or documenting failures
+  - **Documentation Standards**:
+    - **CHANGELOG.md**: Keep a Changelog format with semantic versioning (Added, Changed, Deprecated, Removed, Fixed, Security)
+    - **FILETREE.md**: Accurate project structure representation with descriptions
+    - **FAILURELOG.md**: Comprehensive debugging history (attempts, errors, root cause, resolution)
+  - **Format Guidelines**: YAML frontmatter, date stamps (YYYY-MM-DD), version numbers, GitHub issue references
+  - **Version Management**: Semantic versioning rules (MAJOR.MINOR.PATCH) with increment guidelines
+  - **Project-Specific Considerations**: API changes, database schema updates, performance improvements, security updates
+  - **Workflow Integration**: Standard development, debugging, and release workflows with best practices
+  - **Common Pitfalls**: Lists mistakes to avoid (inconsistent categories, wrong date format, missing updates)
+  - **Skill Creation Process**: Transformed from `.project/steering/CHANGELOG.md` using `example-skills:skill-creator`
+  - **Implementation**: Imperative/infinitive form, industry-standard formats, clear triggering conditions
+
+### Added
+
+- **Comprehensive Style Audit**: Analyzed current app styling against STYLE_GUIDE.md for consistency and conformity (2025-11-15)
+  - **Analysis Documents**:
+    - `.project/steering/STYLE_AUDIT_REPORT.md` - Detailed 75% compliance audit with gap analysis
+    - `.project/steering/STYLE_ENHANCEMENT_SUMMARY.md` - Quick reference guide for design improvements
+  - **Methodology**: Used Chrome DevTools MCP + frontend-design skill for professional design critique
+  - **Current State Analysis**:
+    - ✅ Design tokens properly implemented (colors, spacing, shadows, typography variables)
+    - ✅ Glassmorphic effects working (backdrop-blur, transparency)
+    - ✅ Animated gradient background functional
+    - ✅ Header, sidebar, and core components structurally sound
+    - ❌ Missing background pattern overlay (SVG dots - CRITICAL)
+    - ❌ Missing 4 keyframe animations (fadeInDown, fadeInUp, shimmer, spin)
+    - ❌ Missing --primary-dark CSS variable
+  - **Generic AI Aesthetic Issues Identified**:
+    - Typography: Inter font (overused in AI-generated designs)
+    - Colors: Purple-blue gradient (#667eea → #6366f1) - cliched tech startup palette
+    - Brand Identity: Lacks "Pampered Pooch" warmth and personality
+    - Differentiation: Design could be for any SaaS product, not a luxury pet care service
+  - **Enhanced Design Direction - "Soft Luxury"**:
+    - **Concept**: Premium pet boutique meets modern editorial design
+    - **Typography System**:
+      - Display/Headings: Cormorant (elegant serif - warm, approachable)
+      - Body: DM Sans (clean sans - less common than Inter)
+      - UI/Accent: Outfit (modern geometric for buttons, badges)
+    - **Color Palette Redesign**:
+      - Primary: #c87d5c (warm terracotta/rose gold - caring, premium)
+      - Secondary: #5a7d6f (forest green - nature, trust, calm)
+      - Accent: #d4a574 (honey gold - welcoming, warmth)
+      - Background: Warm cream-sage gradient (soft, sophisticated)
+      - Neutrals: Warmer grays (#faf8f6 → #1a1614)
+    - **Pet-Themed Enhancements**:
+      - Paw print SVG pattern overlay (subtle, 3% opacity)
+      - Paw icon for brand logo (replaces generic dog SVG)
+      - Playful card hover animations (slight rotate + scale)
+      - Bouncy easing curves (cubic-bezier(0.34, 1.56, 0.64, 1))
+  - **Three Enhancement Options Documented**:
+    - **Option A - Conservative** (2-3 hours): Typography upgrade only, keep colors
+    - **Option B - Bold Transformation** (6-8 hours): Full rebrand with warm palette + pet touches
+    - **Option C - Hybrid** (3-4 hours): New fonts + softened colors, familiar structure
+  - **Immediate Critical Fixes Required** (all options):
+    1. Add body::after pattern overlay (STYLE_GUIDE.md:222-237)
+    2. Add --primary-dark: #3730a3 variable
+    3. Add missing keyframe animations
+  - **Design Rationale**:
+    - Escape "AI slop" territory with distinctive font choices
+    - Warm earth tones reflect care, nature, organic wellness
+    - Avoids overused tech colors while maintaining professionalism
+    - Creates memorable brand identity appropriate for pet grooming business
+  - **Implementation Priority**:
+    - Phase 1: Critical fixes (missing elements from STYLE_GUIDE.md)
+    - Phase 2: Semantic class structure (maintainability)
+    - Phase 3: Aesthetic enhancement (choose A/B/C based on business priorities)
+  - **Testing Checklist**: Font loading, pattern visibility, animations, WCAG contrast, responsive behavior
+  - **Rollback Plan**: Documented with commented CSS for easy reversion
+  - **Next Steps**: Stakeholder review → Choose enhancement path → Implement incrementally → Monitor feedback
+
+- **STYLE_GUIDE.md v2.0 - Option B "Soft Luxury" Rebrand Complete** (2025-11-15)
+  - **Complete rewrite** of style guide (2,457 lines) as definitive source of truth for Option B implementation
+  - **Brand Asset Integration**:
+    - Extracted actual colors from `/images/logo.png` (golden #d9944a, teal #1b9e7e, aqua #2db894)
+    - Documented all 7 cartoon dog poses (`CARTOON_DOG_1.png` through `CARTOON_DOG_7.png`) with strategic usage guide
+    - Logo usage guidelines (header branding, 120px desktop, 100px mobile)
+  - **Typography System** (replaces generic Inter):
+    - **Display/Headings**: Cormorant (elegant serif - warm, approachable)
+    - **Body**: DM Sans (clean sans - distinctive alternative to Inter)
+    - **UI/Accent**: Outfit (modern geometric for buttons, badges, labels)
+    - Complete font import, application rules, and type scale (9 levels) documented
+  - **Color System** (logo-derived "Soft Luxury" palette):
+    - **Primary Golden Brown**: #d9944a, #c97d3d, #fef4e8 (light), #8b5a2b (dark)
+    - **Secondary Teal Green**: #1b9e7e, #178a6c, #e6f7f3 (light), #0f6652 (dark)
+    - **Accent Bright Teal**: #2db894, #24a382, #d4f4f8 (light), #a8e6f0 (bubbles)
+    - **Tertiary Cream/Tan**: #f4d19b, #e8b876, #f9e5d0
+    - **Warm Grays**: #faf8f6 → #1a1614 (replacing cold neutrals)
+    - 5 gradient combinations (primary warmth, teal trust, aqua sparkle, brand multi, background subtle)
+  - **MANDATORY Universal Elements** (⚠️ required on EVERY page):
+    - **Header component** (`src/components/Header.tsx`) - 92px height, glassmorphic, sticky top
+    - **Sidebar component** (`src/components/Sidebar.tsx`) - 280px width, resizable 200-500px, pinnable
+    - **Animated gradient background** (warm cream → peachy → tan → mint → aqua, 20s cycle)
+    - **Paw print pattern overlay** (body::after SVG, 2% opacity, teal #1b9e7e, subtle pet theme)
+  - **Complete Design Token System** (101 CSS variables):
+    - Typography: 4 font family variables
+    - Colors: 52 variables (primary×4, secondary×4, accent×4, tertiary×3, semantic×4, neutrals×11, shadows×3)
+    - Spacing: 12 values (--space-1 4px through --space-24 96px)
+    - Border radius: 7 values (increased for softer organic feel: --radius-sm 8px through --radius-full)
+    - Shadows: 5 levels + 3 brand-colored shadows (primary, secondary, accent)
+    - Animations: 4 durations, 5 easing curves (including bouncy cubic-bezier)
+    - Layout: 3 constants (sidebar width, header height, max content)
+    - Z-index: 8-level scale (base through tooltip)
+  - **Component Library** (10 fully documented components with complete CSS):
+    1. **Card**: Base, header, content, interactive variant with brand gradient accent bar
+    2. **Button**: 7 variants (primary, secondary, accent, outline, ghost, success, danger, warning), 3 sizes
+    3. **Avatar**: Letter avatars with brand gradient, large avatar, mascot avatar wrapper
+    4. **Badge**: Status badges (active, inactive, pending, error), category badges (primary, secondary, accent)
+    5. **Search**: Enhanced search bar with brand focus states (golden ring)
+    6. **Form**: Groups, inputs (text, select, textarea), validation states with brand colors
+    7. **Table**: Data table with brand hover states (primary-light background)
+    8. **Empty State**: Uses cartoon dog mascot (CARTOON_DOG_1 relaxed laying)
+    9. **Loading State**: Uses running cartoon dog (CARTOON_DOG_6) with bounce animation
+    10. **Breadcrumb**: With brand link colors (primary for links, hover underline)
+  - **Cartoon Dog Mascot Strategic Usage Guide**:
+    - **CARTOON_DOG_1** (Relaxed laying): Empty states, idle screens, "nothing to do" states
+    - **CARTOON_DOG_2** (Happy sitting, tongue out): Success messages, welcome screens, confirmations
+    - **CARTOON_DOG_3** (Excited sitting): CTAs, encouragement, feature highlights, onboarding
+    - **CARTOON_DOG_4** (Running/jumping): Short loading states (<3 seconds), quick actions
+    - **CARTOON_DOG_5** (Playful laying): Secondary empty states, maintenance mode, off-hours
+    - **CARTOON_DOG_6** (Running fast): Long loading (>3 seconds), background processing, batch ops
+    - **CARTOON_DOG_7** (Standing happy): "Get started" prompts, form intros, navigation highlights
+    - Complete React component patterns (LoadingState, EmptyState, SuccessToast)
+    - CSS styling classes (.mascot-empty, .mascot-success, .mascot-loading, etc.)
+    - Best practices (don't overuse, match emotion to context, accessibility alt text)
+  - **Animation Library** (8 keyframe animations documented):
+    - **slideInUp**: Entry animation from below (0.4s, staggered delays)
+    - **fadeInUp, fadeInDown**: Fade entries (30px, 20px travel)
+    - **gradientShift**: Background animation (20s infinite, 0% → 100% → 0%)
+    - **shimmer**: Loading highlights (diagonal sweep)
+    - **spin**: Loading spinners (360deg rotation)
+    - **bounce**: Mascot, playful elements (20px vertical)
+    - **pulse, float**: Decorative, attention grabbers
+  - **Layout System**:
+    - Main content container (glassmorphic, sidebar-aware margin-left when pinned)
+    - Two-column grid (1fr + 400px sidebar for detail pages)
+    - Card grids (2-column results, auto-fill 280px animals)
+    - Responsive patterns with breakpoints (480px, 768px, 1280px)
+  - **Pet-Themed Visual Enhancements**:
+    - Paw print SVG pattern overlay (5 ellipses forming paw, 80×80 repeat, teal fill 2% opacity)
+    - Bubble effects using accent-bubbles (#a8e6f0) for grooming spa theme
+    - Organic shapes (all border radius increased by 2px for softer, friendlier feel)
+    - Bouncy easing curves (cubic-bezier(0.34, 1.56, 0.64, 1)) for playful micro-interactions
+    - Warm color temperature throughout (cream, peach, golden tones)
+  - **Complete Implementation Checklist** (40+ items):
+    - Required elements (header, sidebar, background, pattern overlay)
+    - Design tokens (fonts, variables, usage)
+    - Typography (display, body, UI fonts with correct application)
+    - Colors (brand palette from logo, semantic usage)
+    - Layout (cards, spacing, responsive, glassmorphic)
+    - Components (buttons, forms, badges, avatars, mascot)
+    - Interactions (hover, focus, loading, transitions, bouncy easing)
+    - Animations (entry, gradient, mascot, smooth throughout)
+    - Responsive (mobile 480px, tablet 768px, desktop 1024px+ testing)
+    - Accessibility (semantic HTML, ARIA, keyboard nav, focus visible, WCAG AA contrast)
+    - Mascot usage validation (correct pose, size, alt text, animation, not overused)
+  - **20 Major Sections**:
+    1. Brand Assets & Mascot
+    2. Design Philosophy
+    3. **MANDATORY** Universal Elements (critical section)
+    4. Design Tokens (Complete Reference)
+    5. Typography System
+    6. Color System
+    7. Layout System
+    8. Component Library
+    9. Spacing & Sizing
+    10. Shadows & Elevation
+    11. Animations & Transitions
+    12. Responsive Behavior
+    13. Glassmorphism Effects
+    14. Interactive States
+    15. Icons & Graphics
+    16. Forms & Inputs
+    17. Data Display Patterns
+    18. **Cartoon Dog Usage Guide** (comprehensive section)
+    19. Accessibility Guidelines
+    20. Implementation Checklist
+  - **Design Differentiation Strategy**:
+    - **What makes this NOT generic**: Cormorant+DM Sans (not Inter), logo colors (not purple), mascot personality, warm organic aesthetic, playful interactions, pet spa theme
+    - **What we avoid**: Inter/Roboto/System fonts, purple-blue gradients, cold clinical layouts, cookie-cutter components, boring interactions
+  - **Quick Reference Guide** at end:
+    - Color quick lookup (primary #d9944a, secondary #1b9e7e, accent #2db894)
+    - Font quick lookup (Cormorant, DM Sans, Outfit)
+    - Mandatory elements checklist
+    - Asset locations (logo, mascot poses)
+  - **Version History**: v1.0 (2025-11-14 generic) → v2.0 (2025-11-15 Option B rebrand)
+  - **Ready for Implementation**: All code snippets provided, complete CSS, React patterns, token values, no guesswork required
+
+### Added
+
 - **Add Customer Page**: Created modern glassmorphic Add Customer page at `/customers/add`
   - **File**: `src/app/customers/add/page.tsx` - Full-featured customer creation form
   - **Navigation**: Updated Sidebar component to link "Add Customer" menu item to `/customers/add`
