@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daily Totals/Analytics - Pampered Pooch Database</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -13,56 +13,78 @@
          DESIGN TOKENS (from STYLE_GUIDE.md)
          ======================================== */
       :root {
-        /* Modern Color Palette */
-        --primary: #6366f1;
-        --primary-hover: #4f46e5;
-        --primary-light: #e0e7ff;
-        --primary-dark: #3730a3;
-        --secondary: #06b6d4;
-        --secondary-hover: #0891b2;
-        --accent: #f59e0b;
-        --accent-hover: #d97706;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #ef4444;
+        /* === TYPOGRAPHY === */
+        --font-display: 'Cormorant', Georgia, serif;
+        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-accent: 'Outfit', -apple-system, sans-serif;
+        --font-family: var(--font-body); /* Legacy fallback */
 
-        /* Neutrals */
+        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+        --primary: #d9944a; /* Golden brown - main brand color */
+        --primary-hover: #c97d3d; /* Darker brown on hover */
+        --primary-light: #fef4e8; /* Very light peach for backgrounds */
+        --primary-dark: #8b5a2b; /* Deep brown for contrast */
+
+        /* === SECONDARY COLORS (From Logo - Teal Green) === */
+        --secondary: #1b9e7e; /* Teal green - trust, nature */
+        --secondary-hover: #178a6c; /* Darker teal on hover */
+        --secondary-light: #e6f7f3; /* Pale mint for backgrounds */
+        --secondary-dark: #0f6652; /* Deep teal for text */
+
+        /* === ACCENT COLORS (From Logo - Light Aqua) === */
+        --accent: #2db894; /* Bright teal - CTAs, highlights */
+        --accent-hover: #24a382; /* Darker on hover */
+        --accent-light: #d4f4f8; /* Pale aqua - subtle backgrounds */
+        --accent-bubbles: #a8e6f0; /* Bubble effect color */
+
+        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+        --cream: #f4d19b; /* Warm cream */
+        --tan: #e8b876; /* Golden tan */
+        --peach: #f9e5d0; /* Soft peach */
+
+        /* === SEMANTIC COLORS === */
+        --success: #2db894; /* Use accent teal for success */
+        --warning: #e8b876; /* Use tan for warnings */
+        --error: #d97066; /* Muted coral red */
+        --info: #a8e6f0; /* Light aqua for info */
+
+        /* === NEUTRAL COLORS (Warmer Grays) === */
         --white: #ffffff;
-        --gray-50: #f8fafc;
-        --gray-100: #f1f5f9;
-        --gray-200: #e2e8f0;
-        --gray-300: #cbd5e1;
-        --gray-400: #94a3b8;
-        --gray-500: #64748b;
-        --gray-600: #475569;
-        --gray-700: #334155;
-        --gray-800: #1e293b;
-        --gray-900: #0f172a;
+        --gray-50: #faf8f6; /* Warm white */
+        --gray-100: #f2ebe5; /* Cream beige */
+        --gray-200: #e8dfd7; /* Light tan */
+        --gray-300: #d4c7bb; /* Medium tan */
+        --gray-400: #a89b8f; /* Warm gray */
+        --gray-500: #7d7169; /* Medium brown-gray */
+        --gray-600: #5d544d; /* Dark brown-gray */
+        --gray-700: #3d3935; /* Very dark brown */
+        --gray-800: #2a2622; /* Almost black brown */
+        --gray-900: #1a1614; /* Darkest brown */
 
-        /* Typography */
-        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* === SPACING SCALE === */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-10: 2.5rem; /* 40px */
+        --space-12: 3rem; /* 48px */
+        --space-16: 4rem; /* 64px */
+        --space-20: 5rem; /* 80px */
+        --space-24: 6rem; /* 96px */
 
-        /* Spacing Scale */
-        --space-1: 0.25rem;
-        --space-2: 0.5rem;
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-8: 2rem;
-        --space-10: 2.5rem;
-        --space-12: 3rem;
-        --space-16: 4rem;
+        /* === BORDER RADIUS (Softer, More Organic) === */
+        --radius-sm: 0.5rem; /* 8px */
+        --radius-md: 0.75rem; /* 12px */
+        --radius-lg: 1rem; /* 16px */
+        --radius-xl: 1.5rem; /* 24px */
+        --radius-2xl: 2rem; /* 32px */
+        --radius-3xl: 2.5rem; /* 40px */
+        --radius-full: 9999px; /* Full pill shape */
 
-        /* Border Radius */
-        --radius-sm: 0.375rem;
-        --radius-md: 0.5rem;
-        --radius-lg: 0.75rem;
-        --radius-xl: 1rem;
-        --radius-2xl: 1.5rem;
-        --radius-full: 9999px;
-
-        /* Shadows */
+        /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
         --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
           0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -71,6 +93,39 @@
         --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
           0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+        /* Brand-colored shadows for special elements */
+        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+
+        /* === LAYOUT CONSTANTS === */
+        --sidebar-width: 280px;
+        --header-height: 92px;
+        --max-content-width: 1400px;
+
+        /* === ANIMATION DURATIONS === */
+        --duration-fast: 150ms;
+        --duration-normal: 250ms;
+        --duration-slow: 350ms;
+        --duration-slower: 500ms;
+
+        /* === ANIMATION EASINGS === */
+        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-in: cubic-bezier(0.4, 0, 1, 1);
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+        /* === Z-INDEX SCALE === */
+        --z-base: 0;
+        --z-dropdown: 100;
+        --z-sticky: 100;
+        --z-overlay: 150;
+        --z-sidebar: 200;
+        --z-modal: 300;
+        --z-toast: 400;
+        --z-tooltip: 500;
       }
 
       /* ========================================
@@ -83,17 +138,17 @@
       }
 
       body {
-        font-family: var(--font-family);
+        font-family: var(--font-body);
         background: linear-gradient(
-          135deg,
-          #667eea 0%,
-          #764ba2 25%,
-          #6366f1 50%,
-          #06b6d4 75%,
-          #10b981 100%
+          160deg,
+          #fef9f5 0%,
+          /* Warm cream */ #f8f2ec 25%,
+          /* Peachy beige */ #f0ebe6 50%,
+          /* Soft tan */ #e8f4f2 75%,
+          /* Pale mint */ #f5fbfa 100% /* Light aqua */
         );
         background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
+        animation: gradientShift 20s ease infinite;
         min-height: 100vh;
         color: var(--gray-800);
         overflow-x: hidden;
@@ -102,14 +157,12 @@
       }
 
       @keyframes gradientShift {
-        0% {
+        0%,
+        100% {
           background-position: 0% 50%;
         }
         50% {
           background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
         }
       }
 
@@ -120,10 +173,47 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='27' cy='7' r='1'/%3E%3Ccircle cx='47' cy='7' r='1'/%3E%3Ccircle cx='7' cy='27' r='1'/%3E%3Ccircle cx='27' cy='27' r='1'/%3E%3Ccircle cx='47' cy='27' r='1'/%3E%3Ccircle cx='7' cy='47' r='1'/%3E%3Ccircle cx='27' cy='47' r='1'/%3E%3Ccircle cx='47' cy='47' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-          repeat;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
         pointer-events: none;
         z-index: 0;
+        opacity: 0.6;
+      }
+
+      /* ========================================
+         TYPOGRAPHY APPLICATION
+         ======================================== */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--gray-900);
+        line-height: 1.2;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-family: var(--font-body);
+        font-weight: 400;
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+
+      button,
+      .btn,
+      .badge,
+      label,
+      input,
+      select,
+      textarea {
+        font-family: var(--font-accent);
+        letter-spacing: 0.01em;
       }
 
       /* ========================================
@@ -156,13 +246,13 @@
         cursor: pointer;
         padding: var(--space-3);
         border-radius: var(--radius-lg);
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
         background: var(--gray-100);
         border: none;
       }
 
       .hamburger:hover {
-        background: var(--gray-200);
+        background: var(--primary-light);
       }
 
       .hamburger span {
@@ -170,7 +260,7 @@
         height: 2px;
         background: var(--gray-700);
         border-radius: 1px;
-        transition: all 0.3s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .hamburger.active span:nth-child(1) {
@@ -195,11 +285,7 @@
       .brand-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--secondary) 100%
-        );
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -207,10 +293,11 @@
         color: white;
         font-size: 1.25rem;
         font-weight: 700;
-        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        box-shadow: var(--shadow-primary);
       }
 
       .brand-text-header {
+        font-family: var(--font-display);
         font-size: 1.125rem;
         font-weight: 700;
         color: var(--gray-900);
@@ -222,6 +309,7 @@
         display: flex;
         align-items: center;
         gap: var(--space-2);
+        font-family: var(--font-body);
         font-size: 0.875rem;
         color: var(--gray-600);
       }
@@ -230,11 +318,12 @@
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.2s ease;
+        transition: color var(--duration-fast) var(--ease-smooth);
       }
 
       .breadcrumb-link:hover {
         color: var(--primary-hover);
+        text-decoration: underline;
       }
 
       .breadcrumb-separator {
@@ -276,7 +365,7 @@
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
-        transition: all 0.3s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
         z-index: 200;
       }
 
@@ -303,18 +392,19 @@
         color: var(--gray-700);
         text-decoration: none;
         border-radius: var(--radius-lg);
-        transition: all 0.2s ease;
+        font-family: var(--font-body);
+        transition: all var(--duration-normal) var(--ease-smooth);
         font-weight: 500;
       }
 
       .nav-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-900);
+        background: var(--primary-light);
+        color: var(--primary-dark);
       }
 
       .nav-link.active {
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         font-weight: 600;
       }
 
@@ -353,14 +443,18 @@
       }
 
       .page-title-section h1 {
+        font-family: var(--font-display);
         font-size: 2.5rem;
-        font-weight: 800;
+        font-weight: 700;
         color: var(--gray-900);
         margin: 0 0 var(--space-2) 0;
+        letter-spacing: -0.02em;
       }
 
       .page-subtitle {
+        font-family: var(--font-body);
         font-size: 1.125rem;
+        font-weight: 400;
         color: var(--gray-600);
         margin: 0;
       }
@@ -392,10 +486,10 @@
         border-radius: var(--radius-xl);
         padding: var(--space-6);
         box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
+        transition: all var(--duration-slow) var(--ease-bounce);
         position: relative;
         overflow: hidden;
-        animation: slideInUp 0.4s ease-out forwards;
+        animation: slideInUp 0.4s var(--ease-out) forwards;
         opacity: 0;
       }
 
@@ -424,7 +518,7 @@
 
       .stat-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--shadow-xl);
+        box-shadow: var(--shadow-primary);
       }
 
       .stat-card::before {
@@ -434,27 +528,23 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--secondary) 100%
-        );
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
       }
 
       .stat-card.revenue::before {
-        background: linear-gradient(
-          135deg,
-          var(--success) 0%,
-          var(--secondary) 100%
-        );
+        background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      }
+
+      .stat-card.revenue:hover {
+        box-shadow: var(--shadow-accent);
       }
 
       .stat-card.date::before {
-        background: linear-gradient(
-          135deg,
-          var(--accent) 0%,
-          var(--primary) 100%
-        );
+        background: linear-gradient(135deg, var(--tan) 0%, var(--primary) 100%);
+      }
+
+      .stat-card.date:hover {
+        box-shadow: var(--shadow-secondary);
       }
 
       .stat-header {
@@ -465,6 +555,7 @@
       }
 
       .stat-label {
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -484,13 +575,13 @@
       }
 
       .stat-card.revenue .stat-icon {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success);
+        background: var(--accent-light);
+        color: var(--accent);
       }
 
       .stat-card.date .stat-icon {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--accent);
+        background: var(--peach);
+        color: var(--tan);
       }
 
       .stat-value {
@@ -519,16 +610,17 @@
         align-items: center;
         gap: var(--space-1);
         padding: var(--space-1) var(--space-2);
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success);
+        background: var(--accent-light);
+        color: var(--secondary-dark);
         border-radius: var(--radius-sm);
+        font-family: var(--font-accent);
         font-size: 0.75rem;
         font-weight: 600;
         margin-left: var(--space-2);
       }
 
       .stat-change.negative {
-        background: rgba(239, 68, 68, 0.1);
+        background: rgba(217, 112, 102, 0.1);
         color: var(--error);
       }
 
@@ -547,6 +639,7 @@
       }
 
       .section-title {
+        font-family: var(--font-display);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--gray-900);
@@ -566,12 +659,12 @@
         border: none;
         background: transparent;
         color: var(--gray-600);
-        font-family: var(--font-family);
+        font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
         border-radius: var(--radius-md);
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .toggle-btn.active {
@@ -581,7 +674,8 @@
       }
 
       .toggle-btn:hover:not(.active) {
-        background: var(--gray-200);
+        background: var(--primary-light);
+        color: var(--primary-dark);
       }
 
       .charts-grid {
@@ -596,7 +690,7 @@
         border-radius: var(--radius-xl);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .chart-card:hover {
@@ -613,6 +707,7 @@
       }
 
       .chart-title {
+        font-family: var(--font-display);
         font-size: 1.125rem;
         font-weight: 700;
         color: var(--gray-900);
@@ -637,14 +732,15 @@
         height: 300px;
         background: linear-gradient(
           135deg,
-          var(--gray-50) 0%,
-          var(--primary-light) 100%
+          var(--primary-light) 0%,
+          var(--accent-light) 100%
         );
         border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--gray-500);
+        font-family: var(--font-body);
         font-style: italic;
         border: 2px dashed var(--gray-300);
       }
@@ -687,6 +783,7 @@
       .data-table {
         width: 100%;
         border-collapse: collapse;
+        font-family: var(--font-body);
       }
 
       .data-table thead {
@@ -696,11 +793,14 @@
       .data-table th {
         padding: var(--space-4);
         text-align: left;
+        font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
         color: var(--gray-700);
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 2px solid var(--gray-200);
         white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
       .data-table td {
@@ -708,10 +808,11 @@
         border-bottom: 1px solid var(--gray-100);
         vertical-align: middle;
         font-size: 0.875rem;
+        color: var(--gray-800);
       }
 
       .data-table tr:hover {
-        background: var(--gray-50);
+        background: var(--primary-light);
       }
 
       .data-table tr:last-child td {
