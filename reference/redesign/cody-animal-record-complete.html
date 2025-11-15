@@ -5,69 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cody - Animal Record - Pampered Pooch Database</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       /* Design System Variables */
       :root {
-        /* Modern Color Palette */
-        --primary: #6366f1;
-        --primary-hover: #4f46e5;
-        --primary-light: #e0e7ff;
-        --secondary: #06b6d4;
-        --secondary-hover: #0891b2;
-        --accent: #f59e0b;
-        --accent-hover: #d97706;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #ef4444;
+        /* === TYPOGRAPHY === */
+        --font-display: 'Cormorant', Georgia, serif;
+        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-accent: 'Outfit', -apple-system, sans-serif;
+        --font-family: var(--font-body); /* Legacy fallback */
 
-        /* Neutrals */
+        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+        --primary: #d9944a; /* Golden brown - main brand color */
+        --primary-hover: #c97d3d; /* Darker brown on hover */
+        --primary-light: #fef4e8; /* Very light peach for backgrounds */
+        --primary-dark: #8b5a2b; /* Deep brown for contrast */
+
+        /* === SECONDARY COLORS (From Logo - Teal Green) === */
+        --secondary: #1b9e7e; /* Teal green - trust, nature */
+        --secondary-hover: #178a6c; /* Darker teal on hover */
+        --secondary-light: #e6f7f3; /* Pale mint for backgrounds */
+        --secondary-dark: #0f6652; /* Deep teal for text */
+
+        /* === ACCENT COLORS (From Logo - Light Aqua) === */
+        --accent: #2db894; /* Bright teal - CTAs, highlights */
+        --accent-hover: #24a382; /* Darker on hover */
+        --accent-light: #d4f4f8; /* Pale aqua - subtle backgrounds */
+        --accent-bubbles: #a8e6f0; /* Bubble effect color */
+
+        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+        --cream: #f4d19b; /* Warm cream */
+        --tan: #e8b876; /* Golden tan */
+        --peach: #f9e5d0; /* Soft peach */
+
+        /* === SEMANTIC COLORS === */
+        --success: #2db894; /* Use accent teal for success */
+        --warning: #e8b876; /* Use tan for warnings */
+        --error: #d97066; /* Muted coral red */
+        --info: #a8e6f0; /* Light aqua for info */
+
+        /* === NEUTRAL COLORS (Warmer Grays) === */
         --white: #ffffff;
-        --gray-50: #f8fafc;
-        --gray-100: #f1f5f9;
-        --gray-200: #e2e8f0;
-        --gray-300: #cbd5e1;
-        --gray-400: #94a3b8;
-        --gray-500: #64748b;
-        --gray-600: #475569;
-        --gray-700: #334155;
-        --gray-800: #1e293b;
-        --gray-900: #0f172a;
+        --gray-50: #faf8f6; /* Warm white */
+        --gray-100: #f2ebe5; /* Cream beige */
+        --gray-200: #e8dfd7; /* Light tan */
+        --gray-300: #d4c7bb; /* Medium tan */
+        --gray-400: #a89b8f; /* Warm gray */
+        --gray-500: #7d7169; /* Medium brown-gray */
+        --gray-600: #5d544d; /* Dark brown-gray */
+        --gray-700: #3d3935; /* Very dark brown */
+        --gray-800: #2a2622; /* Almost black brown */
+        --gray-900: #1a1614; /* Darkest brown */
 
-        /* Typography */
-        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* === SPACING SCALE === */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-10: 2.5rem; /* 40px */
+        --space-12: 3rem; /* 48px */
+        --space-16: 4rem; /* 64px */
+        --space-20: 5rem; /* 80px */
+        --space-24: 6rem; /* 96px */
 
-        /* Spacing Scale */
-        --space-1: 0.25rem;
-        --space-2: 0.5rem;
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-8: 2rem;
-        --space-10: 2.5rem;
-        --space-12: 3rem;
-        --space-16: 4rem;
+        /* === BORDER RADIUS (Softer, More Organic) === */
+        --radius-sm: 0.5rem; /* 8px - was 6px */
+        --radius-md: 0.75rem; /* 12px - was 8px */
+        --radius-lg: 1rem; /* 16px - was 12px */
+        --radius-xl: 1.5rem; /* 24px - was 16px */
+        --radius-2xl: 2rem; /* 32px - was 24px */
+        --radius-3xl: 2.5rem; /* 40px - new! */
+        --radius-full: 9999px; /* Full pill shape */
 
-        /* Border Radius */
-        --radius-sm: 0.375rem;
-        --radius-md: 0.5rem;
-        --radius-lg: 0.75rem;
-        --radius-xl: 1rem;
-        --radius-2xl: 1.5rem;
-        --radius-full: 9999px;
-
-        /* Shadows */
+        /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md:
-          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         --shadow-lg:
           0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         --shadow-xl:
           0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+        /* Brand-colored shadows for special elements */
+        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+
+        /* === LAYOUT CONSTANTS === */
+        --sidebar-width: 280px;
+        --header-height: 92px;
+        --max-content-width: 1400px;
+
+        /* === ANIMATION DURATIONS === */
+        --duration-fast: 150ms;
+        --duration-normal: 250ms;
+        --duration-slow: 350ms;
+        --duration-slower: 500ms;
+
+        /* === ANIMATION EASINGS === */
+        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-in: cubic-bezier(0.4, 0, 1, 1);
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+        /* === Z-INDEX SCALE === */
+        --z-base: 0;
+        --z-dropdown: 100;
+        --z-sticky: 100;
+        --z-overlay: 150;
+        --z-sidebar: 200;
+        --z-modal: 300;
+        --z-toast: 400;
+        --z-tooltip: 500;
       }
 
       /* Reset */
@@ -85,32 +140,82 @@
       }
 
       body {
-        font-family: var(--font-family);
+        font-family: var(--font-body);
         background: linear-gradient(
-          135deg,
-          #667eea 0%,
-          #764ba2 25%,
-          #6366f1 50%,
-          #06b6d4 75%,
-          #10b981 100%
+          160deg,
+          #fef9f5 0%,
+          /* Warm cream */ #f8f2ec 25%,
+          /* Peachy beige */ #f0ebe6 50%,
+          /* Soft tan */ #e8f4f2 75%,
+          /* Pale mint */ #f5fbfa 100% /* Light aqua */
         );
         background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
+        animation: gradientShift 20s ease infinite;
         min-height: 100vh;
         color: var(--gray-800);
         overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Paw print pattern overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.6;
       }
 
       @keyframes gradientShift {
-        0% {
+        0%,
+        100% {
           background-position: 0% 50%;
         }
         50% {
           background-position: 100% 50%;
         }
-        100% {
-          background-position: 0% 50%;
-        }
+      }
+
+      /* Headings use elegant serif */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--gray-900);
+        line-height: 1.2;
+      }
+
+      /* Body text uses warm sans-serif */
+      p,
+      li,
+      td,
+      th {
+        font-family: var(--font-body);
+        font-weight: 400;
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+
+      /* UI elements (buttons, badges, labels) use geometric sans */
+      button,
+      .btn,
+      .badge,
+      label,
+      input,
+      select,
+      textarea {
+        font-family: var(--font-accent);
+        letter-spacing: 0.01em;
       }
 
       /* Layout Structure */
@@ -118,17 +223,22 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        position: relative;
+        z-index: 1;
       }
 
       /* Persistent Header */
       .app-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding: var(--space-4) var(--space-6);
+        border-bottom: 1px solid var(--gray-200);
+        padding: var(--space-6);
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: var(--z-sticky);
         box-shadow: var(--shadow-md);
       }
 
@@ -152,12 +262,17 @@
         cursor: pointer;
         padding: var(--space-3);
         border-radius: var(--radius-lg);
-        transition: all 0.2s ease;
+        transition: all var(--duration-fast) var(--ease-smooth);
         background: var(--gray-100);
       }
 
       .hamburger:hover {
-        background: var(--gray-200);
+        background: var(--primary-light);
+      }
+
+      .hamburger:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .hamburger span {
@@ -219,7 +334,7 @@
       .brand-icon-dropdown {
         width: 35px;
         height: 35px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
@@ -228,6 +343,7 @@
       }
 
       .brand-text-dropdown h3 {
+        font-family: var(--font-display);
         font-size: 1rem;
         font-weight: 700;
         margin: 0;
@@ -235,6 +351,7 @@
       }
 
       .brand-text-dropdown p {
+        font-family: var(--font-body);
         font-size: 0.75rem;
         color: var(--gray-600);
         margin: 0;
@@ -256,20 +373,21 @@
         color: var(--gray-700);
         text-decoration: none;
         border-radius: var(--radius-lg);
+        font-family: var(--font-body);
         font-weight: 500;
         font-size: 0.875rem;
-        transition: all 0.2s ease;
+        transition: all var(--duration-fast) var(--ease-smooth);
         width: 100%;
       }
 
       .nav-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-900);
+        background: var(--primary-light);
+        color: var(--primary-dark);
       }
 
       .nav-link.active {
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         font-weight: 600;
       }
 
@@ -290,7 +408,7 @@
       .brand-icon-header {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
@@ -299,6 +417,7 @@
       }
 
       .brand-text-header h1 {
+        font-family: var(--font-display);
         font-size: 1.25rem;
         font-weight: 700;
         margin: 0;
@@ -306,6 +425,7 @@
       }
 
       .brand-text-header p {
+        font-family: var(--font-body);
         font-size: 0.75rem;
         color: var(--gray-600);
         margin: 0;
@@ -322,14 +442,16 @@
       }
 
       .breadcrumb-link {
+        font-family: var(--font-body);
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.2s ease;
+        transition: color var(--duration-fast) var(--ease-smooth);
       }
 
       .breadcrumb-link:hover {
         color: var(--primary-hover);
+        text-decoration: underline;
       }
 
       .breadcrumb-separator {
@@ -350,9 +472,10 @@
 
       .date-display {
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-full);
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         white-space: nowrap;
@@ -387,16 +510,13 @@
       .animal-avatar-large {
         width: 120px;
         height: 120px;
-        background: linear-gradient(
-          135deg,
-          var(--primary-light),
-          var(--secondary)
-        );
+        background: linear-gradient(135deg, var(--primary-light), var(--accent));
         border-radius: var(--radius-2xl);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--primary);
+        color: var(--primary-dark);
+        font-family: var(--font-accent);
         font-size: 3rem;
         font-weight: 800;
         box-shadow: var(--shadow-lg);
@@ -415,19 +535,25 @@
       }
 
       .animal-name {
+        font-family: var(--font-display);
         font-size: 2.5rem;
-        font-weight: 800;
+        font-weight: 700;
         color: var(--gray-900);
         margin: 0;
+        letter-spacing: -0.02em;
       }
 
       .status-badge {
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-full);
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
       }
 
       .status-active {
@@ -438,6 +564,16 @@
       .status-inactive {
         background: var(--gray-200);
         color: var(--gray-700);
+      }
+
+      .status-pending {
+        background: var(--warning);
+        color: white;
+      }
+
+      .status-error {
+        background: var(--error);
+        color: white;
       }
 
       .animal-meta {
@@ -454,6 +590,7 @@
       }
 
       .meta-label {
+        font-family: var(--font-accent);
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -462,6 +599,7 @@
       }
 
       .meta-value {
+        font-family: var(--font-body);
         font-size: 1rem;
         font-weight: 600;
         color: var(--gray-800);
@@ -499,11 +637,12 @@
         border-radius: var(--radius-xl);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .card:hover {
         box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
       }
 
       .card-header {
@@ -516,8 +655,9 @@
       }
 
       .card-title {
-        font-size: 1.125rem;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 600;
         color: var(--gray-900);
         margin: 0;
         display: flex;
@@ -553,9 +693,15 @@
       }
 
       .form-label {
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--gray-700);
+      }
+
+      .form-label.required::after {
+        content: ' *';
+        color: var(--error);
       }
 
       .form-input,
@@ -575,7 +721,19 @@
       .form-textarea:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+      }
+
+      .form-input.error,
+      .form-select.error,
+      .form-textarea.error {
+        border-color: var(--error);
+      }
+
+      .form-input.error:focus,
+      .form-select.error:focus,
+      .form-textarea.error:focus {
+        box-shadow: 0 0 0 3px rgba(217, 102, 102, 0.1);
       }
 
       .form-textarea {
@@ -620,12 +778,13 @@
         background: var(--gray-50);
         border-radius: var(--radius-lg);
         border-left: 4px solid var(--primary);
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .service-item:hover {
         background: var(--primary-light);
         border-left-color: var(--primary-hover);
+        transform: translateX(4px);
       }
 
       .service-date {
@@ -677,18 +836,35 @@
         padding: var(--space-3) var(--space-5);
         border: none;
         border-radius: var(--radius-lg);
-        font-family: var(--font-family);
+        font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
+        transition: all var(--duration-normal) var(--ease-smooth);
+        display: inline-flex;
         align-items: center;
         gap: var(--space-2);
         justify-content: center;
         text-decoration: none;
+        white-space: nowrap;
+        box-shadow: var(--shadow-sm);
       }
 
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      /* Primary (Golden Brown) */
       .btn-primary {
         background: var(--primary);
         color: white;
@@ -696,49 +872,76 @@
 
       .btn-primary:hover {
         background: var(--primary-hover);
-        transform: translateY(-1px);
       }
 
+      /* Secondary (Teal Green) */
       .btn-secondary {
-        background: var(--gray-100);
-        color: var(--gray-700);
-        border: 1px solid var(--gray-300);
+        background: var(--secondary);
+        color: white;
       }
 
       .btn-secondary:hover {
-        background: var(--gray-200);
+        background: var(--secondary-hover);
       }
 
+      /* Accent (Bright Teal - CTAs) */
+      .btn-accent {
+        background: var(--accent);
+        color: white;
+      }
+
+      .btn-accent:hover {
+        background: var(--accent-hover);
+      }
+
+      /* Success */
       .btn-success {
         background: var(--success);
         color: white;
       }
 
       .btn-success:hover {
-        background: #059669;
+        background: var(--accent-hover);
       }
 
+      /* Danger */
       .btn-danger {
         background: var(--error);
         color: white;
       }
 
       .btn-danger:hover {
-        background: #dc2626;
+        background: #c45d54;
       }
 
+      /* Warning */
       .btn-warning {
         background: var(--warning);
         color: white;
       }
 
       .btn-warning:hover {
-        background: var(--accent-hover);
+        background: var(--tan);
+      }
+
+      /* Ghost */
+      .btn-ghost {
+        background: var(--gray-100);
+        color: var(--gray-700);
+      }
+
+      .btn-ghost:hover {
+        background: var(--gray-200);
       }
 
       .btn-small {
         padding: var(--space-2) var(--space-3);
         font-size: 0.75rem;
+      }
+
+      .btn-large {
+        padding: var(--space-4) var(--space-6);
+        font-size: 1rem;
       }
 
       /* Customer Info Card */
@@ -757,17 +960,22 @@
       .customer-avatar {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
+        font-family: var(--font-accent);
         font-weight: 700;
         font-size: 1.25rem;
+        box-shadow: var(--shadow-primary);
+        transition: all var(--duration-normal) var(--ease-bounce);
+        border: 2px solid white;
       }
 
       .customer-details h3 {
+        font-family: var(--font-display);
         font-size: 1.125rem;
         font-weight: 700;
         color: var(--gray-900);
@@ -775,6 +983,7 @@
       }
 
       .customer-details p {
+        font-family: var(--font-body);
         font-size: 0.875rem;
         color: var(--gray-600);
         margin: 0;
@@ -793,11 +1002,12 @@
         gap: var(--space-3);
         padding: var(--space-2);
         border-radius: var(--radius-md);
-        transition: background 0.2s ease;
+        transition: background var(--duration-fast) var(--ease-smooth);
       }
 
       .contact-item:hover {
-        background: var(--gray-50);
+        background: var(--primary-light);
+        cursor: pointer;
       }
 
       .contact-icon {
@@ -822,6 +1032,7 @@
       }
 
       .stat-number {
+        font-family: var(--font-accent);
         font-size: 1.5rem;
         font-weight: 800;
         color: var(--primary);
@@ -829,6 +1040,7 @@
       }
 
       .stat-label {
+        font-family: var(--font-accent);
         font-size: 0.75rem;
         color: var(--gray-600);
         text-transform: uppercase;
@@ -904,10 +1116,90 @@
         }
       }
 
-      .card {
-        animation: slideInUp 0.4s ease-out forwards;
+      /* Fade in from below */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
+      /* Fade in from above */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Shimmer effect (for loading, highlights) */
+      @keyframes shimmer {
+        0%,
+        100% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        50% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      /* Spin (loading indicators) */
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Bounce (playful elements, mascot) */
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      /* Gentle pulse (attention grabbers) */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      /* Float (decorative elements) */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .card {
+        animation: slideInUp 0.4s var(--ease-out) forwards;
+      }
+
+      .card:nth-child(1) {
+        animation-delay: 0s;
+      }
       .card:nth-child(2) {
         animation-delay: 0.1s;
       }
@@ -916,6 +1208,12 @@
       }
       .card:nth-child(4) {
         animation-delay: 0.3s;
+      }
+      .card:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+      .card:nth-child(6) {
+        animation-delay: 0.5s;
       }
     </style>
   </head>
