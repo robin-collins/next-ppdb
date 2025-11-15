@@ -4,71 +4,131 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Breed Management - Pampered Pooch Database</title>
+    <!-- STYLE GUIDE COMPLIANT FONTS: Cormorant, DM Sans, Outfit -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
-      /* Design System Variables */
+      /* ========================================
+         PAMPERED POOCH DESIGN SYSTEM v2.0
+         "Soft Luxury" Brand - Style Guide Compliant
+         ======================================== */
+
+      /* Design System Variables - Extracted from Logo */
       :root {
-        /* Modern Color Palette */
-        --primary: #6366f1;
-        --primary-hover: #4f46e5;
-        --primary-light: #e0e7ff;
-        --primary-dark: #3730a3;
-        --secondary: #06b6d4;
-        --secondary-hover: #0891b2;
-        --accent: #f59e0b;
-        --accent-hover: #d97706;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #ef4444;
+        /* === TYPOGRAPHY === */
+        --font-display: 'Cormorant', Georgia, serif;
+        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-accent: 'Outfit', -apple-system, sans-serif;
 
-        /* Neutrals */
+        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+        --primary: #d9944a; /* Golden brown - main brand color */
+        --primary-hover: #c97d3d; /* Darker brown on hover */
+        --primary-light: #fef4e8; /* Very light peach for backgrounds */
+        --primary-dark: #8b5a2b; /* Deep brown for contrast */
+
+        /* === SECONDARY COLORS (From Logo - Teal Green) === */
+        --secondary: #1b9e7e; /* Teal green - trust, nature */
+        --secondary-hover: #178a6c; /* Darker teal on hover */
+        --secondary-light: #e6f7f3; /* Pale mint for backgrounds */
+        --secondary-dark: #0f6652; /* Deep teal for text */
+
+        /* === ACCENT COLORS (From Logo - Light Aqua) === */
+        --accent: #2db894; /* Bright teal - CTAs, highlights */
+        --accent-hover: #24a382; /* Darker on hover */
+        --accent-light: #d4f4f8; /* Pale aqua - subtle backgrounds */
+        --accent-bubbles: #a8e6f0; /* Bubble effect color */
+
+        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+        --cream: #f4d19b; /* Warm cream */
+        --tan: #e8b876; /* Golden tan */
+        --peach: #f9e5d0; /* Soft peach */
+
+        /* === SEMANTIC COLORS === */
+        --success: #2db894; /* Use accent teal for success */
+        --warning: #e8b876; /* Use tan for warnings */
+        --error: #d97066; /* Muted coral red */
+        --info: #a8e6f0; /* Light aqua for info */
+
+        /* === NEUTRAL COLORS (Warmer Grays) === */
         --white: #ffffff;
-        --gray-50: #f8fafc;
-        --gray-100: #f1f5f9;
-        --gray-200: #e2e8f0;
-        --gray-300: #cbd5e1;
-        --gray-400: #94a3b8;
-        --gray-500: #64748b;
-        --gray-600: #475569;
-        --gray-700: #334155;
-        --gray-800: #1e293b;
-        --gray-900: #0f172a;
+        --gray-50: #faf8f6; /* Warm white */
+        --gray-100: #f2ebe5; /* Cream beige */
+        --gray-200: #e8dfd7; /* Light tan */
+        --gray-300: #d4c7bb; /* Medium tan */
+        --gray-400: #a89b8f; /* Warm gray */
+        --gray-500: #7d7169; /* Medium brown-gray */
+        --gray-600: #5d544d; /* Dark brown-gray */
+        --gray-700: #3d3935; /* Very dark brown */
+        --gray-800: #2a2622; /* Almost black brown */
+        --gray-900: #1a1614; /* Darkest brown */
 
-        /* Typography */
-        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* === SPACING SCALE === */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-10: 2.5rem; /* 40px */
+        --space-12: 3rem; /* 48px */
+        --space-16: 4rem; /* 64px */
+        --space-20: 5rem; /* 80px */
+        --space-24: 6rem; /* 96px */
 
-        /* Spacing Scale */
-        --space-1: 0.25rem;
-        --space-2: 0.5rem;
-        --space-3: 0.75rem;
-        --space-4: 1rem;
-        --space-5: 1.25rem;
-        --space-6: 1.5rem;
-        --space-8: 2rem;
-        --space-10: 2.5rem;
-        --space-12: 3rem;
-        --space-16: 4rem;
+        /* === BORDER RADIUS (Softer, More Organic) === */
+        --radius-sm: 0.5rem; /* 8px */
+        --radius-md: 0.75rem; /* 12px */
+        --radius-lg: 1rem; /* 16px */
+        --radius-xl: 1.5rem; /* 24px */
+        --radius-2xl: 2rem; /* 32px */
+        --radius-3xl: 2.5rem; /* 40px */
+        --radius-full: 9999px; /* Full pill shape */
 
-        /* Border Radius */
-        --radius-sm: 0.375rem;
-        --radius-md: 0.5rem;
-        --radius-lg: 0.75rem;
-        --radius-xl: 1rem;
-        --radius-2xl: 1.5rem;
-        --radius-full: 9999px;
-
-        /* Shadows */
+        /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md:
-          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --shadow-lg:
-          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        --shadow-xl:
-          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+        /* Brand-colored shadows for special elements */
+        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+
+        /* === LAYOUT CONSTANTS === */
+        --sidebar-width: 280px;
+        --header-height: 92px;
+        --max-content-width: 1400px;
+
+        /* === ANIMATION DURATIONS === */
+        --duration-fast: 150ms;
+        --duration-normal: 250ms;
+        --duration-slow: 350ms;
+        --duration-slower: 500ms;
+
+        /* === ANIMATION EASINGS === */
+        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-in: cubic-bezier(0.4, 0, 1, 1);
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+        /* === Z-INDEX SCALE === */
+        --z-base: 0;
+        --z-dropdown: 100;
+        --z-sticky: 100;
+        --z-overlay: 150;
+        --z-sidebar: 200;
+        --z-modal: 300;
+        --z-toast: 400;
+        --z-tooltip: 500;
       }
 
       /* Reset */
@@ -85,32 +145,151 @@
         line-height: 1.6;
       }
 
+      /* Body with Warm Gradient Background & Paw Print Pattern */
       body {
-        font-family: var(--font-family);
+        font-family: var(--font-body);
         background: linear-gradient(
-          135deg,
-          #667eea 0%,
-          #764ba2 25%,
-          #6366f1 50%,
-          #06b6d4 75%,
-          #10b981 100%
+          160deg,
+          #fef9f5 0%,
+          /* Warm cream */ #f8f2ec 25%,
+          /* Peachy beige */ #f0ebe6 50%,
+          /* Soft tan */ #e8f4f2 75%,
+          /* Pale mint */ #f5fbfa 100% /* Light aqua */
         );
         background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
+        animation: gradientShift 20s ease infinite;
         min-height: 100vh;
-        color: var(--gray-800);
+        color: var(--gray-700);
         overflow-x: hidden;
+        position: relative;
       }
 
+      /* Paw Print Pattern Overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.6;
+      }
+
+      /* Typography - Using Brand Fonts */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--gray-900);
+        line-height: 1.2;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-family: var(--font-body);
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+
+      button,
+      .btn,
+      label,
+      input,
+      select,
+      textarea {
+        font-family: var(--font-accent);
+        letter-spacing: 0.01em;
+      }
+
+      /* Keyframe Animations */
       @keyframes gradientShift {
-        0% {
+        0%,
+        100% {
           background-position: 0% 50%;
         }
         50% {
           background-position: 100% 50%;
         }
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
         100% {
-          background-position: 0% 50%;
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
         }
       }
 
@@ -119,26 +298,32 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        position: relative;
+        z-index: 1;
       }
 
       /* Persistent Header */
       .app-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid var(--gray-200);
         padding: var(--space-4) var(--space-6);
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: var(--z-sticky);
         box-shadow: var(--shadow-md);
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
       }
 
       .header-content {
         display: flex;
         align-items: center;
         gap: var(--space-6);
-        max-width: 1400px;
+        max-width: var(--max-content-width);
         margin: 0 auto;
+        width: 100%;
       }
 
       /* Hamburger Menu */
@@ -153,12 +338,19 @@
         cursor: pointer;
         padding: var(--space-3);
         border-radius: var(--radius-lg);
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
         background: var(--gray-100);
+        border: none;
       }
 
       .hamburger:hover {
         background: var(--gray-200);
+        transform: translateY(-1px);
+      }
+
+      .hamburger:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .hamburger span {
@@ -166,7 +358,7 @@
         height: 2px;
         background: var(--gray-700);
         border-radius: 1px;
-        transition: all 0.3s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
       }
 
       .hamburger.active span:nth-child(1) {
@@ -194,18 +386,19 @@
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
-        transition: all 0.3s ease;
-        z-index: 200;
+        transition: all var(--duration-normal) var(--ease-out);
+        z-index: var(--z-dropdown);
       }
 
       .nav-dropdown.active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
+        animation: fadeInDown var(--duration-normal) var(--ease-out);
       }
 
       .dropdown-header {
-        padding: var(--space-4) var(--space-5);
+        padding: var(--space-5) var(--space-6);
         border-bottom: 1px solid var(--gray-200);
         background: var(--gray-50);
         border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -220,22 +413,25 @@
       .brand-icon-dropdown {
         width: 35px;
         height: 35px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
+        box-shadow: var(--shadow-primary);
       }
 
       .brand-text-dropdown h3 {
+        font-family: var(--font-display);
         font-size: 1rem;
         font-weight: 700;
         margin: 0;
-        color: var(--gray-800);
+        color: var(--gray-900);
       }
 
       .brand-text-dropdown p {
+        font-family: var(--font-body);
         font-size: 0.75rem;
         color: var(--gray-600);
         margin: 0;
@@ -257,56 +453,71 @@
         color: var(--gray-700);
         text-decoration: none;
         border-radius: var(--radius-lg);
+        font-family: var(--font-body);
         font-weight: 500;
         font-size: 0.875rem;
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
         width: 100%;
       }
 
       .nav-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-900);
+        background: var(--primary-light);
+        color: var(--primary-dark);
       }
 
       .nav-link.active {
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         font-weight: 600;
+      }
+
+      .nav-link:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .nav-icon {
         width: 18px;
         height: 18px;
         flex-shrink: 0;
+        color: var(--primary);
       }
 
-      /* Brand Logo */
+      /* Brand Logo in Header */
       .brand-header {
         display: flex;
         align-items: center;
         gap: var(--space-3);
         cursor: pointer;
+        transition: transform var(--duration-normal) var(--ease-smooth);
+      }
+
+      .brand-header:hover {
+        transform: translateY(-2px);
       }
 
       .brand-icon-header {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
+        box-shadow: var(--shadow-primary);
       }
 
       .brand-text-header h1 {
+        font-family: var(--font-display);
         font-size: 1.25rem;
         font-weight: 700;
         margin: 0;
-        color: var(--gray-800);
+        color: var(--gray-900);
       }
 
       .brand-text-header p {
+        font-family: var(--font-body);
         font-size: 0.75rem;
         color: var(--gray-600);
         margin: 0;
@@ -318,6 +529,7 @@
         display: flex;
         align-items: center;
         gap: var(--space-2);
+        font-family: var(--font-body);
         font-size: 0.875rem;
         color: var(--gray-600);
       }
@@ -326,11 +538,18 @@
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.2s ease;
+        transition: color var(--duration-fast) var(--ease-smooth);
       }
 
       .breadcrumb-link:hover {
         color: var(--primary-hover);
+        text-decoration: underline;
+      }
+
+      .breadcrumb-link:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
       }
 
       .breadcrumb-separator {
@@ -351,12 +570,14 @@
 
       .date-display {
         background: var(--primary-light);
-        color: var(--primary);
+        color: var(--primary-dark);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-full);
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         white-space: nowrap;
+        border: 1px solid var(--primary);
       }
 
       /* Main Content */
@@ -375,53 +596,28 @@
         padding: var(--space-8);
       }
 
-      /* Page Header */
+      /* Page Header - NO STATS (Removed as per task requirement) */
       .page-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
         margin-bottom: var(--space-8);
         padding-bottom: var(--space-6);
         border-bottom: 1px solid var(--gray-200);
       }
 
       .page-title-section h1 {
+        font-family: var(--font-display);
         font-size: 2.5rem;
-        font-weight: 800;
+        font-weight: 700;
         color: var(--gray-900);
         margin: 0 0 var(--space-2) 0;
+        letter-spacing: -0.02em;
       }
 
       .page-subtitle {
+        font-family: var(--font-body);
         font-size: 1.125rem;
+        font-weight: 400;
         color: var(--gray-600);
         margin: 0;
-      }
-
-      .page-stats {
-        display: flex;
-        gap: var(--space-6);
-        text-align: right;
-      }
-
-      .stat-item {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-
-      .stat-number {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--primary);
-      }
-
-      .stat-label {
-        font-size: 0.875rem;
-        color: var(--gray-600);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
       }
 
       /* Add New Breed Section */
@@ -432,6 +628,13 @@
         padding: var(--space-6);
         margin-bottom: var(--space-8);
         box-shadow: var(--shadow-sm);
+        animation: slideInUp 0.4s var(--ease-out) forwards;
+        transition: all var(--duration-normal) var(--ease-smooth);
+      }
+
+      .add-breed-section:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
       }
 
       .section-header {
@@ -448,8 +651,9 @@
       }
 
       .section-title {
+        font-family: var(--font-display);
         font-size: 1.25rem;
-        font-weight: 700;
+        font-weight: 600;
         color: var(--gray-900);
         margin: 0;
       }
@@ -468,6 +672,7 @@
       }
 
       .form-label {
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--gray-700);
@@ -477,16 +682,27 @@
         padding: var(--space-3) var(--space-4);
         border: 2px solid var(--gray-200);
         border-radius: var(--radius-lg);
+        font-family: var(--font-body);
         font-size: 1rem;
-        font-family: var(--font-family);
         background: white;
-        transition: all 0.2s ease;
+        color: var(--gray-800);
+        transition: all var(--duration-fast) var(--ease-smooth);
       }
 
       .form-input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+      }
+
+      .form-input:focus-visible {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+      }
+
+      .form-input::placeholder {
+        color: var(--gray-400);
       }
 
       /* Breed Management Section */
@@ -496,15 +712,14 @@
         border-radius: var(--radius-xl);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
+        animation: slideInUp 0.4s var(--ease-out) 0.1s forwards;
+        opacity: 0;
       }
 
       .management-header {
         padding: var(--space-6);
         border-bottom: 1px solid var(--gray-200);
         background: var(--gray-50);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
       }
 
       /* Search and Filter Controls */
@@ -512,7 +727,7 @@
         display: flex;
         align-items: center;
         gap: var(--space-4);
-        margin-bottom: var(--space-6);
+        margin-top: var(--space-6);
       }
 
       .search-box {
@@ -526,14 +741,21 @@
         padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
         border: 2px solid var(--gray-200);
         border-radius: var(--radius-lg);
+        font-family: var(--font-body);
         font-size: 0.875rem;
-        transition: all 0.2s ease;
+        background: white;
+        color: var(--gray-800);
+        transition: all var(--duration-fast) var(--ease-smooth);
       }
 
       .search-input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+      }
+
+      .search-input::placeholder {
+        color: var(--gray-400);
       }
 
       .search-icon {
@@ -544,6 +766,7 @@
         width: 16px;
         height: 16px;
         color: var(--gray-400);
+        pointer-events: none;
       }
 
       .filter-buttons {
@@ -553,24 +776,34 @@
 
       .filter-btn {
         padding: var(--space-2) var(--space-4);
-        border: 1px solid var(--gray-300);
+        border: 2px solid var(--gray-300);
         background: white;
         border-radius: var(--radius-md);
+        font-family: var(--font-accent);
         font-size: 0.875rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--duration-normal) var(--ease-smooth);
         color: var(--gray-700);
       }
 
       .filter-btn:hover {
-        background: var(--gray-50);
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary-dark);
+        transform: translateY(-1px);
       }
 
       .filter-btn.active {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
+        box-shadow: var(--shadow-primary);
+      }
+
+      .filter-btn:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       /* Breed Table */
@@ -581,40 +814,51 @@
       .breed-table {
         width: 100%;
         border-collapse: collapse;
+        font-family: var(--font-body);
       }
 
       .breed-table th {
         background: var(--gray-50);
         padding: var(--space-4);
         text-align: left;
+        font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
         color: var(--gray-700);
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 2px solid var(--gray-200);
         white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
       .breed-table td {
         padding: var(--space-4);
         border-bottom: 1px solid var(--gray-100);
         vertical-align: middle;
+        color: var(--gray-800);
       }
 
       .breed-table tr:hover {
-        background: var(--gray-50);
+        background: var(--primary-light);
+      }
+
+      .breed-table tr:last-child td {
+        border-bottom: none;
       }
 
       .breed-name {
+        font-family: var(--font-body);
         font-weight: 600;
         color: var(--gray-900);
       }
 
       .breed-category {
-        display: inline-block;
-        padding: var(--space-1) var(--space-2);
-        background: var(--secondary);
-        color: white;
-        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-family: var(--font-accent);
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -622,31 +866,41 @@
       }
 
       .breed-category.dogs {
-        background: var(--primary);
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border: 1px solid var(--primary);
       }
+
       .breed-category.cats {
-        background: var(--accent);
+        background: var(--secondary-light);
+        color: var(--secondary-dark);
+        border: 1px solid var(--secondary);
       }
+
       .breed-category.other {
-        background: var(--gray-500);
+        background: var(--accent-light);
+        color: var(--secondary-dark);
+        border: 1px solid var(--accent);
       }
 
       .time-input,
       .cost-input {
         width: 100%;
         padding: var(--space-2) var(--space-3);
-        border: 1px solid var(--gray-200);
+        border: 2px solid var(--gray-200);
         border-radius: var(--radius-md);
+        font-family: var(--font-body);
         font-size: 0.875rem;
         background: white;
-        transition: all 0.2s ease;
+        color: var(--gray-800);
+        transition: all var(--duration-fast) var(--ease-smooth);
       }
 
       .time-input:focus,
       .cost-input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 2px rgba(217, 148, 74, 0.1);
       }
 
       .action-buttons {
@@ -655,31 +909,46 @@
         align-items: center;
       }
 
-      /* Buttons */
+      /* Buttons - Style Guide Compliant */
       .btn {
         padding: var(--space-3) var(--space-5);
         border: none;
         border-radius: var(--radius-lg);
-        font-family: var(--font-family);
+        font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
         cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
+        transition: all var(--duration-normal) var(--ease-smooth);
+        display: inline-flex;
         align-items: center;
         gap: var(--space-2);
         justify-content: center;
         text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .btn-primary {
         background: var(--primary);
         color: white;
+        box-shadow: var(--shadow-sm);
       }
 
       .btn-primary:hover {
         background: var(--primary-hover);
-        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
       }
 
       .btn-secondary {
@@ -695,19 +964,23 @@
       .btn-success {
         background: var(--success);
         color: white;
+        box-shadow: var(--shadow-sm);
       }
 
       .btn-success:hover {
-        background: #059669;
+        background: var(--accent-hover);
+        box-shadow: var(--shadow-accent);
       }
 
       .btn-danger {
         background: var(--error);
         color: white;
+        box-shadow: var(--shadow-sm);
       }
 
       .btn-danger:hover {
-        background: #dc2626;
+        background: #c85c52;
+        box-shadow: 0 10px 30px -5px rgba(217, 112, 102, 0.3);
       }
 
       .btn-small {
@@ -719,6 +992,13 @@
         padding: var(--space-2);
         width: auto;
         height: auto;
+        aspect-ratio: 1;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
       }
 
       /* Pagination */
@@ -732,6 +1012,7 @@
       }
 
       .pagination-info {
+        font-family: var(--font-body);
         font-size: 0.875rem;
         color: var(--gray-600);
       }
@@ -748,78 +1029,14 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: transparent;
-        z-index: 150;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: var(--z-overlay);
         display: none;
+        backdrop-filter: blur(2px);
       }
 
       .nav-overlay.active {
         display: block;
-      }
-
-      /* Mobile Responsive */
-      @media (max-width: 768px) {
-        .header-content {
-          gap: var(--space-4);
-        }
-
-        .brand-text-header {
-          display: none;
-        }
-
-        .date-display {
-          display: none;
-        }
-
-        .page-header {
-          flex-direction: column;
-          gap: var(--space-4);
-          text-align: left;
-        }
-
-        .page-stats {
-          align-self: stretch;
-          justify-content: space-around;
-        }
-
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .controls-section {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .breed-table-container {
-          overflow-x: scroll;
-        }
-
-        .pagination {
-          flex-direction: column;
-          gap: var(--space-4);
-        }
-      }
-
-      /* Animations */
-      @keyframes slideInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .add-breed-section,
-      .breed-management {
-        animation: slideInUp 0.4s ease-out forwards;
-      }
-
-      .breed-management {
-        animation-delay: 0.1s;
       }
 
       /* Loading state */
@@ -837,15 +1054,77 @@
         width: 20px;
         height: 20px;
         margin: -10px 0 0 -10px;
-        border: 2px solid currentColor;
+        border: 2px solid var(--primary);
         border-top-color: transparent;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
 
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-content {
+          gap: var(--space-4);
+        }
+
+        .brand-text-header {
+          display: none;
+        }
+
+        .breadcrumb {
+          display: none;
+        }
+
+        .date-display {
+          display: none;
+        }
+
+        .page-title-section h1 {
+          font-size: 2rem;
+        }
+
+        .page-subtitle {
+          font-size: 1rem;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .controls-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .search-box {
+          max-width: 100%;
+        }
+
+        .breed-table-container {
+          overflow-x: scroll;
+        }
+
+        .pagination {
+          flex-direction: column;
+          gap: var(--space-4);
+        }
+
+        .content-wrapper {
+          padding: var(--space-6);
+        }
+
+        .main-content {
+          margin: var(--space-4);
+          border-radius: var(--radius-xl);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-title-section h1 {
+          font-size: 1.75rem;
+        }
+
+        .content-wrapper {
+          padding: var(--space-4);
         }
       }
     </style>
@@ -853,21 +1132,33 @@
   <body>
     <div class="app-layout">
       <!-- Persistent Header with Navigation -->
-      <header class="app-header">
+      <header class="app-header" role="banner">
         <div class="header-content">
           <!-- Hamburger Menu -->
           <div class="hamburger-menu">
-            <div class="hamburger" id="hamburgerBtn" onclick="toggleNavMenu()">
+            <button
+              class="hamburger"
+              id="hamburgerBtn"
+              onclick="toggleNavMenu()"
+              aria-label="Toggle navigation menu"
+              aria-expanded="false"
+              aria-controls="navDropdown"
+            >
               <span></span>
               <span></span>
               <span></span>
-            </div>
+            </button>
 
             <!-- Navigation Dropdown -->
-            <div class="nav-dropdown" id="navDropdown">
+            <nav
+              class="nav-dropdown"
+              id="navDropdown"
+              role="navigation"
+              aria-label="Main navigation"
+            >
               <div class="dropdown-header">
                 <div class="dropdown-brand">
-                  <div class="brand-icon-dropdown">
+                  <div class="brand-icon-dropdown" aria-hidden="true">
                     <svg
                       width="20"
                       height="20"
@@ -886,13 +1177,19 @@
                 </div>
               </div>
 
-              <div class="nav-menu">
-                <div class="nav-item">
-                  <a href="#" class="nav-link" onclick="navigate('dashboard')">
+              <ul class="nav-menu" role="list">
+                <li class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link"
+                    onclick="navigate('dashboard')"
+                    role="menuitem"
+                  >
                     <svg
                       class="nav-icon"
                       viewBox="0 0 24 24"
                       fill="currentColor"
+                      aria-hidden="true"
                     >
                       <path
                         d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
@@ -900,13 +1197,19 @@
                     </svg>
                     Dashboard
                   </a>
-                </div>
-                <div class="nav-item">
-                  <a href="#" class="nav-link" onclick="navigate('search')">
+                </li>
+                <li class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link"
+                    onclick="navigate('search')"
+                    role="menuitem"
+                  >
                     <svg
                       class="nav-icon"
                       viewBox="0 0 24 24"
                       fill="currentColor"
+                      aria-hidden="true"
                     >
                       <path
                         d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
@@ -914,29 +1217,38 @@
                     </svg>
                     Search Animals
                   </a>
-                </div>
-                <div class="nav-item">
-                  <a href="#" class="nav-link" onclick="navigate('customers')">
-                    <svg
-                      class="nav-icon"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                    </svg>
-                    Add Customer
-                  </a>
-                </div>
-                <div class="nav-item">
+                </li>
+                <li class="nav-item">
                   <a
                     href="#"
-                    class="nav-link active"
-                    onclick="navigate('breeds')"
+                    class="nav-link"
+                    onclick="navigate('customers')"
+                    role="menuitem"
                   >
                     <svg
                       class="nav-icon"
                       viewBox="0 0 24 24"
                       fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                    Add Customer
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link active"
+                    onclick="navigate('breeds')"
+                    role="menuitem"
+                    aria-current="page"
+                  >
+                    <svg
+                      class="nav-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
                     >
                       <path
                         d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
@@ -944,13 +1256,19 @@
                     </svg>
                     Manage Breeds
                   </a>
-                </div>
-                <div class="nav-item">
-                  <a href="#" class="nav-link" onclick="navigate('analytics')">
+                </li>
+                <li class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link"
+                    onclick="navigate('analytics')"
+                    role="menuitem"
+                  >
                     <svg
                       class="nav-icon"
                       viewBox="0 0 24 24"
                       fill="currentColor"
+                      aria-hidden="true"
                     >
                       <path
                         d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
@@ -958,13 +1276,19 @@
                     </svg>
                     Daily Analytics
                   </a>
-                </div>
-                <div class="nav-item">
-                  <a href="#" class="nav-link" onclick="navigate('history')">
+                </li>
+                <li class="nav-item">
+                  <a
+                    href="#"
+                    class="nav-link"
+                    onclick="navigate('history')"
+                    role="menuitem"
+                  >
                     <svg
                       class="nav-icon"
                       viewBox="0 0 24 24"
                       fill="currentColor"
+                      aria-hidden="true"
                     >
                       <path
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
@@ -972,14 +1296,14 @@
                     </svg>
                     Customer History
                   </a>
-                </div>
-              </div>
-            </div>
+                </li>
+              </ul>
+            </nav>
           </div>
 
           <!-- Brand Logo -->
           <div class="brand-header" onclick="navigate('dashboard')">
-            <div class="brand-icon-header">
+            <div class="brand-icon-header" aria-hidden="true">
               <svg
                 width="20"
                 height="20"
@@ -998,58 +1322,97 @@
           </div>
 
           <!-- Breadcrumb -->
-          <div class="breadcrumb">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
             <a href="#" class="breadcrumb-link" onclick="navigate('dashboard')"
               >Dashboard</a
             >
-            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-separator" aria-hidden="true">›</span>
             <span class="breadcrumb-current">Breed Management</span>
-          </div>
+          </nav>
 
           <!-- Header Actions -->
           <div class="header-actions">
-            <div class="date-display" id="currentDate"></div>
+            <div
+              class="date-display"
+              id="currentDate"
+              role="status"
+              aria-live="polite"
+            ></div>
           </div>
         </div>
       </header>
 
       <!-- Navigation Overlay -->
-      <div class="nav-overlay" id="navOverlay" onclick="toggleNavMenu()"></div>
+      <div
+        class="nav-overlay"
+        id="navOverlay"
+        onclick="toggleNavMenu()"
+        aria-hidden="true"
+      ></div>
 
       <!-- Main Content -->
-      <main class="main-content">
+      <main class="main-content" role="main">
         <div class="content-wrapper">
+          <!-- Page Header (No Stats) -->
+          <div class="page-header">
+            <div class="page-title-section">
+              <h1>Breed Management</h1>
+              <p class="page-subtitle">
+                Manage breed database with custom grooming times and pricing
+              </p>
+            </div>
+          </div>
+
           <!-- Add New Breed Section -->
-          <div class="add-breed-section">
+          <section class="add-breed-section" aria-labelledby="add-breed-title">
             <div class="section-header">
-              <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                class="section-icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
               </svg>
-              <h2 class="section-title">Add New Breed</h2>
+              <h2 class="section-title" id="add-breed-title">Add New Breed</h2>
             </div>
 
-            <div class="form-grid">
+            <form
+              class="form-grid"
+              onsubmit="event.preventDefault(); addNewBreed()"
+              aria-label="Add new breed form"
+            >
               <div class="form-group">
-                <label class="form-label">Breed Name</label>
+                <label class="form-label" for="newBreedName">Breed Name</label>
                 <input
                   type="text"
                   class="form-input"
                   id="newBreedName"
                   placeholder="Enter breed name (e.g., Golden Retriever)"
+                  aria-required="true"
+                  required
                 />
               </div>
               <div class="form-group">
-                <label class="form-label">Average Time (HH:MM:SS)</label>
+                <label class="form-label" for="newBreedTime"
+                  >Average Time (HH:MM:SS)</label
+                >
                 <input
                   type="text"
                   class="form-input"
                   id="newBreedTime"
                   placeholder="01:00:00"
                   pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+                  aria-describedby="time-format-hint"
                 />
+                <span id="time-format-hint" class="sr-only"
+                  >Format: Hours, minutes, seconds</span
+                >
               </div>
               <div class="form-group">
-                <label class="form-label">Average Cost ($)</label>
+                <label class="form-label" for="newBreedCost"
+                  >Average Cost ($)</label
+                >
                 <input
                   type="number"
                   class="form-input"
@@ -1057,44 +1420,60 @@
                   placeholder="75"
                   min="0"
                   step="5"
+                  aria-describedby="cost-hint"
                 />
+                <span id="cost-hint" class="sr-only"
+                  >Enter cost in dollars</span
+                >
               </div>
-              <button class="btn btn-primary" onclick="addNewBreed()">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                aria-label="Add new breed to database"
+              >
                 <svg
                   width="16"
                   height="16"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                 </svg>
                 Add Breed
               </button>
-            </div>
-          </div>
+            </form>
+          </section>
 
           <!-- Breed Management Section -->
-          <div class="breed-management">
+          <section
+            class="breed-management"
+            aria-labelledby="breed-database-title"
+          >
             <div class="management-header">
               <div class="section-header">
                 <svg
                   class="section-icon"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                   />
                 </svg>
-                <h2 class="section-title">Existing Breeds Database</h2>
+                <h2 class="section-title" id="breed-database-title">
+                  Existing Breeds Database
+                </h2>
               </div>
 
-              <div class="controls-section">
+              <div class="controls-section" role="search">
                 <div class="search-box">
                   <svg
                     class="search-icon"
                     viewBox="0 0 24 24"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
@@ -1105,23 +1484,37 @@
                     class="search-input"
                     id="breedSearch"
                     placeholder="Search breeds..."
+                    aria-label="Search breeds"
                   />
                 </div>
 
-                <div class="filter-buttons">
+                <div class="filter-buttons" role="group" aria-label="Filter breeds by category">
                   <button
                     class="filter-btn active"
                     onclick="filterBreeds('all')"
+                    aria-pressed="true"
                   >
                     All
                   </button>
-                  <button class="filter-btn" onclick="filterBreeds('dogs')">
+                  <button
+                    class="filter-btn"
+                    onclick="filterBreeds('dogs')"
+                    aria-pressed="false"
+                  >
                     Dogs
                   </button>
-                  <button class="filter-btn" onclick="filterBreeds('cats')">
+                  <button
+                    class="filter-btn"
+                    onclick="filterBreeds('cats')"
+                    aria-pressed="false"
+                  >
                     Cats
                   </button>
-                  <button class="filter-btn" onclick="filterBreeds('other')">
+                  <button
+                    class="filter-btn"
+                    onclick="filterBreeds('other')"
+                    aria-pressed="false"
+                  >
                     Other
                   </button>
                 </div>
@@ -1129,24 +1522,24 @@
             </div>
 
             <div class="breed-table-container">
-              <table class="breed-table" id="breedTable">
+              <table class="breed-table" aria-label="Breed management table">
                 <thead>
                   <tr>
-                    <th>Breed Name</th>
-                    <th>Category</th>
-                    <th>Average Time</th>
-                    <th>Average Cost</th>
-                    <th>Actions</th>
+                    <th scope="col">Breed Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Average Time</th>
+                    <th scope="col">Average Cost</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="breedTableBody">
-                  <!-- Sample breed data - will be populated by JavaScript -->
+                  <!-- Populated by JavaScript -->
                 </tbody>
               </table>
             </div>
 
-            <div class="pagination">
-              <div class="pagination-info">
+            <div class="pagination" role="navigation" aria-label="Pagination">
+              <div class="pagination-info" role="status" aria-live="polite">
                 Showing <span id="currentRange">1-20</span> of
                 <span id="totalBreeds">200+</span> breeds
               </div>
@@ -1155,12 +1548,14 @@
                   class="btn btn-secondary btn-small"
                   onclick="previousPage()"
                   id="prevBtn"
+                  aria-label="Go to previous page"
                 >
                   <svg
                     width="14"
                     height="14"
                     viewBox="0 0 24 24"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                   </svg>
@@ -1170,6 +1565,7 @@
                   class="btn btn-secondary btn-small"
                   onclick="nextPage()"
                   id="nextBtn"
+                  aria-label="Go to next page"
                 >
                   Next
                   <svg
@@ -1177,13 +1573,14 @@
                     height="14"
                     viewBox="0 0 24 24"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                   </svg>
                 </button>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </main>
     </div>
@@ -1479,6 +1876,9 @@
         dropdown.classList.toggle('active')
         overlay.classList.toggle('active')
 
+        // Update ARIA attributes
+        hamburger.setAttribute('aria-expanded', navMenuOpen)
+
         if (navMenuOpen) {
           document.body.style.overflow = 'hidden'
         } else {
@@ -1491,11 +1891,16 @@
         // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
           link.classList.remove('active')
+          link.removeAttribute('aria-current')
         })
 
         // Add active class to clicked nav link if event is available
         if (event && event.target) {
-          event.target.closest('.nav-link').classList.add('active')
+          const navLink = event.target.closest('.nav-link')
+          if (navLink) {
+            navLink.classList.add('active')
+            navLink.setAttribute('aria-current', 'page')
+          }
         }
 
         // Close navigation menu
@@ -1575,8 +1980,10 @@
         // Update filter button states
         document.querySelectorAll('.filter-btn').forEach(btn => {
           btn.classList.remove('active')
+          btn.setAttribute('aria-pressed', 'false')
         })
         event.target.classList.add('active')
+        event.target.setAttribute('aria-pressed', 'true')
 
         // Filter breeds
         if (category === 'all') {
@@ -1698,26 +2105,32 @@
                         <div class="breed-name">${breed.name}</div>
                     </td>
                     <td>
-                        <span class="breed-category ${breed.category}">${breed.category}</span>
+                        <span class="breed-category ${breed.category}" role="status">${breed.category}</span>
                     </td>
                     <td>
-                        <input type="text" class="time-input" value="${breed.time}" 
-                               pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" 
-                               title="Format: HH:MM:SS">
+                        <input type="text" class="time-input" value="${breed.time}"
+                               pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+                               title="Format: HH:MM:SS"
+                               aria-label="Average time for ${breed.name}">
                     </td>
                     <td>
-                        <input type="number" class="cost-input" value="${breed.cost}" 
-                               min="0" step="5">
+                        <input type="number" class="cost-input" value="${breed.cost}"
+                               min="0" step="5"
+                               aria-label="Average cost for ${breed.name}">
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-success btn-small" onclick="updateBreed(${breed.id})" title="Update breed">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <button class="btn btn-success btn-small" onclick="updateBreed(${breed.id})"
+                                    title="Update ${breed.name}"
+                                    aria-label="Update ${breed.name}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58 3.51-3.47 9.14-3.47 12.65 0L21 3v7.12z"/>
                                 </svg>
                             </button>
-                            <button class="btn btn-danger btn-small" onclick="deleteBreed(${breed.id})" title="Delete breed">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <button class="btn btn-danger btn-small" onclick="deleteBreed(${breed.id})"
+                                    title="Delete ${breed.name}"
+                                    aria-label="Delete ${breed.name}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                                 </svg>
                             </button>
@@ -1818,6 +2231,11 @@
 
       // Keyboard shortcuts
       document.addEventListener('keydown', function (e) {
+        // Escape to close menu
+        if (e.key === 'Escape' && navMenuOpen) {
+          toggleNavMenu()
+        }
+
         // Ctrl/Cmd + F for search
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
           e.preventDefault()
