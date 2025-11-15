@@ -25,6 +25,7 @@ ppdb-ts/
 │   └── homepage.spec.ts            # Enhanced with Next.js dev compilation handling
 ├── eslint.config.mjs
 ├── FILETREE.md                     # This file (created)
+├── FAILURELOG.md                   # Failed attempt log (created)
 ├── TODO.md                         # Redesign implementation plan (created)
 ├── next.config.ts
 ├── package.json
@@ -57,6 +58,8 @@ ppdb-ts/
 │       ├── customer-record-modern.html     # Customer detail page mockup
 │       ├── cody-animal-record-complete.html # Animal detail page mockup
 │       ├── breed_management_modern.html    # Breed management mockup
+│       ├── mockui-customer-history.html    # Customer history mock UI (form removed, table retained)
+│       ├── mockui-service-history.html     # Service history mock UI with unified stats header and divider-separated notes
 │       └── landing_page.html               # Landing page mockup
 ├── .project/
 │   ├── steering/

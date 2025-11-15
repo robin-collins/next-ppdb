@@ -118,7 +118,7 @@ See [Cartoon Dog Usage Guide](#cartoon-dog-usage-guide) for detailed implementat
 
 **What makes this NOT generic:**
 
-- ✅ Distinctive typography (Cormorant + DM Sans, NOT Inter)
+- ✅ Distinctive typography (Lora + Rubik, NOT Inter or Roboto)
 - ✅ Brand-authentic colors from actual logo
 - ✅ Contextual mascot usage throughout
 - ✅ Warm, organic aesthetic (not cold corporate)
@@ -311,9 +311,9 @@ _Note: The pattern overlay uses subtle paw prints in teal, matching brand identi
 ```css
 :root {
   /* === TYPOGRAPHY === */
-  --font-display: 'Cormorant', Georgia, serif;
-  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-accent: 'Outfit', -apple-system, sans-serif;
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Rubik', -apple-system, sans-serif;
   --font-family: var(--font-body); /* Legacy fallback */
 
   /* === PRIMARY COLORS (From Logo - Golden Brown) === */
@@ -431,14 +431,14 @@ _Note: The pattern overlay uses subtle paw prints in teal, matching brand identi
 
 ### Font Stack
 
-**Display Font (Headings):** Cormorant
-**Body Font:** DM Sans
-**UI/Accent Font:** Outfit
+**Display Font (Headings):** Lora
+**Body Font:** Rubik
+**UI/Accent Font:** Rubik
 
 **Import (in `src/app/globals.css`):**
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
 ```
 
 ### Typography Application
@@ -2495,6 +2495,7 @@ When creating a new page, ensure:
 | ------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1.0     | 2025-11-14 | Initial style guide based on generic design                                                                                                                                                                 |
 | 2.0     | 2025-11-15 | **Option B Rebrand:** Logo-based colors, Cormorant/DM Sans/Outfit typography, cartoon dog mascot integration, mandatory navbar/sidebar specification, complete design token system, pet-themed enhancements |
+| 2.1     | 2025-11-15 | **Typography Update:** Changed from Cormorant/DM Sans/Outfit to Lora/Rubik pairing for refined warmth — elegant serif headlines balanced with warm, rounded body text                                       |
 
 ---
 
@@ -2504,7 +2505,7 @@ When creating a new page, ensure:
 - All new pages **MUST** include Header and Sidebar components
 - Use actual brand colors extracted from logo (not theoretical palettes)
 - Cartoon dog mascot adds personality - use strategically
-- Typography choices are deliberate to escape generic AI aesthetics
+- Typography choices (Lora + Rubik) provide refined warmth - elegant yet friendly
 - When in doubt, reference this guide before implementing
 - Update this document when adding new patterns
 - Maintain consistency above all else
@@ -2517,9 +2518,9 @@ When creating a new page, ensure:
 **Secondary Color:** `#1b9e7e` (Teal green - from logo)
 **Accent Color:** `#2db894` (Bright teal - from logo)
 
-**Display Font:** Cormorant (serif)
-**Body Font:** DM Sans (sans-serif)
-**UI Font:** Outfit (sans-serif)
+**Display Font:** Lora (serif)
+**Body Font:** Rubik (sans-serif)
+**UI Font:** Rubik (sans-serif)
 
 **Mandatory on Every Page:**
 

@@ -1,42 +1,58 @@
-/* Import Inter font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* Import Lora and Rubik fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
 
 :root {
-  /* Primary Colors */
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-light: #e0e7ff;
+  /* === TYPOGRAPHY === */
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Rubik', -apple-system, sans-serif;
+  --font-family: var(--font-body); /* Legacy fallback */
 
-  /* Secondary & Accent */
-  --secondary: #06b6d4;
-  --secondary-hover: #0891b2;
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
+  /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+  --primary: #d9944a;
+  --primary-hover: #c97d3d;
+  --primary-light: #fef4e8;
+  --primary-dark: #8b5a2b;
 
-  /* Status Colors */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  /* === SECONDARY COLORS (From Logo - Teal Green) === */
+  --secondary: #1b9e7e;
+  --secondary-hover: #178a6c;
+  --secondary-light: #e6f7f3;
+  --secondary-dark: #0f6652;
 
-  /* Neutrals */
+  /* === ACCENT COLORS (From Logo - Light Aqua) === */
+  --accent: #2db894;
+  --accent-hover: #24a382;
+  --accent-light: #d4f4f8;
+  --accent-bubbles: #a8e6f0;
+
+  /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+  --cream: #f4d19b;
+  --tan: #e8b876;
+  --peach: #f9e5d0;
+
+  /* === SEMANTIC COLORS === */
+  --success: #2db894;
+  --warning: #e8b876;
+  --error: #d97066;
+  --info: #a8e6f0;
+
+  /* === NEUTRAL COLORS (Warmer Grays) === */
   --white: #ffffff;
-  --gray-50: #f8fafc;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1e293b;
-  --gray-900: #0f172a;
+  --gray-50: #faf8f6;
+  --gray-100: #f2ebe5;
+  --gray-200: #e8dfd7;
+  --gray-300: #d4c7bb;
+  --gray-400: #a89b8f;
+  --gray-500: #7d7169;
+  --gray-600: #5d544d;
+  --gray-700: #3d3935;
+  --gray-800: #2a2622;
+  --gray-900: #1a1614;
 
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-  /* Spacing Scale */
+  /* === SPACING SCALE === */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -47,16 +63,19 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
 
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  /* === BORDER RADIUS (Softer, More Organic) === */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
   --radius-full: 9999px;
 
-  /* Shadows */
+  /* === SHADOWS & ELEVATION === */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg:
@@ -65,9 +84,38 @@
     0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 
-  /* Layout */
+  /* Brand-colored shadows for special elements */
+  --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+  --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+  --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+
+  /* === LAYOUT CONSTANTS === */
   --sidebar-width: 280px;
-  --header-height: 70px;
+  --header-height: 92px;
+  --max-content-width: 1400px;
+
+  /* === ANIMATION DURATIONS === */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  /* === ANIMATION EASINGS === */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* === Z-INDEX SCALE === */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 100;
+  --z-overlay: 150;
+  --z-sidebar: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
 }
 
 * {
@@ -82,20 +130,69 @@ html {
 }
 
 body {
-  font-family: var(--font-family);
+  font-family: var(--font-body);
   background: linear-gradient(
-    135deg,
-    #667eea 0%,
-    #764ba2 25%,
-    #6366f1 50%,
-    #06b6d4 75%,
-    #10b981 100%
+    160deg,
+    #fef9f5 0%,
+    /* Warm cream */ #f8f2ec 25%,
+    /* Peachy beige */ #f0ebe6 50%,
+    /* Soft tan */ #e8f4f2 75%,
+    /* Pale mint */ #f5fbfa 100% /* Light aqua */
   );
   background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  animation: gradientShift 20s ease infinite;
   min-height: 100vh;
   color: var(--gray-800);
   overflow-x: hidden;
+}
+
+/* Paw print pattern overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Typography hierarchy */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+p,
+li,
+td,
+th {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+button,
+.btn,
+.badge,
+label,
+input,
+select,
+textarea {
+  font-family: var(--font-accent);
+  letter-spacing: 0.01em;
 }
 
 main {
@@ -111,14 +208,12 @@ header {
 }
 
 @keyframes gradientShift {
-  0% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }
 
@@ -130,6 +225,76 @@ header {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  50% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 

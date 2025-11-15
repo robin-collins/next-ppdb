@@ -1,1305 +1,1185 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer History - Pampered Pooch Database</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      /* ============================================
+        /* ============================================
          RESET & BASE STYLES
          ============================================ */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      /* ============================================
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* ============================================
          DESIGN TOKENS
          ============================================ */
-      :root {
-        /* === TYPOGRAPHY === */
-        --font-display: 'Cormorant', Georgia, serif;
-        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        --font-accent: 'Outfit', -apple-system, sans-serif;
-        --font-family: var(--font-body); /* Legacy fallback */
-
-        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
-        --primary: #d9944a;
-        --primary-hover: #c97d3d;
-        --primary-light: #fef4e8;
-        --primary-dark: #8b5a2b;
-
-        /* === SECONDARY COLORS (From Logo - Teal Green) === */
-        --secondary: #1b9e7e;
-        --secondary-hover: #178a6c;
-        --secondary-light: #e6f7f3;
-        --secondary-dark: #0f6652;
-
-        /* === ACCENT COLORS (From Logo - Light Aqua) === */
-        --accent: #2db894;
-        --accent-hover: #24a382;
-        --accent-light: #d4f4f8;
-        --accent-bubbles: #a8e6f0;
-
-        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
-        --cream: #f4d19b;
-        --tan: #e8b876;
-        --peach: #f9e5d0;
-
-        /* === SEMANTIC COLORS === */
-        --success: #2db894;
-        --warning: #e8b876;
-        --error: #d97066;
-        --info: #a8e6f0;
-
-        /* === NEUTRAL COLORS (Warmer Grays) === */
-        --white: #ffffff;
-        --gray-50: #faf8f6;
-        --gray-100: #f2ebe5;
-        --gray-200: #e8dfd7;
-        --gray-300: #d4c7bb;
-        --gray-400: #a89b8f;
-        --gray-500: #7d7169;
-        --gray-600: #5d544d;
-        --gray-700: #3d3935;
-        --gray-800: #2a2622;
-        --gray-900: #1a1614;
-
-        /* === SPACING SCALE === */
-        --space-1: 0.25rem; /* 4px */
-        --space-2: 0.5rem; /* 8px */
-        --space-3: 0.75rem; /* 12px */
-        --space-4: 1rem; /* 16px */
-        --space-5: 1.25rem; /* 20px */
-        --space-6: 1.5rem; /* 24px */
-        --space-8: 2rem; /* 32px */
-        --space-10: 2.5rem; /* 40px */
-        --space-12: 3rem; /* 48px */
-        --space-16: 4rem; /* 64px */
-        --space-20: 5rem; /* 80px */
-        --space-24: 6rem; /* 96px */
-
-        /* === BORDER RADIUS (Softer, More Organic) === */
-        --radius-sm: 0.5rem; /* 8px */
-        --radius-md: 0.75rem; /* 12px */
-        --radius-lg: 1rem; /* 16px */
-        --radius-xl: 1.5rem; /* 24px */
-        --radius-2xl: 2rem; /* 32px */
-        --radius-3xl: 2.5rem; /* 40px */
-        --radius-full: 9999px;
-
-        /* === SHADOWS & ELEVATION === */
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-          0 4px 6px -4px rgb(0 0 0 / 0.1);
-        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
-        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-
-        /* Brand-colored shadows for special elements */
-        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
-        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
-        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
-
-        /* === LAYOUT CONSTANTS === */
-        --sidebar-width: 280px;
-        --header-height: 92px;
-        --max-content-width: 1400px;
-
-        /* === ANIMATION DURATIONS === */
-        --duration-fast: 150ms;
-        --duration-normal: 250ms;
-        --duration-slow: 350ms;
-        --duration-slower: 500ms;
-
-        /* === ANIMATION EASINGS === */
-        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-        --ease-in: cubic-bezier(0.4, 0, 1, 1);
-        --ease-out: cubic-bezier(0, 0, 0.2, 1);
-        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
-
-        /* === Z-INDEX SCALE === */
-        --z-base: 0;
-        --z-dropdown: 100;
-        --z-sticky: 100;
-        --z-overlay: 150;
-        --z-sidebar: 200;
-        --z-modal: 300;
-        --z-toast: 400;
-        --z-tooltip: 500;
-      }
-
-      /* ============================================
+        
+         :root {
+            /* === TYPOGRAPHY === */
+            --font-display: 'Cormorant', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-accent: 'Outfit', -apple-system, sans-serif;
+            --font-family: var(--font-body);
+            /* Legacy fallback */
+            /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+            --primary: #d9944a;
+            --primary-hover: #c97d3d;
+            --primary-light: #fef4e8;
+            --primary-dark: #8b5a2b;
+            /* === SECONDARY COLORS (From Logo - Teal Green) === */
+            --secondary: #1b9e7e;
+            --secondary-hover: #178a6c;
+            --secondary-light: #e6f7f3;
+            --secondary-dark: #0f6652;
+            /* === ACCENT COLORS (From Logo - Light Aqua) === */
+            --accent: #2db894;
+            --accent-hover: #24a382;
+            --accent-light: #d4f4f8;
+            --accent-bubbles: #a8e6f0;
+            /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+            --cream: #f4d19b;
+            --tan: #e8b876;
+            --peach: #f9e5d0;
+            /* === SEMANTIC COLORS === */
+            --success: #2db894;
+            --warning: #e8b876;
+            --error: #d97066;
+            --info: #a8e6f0;
+            /* === NEUTRAL COLORS (Warmer Grays) === */
+            --white: #ffffff;
+            --gray-50: #faf8f6;
+            --gray-100: #f2ebe5;
+            --gray-200: #e8dfd7;
+            --gray-300: #d4c7bb;
+            --gray-400: #a89b8f;
+            --gray-500: #7d7169;
+            --gray-600: #5d544d;
+            --gray-700: #3d3935;
+            --gray-800: #2a2622;
+            --gray-900: #1a1614;
+            /* === SPACING SCALE === */
+            --space-1: 0.25rem;
+            /* 4px */
+            --space-2: 0.5rem;
+            /* 8px */
+            --space-3: 0.75rem;
+            /* 12px */
+            --space-4: 1rem;
+            /* 16px */
+            --space-5: 1.25rem;
+            /* 20px */
+            --space-6: 1.5rem;
+            /* 24px */
+            --space-8: 2rem;
+            /* 32px */
+            --space-10: 2.5rem;
+            /* 40px */
+            --space-12: 3rem;
+            /* 48px */
+            --space-16: 4rem;
+            /* 64px */
+            --space-20: 5rem;
+            /* 80px */
+            --space-24: 6rem;
+            /* 96px */
+            /* === BORDER RADIUS (Softer, More Organic) === */
+            --radius-sm: 0.5rem;
+            /* 8px */
+            --radius-md: 0.75rem;
+            /* 12px */
+            --radius-lg: 1rem;
+            /* 16px */
+            --radius-xl: 1.5rem;
+            /* 24px */
+            --radius-2xl: 2rem;
+            /* 32px */
+            --radius-3xl: 2.5rem;
+            /* 40px */
+            --radius-full: 9999px;
+            /* === SHADOWS & ELEVATION === */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            /* Brand-colored shadows for special elements */
+            --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+            --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+            --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+            /* === LAYOUT CONSTANTS === */
+            --sidebar-width: 280px;
+            --header-height: 92px;
+            --max-content-width: 1400px;
+            /* === ANIMATION DURATIONS === */
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --duration-slow: 350ms;
+            --duration-slower: 500ms;
+            /* === ANIMATION EASINGS === */
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-in: cubic-bezier(0.4, 0, 1, 1);
+            --ease-out: cubic-bezier(0, 0, 0.2, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+            /* === Z-INDEX SCALE === */
+            --z-base: 0;
+            --z-dropdown: 100;
+            --z-sticky: 100;
+            --z-overlay: 150;
+            --z-sidebar: 200;
+            --z-modal: 300;
+            --z-toast: 400;
+            --z-tooltip: 500;
+        }
+        /* ============================================
          BODY & BACKGROUND
          ============================================ */
-      body {
-        font-family: var(--font-body);
-        background: linear-gradient(
-          160deg,
-          #fef9f5 0%,
-          /* Warm cream */ #f8f2ec 25%,
-          /* Peachy beige */ #f0ebe6 50%,
-          /* Soft tan */ #e8f4f2 75%,
-          /* Pale mint */ #f5fbfa 100% /* Light aqua */
-        );
-        background-size: 400% 400%;
-        animation: gradientShift 20s ease infinite;
-        min-height: 100vh;
-        color: var(--gray-800);
-        overflow-x: hidden;
-      }
-
-      body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.6;
-      }
-
-      @keyframes gradientShift {
-        0%,
-        100% {
-          background-position: 0% 50%;
+        
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient( 160deg, #fef9f5 0%, /* Warm cream */
+            #f8f2ec 25%, /* Peachy beige */
+            #f0ebe6 50%, /* Soft tan */
+            #e8f4f2 75%, /* Pale mint */
+            #f5fbfa 100%/* Light aqua */
+            );
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            min-height: 100vh;
+            color: var(--gray-800);
+            overflow-x: hidden;
         }
-        50% {
-          background-position: 100% 50%;
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
         }
-      }
-
-      /* Typography Base Styles */
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        color: var(--gray-900);
-        line-height: 1.2;
-      }
-
-      p,
-      li,
-      td,
-      th {
-        font-family: var(--font-body);
-        font-weight: 400;
-        color: var(--gray-700);
-        line-height: 1.6;
-      }
-
-      button,
-      .btn,
-      label,
-      input,
-      select,
-      textarea {
-        font-family: var(--font-accent);
-        letter-spacing: 0.01em;
-      }
-
-      /* ============================================
+        
+        @keyframes gradientShift {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        /* Typography Base Styles */
+        
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+        
+        p,
+        li,
+        td,
+        th {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        
+        button,
+        .btn,
+        label,
+        input,
+        select,
+        textarea {
+            font-family: var(--font-accent);
+            letter-spacing: 0.01em;
+        }
+        /* ============================================
          HEADER
          ============================================ */
-      .app-header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding: var(--space-4) var(--space-6);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: var(--shadow-md);
-      }
-
-      .header-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-6);
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      /* Hamburger Menu */
-      .hamburger {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        cursor: pointer;
-        padding: var(--space-3);
-        border-radius: var(--radius-lg);
-        transition: all 0.2s ease;
-        background: var(--gray-100);
-        border: none;
-      }
-
-      .hamburger:hover {
-        background: var(--gray-200);
-      }
-
-      .hamburger span {
-        width: 20px;
-        height: 2px;
-        background: var(--gray-700);
-        border-radius: 1px;
-        transition: all 0.3s ease;
-      }
-
-      .hamburger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-      }
-
-      .hamburger.active span:nth-child(2) {
-        opacity: 0;
-      }
-
-      .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-      }
-
-      /* Brand */
-      .brand-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        text-decoration: none;
-      }
-
-      .brand-logo {
-        width: 120px;
-        height: auto;
-        display: block;
-      }
-
-      .brand-text-header {
-        font-family: var(--font-display);
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--gray-900);
-      }
-
-      /* Breadcrumb */
-      .breadcrumb {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        font-size: 0.875rem;
-        color: var(--gray-600);
-      }
-
-      .breadcrumb-link {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-      }
-
-      .breadcrumb-link:hover {
-        color: var(--primary-hover);
-      }
-
-      .breadcrumb-separator {
-        color: var(--gray-400);
-      }
-
-      .breadcrumb-current {
-        color: var(--gray-800);
-        font-weight: 600;
-      }
-
-      /* Date Display */
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-      }
-
-      .date-display {
-        padding: var(--space-2) var(--space-4);
-        background: var(--primary-light);
-        color: var(--primary);
-        border-radius: var(--radius-full);
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
-
-      /* Navigation Dropdown */
-      .nav-dropdown {
-        position: absolute;
-        top: calc(100% + var(--space-2));
-        left: 0;
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-xl);
-        min-width: 280px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-        z-index: 200;
-      }
-
-      .nav-dropdown.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      .nav-link {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-4) var(--space-5);
-        color: var(--gray-700);
-        text-decoration: none;
-        transition: all 0.2s ease;
-        font-weight: 500;
-        border-bottom: 1px solid var(--gray-100);
-      }
-
-      .nav-link:last-child {
-        border-bottom: none;
-      }
-
-      .nav-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-900);
-      }
-
-      .nav-link.active {
-        background: var(--primary-light);
-        color: var(--primary);
-        font-weight: 600;
-      }
-
-      .nav-icon {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-      }
-
-      /* ============================================
+        
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--space-4) var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-6);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Hamburger Menu */
+        
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            background: var(--gray-100);
+            border: none;
+        }
+        
+        .hamburger:hover {
+            background: var(--gray-200);
+        }
+        
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-700);
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        /* Brand */
+        
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+        }
+        
+        .brand-logo {
+            width: 120px;
+            height: auto;
+            display: block;
+        }
+        
+        .brand-text-header {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        /* Breadcrumb */
+        
+        .breadcrumb {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .breadcrumb-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .breadcrumb-link:hover {
+            color: var(--primary-hover);
+        }
+        
+        .breadcrumb-separator {
+            color: var(--gray-400);
+        }
+        
+        .breadcrumb-current {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+        /* Date Display */
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .date-display {
+            padding: var(--space-2) var(--space-4);
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        /* Navigation Dropdown */
+        
+        .nav-dropdown {
+            position: absolute;
+            top: calc(100% + var(--space-2));
+            left: 0;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            min-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+        
+        .nav-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-5);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .nav-link:last-child {
+            border-bottom: none;
+        }
+        
+        .nav-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+        
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        /* ============================================
          MAIN CONTENT
          ============================================ */
-      .main-content {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        margin: var(--space-6);
-        margin-top: 0;
-        border-radius: var(--radius-2xl);
-        box-shadow: var(--shadow-xl);
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-      }
-
-      .content-wrapper {
-        padding: var(--space-8);
-      }
-
-      /* Page Title */
-      .page-title-section {
-        margin-bottom: var(--space-8);
-      }
-
-      .page-title-section h1 {
-        font-family: var(--font-display);
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin: 0 0 var(--space-2) 0;
-        letter-spacing: -0.02em;
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .page-title-icon {
-        width: 40px;
-        height: 40px;
-        color: var(--primary);
-      }
-
-      .page-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.125rem;
-        font-weight: 400;
-        color: var(--gray-600);
-        margin: 0;
-      }
-
-      /* ============================================
+        
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: var(--space-6);
+            margin-top: 0;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-wrapper {
+            padding: var(--space-8);
+        }
+        /* Page Title */
+        
+        .page-title-section {
+            margin-bottom: var(--space-8);
+        }
+        
+        .page-title-section h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 var(--space-2) 0;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .page-title-icon {
+            width: 40px;
+            height: 40px;
+            color: var(--primary);
+        }
+        
+        .page-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            font-weight: 400;
+            color: var(--gray-600);
+            margin: 0;
+        }
+        /* ============================================
          CARD COMPONENT
          ============================================ */
-      .card {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        transition: all var(--duration-slow) var(--ease-bounce);
-        margin-bottom: var(--space-6);
-      }
-
-      .card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-      }
-
-      .card-header {
-        padding: var(--space-5) var(--space-6);
-        border-bottom: 1px solid var(--gray-200);
-        background: var(--gray-50);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .card-title {
-        font-family: var(--font-display);
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--gray-900);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .card-icon {
-        width: 20px;
-        height: 20px;
-        color: var(--primary);
-      }
-
-      .card-content {
-        padding: var(--space-6);
-      }
-
-      /* ============================================
+        
+        .card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-slow) var(--ease-bounce);
+            margin-bottom: var(--space-6);
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .card-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+        
+        .card-content {
+            padding: var(--space-6);
+        }
+        /* ============================================
          FORM COMPONENTS
          ============================================ */
-      .form-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-4);
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2);
-      }
-
-      .form-group.full-width {
-        grid-column: 1 / -1;
-      }
-
-      .form-label {
-        font-family: var(--font-accent);
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--gray-700);
-      }
-
-      .form-input,
-      .form-select {
-        padding: var(--space-3) var(--space-4);
-        border: 2px solid var(--gray-200);
-        border-radius: var(--radius-lg);
-        font-size: 1rem;
-        font-family: var(--font-body);
-        background: white;
-        transition: all var(--duration-fast) var(--ease-smooth);
-        color: var(--gray-800);
-      }
-
-      .form-input:focus,
-      .form-select:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
-      }
-
-      .form-input::placeholder {
-        color: var(--gray-400);
-      }
-
-      /* ============================================
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .form-input,
+        .form-select {
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-family: var(--font-body);
+            background: white;
+            transition: all var(--duration-fast) var(--ease-smooth);
+            color: var(--gray-800);
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+        /* ============================================
          BUTTON COMPONENT
          ============================================ */
-      .btn {
-        padding: var(--space-3) var(--space-5);
-        border: none;
-        border-radius: var(--radius-lg);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all var(--duration-normal) var(--ease-smooth);
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-2);
-        justify-content: center;
-        text-decoration: none;
-        white-space: nowrap;
-      }
-
-      .btn:hover {
-        transform: translateY(-1px);
-      }
-
-      .btn:active {
-        transform: translateY(0);
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .btn-primary:hover {
-        background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
-      }
-
-      .btn-secondary {
-        background: var(--gray-100);
-        color: var(--gray-700);
-      }
-
-      .btn-secondary:hover {
-        background: var(--gray-200);
-      }
-
-      .btn-success {
-        background: var(--success);
-        color: white;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .btn-success:hover {
-        background: var(--accent-hover);
-        box-shadow: var(--shadow-md);
-      }
-
-      .btn svg {
-        width: 16px;
-        height: 16px;
-      }
-
-      .form-actions {
-        display: flex;
-        gap: var(--space-3);
-        justify-content: flex-end;
-        margin-top: var(--space-4);
-      }
-
-      /* ============================================
+        
+        .btn {
+            padding: var(--space-3) var(--space-5);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            justify-content: center;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-success:hover {
+            background: var(--accent-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            margin-top: var(--space-4);
+        }
+        /* ============================================
          FILTER BAR
          ============================================ */
-      .filter-bar {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-        margin-bottom: var(--space-4);
-        flex-wrap: wrap;
-      }
-
-      .search-wrapper {
-        flex: 1;
-        min-width: 300px;
-      }
-
-      .search-bar {
-        position: relative;
-        display: flex;
-        align-items: center;
-        background: white;
-        border: 2px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        box-shadow: var(--shadow-sm);
-        height: 53px;
-      }
-
-      .search-bar:focus-within {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
-      }
-
-      .search-icon {
-        width: 20px;
-        height: 20px;
-        color: var(--gray-400);
-        margin-left: var(--space-4);
-        flex-shrink: 0;
-      }
-
-      .search-input {
-        flex: 1;
-        padding: var(--space-4);
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        font-weight: 500;
-        background: transparent;
-        color: var(--gray-800);
-        font-family: var(--font-body);
-      }
-
-      .search-input::placeholder {
-        color: var(--gray-400);
-      }
-
-      .filter-group {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .filter-label {
-        font-family: var(--font-accent);
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        white-space: nowrap;
-      }
-
-      .filter-select {
-        padding: var(--space-3) var(--space-4);
-        border: 2px solid var(--gray-200);
-        border-radius: var(--radius-lg);
-        font-size: 0.875rem;
-        font-family: var(--font-body);
-        background: white;
-        transition: all var(--duration-fast) var(--ease-smooth);
-        cursor: pointer;
-        min-width: 150px;
-      }
-
-      .filter-select:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
-      }
-
-      /* Stats Bar */
-      .stats-bar {
-        display: flex;
-        gap: var(--space-4);
-        margin-bottom: var(--space-4);
-        padding: var(--space-4);
-        background: var(--gray-50);
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--gray-200);
-      }
-
-      .stat-item {
-        text-align: center;
-        padding: var(--space-3);
-        flex: 1;
-      }
-
-      .stat-number {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--primary);
-        display: block;
-      }
-
-      .stat-label {
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        color: var(--gray-600);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
-      }
-
-      /* ============================================
+        
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        .search-wrapper {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            transition: all var(--duration-normal) var(--ease-smooth);
+            box-shadow: var(--shadow-sm);
+            height: 53px;
+        }
+        
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+        }
+        
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--gray-400);
+            margin-left: var(--space-4);
+            flex-shrink: 0;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: var(--space-4);
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 500;
+            background: transparent;
+            color: var(--gray-800);
+            font-family: var(--font-body);
+        }
+        
+        .search-input::placeholder {
+            color: var(--gray-400);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .filter-label {
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+        
+        .filter-select {
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-family: var(--font-body);
+            background: white;
+            transition: all var(--duration-fast) var(--ease-smooth);
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+        }
+        /* Stats Bar */
+        
+        .stats-bar {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: var(--space-3);
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .stat-label {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        /* ============================================
          TABLE COMPONENT
          ============================================ */
-      .table-wrapper {
-        overflow-x: auto;
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--gray-200);
-      }
-
-      .customer-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-      }
-
-      .customer-table thead {
-        background: var(--gray-50);
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-
-      .customer-table th {
-        padding: var(--space-4);
-        text-align: left;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: var(--gray-700);
-        border-bottom: 2px solid var(--gray-200);
-        white-space: nowrap;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .customer-table td {
-        padding: var(--space-4);
-        border-bottom: 1px solid var(--gray-100);
-        vertical-align: middle;
-        font-size: 0.875rem;
-      }
-
-      .customer-table tbody tr {
-        transition: all var(--duration-normal) var(--ease-smooth);
-      }
-
-      .customer-table tbody tr:hover {
-        background: var(--primary-light);
-      }
-
-      .customer-table tbody tr:last-child td {
-        border-bottom: none;
-      }
-
-      /* Table Cell Styles */
-      .customer-name {
-        font-weight: 600;
-        color: var(--gray-900);
-      }
-
-      .customer-address {
-        color: var(--gray-600);
-        max-width: 250px;
-      }
-
-      .customer-phone {
-        font-family: 'Courier New', monospace;
-        color: var(--gray-700);
-      }
-
-      .customer-animal {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .animal-avatar-small {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: var(--radius-full);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-family: var(--font-accent);
-        font-weight: 700;
-        font-size: 0.875rem;
-        flex-shrink: 0;
-        box-shadow: var(--shadow-primary);
-        transition: all var(--duration-normal) var(--ease-bounce);
-        border: 2px solid white;
-      }
-
-      .customer-table tbody tr:hover .animal-avatar-small {
-        transform: rotate(-5deg) scale(1.1);
-      }
-
-      .animal-info {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .animal-name {
-        font-weight: 600;
-        color: var(--gray-900);
-      }
-
-      .animal-breed {
-        font-size: 0.75rem;
-        color: var(--gray-500);
-      }
-
-      .last-visit {
-        font-weight: 600;
-        color: var(--gray-700);
-      }
-
-      .date-badge {
-        display: inline-block;
-        padding: var(--space-1) var(--space-2);
-        background: var(--gray-100);
-        border-radius: var(--radius-sm);
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-
-      .date-badge.old {
-        background: var(--warning);
-        color: white;
-      }
-
-      .date-badge.very-old {
-        background: var(--error);
-        color: white;
-      }
-
-      /* Empty State */
-      .empty-state {
-        text-align: center;
-        padding: var(--space-16) var(--space-8);
-      }
-
-      .empty-state-icon {
-        color: var(--gray-300);
-        margin-bottom: var(--space-4);
-      }
-
-      .empty-state h3 {
-        font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        margin-bottom: var(--space-2);
-      }
-
-      .empty-state p {
-        font-family: var(--font-body);
-        font-size: 1rem;
-        color: var(--gray-500);
-      }
-
-      /* ============================================
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .customer-table thead {
+            background: var(--gray-50);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .customer-table th {
+            padding: var(--space-4);
+            text-align: left;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .customer-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+            font-size: 0.875rem;
+        }
+        
+        .customer-table tbody tr {
+            transition: all var(--duration-normal) var(--ease-smooth);
+        }
+        
+        .customer-table tbody tr:hover {
+            background: var(--primary-light);
+        }
+        
+        .customer-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        /* Table Cell Styles */
+        
+        .customer-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        .customer-address {
+            color: var(--gray-600);
+            max-width: 250px;
+        }
+        
+        .customer-phone {
+            font-family: 'Courier New', monospace;
+            color: var(--gray-700);
+        }
+        
+        .customer-animal {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .animal-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: var(--font-accent);
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-primary);
+            transition: all var(--duration-normal) var(--ease-bounce);
+            border: 2px solid white;
+        }
+        
+        .customer-table tbody tr:hover .animal-avatar-small {
+            transform: rotate(-5deg) scale(1.1);
+        }
+        
+        .animal-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .animal-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        .animal-breed {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        
+        .last-visit {
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .date-badge {
+            display: inline-block;
+            padding: var(--space-1) var(--space-2);
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .date-badge.old {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .date-badge.very-old {
+            background: var(--error);
+            color: white;
+        }
+        /* Empty State */
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-16) var(--space-8);
+        }
+        
+        .empty-state-icon {
+            color: var(--gray-300);
+            margin-bottom: var(--space-4);
+        }
+        
+        .empty-state h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .empty-state p {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--gray-500);
+        }
+        /* ============================================
          ANIMATIONS
          ============================================ */
-      @keyframes slideInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
         }
-      }
-
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
-      }
-
-      @keyframes bounce {
-        0%,
-        100% {
-          transform: translateY(0);
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
-        50% {
-          transform: translateY(-20px);
+        
+        .customer-table tbody tr {
+            animation: slideInUp 0.4s var(--ease-out) forwards;
+            opacity: 0;
         }
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.8;
-          transform: scale(1.05);
-        }
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .customer-table tbody tr {
-        animation: slideInUp 0.4s var(--ease-out) forwards;
-        opacity: 0;
-      }
-
-      /* ============================================
+        /* ============================================
          RESPONSIVE
          ============================================ */
-      @media (max-width: 1024px) {
-        .form-grid {
-          grid-template-columns: repeat(2, 1fr);
+        
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
-      }
-
-      @media (max-width: 768px) {
-        .brand-logo {
-          width: 100px;
+        
+        @media (max-width: 768px) {
+            .brand-logo {
+                width: 100px;
+            }
+            .header-content {
+                gap: var(--space-3);
+            }
+            .content-wrapper {
+                padding: var(--space-6);
+            }
+            .page-title-section h1 {
+                font-size: 2rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-wrapper {
+                min-width: 100%;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-select {
+                width: 100%;
+            }
+            .stats-bar {
+                flex-direction: column;
+            }
+            .table-wrapper {
+                font-size: 0.75rem;
+            }
+            .customer-table th,
+            .customer-table td {
+                padding: var(--space-2);
+            }
         }
-
-        .header-content {
-          gap: var(--space-3);
+        
+        @media (max-width: 480px) {
+            .brand-logo {
+                width: 80px;
+            }
+            .page-title-section h1 {
+                font-size: 1.75rem;
+            }
+            .content-wrapper {
+                padding: var(--space-4);
+            }
+            .main-content {
+                margin: var(--space-4);
+                border-radius: var(--radius-xl);
+            }
         }
-
-        .content-wrapper {
-          padding: var(--space-6);
-        }
-
-        .page-title-section h1 {
-          font-size: 2rem;
-        }
-
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .filter-bar {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .search-wrapper {
-          min-width: 100%;
-        }
-
-        .filter-group {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .filter-select {
-          width: 100%;
-        }
-
-        .stats-bar {
-          flex-direction: column;
-        }
-
-        .table-wrapper {
-          font-size: 0.75rem;
-        }
-
-        .customer-table th,
-        .customer-table td {
-          padding: var(--space-2);
-        }
-      }
-
-      @media (max-width: 480px) {
-        .brand-logo {
-          width: 80px;
-        }
-
-        .page-title-section h1 {
-          font-size: 1.75rem;
-        }
-
-        .content-wrapper {
-          padding: var(--space-4);
-        }
-
-        .main-content {
-          margin: var(--space-4);
-          border-radius: var(--radius-xl);
-        }
-      }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <!-- Header -->
     <header class="app-header">
-      <div class="header-content">
-        <!-- Hamburger Menu -->
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+        <div class="header-content">
+            <!-- Hamburger Menu -->
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <!-- Navigation Dropdown -->
-        <nav class="nav-dropdown" id="navDropdown">
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Navigation Dropdown -->
+            <nav class="nav-dropdown" id="navDropdown">
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
-            </svg>
-            Dashboard
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </svg> Dashboard
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
-            </svg>
-            Search Animals
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </svg> Search Animals
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
               />
-            </svg>
-            Add Customer
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </svg> Add Customer
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"
               />
-            </svg>
-            Manage Breeds
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </svg> Manage Breeds
+                </a>
+                <a href="#" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
-            </svg>
-            Daily Analytics
-          </a>
-          <a href="#" class="nav-link active">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </svg> Daily Analytics
+                </a>
+                <a href="#" class="nav-link active">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
-            Customer History
-          </a>
-        </nav>
+            </svg> Customer History
+                </a>
+            </nav>
 
-        <!-- Brand Logo -->
-        <a href="#" class="brand-header">
-          <img src="/images/logo.png" alt="Pampered Pooch Logo" class="brand-logo" />
-        </a>
+            <!-- Brand Logo -->
+            <a href="#" class="brand-header">
+                <img src="/images/logo.png" alt="Pampered Pooch Logo" class="brand-logo" />
+            </a>
 
-        <!-- Breadcrumb -->
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">›</span>
-          <span class="breadcrumb-current">Customer History</span>
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="#" class="breadcrumb-link">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">Customer History</span>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <div class="date-display" id="currentDate"></div>
+            </div>
         </div>
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-          <div class="date-display" id="currentDate"></div>
-        </div>
-      </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-      <div class="content-wrapper">
-        <!-- Page Title -->
-        <div class="page-title-section">
-          <h1>
-            <svg class="page-title-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="content-wrapper">
+            <!-- Page Title -->
+            <div class="page-title-section">
+                <h1>
+                    <svg class="page-title-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
-            Customer History
-          </h1>
-          <p class="page-subtitle">
-            Manage historical customer records and track inactive customers
-          </p>
-        </div>
+            </svg> Customer History
+                </h1>
+                <p class="page-subtitle">
+                    Manage historical customer records and track inactive customers
+                </p>
+            </div>
 
-        <!-- Add Customer Card -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Insert New Customer Record
-            </h2>
-          </div>
-          <div class="card-content">
-            <form id="customerForm">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label class="form-label" for="firstname">First Name</label>
-                  <input
-                    type="text"
-                    id="firstname"
-                    class="form-input"
-                    placeholder="Enter first name"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="surname">Surname</label>
-                  <input
-                    type="text"
-                    id="surname"
-                    class="form-input"
-                    placeholder="Enter surname"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="email">Email</label>
-                  <input type="email" id="email" class="form-input" placeholder="customer@email.com" />
-                </div>
-                <div class="form-group full-width">
-                  <label class="form-label" for="address">Address</label>
-                  <input
-                    type="text"
-                    id="address"
-                    class="form-input"
-                    placeholder="Street address"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="suburb">Suburb</label>
-                  <input type="text" id="suburb" class="form-input" placeholder="Suburb/City" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="postcode">Postcode</label>
-                  <input type="text" id="postcode" class="form-input" placeholder="5171" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="phone1">Phone 1</label>
-                  <input type="tel" id="phone1" class="form-input" placeholder="0412 345 678" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="phone2">Phone 2</label>
-                  <input type="tel" id="phone2" class="form-input" placeholder="0412 345 678" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="phone3">Phone 3</label>
-                  <input type="tel" id="phone3" class="form-input" placeholder="0412 345 678" />
-                </div>
-              </div>
-              <div class="form-actions">
-                <button type="reset" class="btn btn-secondary">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                  Clear
-                </button>
-                <button type="submit" class="btn btn-success">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Insert Record
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Historical Customers Card -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Historical Customers Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
                   d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                 />
-              </svg>
-              Historical Customers
-            </h2>
-          </div>
-          <div class="card-content">
-            <!-- Filter Bar -->
-            <div class="filter-bar">
-              <div class="search-wrapper">
-                <div class="search-bar">
-                  <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </svg> Historical Customers
+                    </h2>
+                </div>
+                <div class="card-content">
+                    <!-- Filter Bar -->
+                    <div class="filter-bar">
+                        <div class="search-wrapper">
+                            <div class="search-bar">
+                                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
@@ -1307,271 +1187,255 @@
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                   </svg>
-                  <input
-                    type="text"
-                    class="search-input"
-                    id="searchInput"
-                    placeholder="Search by name, address, phone, animal, or breed..."
-                  />
-                </div>
-              </div>
-              <div class="filter-group">
-                <label class="filter-label" for="timePeriod">Inactive Period:</label>
-                <select id="timePeriod" class="filter-select">
+                                <input type="text" class="search-input" id="searchInput" placeholder="Search by name, address, phone, animal, or breed..." />
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="timePeriod">Inactive Period:</label>
+                            <select id="timePeriod" class="filter-select">
                   <option value="all">All Records</option>
                   <option value="12" selected>12+ Months</option>
                   <option value="24">24+ Months</option>
                   <option value="36">36+ Months</option>
                 </select>
-              </div>
-            </div>
+                        </div>
+                    </div>
 
-            <!-- Stats Bar -->
-            <div class="stats-bar">
-              <div class="stat-item">
-                <span class="stat-number" id="totalCount">0</span>
-                <span class="stat-label">Total Records</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number" id="displayedCount">0</span>
-                <span class="stat-label">Displayed</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number" id="oldestDate">—</span>
-                <span class="stat-label">Oldest Visit</span>
-              </div>
-            </div>
+                    <!-- Stats Bar -->
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalCount">0</span>
+                            <span class="stat-label">Total Records</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="displayedCount">0</span>
+                            <span class="stat-label">Displayed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="oldestDate">—</span>
+                            <span class="stat-label">Oldest Visit</span>
+                        </div>
+                    </div>
 
-            <!-- Table -->
-            <div class="table-wrapper">
-              <table class="customer-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Animal</th>
-                    <th>Last Visit</th>
-                  </tr>
-                </thead>
-                <tbody id="customerTableBody">
-                  <!-- Populated by JavaScript -->
-                </tbody>
-              </table>
+                    <!-- Table -->
+                    <div class="table-wrapper">
+                        <table class="customer-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Animal</th>
+                                    <th>Last Visit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customerTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </main>
 
     <script>
-      // ============================================
-      // NAVIGATION & HEADER
-      // ============================================
+        // ============================================
+        // NAVIGATION & HEADER
+        // ============================================
 
-      // Hamburger menu toggle
-      const hamburger = document.getElementById('hamburgerBtn')
-      const navDropdown = document.getElementById('navDropdown')
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburgerBtn')
+        const navDropdown = document.getElementById('navDropdown')
+        const customerForm = document.getElementById('customerForm')
 
-      hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active')
-        navDropdown.classList.toggle('active')
-      })
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active')
+            navDropdown.classList.toggle('active')
+        })
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navDropdown.contains(e.target)) {
-          hamburger.classList.remove('active')
-          navDropdown.classList.remove('active')
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navDropdown.contains(e.target)) {
+                hamburger.classList.remove('active')
+                navDropdown.classList.remove('active')
+            }
+        })
+
+        // Update current date/time
+        function updateDateTime() {
+            const now = new Date()
+            const options = {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options)
         }
-      })
+        updateDateTime()
+        setInterval(updateDateTime, 1000)
 
-      // Update current date/time
-      function updateDateTime() {
-        const now = new Date()
-        const options = {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        // ============================================
+        // SAMPLE DATA (based on old-customers-result.jpg)
+        // ============================================
+
+        const customerData = [{
+            name: 'Chelsea Donhardt',
+            address: '409 Proctor Rd, Yundi 5172',
+            phone: '0428568458',
+            animal: 'Cody',
+            breed: 'Corgi',
+            lastVisit: '2020-12-03'
+        }, {
+            name: 'Kirby Madden-Campbell',
+            address: '2/9 Quinliven Rd, Port Willunga',
+            phone: '0426266480',
+            animal: 'Naboo',
+            breed: 'Cat',
+            lastVisit: '2017-08-03'
+        }, {
+            name: 'Stacey Abercrombie',
+            address: '3 Kauma Ave, Aldinga Beach 5173',
+            phone: '0435853405',
+            animal: 'Marnie',
+            breed: 'Huskie',
+            lastVisit: '2020-10-08'
+        }, {
+            name: 'Emily Abley',
+            address: '11 Clyde Tce, Mount Compass 5210',
+            phone: '0435519234',
+            animal: 'Peppa',
+            breed: 'Labradoodle',
+            lastVisit: '2017-11-16'
+        }, {
+            name: 'Andrew Adair',
+            address: 'Lot 1022 Pages Flat, Myponga 5202',
+            phone: '0459498523',
+            animal: 'Seth',
+            breed: 'Huskie',
+            lastVisit: '2020-12-17'
+        }, {
+            name: 'Andrew Adair',
+            address: 'Lot 1022 Pages Flat, Myponga 5202',
+            phone: '0459498523',
+            animal: 'Rudi',
+            breed: 'Huskie',
+            lastVisit: '2020-12-17'
+        }, {
+            name: 'Anthony Adami',
+            address: '71 Berry Rd, Mt Compass 5172',
+            phone: '0405977622',
+            animal: 'Dely',
+            breed: 'Labrador',
+            lastVisit: '2021-10-14'
+        }, {
+            name: 'Jenny Adams',
+            address: '35 Dolphin Ave, Carrickalinga 5203',
+            phone: '0408811493',
+            animal: 'Maisie',
+            breed: 'Schnauzer Miniature',
+            lastVisit: '2019-02-13'
+        }, {
+            name: 'Yvonne Adams',
+            address: '145/91 Main Rd, Mc Laren Vale 5171',
+            phone: '83238936',
+            animal: 'Emma',
+            breed: 'Tenterfield Terrier',
+            lastVisit: '2019-05-25'
+        }, {
+            name: 'Tina Adams',
+            address: '15 Moore St, Willunga 5172',
+            phone: '0400779846',
+            animal: 'Archie',
+            breed: 'Welsh Springer Spanial',
+            lastVisit: '2020-10-30'
+        }, {
+            name: 'Tina Adams',
+            address: '15 Moore St, Willunga 5172',
+            phone: '0400779846',
+            animal: 'Mira',
+            breed: 'Welsh Springer Spanial',
+            lastVisit: '2020-10-30'
+        }, {
+            name: 'Amanda Adams',
+            address: '6 Jayden Crt, Hindmarsh Island 5171',
+            phone: '0468968394',
+            animal: 'Sao',
+            breed: 'Spoodle',
+            lastVisit: '2021-08-03'
+        }, {
+            name: 'Amanda Adams',
+            address: '6 Jayden Crt, Hindmarsh Island 5171',
+            phone: '0468968394',
+            animal: 'Coco',
+            breed: 'Spoodle',
+            lastVisit: '2021-08-03'
+        }, {
+            name: 'Laura Adamson',
+            address: '23 Wellington Ave, Sellicks Beach 5174',
+            phone: '0422559262',
+            animal: 'Jax',
+            breed: 'Cocker Spaniel',
+            lastVisit: '2020-01-03'
+        }, {
+            name: 'Madeline Adamson',
+            address: '25 Stock Dry, Port Elliot 5212',
+            phone: '0423152861',
+            animal: 'Pippa',
+            breed: 'Golden Retriever',
+            lastVisit: '2021-08-05'
+        }]
+
+        // ============================================
+        // CUSTOMER HISTORY LOGIC
+        // ============================================
+
+        let filteredData = [...customerData]
+
+        // Calculate months since last visit
+        function getMonthsSince(dateString) {
+            const lastVisit = new Date(dateString)
+            const now = new Date()
+            const months =
+                (now.getFullYear() - lastVisit.getFullYear()) * 12 +
+                (now.getMonth() - lastVisit.getMonth())
+            return months
         }
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options)
-      }
-      updateDateTime()
-      setInterval(updateDateTime, 1000)
 
-      // ============================================
-      // SAMPLE DATA (based on old-customers-result.jpg)
-      // ============================================
-
-      const customerData = [
-        {
-          name: 'Chelsea Donhardt',
-          address: '409 Proctor Rd, Yundi 5172',
-          phone: '0428568458',
-          animal: 'Cody',
-          breed: 'Corgi',
-          lastVisit: '2020-12-03'
-        },
-        {
-          name: 'Kirby Madden-Campbell',
-          address: '2/9 Quinliven Rd, Port Willunga',
-          phone: '0426266480',
-          animal: 'Naboo',
-          breed: 'Cat',
-          lastVisit: '2017-08-03'
-        },
-        {
-          name: 'Stacey Abercrombie',
-          address: '3 Kauma Ave, Aldinga Beach 5173',
-          phone: '0435853405',
-          animal: 'Marnie',
-          breed: 'Huskie',
-          lastVisit: '2020-10-08'
-        },
-        {
-          name: 'Emily Abley',
-          address: '11 Clyde Tce, Mount Compass 5210',
-          phone: '0435519234',
-          animal: 'Peppa',
-          breed: 'Labradoodle',
-          lastVisit: '2017-11-16'
-        },
-        {
-          name: 'Andrew Adair',
-          address: 'Lot 1022 Pages Flat, Myponga 5202',
-          phone: '0459498523',
-          animal: 'Seth',
-          breed: 'Huskie',
-          lastVisit: '2020-12-17'
-        },
-        {
-          name: 'Andrew Adair',
-          address: 'Lot 1022 Pages Flat, Myponga 5202',
-          phone: '0459498523',
-          animal: 'Rudi',
-          breed: 'Huskie',
-          lastVisit: '2020-12-17'
-        },
-        {
-          name: 'Anthony Adami',
-          address: '71 Berry Rd, Mt Compass 5172',
-          phone: '0405977622',
-          animal: 'Dely',
-          breed: 'Labrador',
-          lastVisit: '2021-10-14'
-        },
-        {
-          name: 'Jenny Adams',
-          address: '35 Dolphin Ave, Carrickalinga 5203',
-          phone: '0408811493',
-          animal: 'Maisie',
-          breed: 'Schnauzer Miniature',
-          lastVisit: '2019-02-13'
-        },
-        {
-          name: 'Yvonne Adams',
-          address: '145/91 Main Rd, Mc Laren Vale 5171',
-          phone: '83238936',
-          animal: 'Emma',
-          breed: 'Tenterfield Terrier',
-          lastVisit: '2019-05-25'
-        },
-        {
-          name: 'Tina Adams',
-          address: '15 Moore St, Willunga 5172',
-          phone: '0400779846',
-          animal: 'Archie',
-          breed: 'Welsh Springer Spanial',
-          lastVisit: '2020-10-30'
-        },
-        {
-          name: 'Tina Adams',
-          address: '15 Moore St, Willunga 5172',
-          phone: '0400779846',
-          animal: 'Mira',
-          breed: 'Welsh Springer Spanial',
-          lastVisit: '2020-10-30'
-        },
-        {
-          name: 'Amanda Adams',
-          address: '6 Jayden Crt, Hindmarsh Island 5171',
-          phone: '0468968394',
-          animal: 'Sao',
-          breed: 'Spoodle',
-          lastVisit: '2021-08-03'
-        },
-        {
-          name: 'Amanda Adams',
-          address: '6 Jayden Crt, Hindmarsh Island 5171',
-          phone: '0468968394',
-          animal: 'Coco',
-          breed: 'Spoodle',
-          lastVisit: '2021-08-03'
-        },
-        {
-          name: 'Laura Adamson',
-          address: '23 Wellington Ave, Sellicks Beach 5174',
-          phone: '0422559262',
-          animal: 'Jax',
-          breed: 'Cocker Spaniel',
-          lastVisit: '2020-01-03'
-        },
-        {
-          name: 'Madeline Adamson',
-          address: '25 Stock Dry, Port Elliot 5212',
-          phone: '0423152861',
-          animal: 'Pippa',
-          breed: 'Golden Retriever',
-          lastVisit: '2021-08-05'
+        // Get initials for avatar
+        function getInitials(animalName) {
+            return animalName.charAt(0).toUpperCase()
         }
-      ]
 
-      // ============================================
-      // CUSTOMER HISTORY LOGIC
-      // ============================================
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString)
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }
+            return date.toLocaleDateString('en-US', options)
+        }
 
-      let filteredData = [...customerData]
+        // Get date badge class
+        function getDateBadgeClass(dateString) {
+            const months = getMonthsSince(dateString)
+            if (months >= 36) return 'very-old'
+            if (months >= 24) return 'old'
+            return ''
+        }
 
-      // Calculate months since last visit
-      function getMonthsSince(dateString) {
-        const lastVisit = new Date(dateString)
-        const now = new Date()
-        const months =
-          (now.getFullYear() - lastVisit.getFullYear()) * 12 +
-          (now.getMonth() - lastVisit.getMonth())
-        return months
-      }
+        // Render table
+        function renderTable(data) {
+            const tbody = document.getElementById('customerTableBody')
+            tbody.innerHTML = ''
 
-      // Get initials for avatar
-      function getInitials(animalName) {
-        return animalName.charAt(0).toUpperCase()
-      }
-
-      // Format date for display
-      function formatDate(dateString) {
-        const date = new Date(dateString)
-        const options = { year: 'numeric', month: 'short', day: 'numeric' }
-        return date.toLocaleDateString('en-US', options)
-      }
-
-      // Get date badge class
-      function getDateBadgeClass(dateString) {
-        const months = getMonthsSince(dateString)
-        if (months >= 36) return 'very-old'
-        if (months >= 24) return 'old'
-        return ''
-      }
-
-      // Render table
-      function renderTable(data) {
-        const tbody = document.getElementById('customerTableBody')
-        tbody.innerHTML = ''
-
-        if (data.length === 0) {
-          tbody.innerHTML = `
+            if (data.length === 0) {
+                tbody.innerHTML = `
             <tr>
               <td colspan="5">
                 <div class="empty-state">
@@ -1584,16 +1448,16 @@
               </td>
             </tr>
           `
-          return
-        }
+                return
+            }
 
-        data.forEach((customer, index) => {
-          const tr = document.createElement('tr')
-          tr.style.animationDelay = `${index * 0.05}s`
+            data.forEach((customer, index) => {
+                const tr = document.createElement('tr')
+                tr.style.animationDelay = `${index * 0.05}s`
 
-          const badgeClass = getDateBadgeClass(customer.lastVisit)
+                const badgeClass = getDateBadgeClass(customer.lastVisit)
 
-          tr.innerHTML = `
+                tr.innerHTML = `
             <td>
               <div class="customer-name">${customer.name}</div>
             </td>
@@ -1617,95 +1481,98 @@
             </td>
           `
 
-          tbody.appendChild(tr)
-        })
+                tbody.appendChild(tr)
+            })
 
-        updateStats(data)
-      }
-
-      // Update statistics
-      function updateStats(data) {
-        document.getElementById('totalCount').textContent = customerData.length
-        document.getElementById('displayedCount').textContent = data.length
-
-        if (data.length > 0) {
-          const dates = data.map((c) => new Date(c.lastVisit))
-          const oldest = new Date(Math.min(...dates))
-          document.getElementById('oldestDate').textContent = formatDate(
-            oldest.toISOString().split('T')[0]
-          )
-        } else {
-          document.getElementById('oldestDate').textContent = '—'
-        }
-      }
-
-      // Filter by time period
-      function filterByTimePeriod(data, months) {
-        if (months === 'all') return data
-        const monthsNum = parseInt(months)
-        return data.filter((customer) => getMonthsSince(customer.lastVisit) >= monthsNum)
-      }
-
-      // Search filter
-      function searchFilter(data, query) {
-        if (!query.trim()) return data
-
-        const lowerQuery = query.toLowerCase()
-        return data.filter((customer) => {
-          return (
-            customer.name.toLowerCase().includes(lowerQuery) ||
-            customer.address.toLowerCase().includes(lowerQuery) ||
-            customer.phone.includes(lowerQuery) ||
-            customer.animal.toLowerCase().includes(lowerQuery) ||
-            customer.breed.toLowerCase().includes(lowerQuery)
-          )
-        })
-      }
-
-      // Apply all filters
-      function applyFilters() {
-        const timePeriod = document.getElementById('timePeriod').value
-        const searchQuery = document.getElementById('searchInput').value
-
-        let data = [...customerData]
-        data = filterByTimePeriod(data, timePeriod)
-        data = searchFilter(data, searchQuery)
-
-        filteredData = data
-        renderTable(filteredData)
-      }
-
-      // Event listeners for filters
-      document.getElementById('timePeriod').addEventListener('change', applyFilters)
-      document.getElementById('searchInput').addEventListener('input', applyFilters)
-
-      // Form submission
-      document.getElementById('customerForm').addEventListener('submit', (e) => {
-        e.preventDefault()
-
-        const formData = {
-          firstname: document.getElementById('firstname').value,
-          surname: document.getElementById('surname').value,
-          address: document.getElementById('address').value,
-          suburb: document.getElementById('suburb').value,
-          postcode: document.getElementById('postcode').value,
-          phone1: document.getElementById('phone1').value,
-          phone2: document.getElementById('phone2').value,
-          phone3: document.getElementById('phone3').value,
-          email: document.getElementById('email').value
+            updateStats(data)
         }
 
-        console.log('Form submitted:', formData)
-        alert(
-          `Customer record created:\n\nName: ${formData.firstname} ${formData.surname}\nAddress: ${formData.address}, ${formData.suburb} ${formData.postcode}\nPhone: ${formData.phone1}\nEmail: ${formData.email}`
-        )
+        // Update statistics
+        function updateStats(data) {
+            document.getElementById('totalCount').textContent = customerData.length
+            document.getElementById('displayedCount').textContent = data.length
 
-        // Reset form
-        e.target.reset()
-      })
+            if (data.length > 0) {
+                const dates = data.map((c) => new Date(c.lastVisit))
+                const oldest = new Date(Math.min(...dates))
+                document.getElementById('oldestDate').textContent = formatDate(
+                    oldest.toISOString().split('T')[0]
+                )
+            } else {
+                document.getElementById('oldestDate').textContent = '—'
+            }
+        }
 
-      // Initial render
-      applyFilters()
+        // Filter by time period
+        function filterByTimePeriod(data, months) {
+            if (months === 'all') return data
+            const monthsNum = parseInt(months)
+            return data.filter((customer) => getMonthsSince(customer.lastVisit) >= monthsNum)
+        }
+
+        // Search filter
+        function searchFilter(data, query) {
+            if (!query.trim()) return data
+
+            const lowerQuery = query.toLowerCase()
+            return data.filter((customer) => {
+                return (
+                    customer.name.toLowerCase().includes(lowerQuery) ||
+                    customer.address.toLowerCase().includes(lowerQuery) ||
+                    customer.phone.includes(lowerQuery) ||
+                    customer.animal.toLowerCase().includes(lowerQuery) ||
+                    customer.breed.toLowerCase().includes(lowerQuery)
+                )
+            })
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const timePeriod = document.getElementById('timePeriod').value
+            const searchQuery = document.getElementById('searchInput').value
+
+            let data = [...customerData]
+            data = filterByTimePeriod(data, timePeriod)
+            data = searchFilter(data, searchQuery)
+
+            filteredData = data
+            renderTable(filteredData)
+        }
+
+        // Event listeners for filters
+        document.getElementById('timePeriod').addEventListener('change', applyFilters)
+        document.getElementById('searchInput').addEventListener('input', applyFilters)
+
+        // Form submission (guarded for optional form)
+        if (customerForm) {
+            customerForm.addEventListener('submit', (e) => {
+                e.preventDefault()
+
+                const formData = {
+                    firstname: document.getElementById('firstname').value,
+                    surname: document.getElementById('surname').value,
+                    address: document.getElementById('address').value,
+                    suburb: document.getElementById('suburb').value,
+                    postcode: document.getElementById('postcode').value,
+                    phone1: document.getElementById('phone1').value,
+                    phone2: document.getElementById('phone2').value,
+                    phone3: document.getElementById('phone3').value,
+                    email: document.getElementById('email').value
+                }
+
+                console.log('Form submitted:', formData)
+                alert(
+                    `Customer record created:\n\nName: ${formData.firstname} ${formData.surname}\nAddress: ${formData.address}, ${formData.suburb} ${formData.postcode}\nPhone: ${formData.phone1}\nEmail: ${formData.email}`
+                )
+
+                // Reset form
+                e.target.reset()
+            })
+        }
+
+        // Initial render
+        applyFilters()
     </script>
-  </body>
+</body>
+
 </html>

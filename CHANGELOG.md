@@ -52,6 +52,7 @@ All notable changes to this project will be documented in this file.
   - **Common Pitfalls**: Lists mistakes to avoid (inconsistent categories, wrong date format, missing updates)
   - **Skill Creation Process**: Transformed from `.project/steering/CHANGELOG.md` using `example-skills:skill-creator`
   - **Implementation**: Imperative/infinitive form, industry-standard formats, clear triggering conditions
+- **FAILURELOG.md**: Started repository-wide log for unsuccessful approaches; first entry documents the regex-based service-history refactor that produced unusable spacing (2025-11-15)
 
 ### Added
 
@@ -442,6 +443,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- `reference/redesign/mockui-customer-history.html`: Removed the mock "Insert New Customer Record" card and made the form handler optional so the historical customer table continues rendering when the form section is absent.
 - **Add Customer Page lint**: Replaced `any` with a typed `ValidationDetail` helper and escaped the apostrophe in the tips list so `/customers/add` passes ESLint.
 - **Database Schema Alignment**: Fixed Prisma schema to allow NULL values in `animal.colour` field
   - Updated `prisma/schema.prisma` to define `colour` as `String?` (nullable) instead of `String`
@@ -604,3 +606,5 @@ All notable changes to this project will be documented in this file.
 - **Prisma Schema**: Updated generator configuration to use default output location
 - **API Routes**: Enhanced to properly transform database fields to match frontend expectations
 - **Type System**: Aligned interfaces between store, components, and API responses
+- **Mock UI Service History**: Rebuilt `reference/redesign/mockui-service-history.html` entries with a compact inline layout (date header + flex row for notes, price, technician) and updated styles to reduce vertical spacing
+- **Mock UI Service History**: Stats overview now forms the header of a single glassmorphic card, with every note rendered as a divider-separated row so the list reads as one continuous timeline

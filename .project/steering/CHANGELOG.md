@@ -181,10 +181,11 @@ inclusion: always
 - Enhanced environment configuration with proper validation and defaults
 - Improved error handling with categorized error types
 
-## [Unreleased] - 2025-11-14
+## [Unreleased] - 2025-11-15
 
 ### Added
 
+- Font comparison mockup (reference/font-comparison.html) showcasing six alternative typography options
 - Comprehensive gap analysis report for customer detail page comparing live implementation against mockup
 - Created `.project/reports/customer-detail-page-gap-analysis.md` with systematic MOCKUI_ANALYSIS methodology
 - Identified 7 specific gaps with priority classification (P1-P3)
@@ -192,7 +193,15 @@ inclusion: always
 
 ### Changed
 
-- N/A
+- **Typography Update (v2.1):** Changed from Cormorant/DM Sans/Outfit to Lora/Rubik pairing
+  - Display font: Cormorant → Lora (serif) for refined elegance
+  - Body font: DM Sans → Rubik (sans-serif) for warm, friendly readability
+  - UI/Accent font: Outfit → Rubik for consistency
+  - Updated STYLE_GUIDE.md to reflect new typography system
+  - Updated src/app/globals.css with new font imports and CSS variables
+  - Applied new brand color palette (golden brown, teal green, aqua) from logo
+  - Added paw print pattern overlay and updated background gradient
+  - Enhanced animation keyframes (fadeInUp, fadeInDown, shimmer, spin, bounce, pulse, float)
 
 ### Fixed
 
