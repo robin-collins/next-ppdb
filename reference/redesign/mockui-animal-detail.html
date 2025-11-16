@@ -912,9 +912,9 @@
          BUTTON COMPONENT
          ================================ */
       .btn {
-        padding: var(--space-3) var(--space-5);
+        padding: var(--space-2) var(--space-3);
         border: none;
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-md);
         font-family: var(--font-accent);
         font-weight: 600;
         font-size: 0.875rem;
@@ -953,14 +953,24 @@
         box-shadow: var(--shadow-md);
       }
 
-      /* Secondary (Outline style with primary color) */
+      /* Secondary (Gray background) */
       .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+
+      /* Outline variant for secondary actions */
+      .btn-outline {
         background: transparent;
         color: var(--primary);
         border: 2px solid var(--primary);
       }
 
-      .btn-secondary:hover {
+      .btn-outline:hover {
         background: var(--primary-light);
       }
 
@@ -998,6 +1008,11 @@
 
       .btn-danger:hover {
         background: #c75d55;
+      }
+
+      .btn-large {
+        padding: var(--space-3) var(--space-5);
+        border-radius: var(--radius-lg);
       }
 
       .btn-small {
@@ -1486,7 +1501,7 @@
                 </div>
               </div>
               <div class="form-actions">
-                <a href="#" class="btn btn-secondary">
+                <a href="#" class="btn btn-outline btn-large">
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
@@ -1525,7 +1540,7 @@
                   </div>
                 </div>
               </div>
-              <a href="#" class="btn btn-primary">
+              <a href="#" class="btn btn-primary btn-large">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
@@ -1715,7 +1730,7 @@
                     <!-- Form Actions -->
                     <div class="form-group full-width">
                       <div class="form-actions">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success btn-large">
                           <svg
                             fill="none"
                             stroke="currentColor"
@@ -1730,7 +1745,7 @@
                           </svg>
                           Update Record
                         </button>
-                        <button type="button" class="btn btn-warning">
+                        <button type="button" class="btn btn-warning btn-large">
                           <svg
                             fill="none"
                             stroke="currentColor"
@@ -1784,7 +1799,7 @@
                       class="form-textarea"
                       placeholder="Enter service details (e.g., full clip 3 legs 7 short ears & face leave top knot CC $60)"
                     ></textarea>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary btn-large">
                       <svg
                         fill="none"
                         stroke="currentColor"
