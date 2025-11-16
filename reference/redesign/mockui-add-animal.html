@@ -1,810 +1,1374 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Animal - Pampered Pooch Database</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* ========================================
-       CSS CUSTOM PROPERTIES (Design Tokens)
-       ======================================== */
-    :root {
-      /* === TYPOGRAPHY === */
-      --font-display: 'Lora', Georgia, serif;
-      --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-accent: 'Rubik', -apple-system, sans-serif;
-      --font-family: var(--font-body); /* Legacy fallback */
-
-      /* === PRIMARY COLORS (From Logo - Golden Brown) === */
-      --primary: #d9944a;
-      --primary-hover: #c97d3d;
-      --primary-light: #fef4e8;
-      --primary-dark: #8b5a2b;
-
-      /* === SECONDARY COLORS (From Logo - Teal Green) === */
-      --secondary: #1b9e7e;
-      --secondary-hover: #178a6c;
-      --secondary-light: #e6f7f3;
-      --secondary-dark: #0f6652;
-
-      /* === ACCENT COLORS (From Logo - Light Aqua) === */
-      --accent: #2db894;
-      --accent-hover: #24a382;
-      --accent-light: #d4f4f8;
-      --accent-bubbles: #a8e6f0;
-
-      /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
-      --cream: #f4d19b;
-      --tan: #e8b876;
-      --peach: #f9e5d0;
-
-      /* === SEMANTIC COLORS === */
-      --success: #2db894;
-      --warning: #e8b876;
-      --error: #d97066;
-      --info: #a8e6f0;
-
-      /* === NEUTRAL COLORS (Warmer Grays) === */
-      --white: #ffffff;
-      --gray-50: #faf8f6;
-      --gray-100: #f2ebe5;
-      --gray-200: #e8dfd7;
-      --gray-300: #d4c7bb;
-      --gray-400: #a89b8f;
-      --gray-500: #7d7169;
-      --gray-600: #5d544d;
-      --gray-700: #3d3935;
-      --gray-800: #2a2622;
-      --gray-900: #1a1614;
-
-      /* === SPACING SCALE === */
-      --space-1: 0.25rem;
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --space-12: 3rem;
-      --space-16: 4rem;
-      --space-20: 5rem;
-      --space-24: 6rem;
-
-      /* === BORDER RADIUS (Softer, More Organic) === */
-      --radius-sm: 0.5rem;
-      --radius-md: 0.75rem;
-      --radius-lg: 1rem;
-      --radius-xl: 1.5rem;
-      --radius-2xl: 2rem;
-      --radius-3xl: 2.5rem;
-      --radius-full: 9999px;
-
-      /* === SHADOWS & ELEVATION === */
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-      --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-
-      /* Brand-colored shadows for special elements */
-      --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
-      --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
-      --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
-
-      /* === LAYOUT CONSTANTS === */
-      --sidebar-width: 280px;
-      --header-height: 92px;
-      --max-content-width: 1400px;
-
-      /* === ANIMATION DURATIONS === */
-      --duration-fast: 150ms;
-      --duration-normal: 250ms;
-      --duration-slow: 350ms;
-      --duration-slower: 500ms;
-
-      /* === ANIMATION EASINGS === */
-      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-      --ease-in: cubic-bezier(0.4, 0, 1, 1);
-      --ease-out: cubic-bezier(0, 0, 0.2, 1);
-      --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
-
-      /* === Z-INDEX SCALE === */
-      --z-base: 0;
-      --z-dropdown: 100;
-      --z-sticky: 100;
-      --z-overlay: 150;
-      --z-sidebar: 200;
-      --z-modal: 300;
-      --z-toast: 400;
-      --z-tooltip: 500;
-    }
-
-    /* ========================================
-       RESET & BASE STYLES
-       ======================================== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: var(--font-body);
-      background: linear-gradient(
-        160deg,
-        #fef9f5 0%,     /* Warm cream */
-        #f8f2ec 25%,    /* Peachy beige */
-        #f0ebe6 50%,    /* Soft tan */
-        #e8f4f2 75%,    /* Pale mint */
-        #f5fbfa 100%    /* Light aqua */
-      );
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
-      min-height: 100vh;
-      color: var(--gray-800);
-      overflow-x: hidden;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-    }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* ========================================
-       TYPOGRAPHY APPLICATION
-       ======================================== */
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--font-display);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--gray-900);
-      line-height: 1.2;
-    }
-
-    body, p, li, td, th {
-      font-family: var(--font-body);
-      font-weight: 400;
-      color: var(--gray-700);
-      line-height: 1.6;
-    }
-
-    button, .btn, .badge, label, input, select, textarea {
-      font-family: var(--font-accent);
-      letter-spacing: 0.01em;
-    }
-
-    /* ========================================
-       HEADER
-       ======================================== */
-    .app-header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: var(--space-4) var(--space-6);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow-md);
-    }
-
-    .header-content {
-      display: flex;
-      align-items: center;
-      gap: var(--space-6);
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    /* Hamburger Menu */
-    .hamburger {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      cursor: pointer;
-      padding: var(--space-3);
-      border-radius: var(--radius-lg);
-      transition: all var(--duration-normal) var(--ease-smooth);
-      background: var(--gray-100);
-    }
-
-    .hamburger:hover {
-      background: var(--gray-200);
-    }
-
-    .hamburger span {
-      width: 20px;
-      height: 2px;
-      background: var(--gray-700);
-      border-radius: 1px;
-      transition: all var(--duration-slow) var(--ease-smooth);
-    }
-
-    .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(6px, 6px);
-    }
-
-    .hamburger.active span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .hamburger.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(6px, -6px);
-    }
-
-    /* Brand */
-    .brand-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.25rem;
-      box-shadow: var(--shadow-md);
-    }
-
-    .brand-text-header {
-      font-family: var(--font-display);
-      font-size: 1.125rem;
-      font-weight: 700;
-      color: var(--gray-900);
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-family: var(--font-body);
-      font-size: 0.875rem;
-      color: var(--gray-600);
-    }
-
-    .breadcrumb-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color var(--duration-fast) var(--ease-smooth);
-    }
-
-    .breadcrumb-link:hover {
-      color: var(--primary-hover);
-      text-decoration: underline;
-    }
-
-    .breadcrumb-separator {
-      color: var(--gray-400);
-    }
-
-    .breadcrumb-current {
-      color: var(--gray-800);
-      font-weight: 600;
-    }
-
-    /* Date Display */
-    .date-display {
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--radius-full);
-      font-family: var(--font-accent);
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
-
-    /* ========================================
-       MAIN CONTENT
-       ======================================== */
-    .main-content {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      margin: var(--space-6);
-      margin-top: 0;
-      border-radius: var(--radius-2xl);
-      box-shadow: var(--shadow-xl);
-      overflow: hidden;
-      position: relative;
-      z-index: 1;
-      animation: slideInUp 0.4s ease-out forwards;
-    }
-
-    .content-wrapper {
-      padding: var(--space-8);
-    }
-
-    /* ========================================
-       PAGE HEADER
-       ======================================== */
-    .page-header {
-      margin-bottom: var(--space-8);
-    }
-
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin: 0 0 var(--space-2) 0;
-      letter-spacing: -0.02em;
-    }
-
-    .page-subtitle {
-      font-family: var(--font-body);
-      font-size: 1.125rem;
-      font-weight: 400;
-      color: var(--gray-600);
-      margin: 0;
-    }
-
-    /* ========================================
-       CUSTOMER CONTEXT SECTION
-       ======================================== */
-    .customer-context {
-      background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
-      border: 2px solid var(--primary);
-      border-radius: var(--radius-xl);
-      padding: var(--space-6);
-      margin-bottom: var(--space-6);
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-      animation: slideInUp 0.4s ease-out 0.1s forwards;
-      opacity: 0;
-    }
-
-    .customer-avatar {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: var(--font-accent);
-      font-weight: 700;
-      font-size: 1.5rem;
-      box-shadow: var(--shadow-primary);
-      border: 3px solid white;
-      flex-shrink: 0;
-    }
-
-    .customer-info {
-      flex: 1;
-    }
-
-    .customer-label {
-      font-family: var(--font-accent);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--primary);
-      margin-bottom: var(--space-1);
-    }
-
-    .customer-name {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: var(--space-1);
-    }
-
-    .customer-phone {
-      font-family: var(--font-body);
-      font-size: 1rem;
-      color: var(--gray-600);
-      font-weight: 500;
-    }
-
-    /* ========================================
-       FORM COMPONENTS
-       ======================================== */
-    .form-card {
-      background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      animation: slideInUp 0.4s ease-out 0.2s forwards;
-      opacity: 0;
-    }
-
-    .form-card-header {
-      padding: var(--space-5) var(--space-6);
-      border-bottom: 1px solid var(--gray-200);
-      background: var(--gray-50);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .form-card-title {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--gray-900);
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .card-icon {
-      width: 20px;
-      height: 20px;
-      color: var(--primary);
-    }
-
-    .form-card-content {
-      padding: var(--space-6);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-4);
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .form-group.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .form-label {
-      font-family: var(--font-accent);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gray-700);
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    .required {
-      color: var(--error);
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      padding: var(--space-3) var(--space-4);
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      font-size: 1rem;
-      font-family: var(--font-body);
-      background: white;
-      transition: all var(--duration-fast) var(--ease-smooth);
-      color: var(--gray-800);
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
-    }
-
-    .form-textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .form-select {
-      cursor: pointer;
-    }
-
-    /* Date Input Group */
-    .date-input-group {
-      display: flex;
-      gap: var(--space-2);
-      align-items: stretch;
-    }
-
-    .date-input-group .form-input {
-      flex: 1;
-    }
-
-    .calendar-btn {
-      padding: var(--space-3);
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      background: var(--gray-50);
-      color: var(--primary);
-      cursor: pointer;
-      transition: all var(--duration-normal) var(--ease-smooth);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-    }
-
-    .calendar-btn:hover {
-      background: var(--primary-light);
-      border-color: var(--primary);
-    }
-
-    .calendar-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* ========================================
-       BUTTONS
-       ======================================== */
-    .form-actions {
-      grid-column: 1 / -1;
-      display: flex;
-      gap: var(--space-3);
-      justify-content: flex-end;
-      margin-top: var(--space-4);
-    }
-
-    .btn {
-      padding: var(--space-3) var(--space-5);
-      border: none;
-      border-radius: var(--radius-lg);
-      font-family: var(--font-accent);
-      font-weight: 600;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all var(--duration-normal) var(--ease-smooth);
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      justify-content: center;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      padding: var(--space-4) var(--space-8);
-      font-size: 1rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: var(--shadow-md);
-    }
-
-    .btn-secondary {
-      background: var(--gray-100);
-      color: var(--gray-700);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-secondary:hover {
-      background: var(--gray-200);
-    }
-
-    .btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* ========================================
-       RESPONSIVE
-       ======================================== */
-    @media (max-width: 768px) {
-      .brand-text-header {
-        display: none;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .content-wrapper {
-        padding: var(--space-4);
-      }
-
-      .page-title {
-        font-size: 2rem;
-      }
-
-      .customer-context {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .form-actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-    }
-
-    /* ========================================
-       HELPER TEXT
-       ======================================== */
-    .helper-text {
-      font-family: var(--font-accent);
-      font-size: 0.75rem;
-      color: var(--gray-500);
-      margin-top: var(--space-1);
-    }
-
-    .cost-badge {
-      display: inline-block;
-      background: var(--success);
-      color: white;
-      padding: var(--space-2) var(--space-4);
-      border-radius: var(--radius-full);
-      font-family: var(--font-accent);
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: var(--space-2);
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Animal - Pampered Pooch Database</title>
+    <style>
+        /* Font Imports - Brand Typography */
+
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+        /* Design System Variables */
+
+         :root {
+            /* === TYPOGRAPHY === */
+            --font-display: 'Lora', Georgia, serif;
+            --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-accent: 'Rubik', -apple-system, sans-serif;
+            --font-family: var(--font-body);
+            /* Legacy fallback */
+            /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+            --primary: #d9944a;
+            /* Golden brown - main brand color */
+            --primary-hover: #c97d3d;
+            /* Darker brown on hover */
+            --primary-light: #fef4e8;
+            /* Very light peach for backgrounds */
+            --primary-dark: #8b5a2b;
+            /* Deep brown for contrast */
+            /* === SECONDARY COLORS (From Logo - Teal Green) === */
+            --secondary: #1b9e7e;
+            /* Teal green - trust, nature */
+            --secondary-hover: #178a6c;
+            /* Darker teal on hover */
+            --secondary-light: #e6f7f3;
+            /* Pale mint for backgrounds */
+            --secondary-dark: #0f6652;
+            /* Deep teal for text */
+            /* === ACCENT COLORS (From Logo - Light Aqua) === */
+            --accent: #2db894;
+            /* Bright teal - CTAs, highlights */
+            --accent-hover: #24a382;
+            /* Darker on hover */
+            --accent-light: #d4f4f8;
+            /* Pale aqua - subtle backgrounds */
+            --accent-bubbles: #a8e6f0;
+            /* Bubble effect color */
+            /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+            --cream: #f4d19b;
+            /* Warm cream */
+            --tan: #e8b876;
+            /* Golden tan */
+            --peach: #f9e5d0;
+            /* Soft peach */
+            /* === SEMANTIC COLORS === */
+            --success: #2db894;
+            /* Use accent teal for success */
+            --warning: #e8b876;
+            /* Use tan for warnings */
+            --error: #d97066;
+            /* Muted coral red */
+            --info: #a8e6f0;
+            /* Light aqua for info */
+            /* === NEUTRAL COLORS (Warmer Grays) === */
+            --white: #ffffff;
+            --gray-50: #faf8f6;
+            /* Warm white */
+            --gray-100: #f2ebe5;
+            /* Cream beige */
+            --gray-200: #e8dfd7;
+            /* Light tan */
+            --gray-300: #d4c7bb;
+            /* Medium tan */
+            --gray-400: #a89b8f;
+            /* Warm gray */
+            --gray-500: #7d7169;
+            /* Medium brown-gray */
+            --gray-600: #5d544d;
+            /* Dark brown-gray */
+            --gray-700: #3d3935;
+            /* Very dark brown */
+            --gray-800: #2a2622;
+            /* Almost black brown */
+            --gray-900: #1a1614;
+            /* Darkest brown */
+            /* === SPACING SCALE === */
+            --space-1: 0.25rem;
+            /* 4px */
+            --space-2: 0.5rem;
+            /* 8px */
+            --space-3: 0.75rem;
+            /* 12px */
+            --space-4: 1rem;
+            /* 16px */
+            --space-5: 1.25rem;
+            /* 20px */
+            --space-6: 1.5rem;
+            /* 24px */
+            --space-8: 2rem;
+            /* 32px */
+            --space-10: 2.5rem;
+            /* 40px */
+            --space-12: 3rem;
+            /* 48px */
+            --space-16: 4rem;
+            /* 64px */
+            --space-18: 4.5rem;
+            /* 72px */
+            --space-20: 5rem;
+            /* 80px */
+            --space-24: 6rem;
+            /* 96px */
+            /* === BORDER RADIUS (Softer, More Organic) === */
+            --radius-sm: 0.5rem;
+            /* 8px - was 6px */
+            --radius-md: 0.75rem;
+            /* 12px - was 8px */
+            --radius-lg: 1rem;
+            /* 16px - was 12px */
+            --radius-xl: 1.5rem;
+            /* 24px - was 16px */
+            --radius-2xl: 2rem;
+            /* 32px - was 24px */
+            --radius-3xl: 2.5rem;
+            /* 40px - new! */
+            --radius-full: 9999px;
+            /* Full pill shape */
+            /* === SHADOWS & ELEVATION === */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            /* Brand-colored shadows for special elements */
+            --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+            --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+            --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+            /* === LAYOUT CONSTANTS === */
+            --sidebar-width: 280px;
+            --header-height: 92px;
+            --max-content-width: 1400px;
+            /* === ANIMATION DURATIONS === */
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --duration-slow: 350ms;
+            --duration-slower: 500ms;
+            /* === ANIMATION EASINGS === */
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-in: cubic-bezier(0.4, 0, 1, 1);
+            --ease-out: cubic-bezier(0, 0, 0.2, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+            /* === Z-INDEX SCALE === */
+            --z-base: 0;
+            --z-dropdown: 100;
+            --z-sticky: 100;
+            --z-overlay: 150;
+            --z-sidebar: 200;
+            --z-modal: 300;
+            --z-toast: 400;
+            --z-tooltip: 500;
+        }
+        /* Reset */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient( 160deg, #fef9f5 0%, /* Warm cream */
+            #f8f2ec 25%, /* Peachy beige */
+            #f0ebe6 50%, /* Soft tan */
+            #e8f4f2 75%, /* Pale mint */
+            #f5fbfa 100%/* Light aqua */
+            );
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            min-height: 100vh;
+            color: var(--gray-800);
+            overflow-x: hidden;
+        }
+        /* Paw Print Pattern Overlay */
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        @keyframes gradientShift {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        /* === ANIMATIONS === */
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* === TYPOGRAPHY APPLICATION === */
+        /* Headings use elegant serif */
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+        /* Body text uses warm sans-serif */
+
+        body,
+        p,
+        li,
+        td,
+        th {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        /* UI elements (buttons, badges, labels) use geometric sans */
+
+        button,
+        .btn,
+        .badge,
+        label,
+        input,
+        select,
+        textarea {
+            font-family: var(--font-accent);
+            letter-spacing: 0.01em;
+        }
+        /* Layout Structure */
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Persistent Header */
+
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--space-4) var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-18);
+            margin: 0 0 0 0;
+        }
+        /* Hamburger Menu */
+
+        .hamburger-menu {
+            position: relative;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            height: 48px;
+            width: 48px;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            background: var(--gray-100);
+        }
+
+        .hamburger:hover {
+            background: var(--gray-200);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-700);
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        /* Sidebar */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-xl);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.pinned {
+            position: relative;
+            transform: translateX(0);
+            transition: none;
+        }
+
+        .sidebar-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: var(--header-height);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .brand-icon-sidebar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .brand-text-sidebar h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .brand-text-sidebar p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .sidebar-controls {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .sidebar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .sidebar-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: var(--space-4);
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-1);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .date-sidebar {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        /* Resize Handle */
+
+        .sidebar-resize-handle {
+            position: absolute;
+            top: 0;
+            right: -2px;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            cursor: col-resize;
+            z-index: 10;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-resize-handle:hover,
+        .sidebar-resize-handle.dragging {
+            background: var(--primary);
+        }
+
+        .sidebar-resize-handle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 40px;
+            background: var(--gray-300);
+            border-radius: 1px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-resize-handle:hover::before,
+        .sidebar-resize-handle.dragging::before {
+            opacity: 1;
+        }
+        /* Brand Logo */
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            cursor: pointer;
+        }
+
+        .brand-icon-header {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .brand-text-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .brand-text-header p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin: 0;
+        }
+        /* Search Bar */
+
+        .search-section {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--gray-400);
+            margin-left: var(--space-4);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: var(--space-4);
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 500;
+            background: transparent;
+            color: var(--gray-800);
+            font-family: var(--font-family);
+        }
+
+        .search-actions {
+            display: flex;
+            gap: var(--space-2);
+            margin-right: var(--space-2);
+        }
+        /* Breadcrumb Section */
+
+        .breadcrumb-section {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            /* Empty by default, styled when breadcrumbs are added */
+        }
+        /* Header Actions */
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-left: auto;
+        }
+
+        .date-display {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0 var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        /* Main Content */
+
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: var(--space-6);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            transition: margin-left 0.3s ease;
+        }
+
+        .app-layout.sidebar-pinned .main-content {
+            margin-left: calc(var(--sidebar-width) + var(--space-6));
+        }
+
+        .btn {
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+        /* Mobile Responsive */
+
+        @media (max-width: 768px) {
+            .header-content {
+                gap: var(--space-4);
+            }
+            .brand-text-header {
+                display: none;
+            }
+            .search-section {
+                max-width: none;
+            }
+            .date-display {
+                display: none;
+            }
+            /* Mobile sidebar adjustments */
+            .sidebar {
+                width: min(280px, 80vw);
+            }
+            .app-layout.sidebar-pinned .main-content {
+                margin-left: var(--space-6);
+            }
+            .sidebar.pinned {
+                position: fixed;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header {
+                padding: var(--space-3) var(--space-4);
+            }
+            .search-actions {
+                flex-direction: column;
+                gap: var(--space-1);
+            }
+            .btn {
+                font-size: 0.75rem;
+                padding: var(--space-2);
+            }
+            .sidebar {
+                width: min(260px, 85vw);
+            }
+        }
+        /* Overlay for dropdown */
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 150;
+            display: none;
+        }
+
+        .nav-overlay.active {
+            display: block;
+        }
+
+        /* ========================================
+           PAGE HEADER
+           ======================================== */
+        .content-wrapper {
+            padding: var(--space-8);
+        }
+
+        .page-header {
+            margin-bottom: var(--space-8);
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 var(--space-2) 0;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            font-weight: 400;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        /* ========================================
+           CUSTOMER CONTEXT SECTION
+           ======================================== */
+        .customer-context {
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            animation: slideInUp 0.4s ease-out 0.1s forwards;
+            opacity: 0;
+        }
+
+        .customer-avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: var(--font-accent);
+            font-weight: 700;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-primary);
+            border: 3px solid white;
+            flex-shrink: 0;
+        }
+
+        .customer-info {
+            flex: 1;
+        }
+
+        .customer-label {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .customer-name {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .customer-phone {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           FORM COMPONENTS
+           ======================================== */
+        .form-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            animation: slideInUp 0.4s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+
+        .form-card-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .form-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .card-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .form-card-content {
+            padding: var(--space-6);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .required {
+            color: var(--error);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-family: var(--font-body);
+            background: white;
+            transition: all var(--duration-fast) var(--ease-smooth);
+            color: var(--gray-800);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        /* Date Input Group */
+        .date-input-group {
+            display: flex;
+            gap: var(--space-2);
+            align-items: stretch;
+        }
+
+        .date-input-group .form-input {
+            flex: 1;
+        }
+
+        .calendar-btn {
+            padding: var(--space-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: var(--gray-50);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+        }
+
+        .calendar-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .calendar-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ========================================
+           BUTTONS
+           ======================================== */
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+            margin-top: var(--space-4);
+        }
+
+        .btn {
+            padding: var(--space-3) var(--space-5);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            justify-content: center;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: var(--space-4) var(--space-8);
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-wrapper {
+                padding: var(--space-4);
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .customer-context {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* ========================================
+           HELPER TEXT
+           ======================================== */
+        .helper-text {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+
+        .cost-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: var(--space-2);
+        }
+    </style>
 </head>
+
 <body>
-  <!-- ========================================
-       HEADER
-       ======================================== -->
-  <header class="app-header">
-    <div class="header-content">
-      <!-- Hamburger Menu -->
-      <div class="hamburger" id="hamburgerBtn">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div class="app-layout">
+        <!-- Persistent Header with Navigation -->
+        <header class="app-header">
+            <div class="header-content">
+                <!-- Hamburger Menu -->
+                <div class="hamburger-menu">
+                    <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
 
-      <!-- Brand -->
-      <div class="brand-header">
-        <div class="brand-icon-header" aria-hidden="true">
-        <img
-          src="images/logo-tiny.png"
-          alt="Pampered Pooch Logo"
-          width="40"
-          height="40"
-          style="border-radius: var(--radius-lg);"
-        />
-      </div>
-        <div class="brand-text-header">Pampered Pooch</div>
-      </div>
+                <!-- Brand Logo -->
+                <div class="brand-header" onclick="navigate('dashboard')">
+                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+                </div>
 
-      <!-- Breadcrumb -->
-      <div class="breadcrumb">
-        <a href="#" class="breadcrumb-link">Customers</a>
-        <span class="breadcrumb-separator">›</span>
-        <a href="#" class="breadcrumb-link">James</a>
-        <span class="breadcrumb-separator">›</span>
-        <span class="breadcrumb-current">Add Animal</span>
-      </div>
+                <!-- Search Bar -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search animals, breeds, owners..." value="" />
+                        <div class="search-actions">
+                            <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                            <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
+                </button>
+                        </div>
+                    </div>
+                </div>
 
-      <!-- Date Display -->
-      <div class="date-display" id="currentDate"></div>
-    </div>
-  </header>
+                <!-- Breadcrumb Display Area -->
+                <div class="breadcrumb-section">
+                    <!-- Breadcrumbs will be inserted here when needed -->
+                </div>
 
-  <!-- ========================================
-       MAIN CONTENT
-       ======================================== -->
-  <main class="main-content">
-    <div class="content-wrapper">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1 class="page-title">Add New Animal</h1>
-        <p class="page-subtitle">Register a new pet for this customer</p>
-      </div>
+                <!-- Header Actions -->
+                <div class="header-actions">
+                    <div class="date-display" id="currentDate"></div>
+                </div>
+            </div>
+        </header>
 
-      <!-- Customer Context -->
-      <div class="customer-context">
-        <div class="customer-avatar">J</div>
-        <div class="customer-info">
-          <div class="customer-label">Adding animal for</div>
-          <div class="customer-name">James</div>
-          <div class="customer-phone">0428111261</div>
-        </div>
-      </div>
+        <!-- Navigation Overlay -->
+        <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
 
-      <!-- Form Card -->
-      <div class="form-card">
-        <div class="form-card-header">
-          <h2 class="form-card-title">
-            <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Animal Information
-          </h2>
-        </div>
-        <div class="form-card-content">
-          <form id="addAnimalForm" class="form-grid">
-            <!-- Animal Name -->
-            <div class="form-group">
-              <label class="form-label" for="animalName">
-                Animal Name <span class="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="animalName"
-                name="animalName"
-                class="form-input"
-                placeholder="Enter pet's name"
-                required
-              />
+        <!-- Left Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <!-- Resize Handle -->
+            <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" style="width: 100px; height: auto" />
+                </div>
+
+                <div class="sidebar-controls">
+                    <button class="sidebar-btn" id="pinBtn" onclick="togglePin()" title="Pin sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z"
+                />
+              </svg>
+            </button>
+                    <button class="sidebar-btn" onclick="toggleSidebar()" title="Close sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+                </div>
             </div>
 
-            <!-- Sex -->
-            <div class="form-group">
-              <label class="form-label" for="sex">
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('dashboard')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                />
+              </svg> Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('search')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg> Search Results
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('customers')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg> Add Customer
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="navigate('add-animal')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg> Add Animal
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('breeds')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg> Manage Breeds
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('analytics')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                />
+              </svg> Daily Analytics
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('history')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg> Customer History
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="date-sidebar" id="sidebarDate"></div>
+            </div>
+        </nav>
+        <!-- All Below this point is per page -->
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">Add New Animal</h1>
+                    <p class="page-subtitle">Register a new pet for this customer</p>
+                </div>
+
+                <!-- Customer Context -->
+                <div class="customer-context">
+                    <div class="customer-avatar">J</div>
+                    <div class="customer-info">
+                        <div class="customer-label">Adding animal for</div>
+                        <div class="customer-name">James</div>
+                        <div class="customer-phone">0428111261</div>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h2 class="form-card-title">
+                            <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Animal Information
+                        </h2>
+                    </div>
+                    <div class="form-card-content">
+                        <form id="addAnimalForm" class="form-grid">
+                            <!-- Animal Name -->
+                            <div class="form-group">
+                                <label class="form-label" for="animalName">
+                Animal Name <span class="required">*</span>
+              </label>
+                                <input type="text" id="animalName" name="animalName" class="form-input" placeholder="Enter pet's name" required />
+                            </div>
+
+                            <!-- Sex -->
+                            <div class="form-group">
+                                <label class="form-label" for="sex">
                 Sex <span class="required">*</span>
               </label>
-              <select id="sex" name="sex" class="form-select" required>
+                                <select id="sex" name="sex" class="form-select" required>
                 <option value="Male" selected>Male</option>
                 <option value="Female">Female</option>
               </select>
-            </div>
+                            </div>
 
-            <!-- Breed -->
-            <div class="form-group">
-              <label class="form-label" for="breed">
+                            <!-- Breed -->
+                            <div class="form-group">
+                                <label class="form-label" for="breed">
                 Breed <span class="required">*</span>
               </label>
-              <select id="breed" name="breed" class="form-select" required>
+                                <select id="breed" name="breed" class="form-select" required>
                 <option value="Afghan Hound">Afghan Hound</option>
                 <option value="Airedale">Airedale</option>
                 <option value="Alaskan Malamute">Alaskan Malamute</option>
@@ -954,227 +1518,378 @@
                 <option value="Wirehaired Pointing Griffon">Wirehaired Pointing Griffon</option>
                 <option value="Yorkshire Terrier">Yorkshire Terrier</option>
               </select>
-              <div class="helper-text">Select the pet's breed - pricing will adjust automatically</div>
-            </div>
+                                <div class="helper-text">Select the pet's breed - pricing will adjust automatically</div>
+                            </div>
 
-            <!-- Colour -->
-            <div class="form-group">
-              <label class="form-label" for="colour">
+                            <!-- Colour -->
+                            <div class="form-group">
+                                <label class="form-label" for="colour">
                 Colour
               </label>
-              <input
-                type="text"
-                id="colour"
-                name="colour"
-                class="form-input"
-                placeholder="e.g., Golden, Black & White"
-              />
-            </div>
+                                <input type="text" id="colour" name="colour" class="form-input" placeholder="e.g., Golden, Black & White" />
+                            </div>
 
-            <!-- Cost -->
-            <div class="form-group">
-              <label class="form-label" for="cost">
+                            <!-- Cost -->
+                            <div class="form-group">
+                                <label class="form-label" for="cost">
                 Cost ($) <span class="required">*</span>
               </label>
-              <input
-                type="number"
-                id="cost"
-                name="cost"
-                class="form-input"
-                value="55"
-                step="0.01"
-                min="0"
-                required
-              />
-              <div class="cost-badge">Breed-based pricing</div>
-            </div>
+                                <input type="number" id="cost" name="cost" class="form-input" value="55" step="0.01" min="0" required />
+                                <div class="cost-badge">Breed-based pricing</div>
+                            </div>
 
-            <!-- Last Visit -->
-            <div class="form-group">
-              <label class="form-label" for="lastVisit">
+                            <!-- Last Visit -->
+                            <div class="form-group">
+                                <label class="form-label" for="lastVisit">
                 Last Visit
               </label>
-              <div class="date-input-group">
-                <input
-                  type="date"
-                  id="lastVisit"
-                  name="lastVisit"
-                  class="form-input"
-                  value="2025-06-19"
-                />
-                <button type="button" class="calendar-btn" onclick="document.getElementById('lastVisit').showPicker()">
+                                <div class="date-input-group">
+                                    <input type="date" id="lastVisit" name="lastVisit" class="form-input" value="2025-06-19" />
+                                    <button type="button" class="calendar-btn" onclick="document.getElementById('lastVisit').showPicker()">
                   <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
                 </button>
-              </div>
-            </div>
+                                </div>
+                            </div>
 
-            <!-- This Visit -->
-            <div class="form-group">
-              <label class="form-label" for="thisVisit">
+                            <!-- This Visit -->
+                            <div class="form-group">
+                                <label class="form-label" for="thisVisit">
                 This Visit
               </label>
-              <div class="date-input-group">
-                <input
-                  type="date"
-                  id="thisVisit"
-                  name="thisVisit"
-                  class="form-input"
-                  value="2025-07-31"
-                />
-                <button type="button" class="calendar-btn" onclick="document.getElementById('thisVisit').showPicker()">
+                                <div class="date-input-group">
+                                    <input type="date" id="thisVisit" name="thisVisit" class="form-input" value="2025-07-31" />
+                                    <button type="button" class="calendar-btn" onclick="document.getElementById('thisVisit').showPicker()">
                   <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
                 </button>
-              </div>
-            </div>
+                                </div>
+                            </div>
 
-            <!-- Comments -->
-            <div class="form-group full-width">
-              <label class="form-label" for="comments">
+                            <!-- Comments -->
+                            <div class="form-group full-width">
+                                <label class="form-label" for="comments">
                 Comments
               </label>
-              <textarea
-                id="comments"
-                name="comments"
-                class="form-textarea"
-                placeholder="Initial service notes, special instructions, or health information..."
-              ></textarea>
-            </div>
+                                <textarea id="comments" name="comments" class="form-textarea" placeholder="Initial service notes, special instructions, or health information..."></textarea>
+                            </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 Insert Record
               </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-          </form>
-        </div>
-      </div>
+        </main>
     </div>
-  </main>
 
-  <!-- ========================================
-       JAVASCRIPT
-       ======================================== -->
-  <script>
-    // Live Date/Time Update
-    function updateDateTime() {
-      const now = new Date()
-      const options = {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }
-      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options)
-    }
+    <script>
+        // Initialize app state and data
+        ;
+        (function() {
+            // App state
+            let appSidebarOpen = false
+            let appSidebarPinned = false
+            let isResizing = false
+            let sidebarWidth = 280 // Default width
 
-    updateDateTime()
-    setInterval(updateDateTime, 1000)
+            // Set current date and time
+            function updateDate() {
+                const now = new Date()
 
-    // Hamburger Menu Toggle
-    const hamburger = document.getElementById('hamburgerBtn')
-    hamburger.addEventListener('click', function() {
-      this.classList.toggle('active')
-      // In full implementation, this would toggle a sidebar
-      console.log('Hamburger menu toggled')
-    })
+                // Format time as "2:38pm"
+                const timeOptions = {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                }
+                const timeText = now
+                    .toLocaleTimeString('en-US', timeOptions)
+                    .toLowerCase()
 
-    // Breed-based Cost Intelligence
-    const breedPricing = {
-      'Afghan Hound': 65,
-      'Airedale': 70,
-      'Alaskan Malamute': 75,
-      'Australian Cattle Dog': 60,
-      'Australian Shepherd': 65,
-      'Beagle': 55,
-      'Border Collie': 60,
-      'Boxer': 60,
-      'Bulldog': 65,
-      'Cavoodle': 60,
-      'Chihuahua': 45,
-      'Cocker Spaniel': 60,
-      'Dachshund': 50,
-      'Dalmatian': 60,
-      'Doberman Pinscher': 65,
-      'French Bulldog': 55,
-      'German Shepherd': 70,
-      'Golden Retriever': 70,
-      'Great Dane': 85,
-      'Groodle': 75,
-      'Labradoodle': 75,
-      'Labrador Retriever': 70,
-      'Maltese': 50,
-      'Miniature Poodle': 55,
-      'Pomeranian': 50,
-      'Poodle': 65,
-      'Pug': 55,
-      'Rottweiler': 70,
-      'Shih Tzu': 55,
-      'Siberian Husky': 70,
-      'Standard Poodle': 75,
-      'Yorkshire Terrier': 50,
-      'Cat': 45,
-      'Guinea Pig': 35,
-      'Rabbit': 40
-    }
+                // Format date as "Tue, Sep 16 2025"
+                const dateOptions = {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                }
+                const dateText = now.toLocaleDateString('en-US', dateOptions)
 
-    const breedSelect = document.getElementById('breed')
-    const costInput = document.getElementById('cost')
+                // Combine as "2:38pm Tue, Sep 16 2025"
+                const fullDateTime = `${timeText} ${dateText}`
 
-    breedSelect.addEventListener('change', function() {
-      const selectedBreed = this.value
-      const price = breedPricing[selectedBreed] || 55
-      costInput.value = price
-    })
+                document.getElementById('currentDate').textContent = fullDateTime
 
-    // Form Submission
-    const form = document.getElementById('addAnimalForm')
-    form.addEventListener('submit', function(e) {
-      e.preventDefault()
+                // Keep sidebar date simple (without time)
+                const sidebarDate = document.getElementById('sidebarDate')
+                if (sidebarDate) {
+                    const simpleDateOptions = {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                    }
+                    const simpleDateText = now.toLocaleDateString(
+                        'en-US',
+                        simpleDateOptions
+                    )
+                    sidebarDate.textContent = simpleDateText
+                }
+            }
 
-      const formData = {
-        animalName: document.getElementById('animalName').value,
-        breed: document.getElementById('breed').value,
-        sex: document.getElementById('sex').value,
-        colour: document.getElementById('colour').value,
-        cost: document.getElementById('cost').value,
-        lastVisit: document.getElementById('lastVisit').value,
-        thisVisit: document.getElementById('thisVisit').value,
-        comments: document.getElementById('comments').value
-      }
+            // Toggle sidebar
+            window.toggleSidebar = function() {
+                const sidebar = document.getElementById('sidebar')
+                const hamburger = document.getElementById('hamburgerBtn')
+                const overlay = document.getElementById('navOverlay')
+                const appLayout = document.querySelector('.app-layout')
 
-      console.log('Form submitted:', formData)
+                if (appSidebarPinned) {
+                    // If pinned, toggle the pinned state instead
+                    togglePin()
+                    return
+                }
 
-      // In full implementation, this would make an API call
-      alert('Animal record created successfully!\n\nName: ' + formData.animalName + '\nBreed: ' + formData.breed + '\nCost: $' + formData.cost)
+                appSidebarOpen = !appSidebarOpen
 
-      // Reset form
-      form.reset()
-      costInput.value = '55'
-    })
+                sidebar.classList.toggle('active', appSidebarOpen)
+                hamburger.classList.toggle('active', appSidebarOpen)
+                overlay.classList.toggle('active', appSidebarOpen)
 
-    // Stagger animation delays
-    setTimeout(() => {
-      const cards = document.querySelectorAll('.customer-context, .form-card')
-      cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`
-      })
-    }, 50)
-  </script>
+                if (appSidebarOpen) {
+                    document.body.style.overflow = 'hidden'
+                } else {
+                    document.body.style.overflow = ''
+                }
+            }
+
+            // Toggle pin state
+            window.togglePin = function() {
+                const sidebar = document.getElementById('sidebar')
+                const pinBtn = document.getElementById('pinBtn')
+                const appLayout = document.querySelector('.app-layout')
+                const overlay = document.getElementById('navOverlay')
+                const hamburger = document.getElementById('hamburgerBtn')
+
+                appSidebarPinned = !appSidebarPinned
+
+                if (appSidebarPinned) {
+                    sidebar.classList.add('pinned')
+                    sidebar.classList.add('active')
+                    appLayout.classList.add('sidebar-pinned')
+                    pinBtn.classList.add('active')
+                    overlay.classList.remove('active')
+                    hamburger.classList.add('active')
+                    document.body.style.overflow = ''
+                    appSidebarOpen = true
+                } else {
+                    sidebar.classList.remove('pinned')
+                    appLayout.classList.remove('sidebar-pinned')
+                    pinBtn.classList.remove('active')
+
+                    // If not pinned and we want to close, close completely
+                    if (appSidebarOpen) {
+                        toggleSidebar()
+                    }
+                }
+            }
+
+            // Initialize resize functionality
+            function initResize() {
+                const resizeHandle = document.getElementById('resizeHandle')
+                const sidebar = document.getElementById('sidebar')
+
+                let startX, startWidth
+
+                function startResize(e) {
+                    isResizing = true
+                    startX = e.clientX
+                    startWidth = sidebarWidth
+
+                    resizeHandle.classList.add('dragging')
+                    document.body.style.cursor = 'col-resize'
+                    document.body.style.userSelect = 'none'
+
+                    document.addEventListener('mousemove', handleResize)
+                    document.addEventListener('mouseup', stopResize)
+                }
+
+                function handleResize(e) {
+                    if (!isResizing) return
+
+                    const deltaX = e.clientX - startX
+                    const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+                    sidebarWidth = newWidth
+                    document.documentElement.style.setProperty(
+                        '--sidebar-width',
+                        `${newWidth}px`
+                    )
+                    sidebar.style.width = `${newWidth}px`
+                }
+
+                function stopResize() {
+                    isResizing = false
+                    resizeHandle.classList.remove('dragging')
+                    document.body.style.cursor = ''
+                    document.body.style.userSelect = ''
+
+                    document.removeEventListener('mousemove', handleResize)
+                    document.removeEventListener('mouseup', stopResize)
+                }
+
+                resizeHandle.addEventListener('mousedown', startResize)
+            }
+
+            // Navigation functions
+            window.navigate = function(section) {
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active')
+                })
+
+                // Add active class to clicked nav link
+                event.target.closest('.nav-link').classList.add('active')
+
+                // Close sidebar if not pinned
+                if (appSidebarOpen && !appSidebarPinned) {
+                    toggleSidebar()
+                }
+
+                alert(`Navigating to ${section}...`)
+            }
+
+            window.performSearch = function() {
+                const query = document.getElementById('searchInput').value
+                if (!query.trim()) {
+                    alert('Please enter a search term')
+                    return
+                }
+                alert(`Searching for: ${query}`)
+            }
+
+            window.clearSearch = function() {
+                document.getElementById('searchInput').value = ''
+                document.getElementById('searchInput').focus()
+            }
+
+            // Close sidebar when clicking outside (only if not pinned)
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.sidebar') &&
+                    !e.target.closest('.hamburger-menu') &&
+                    appSidebarOpen &&
+                    !appSidebarPinned
+                ) {
+                    toggleSidebar()
+                }
+            })
+
+            // Breed-based Cost Intelligence
+            const breedPricing = {
+                'Afghan Hound': 65,
+                'Airedale': 70,
+                'Alaskan Malamute': 75,
+                'Australian Cattle Dog': 60,
+                'Australian Shepherd': 65,
+                'Beagle': 55,
+                'Border Collie': 60,
+                'Boxer': 60,
+                'Bulldog': 65,
+                'Cavoodle': 60,
+                'Chihuahua': 45,
+                'Cocker Spaniel': 60,
+                'Dachshund': 50,
+                'Dalmatian': 60,
+                'Doberman Pinscher': 65,
+                'French Bulldog': 55,
+                'German Shepherd': 70,
+                'Golden Retriever': 70,
+                'Great Dane': 85,
+                'Groodle': 75,
+                'Labradoodle': 75,
+                'Labrador Retriever': 70,
+                'Maltese': 50,
+                'Miniature Poodle': 55,
+                'Pomeranian': 50,
+                'Poodle': 65,
+                'Pug': 55,
+                'Rottweiler': 70,
+                'Shih Tzu': 55,
+                'Siberian Husky': 70,
+                'Standard Poodle': 75,
+                'Yorkshire Terrier': 50,
+                'Cat': 45,
+                'Guinea Pig': 35,
+                'Rabbit': 40
+            }
+
+            const breedSelect = document.getElementById('breed')
+            const costInput = document.getElementById('cost')
+
+            breedSelect.addEventListener('change', function() {
+                const selectedBreed = this.value
+                const price = breedPricing[selectedBreed] || 55
+                costInput.value = price
+            })
+
+            // Form Submission
+            const form = document.getElementById('addAnimalForm')
+            form.addEventListener('submit', function(e) {
+                e.preventDefault()
+
+                const formData = {
+                    animalName: document.getElementById('animalName').value,
+                    breed: document.getElementById('breed').value,
+                    sex: document.getElementById('sex').value,
+                    colour: document.getElementById('colour').value,
+                    cost: document.getElementById('cost').value,
+                    lastVisit: document.getElementById('lastVisit').value,
+                    thisVisit: document.getElementById('thisVisit').value,
+                    comments: document.getElementById('comments').value
+                }
+
+                console.log('Form submitted:', formData)
+
+                // In full implementation, this would make an API call
+                alert('Animal record created successfully!\n\nName: ' + formData.animalName + '\nBreed: ' + formData.breed + '\nCost: $' + formData.cost)
+
+                // Reset form
+                form.reset()
+                costInput.value = '55'
+            })
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function() {
+                updateDate()
+                initResize()
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth <= 768 && appSidebarPinned) {
+                        togglePin() // Unpin on mobile
+                    }
+                })
+            })
+
+            // Update date and time every second
+            setInterval(updateDate, 1000)
+        })()
+    </script>
 </body>
+
 </html>
