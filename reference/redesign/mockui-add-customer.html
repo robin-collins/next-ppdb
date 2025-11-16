@@ -990,7 +990,7 @@
           </div>
 
           <!-- Search Bar -->
-          <div class="search-section" style="display: none">
+          <div class="search-section">
             <div class="search-bar">
               <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -1516,6 +1516,22 @@
           alert(`Navigating to ${section}...`)
         }
 
+        // Search functions
+        window.performSearch = function () {
+          const query = document.getElementById('searchInput').value
+          if (!query.trim()) {
+            alert('Please enter a search term')
+            return
+          }
+          alert(`Searching for: ${query}`)
+          // In production, this would navigate to search results page
+        }
+
+        window.clearSearch = function () {
+          document.getElementById('searchInput').value = ''
+          document.getElementById('searchInput').focus()
+        }
+
         // Close sidebar when clicking outside (only if not pinned)
         document.addEventListener('click', function (e) {
           if (
@@ -1532,6 +1548,16 @@
         document.addEventListener('DOMContentLoaded', function () {
           updateDate()
           initResize()
+
+          // Search on Enter key
+          const searchInput = document.getElementById('searchInput')
+          if (searchInput) {
+            searchInput.addEventListener('keypress', function (e) {
+              if (e.key === 'Enter') {
+                window.performSearch()
+              }
+            })
+          }
 
           // Handle window resize
           window.addEventListener('resize', function () {
