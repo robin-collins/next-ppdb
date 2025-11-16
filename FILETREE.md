@@ -77,13 +77,38 @@ ppdb-ts/
 │   │   │   │   ├── [id]/
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
+│   │   │   ├── breeds/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── notes/
+│   │   │   │   └── [noteId]/
+│   │   │   │       └── route.ts
+│   │   │   ├── admin/
+│   │   │   │   └── backup/
+│   │   │   │       └── route.ts
 │   │   │   └── customers/
 │   │   │       ├── [id]/
 │   │   │       │   └── route.ts
+│   │   │       └── history/
+│   │   │           └── route.ts
 │   │   │       └── route.ts              # GET (search/list), POST (create)
+│   │   ├── animals/
+│   │   │   └── [id]/
+│   │   │       └── page.tsx
 │   │   ├── customers/
 │   │   │   └── add/
 │   │   │       └── page.tsx              # Add Customer page (created)
+│   │   │   └── history/
+│   │   │       └── page.tsx              # Customers History page (created)
+│   │   ├── breeds/
+│   │   │   └── page.tsx                  # Breeds Management page (created)
+│   │   ├── reports/
+│   │   │   └── daily-totals/
+│   │   │       └── page.tsx              # Daily Totals report page (created)
+│   │   ├── admin/
+│   │   │   └── backup/
+│   │   │       └── page.tsx              # Admin backup stub page (created)
 │   │   ├── favicon.ico
 │   │   ├── globals.css              # Updated with design system and tokens
 │   │   ├── layout.tsx               # Simplified with new metadata
@@ -94,8 +119,24 @@ ppdb-ts/
 │   │   ├── EmptyState.tsx           # New: Empty state component (created)
 │   │   ├── ErrorBoundary.tsx        # Fixed linting issues
 │   │   ├── Header.tsx               # Header with search buttons, date pill, solid bg
+│   │   ├── Breadcrumbs.tsx          # Shared breadcrumbs component (created)
+│   │   ├── ConfirmDialog.tsx        # Shared confirmation dialog (created)
+│   │   ├── Pagination.tsx           # Shared pagination (created)
+│   │   ├── Toast.tsx                # Shared toast notification (created)
 │   │   ├── ResultsView.tsx          # New: Results container (created)
 │   │   └── Sidebar.tsx              # New: Navigation sidebar (created)
+│   │   ├── breeds/
+│   │   │   ├── BreedForm.tsx        # Breed creation form (created)
+│   │   │   └── BreedTable.tsx       # Breed list with inline edit/delete (created)
+│   │   ├── animals/
+│   │   │   ├── AnimalHeader.tsx
+│   │   │   └── AnimalInfoCard.tsx
+│   │   ├── customerHistory/
+│   │   │   ├── HistoryFilters.tsx
+│   │   │   ├── CustomerHistoryTable.tsx
+│   │   │   └── StatsBar.tsx
+│   │   ├── reports/
+│   │   │   └── DailyTotalsCard.tsx  # Daily totals summary card (created)
 │   ├── generated/
 │   │   └── prisma/                 # Prisma generated types
 │   ├── lib/
@@ -107,10 +148,12 @@ ppdb-ts/
 │   └── store/
 │       ├── animalsStore.ts         # Fixed linting issues, added types
 │       └── customersStore.ts       # Fixed linting issues, added types
-├── ROUTES_COMPONENTS.md            # MVP routes/components blueprint (updated: customers history)
-├── TODO_ROUTES_COMPONENTS.md       # MVP task checklist (updated: customers history tasks)
+├── ROUTES_COMPONENTS.md            # MVP routes/components blueprint (updated)
+├── TODO_ROUTES_COMPONENTS.md       # MVP task checklist (updated)
 └── reference/
     └── CURRENT_PLAN.md             # MVP development plan (updated priorities)
+└── reference/current/
+    └── mockui-validation-customers-history.md  # Validation artifact (created)
 └── tsconfig.json
 ```
 

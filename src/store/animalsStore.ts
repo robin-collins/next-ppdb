@@ -94,6 +94,11 @@ interface AnimalsState {
   createAnimal: (data: CreateAnimalData) => Promise<void>
   updateAnimal: (id: number, data: UpdateAnimalData) => Promise<void>
   deleteAnimal: (id: number) => Promise<void>
+  addNote: (
+    animalId: number,
+    payload: { notes: string; serviceDate?: string }
+  ) => Promise<void>
+  deleteNote: (noteId: number, animalId?: number) => Promise<void>
 }
 
 export const useAnimalsStore = create<AnimalsState>()(
@@ -274,6 +279,56 @@ export const useAnimalsStore = create<AnimalsState>()(
                 error instanceof Error
                   ? error.message
                   : 'Failed to delete animal',
+            })
+          } finally {
+            set({ loading: false })
+          }
+        },
+
+        addNote: async (animalId, payload) => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/animals/${animalId}/notes`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to add note')
+            }
+            // Refresh selected animal to get updated notes
+            await get().fetchAnimal(animalId)
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error ? error.message : 'Failed to add note',
+            })
+          } finally {
+            set({ loading: false })
+          }
+        },
+
+        deleteNote: async (noteId, animalId) => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/notes/${noteId}`, {
+              method: 'DELETE',
+            })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to delete note')
+            }
+            // Refresh selected animal if provided
+            if (animalId) {
+              await get().fetchAnimal(animalId)
+            }
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to delete note',
             })
           } finally {
             set({ loading: false })

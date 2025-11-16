@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Baseline verification: Repository passes type-check, lint, format, and tests; applied Prettier writes to reference HTML files to satisfy fmt:check (2025-11-16)
+-
+- Mock UI Validation: Customers History validated against `reference/redesign/mockui-customer-history.html`; P1 sticky header and P2 badges/spacing noted for follow-up (2025-11-16)
 
 - **MockUI Font Updates**: Updated all 11 mockui HTML files to use new font specifications (2025-11-15)
   - **Changed From**: Cormorant (display), DM Sans (body), Outfit (accent)
@@ -666,5 +668,6 @@ All notable changes to this project will be documented in this file.
 ### Documentation
 
 - Refined ROUTES_COMPONENTS.md to add confirmed Customers History page `/customers/history` and API `/api/customers/history` from mock UI analysis (2025-11-16)
+- Added `reference/current/mockui-validation-customers-history.md` capturing validation outcome, matches, and gaps (2025-11-16)
 - Updated TODO_ROUTES_COMPONENTS.md with new page, API, and components (HistoryFilters, CustomerHistoryTable, StatsBar) (2025-11-16)
 - Adjusted reference/CURRENT_PLAN.md MVP priorities to include Customers History and reorganized Should/Nice-to-have items (2025-11-16)
