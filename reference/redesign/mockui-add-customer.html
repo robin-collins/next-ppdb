@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Customer - Pampered Pooch Database</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <style>
-      /* Design Tokens - Pampered Pooch Style Guide v2.0 */
+      /* Font Imports - Brand Typography */
+
+      @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+      /* Design System Variables */
+
       :root {
         /* === TYPOGRAPHY === */
         --font-display: 'Lora', Georgia, serif;
@@ -125,15 +125,135 @@
         --z-toast: 400;
         --z-tooltip: 500;
       }
-
       /* Reset */
-      * {
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
 
-      /* Typography Application */
+      html {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: linear-gradient(
+          160deg,
+          #fef9f5 0%,
+          /* Warm cream */ #f8f2ec 25%,
+          /* Peachy beige */ #f0ebe6 50%,
+          /* Soft tan */ #e8f4f2 75%,
+          /* Pale mint */ #f5fbfa 100% /* Light aqua */
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 20s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+      /* Paw Print Pattern Overlay */
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.6;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+      /* === ANIMATIONS === */
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /* === TYPOGRAPHY APPLICATION === */
+      /* Headings use elegant serif */
       h1,
       h2,
       h3,
@@ -168,92 +288,50 @@
         font-family: var(--font-accent);
         letter-spacing: 0.01em;
       }
+      /* Layout Structure */
 
-      /* Body */
-      body {
-        background: linear-gradient(
-          160deg,
-          #fef9f5 0%,
-          /* Warm cream */ #f8f2ec 25%,
-          /* Peachy beige */ #f0ebe6 50%,
-          /* Soft tan */ #e8f4f2 75%,
-          /* Pale mint */ #f5fbfa 100% /* Light aqua */
-        );
-        background-size: 400% 400%;
-        animation: gradientShift 20s ease infinite;
-        min-height: 100vh;
-        color: var(--gray-800);
-        overflow-x: hidden;
-      }
-
-      /* Paw Print Pattern Overlay */
-      body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.6;
-      }
-
-      @keyframes gradientShift {
-        0%,
-        100% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-      }
-
-      /* App Container */
-      .app-container {
-        min-height: 100vh;
+      .app-layout {
         display: flex;
         flex-direction: column;
-        position: relative;
-        z-index: 1;
+        min-height: 100vh;
       }
+      /* Persistent Header */
 
-      /* Header */
       .app-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         padding: var(--space-4) var(--space-6);
         position: sticky;
         top: 0;
-        z-index: var(--z-sticky);
+        z-index: 100;
         box-shadow: var(--shadow-md);
-        height: var(--header-height);
-        display: flex;
-        align-items: center;
       }
 
       .header-content {
         display: flex;
         align-items: center;
-        gap: var(--space-6);
-        max-width: var(--max-content-width);
-        margin: 0 auto;
-        width: 100%;
+        gap: var(--space-18);
+        margin: 0 0 0 0;
+      }
+      /* Hamburger Menu */
+
+      .hamburger-menu {
+        position: relative;
       }
 
-      /* Hamburger Menu */
       .hamburger {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         gap: 4px;
         cursor: pointer;
-        padding: var(--space-3);
+        height: 48px;
+        width: 48px;
         border-radius: var(--radius-lg);
-        transition: all var(--duration-normal) var(--ease-smooth);
+        transition: all 0.2s ease;
         background: var(--gray-100);
-        border: none;
       }
 
       .hamburger:hover {
@@ -265,7 +343,7 @@
         height: 2px;
         background: var(--gray-700);
         border-radius: 1px;
-        transition: all var(--duration-normal) var(--ease-smooth);
+        transition: all 0.3s ease;
       }
 
       .hamburger.active span:nth-child(1) {
@@ -279,125 +357,138 @@
       .hamburger.active span:nth-child(3) {
         transform: rotate(-45deg) translate(6px, -6px);
       }
+      /* Sidebar */
 
-      /* Brand Header */
-      .brand-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .brand-logo {
-        height: 40px;
-        width: auto;
-        object-fit: contain;
-      }
-
-      .brand-text-header {
-        font-family: var(--font-display);
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        letter-spacing: -0.02em;
-      }
-
-      /* Breadcrumb */
-      .breadcrumb {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        font-family: var(--font-body);
-        font-size: 0.875rem;
-        color: var(--gray-600);
-      }
-
-      .breadcrumb-link {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color var(--duration-fast) var(--ease-smooth);
-      }
-
-      .breadcrumb-link:hover {
-        color: var(--primary-hover);
-        text-decoration: underline;
-      }
-
-      .breadcrumb-separator {
-        color: var(--gray-400);
-      }
-
-      .breadcrumb-current {
-        color: var(--gray-800);
-        font-weight: 600;
-      }
-
-      /* Header Actions */
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .date-display {
-        padding: var(--space-2) var(--space-4);
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        border-radius: var(--radius-full);
-        font-family: var(--font-accent);
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
-
-      /* Navigation Dropdown */
-      .nav-dropdown {
-        position: absolute;
-        top: calc(100% + var(--space-2));
+      .sidebar {
+        position: fixed;
+        top: 0;
         left: 0;
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid var(--gray-200);
         box-shadow: var(--shadow-xl);
-        min-width: 280px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        z-index: var(--z-dropdown);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
 
-      .nav-dropdown.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar.pinned {
+        position: relative;
+        transform: translateX(0);
+        transition: none;
+      }
+
+      .sidebar-header {
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: var(--header-height);
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon-sidebar {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-primary);
+      }
+
+      .brand-text-sidebar h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-sidebar p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .sidebar-controls {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .sidebar-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        color: var(--gray-600);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      .sidebar-btn.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu {
+        flex: 1;
+        padding: var(--space-4);
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        margin-bottom: var(--space-1);
       }
 
       .nav-link {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        padding: var(--space-4);
+        padding: var(--space-3) var(--space-4);
         color: var(--gray-700);
         text-decoration: none;
-        transition: all var(--duration-normal) var(--ease-smooth);
-        font-family: var(--font-body);
+        border-radius: var(--radius-lg);
         font-weight: 500;
-        border-bottom: 1px solid var(--gray-100);
-      }
-
-      .nav-link:last-child {
-        border-bottom: none;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        width: 100%;
       }
 
       .nav-link:hover {
-        background: var(--primary-light);
-        color: var(--primary-dark);
+        background: var(--gray-100);
+        color: var(--gray-900);
       }
 
       .nav-link.active {
         background: var(--primary-light);
-        color: var(--primary-dark);
+        color: var(--primary);
         font-weight: 600;
       }
 
@@ -405,31 +496,185 @@
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        color: var(--primary);
       }
 
+      .sidebar-footer {
+        padding: var(--space-4);
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+      }
+
+      .date-sidebar {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      /* Resize Handle */
+
+      .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -2px;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        cursor: col-resize;
+        z-index: 10;
+        transition: background 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover,
+      .sidebar-resize-handle.dragging {
+        background: var(--primary);
+      }
+
+      .sidebar-resize-handle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 40px;
+        background: var(--gray-300);
+        border-radius: 1px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover::before,
+      .sidebar-resize-handle.dragging::before {
+        opacity: 1;
+      }
+      /* Brand Logo */
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        cursor: pointer;
+      }
+
+      .brand-icon-header {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-primary);
+      }
+
+      .brand-text-header h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-header p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+      /* Search Bar */
+
+      .search-section {
+        flex: 1;
+        max-width: 600px;
+      }
+
+      .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+        margin-left: var(--space-4);
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--space-4);
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--gray-800);
+        font-family: var(--font-family);
+      }
+
+      .search-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-right: var(--space-2);
+      }
+      /* Breadcrumb Section */
+
+      .breadcrumb-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        /* Empty by default, styled when breadcrumbs are added */
+      }
+      /* Header Actions */
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-left: auto;
+      }
+
+      .date-display {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0 var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
       /* Main Content */
+
       .main-content {
         flex: 1;
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
         margin: var(--space-6);
-        margin-top: 0;
         border-radius: var(--radius-2xl);
         box-shadow: var(--shadow-xl);
         overflow: hidden;
-        animation: fadeInUp 0.4s var(--ease-out) forwards;
+        transition: margin-left 0.3s ease;
       }
 
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .app-layout.sidebar-pinned .main-content {
+        margin-left: calc(var(--sidebar-width) + var(--space-6));
       }
 
       .content-wrapper {
@@ -587,50 +832,35 @@
 
       /* Buttons */
       .btn {
-        padding: var(--space-3) var(--space-5);
+        padding: var(--space-2) var(--space-3);
         border: none;
-        border-radius: var(--radius-lg);
-        font-family: var(--font-accent);
+        border-radius: var(--radius-md);
+        font-family: var(--font-family);
         font-weight: 600;
         font-size: 0.875rem;
         cursor: pointer;
-        transition: all var(--duration-normal) var(--ease-smooth);
-        display: inline-flex;
+        transition: all 0.2s ease;
+        display: flex;
         align-items: center;
         gap: var(--space-2);
-        justify-content: center;
-        text-decoration: none;
-        white-space: nowrap;
-      }
-
-      .btn:hover {
-        transform: translateY(-1px);
-      }
-
-      .btn:active {
-        transform: translateY(0);
       }
 
       .btn-primary {
         background: var(--primary);
         color: white;
-        box-shadow: var(--shadow-sm);
       }
 
       .btn-primary:hover {
         background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
       }
 
       .btn-secondary {
-        background: var(--secondary);
-        color: white;
-        box-shadow: var(--shadow-sm);
+        background: var(--gray-100);
+        color: var(--gray-700);
       }
 
       .btn-secondary:hover {
-        background: var(--secondary-hover);
-        box-shadow: var(--shadow-md);
+        background: var(--gray-200);
       }
 
       .btn-ghost {
@@ -646,20 +876,46 @@
         width: 16px;
         height: 16px;
       }
+      /* Overlay for dropdown */
 
-      /* Focus States for Accessibility */
-      .btn:focus-visible,
-      .form-input:focus-visible,
-      .form-select:focus-visible,
-      .form-textarea:focus-visible {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
+      .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 150;
+        display: none;
       }
 
-      /* Responsive */
+      .nav-overlay.active {
+        display: block;
+      }
+      /* Mobile Responsive */
+
       @media (max-width: 768px) {
+        .header-content {
+          gap: var(--space-4);
+        }
         .brand-text-header {
           display: none;
+        }
+        .search-section {
+          max-width: none;
+        }
+        .date-display {
+          display: none;
+        }
+        /* Mobile sidebar adjustments */
+        .sidebar {
+          width: min(280px, 80vw);
+        }
+        .app-layout.sidebar-pinned .main-content {
+          margin-left: var(--space-6);
+        }
+        .sidebar.pinned {
+          position: fixed;
         }
 
         .form-grid {
@@ -689,6 +945,21 @@
       }
 
       @media (max-width: 480px) {
+        .app-header {
+          padding: var(--space-3) var(--space-4);
+        }
+        .search-actions {
+          flex-direction: column;
+          gap: var(--space-1);
+        }
+        .btn {
+          font-size: 0.75rem;
+          padding: var(--space-2);
+        }
+        .sidebar {
+          width: min(260px, 85vw);
+        }
+
         .page-title-section h1 {
           font-size: 1.75rem;
         }
@@ -700,136 +971,53 @@
     </style>
   </head>
   <body>
-    <div class="app-container">
-      <!-- Header -->
+    <div class="app-layout">
+      <!-- Persistent Header with Navigation -->
       <header class="app-header">
         <div class="header-content">
           <!-- Hamburger Menu -->
-          <button
-            class="hamburger"
-            id="hamburgerBtn"
-            aria-label="Toggle navigation"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-
-          <!-- Navigation Dropdown -->
-          <nav class="nav-dropdown" id="navDropdown">
-            <a href="/" class="nav-link">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-              Dashboard
-            </a>
-            <a href="/search-animals" class="nav-link">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              Search Animals
-            </a>
-            <a href="/add-customer" class="nav-link active">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                />
-              </svg>
-              Add Customer
-            </a>
-            <a href="/manage-breeds" class="nav-link">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                />
-              </svg>
-              Manage Breeds
-            </a>
-            <a href="/daily-analytics" class="nav-link">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-              Daily Analytics
-            </a>
-            <a href="/customer-history" class="nav-link">
-              <svg
-                class="nav-icon"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Customer History
-            </a>
-          </nav>
-
-          <!-- Brand Logo -->
-          <div class="brand-header">
-            <img
-              src="images/logo-tiny.png"
-              alt="Pampered Pooch Logo"
-              class="brand-logo"
-            />
-            <span class="brand-text-header">Pampered Pooch</span>
+          <div class="hamburger-menu">
+            <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </div>
 
-          <!-- Breadcrumb -->
-          <div class="breadcrumb">
-            <a href="/" class="breadcrumb-link">Home</a>
-            <span class="breadcrumb-separator">›</span>
-            <span class="breadcrumb-current">Add Customer</span>
+          <!-- Brand Logo -->
+          <div class="brand-header" onclick="navigate('dashboard')">
+            <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-section" style="display: none">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              <input
+                type="text"
+                class="search-input"
+                id="searchInput"
+                placeholder="Search animals, breeds, owners..."
+                value=""
+              />
+              <div class="search-actions">
+                <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Breadcrumb Display Area -->
+          <div class="breadcrumb-section">
+            <!-- Breadcrumbs will be inserted here when needed -->
           </div>
 
           <!-- Header Actions -->
@@ -838,6 +1026,130 @@
           </div>
         </div>
       </header>
+
+      <!-- Navigation Overlay -->
+      <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
+
+      <!-- Left Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <!-- Resize Handle -->
+        <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand">
+            <img
+              src="images/logo-tiny.png"
+              alt="Pampered Pooch Logo"
+              style="width: 100px; height: auto"
+            />
+          </div>
+
+          <div class="sidebar-controls">
+            <button
+              class="sidebar-btn"
+              id="pinBtn"
+              onclick="togglePin()"
+              title="Pin sidebar"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z"
+                />
+              </svg>
+            </button>
+            <button
+              class="sidebar-btn"
+              onclick="toggleSidebar()"
+              title="Close sidebar"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('dashboard')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                />
+              </svg>
+              Dashboard
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('search')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              Search Results
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link active" onclick="navigate('customers')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              Add Customer
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('breeds')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+              Manage Breeds
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('analytics')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                />
+              </svg>
+              Daily Analytics
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('history')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg>
+              Customer History
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="date-sidebar" id="sidebarDate"></div>
+        </div>
+      </nav>
+      <!-- All Below this point is per page -->
 
       <!-- Main Content -->
       <main class="main-content">
@@ -1030,42 +1342,208 @@
     </div>
 
     <script>
-      // Live date/time update
-      function updateDateTime() {
-        const now = new Date()
-        const options = {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
+      // Initialize app state and data
+      ;(function () {
+        // App state
+        let appSidebarOpen = false
+        let appSidebarPinned = false
+        let isResizing = false
+        let sidebarWidth = 280 // Default width
+
+        // Set current date and time
+        function updateDate() {
+          const now = new Date()
+
+          // Format time as "2:38pm"
+          const timeOptions = {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          }
+          const timeText = now
+            .toLocaleTimeString('en-US', timeOptions)
+            .toLowerCase()
+
+          // Format date as "Tue, Sep 16 2025"
+          const dateOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }
+          const dateText = now.toLocaleDateString('en-US', dateOptions)
+
+          // Combine as "2:38pm Tue, Sep 16 2025"
+          const fullDateTime = `${timeText} ${dateText}`
+
+          document.getElementById('currentDate').textContent = fullDateTime
+
+          // Keep sidebar date simple (without time)
+          const sidebarDate = document.getElementById('sidebarDate')
+          if (sidebarDate) {
+            const simpleDateOptions = {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+            }
+            const simpleDateText = now.toLocaleDateString(
+              'en-US',
+              simpleDateOptions
+            )
+            sidebarDate.textContent = simpleDateText
+          }
         }
-        document.getElementById('currentDate').textContent =
-          now.toLocaleDateString('en-US', options)
-      }
 
-      updateDateTime()
-      setInterval(updateDateTime, 1000)
+        // Toggle sidebar
+        window.toggleSidebar = function () {
+          const sidebar = document.getElementById('sidebar')
+          const hamburger = document.getElementById('hamburgerBtn')
+          const overlay = document.getElementById('navOverlay')
+          const appLayout = document.querySelector('.app-layout')
 
-      // Hamburger menu toggle
-      const hamburgerBtn = document.getElementById('hamburgerBtn')
-      const navDropdown = document.getElementById('navDropdown')
+          if (appSidebarPinned) {
+            // If pinned, toggle the pinned state instead
+            togglePin()
+            return
+          }
 
-      hamburgerBtn.addEventListener('click', () => {
-        hamburgerBtn.classList.toggle('active')
-        navDropdown.classList.toggle('active')
-      })
+          appSidebarOpen = !appSidebarOpen
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (
-          !hamburgerBtn.contains(e.target) &&
-          !navDropdown.contains(e.target)
-        ) {
-          hamburgerBtn.classList.remove('active')
-          navDropdown.classList.remove('active')
+          sidebar.classList.toggle('active', appSidebarOpen)
+          hamburger.classList.toggle('active', appSidebarOpen)
+          overlay.classList.toggle('active', appSidebarOpen)
+
+          if (appSidebarOpen) {
+            document.body.style.overflow = 'hidden'
+          } else {
+            document.body.style.overflow = ''
+          }
         }
-      })
+
+        // Toggle pin state
+        window.togglePin = function () {
+          const sidebar = document.getElementById('sidebar')
+          const pinBtn = document.getElementById('pinBtn')
+          const appLayout = document.querySelector('.app-layout')
+          const overlay = document.getElementById('navOverlay')
+          const hamburger = document.getElementById('hamburgerBtn')
+
+          appSidebarPinned = !appSidebarPinned
+
+          if (appSidebarPinned) {
+            sidebar.classList.add('pinned')
+            sidebar.classList.add('active')
+            appLayout.classList.add('sidebar-pinned')
+            pinBtn.classList.add('active')
+            overlay.classList.remove('active')
+            hamburger.classList.add('active')
+            document.body.style.overflow = ''
+            appSidebarOpen = true
+          } else {
+            sidebar.classList.remove('pinned')
+            appLayout.classList.remove('sidebar-pinned')
+            pinBtn.classList.remove('active')
+
+            // If not pinned and we want to close, close completely
+            if (appSidebarOpen) {
+              toggleSidebar()
+            }
+          }
+        }
+
+        // Initialize resize functionality
+        function initResize() {
+          const resizeHandle = document.getElementById('resizeHandle')
+          const sidebar = document.getElementById('sidebar')
+
+          let startX, startWidth
+
+          function startResize(e) {
+            isResizing = true
+            startX = e.clientX
+            startWidth = sidebarWidth
+
+            resizeHandle.classList.add('dragging')
+            document.body.style.cursor = 'col-resize'
+            document.body.style.userSelect = 'none'
+
+            document.addEventListener('mousemove', handleResize)
+            document.addEventListener('mouseup', stopResize)
+          }
+
+          function handleResize(e) {
+            if (!isResizing) return
+
+            const deltaX = e.clientX - startX
+            const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+            sidebarWidth = newWidth
+            document.documentElement.style.setProperty(
+              '--sidebar-width',
+              `${newWidth}px`
+            )
+            sidebar.style.width = `${newWidth}px`
+          }
+
+          function stopResize() {
+            isResizing = false
+            resizeHandle.classList.remove('dragging')
+            document.body.style.cursor = ''
+            document.body.style.userSelect = ''
+
+            document.removeEventListener('mousemove', handleResize)
+            document.removeEventListener('mouseup', stopResize)
+          }
+
+          resizeHandle.addEventListener('mousedown', startResize)
+        }
+
+        // Navigation functions
+        window.navigate = function (section) {
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach((link) => {
+            link.classList.remove('active')
+          })
+
+          // Add active class to clicked nav link
+          event.target.closest('.nav-link').classList.add('active')
+
+          // Close sidebar if not pinned
+          if (appSidebarOpen && !appSidebarPinned) {
+            toggleSidebar()
+          }
+
+          alert(`Navigating to ${section}...`)
+        }
+
+        // Close sidebar when clicking outside (only if not pinned)
+        document.addEventListener('click', function (e) {
+          if (
+            !e.target.closest('.sidebar') &&
+            !e.target.closest('.hamburger-menu') &&
+            appSidebarOpen &&
+            !appSidebarPinned
+          ) {
+            toggleSidebar()
+          }
+        })
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+          updateDate()
+          initResize()
+
+          // Handle window resize
+          window.addEventListener('resize', function () {
+            if (window.innerWidth <= 768 && appSidebarPinned) {
+              togglePin() // Unpin on mobile
+            }
+          })
+        })
+
+        // Update date and time every second
+        setInterval(updateDate, 1000)
+      })()
 
       // Form handling
       const form = document.getElementById('addCustomerForm')
