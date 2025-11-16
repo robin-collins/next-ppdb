@@ -1,728 +1,891 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Font Comparison - Pampered Pooch</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Font Comparison - Pampered Pooch</title>
 
-  <!-- Google Fonts - All alternatives -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Josefin+Sans:wght@400;500;600;700&family=Karla:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - All alternatives -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Josefin+Sans:wght@400;500;600;700&family=Karla:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    :root {
-      /* Colors from STYLE_GUIDE.md */
-      --primary: #d9944a;
-      --primary-hover: #c97d3d;
-      --primary-light: #fef4e8;
-      --secondary: #1b9e7e;
-      --secondary-light: #e6f7f3;
-      --accent: #2db894;
-      --gray-50: #faf8f6;
-      --gray-100: #f2ebe5;
-      --gray-200: #e8dfd7;
-      --gray-400: #a89b8f;
-      --gray-600: #5d544d;
-      --gray-700: #3d3935;
-      --gray-800: #2a2622;
+      :root {
+        /* Colors from STYLE_GUIDE.md */
+        --primary: #d9944a;
+        --primary-hover: #c97d3d;
+        --primary-light: #fef4e8;
+        --secondary: #1b9e7e;
+        --secondary-light: #e6f7f3;
+        --accent: #2db894;
+        --gray-50: #faf8f6;
+        --gray-100: #f2ebe5;
+        --gray-200: #e8dfd7;
+        --gray-400: #a89b8f;
+        --gray-600: #5d544d;
+        --gray-700: #3d3935;
+        --gray-800: #2a2622;
 
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --radius-lg: 1rem;
-      --radius-xl: 1.5rem;
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.5rem;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      }
 
-    body {
-      background: linear-gradient(
-        160deg,
-        #fef9f5 0%,
-        #f8f2ec 25%,
-        #f0ebe6 50%,
-        #e8f4f2 75%,
-        #f5fbfa 100%
-      );
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
-      min-height: 100vh;
-      padding: 3rem 1rem;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
+      body {
+        background: linear-gradient(
+          160deg,
+          #fef9f5 0%,
+          #f8f2ec 25%,
+          #f0ebe6 50%,
+          #e8f4f2 75%,
+          #f5fbfa 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 20s ease infinite;
+        min-height: 100vh;
+        padding: 3rem 1rem;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
 
-    @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      text-align: center;
-      margin-bottom: 4rem;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: var(--radius-xl);
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-    }
+      .page-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      }
 
-    .page-header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--gray-800);
-      margin-bottom: 0.5rem;
-      font-family: 'Lora', Georgia, serif;
-    }
+      .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 0.5rem;
+        font-family: 'Lora', Georgia, serif;
+      }
 
-    .page-header p {
-      font-size: 1.125rem;
-      color: var(--gray-600);
-    }
+      .page-header p {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+      }
 
-    .font-section {
-      margin-bottom: 3rem;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+      .font-section {
+        margin-bottom: 3rem;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
 
-    .font-section:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15);
-    }
+      .font-section:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15);
+      }
 
-    .font-label {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-      color: white;
-      padding: 1rem 1.5rem;
-      font-weight: 700;
-      font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+      .font-label {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
+        color: white;
+        padding: 1rem 1.5rem;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    .font-label .number {
-      background: rgba(255, 255, 255, 0.3);
-      padding: 0.25rem 0.75rem;
-      border-radius: 2rem;
-      font-size: 0.75rem;
-    }
+      .font-label .number {
+        background: rgba(255, 255, 255, 0.3);
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+      }
 
-    .font-names {
-      padding: 0.75rem 1.5rem;
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-200);
-      font-size: 0.875rem;
-      color: var(--gray-600);
-      font-family: monospace;
-    }
+      .font-names {
+        padding: 0.75rem 1.5rem;
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-family: monospace;
+      }
 
-    /* Mock Header Styles */
-    .mock-header {
-      height: 92px;
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1.5rem;
-    }
-
-    .hamburger {
-      width: 40px;
-      height: 40px;
-      border: none;
-      background: var(--gray-100);
-      border-radius: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .hamburger:hover {
-      background: var(--gray-200);
-    }
-
-    .hamburger span {
-      width: 18px;
-      height: 2px;
-      background: var(--gray-700);
-      border-radius: 2px;
-    }
-
-    .logo {
-      width: 120px;
-      height: auto;
-      flex-shrink: 0;
-    }
-
-    .search-bar {
-      flex: 1;
-      max-width: 500px;
-      display: flex;
-      align-items: center;
-      background: white;
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius-xl);
-      height: 53px;
-      padding: 0 1rem;
-      gap: 0.75rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .search-bar:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1);
-    }
-
-    .search-icon {
-      width: 20px;
-      height: 20px;
-      color: var(--gray-400);
-    }
-
-    .search-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      color: var(--gray-800);
-      background: transparent;
-    }
-
-    .search-input::placeholder {
-      color: var(--gray-400);
-    }
-
-    .breadcrumb {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: var(--gray-600);
-    }
-
-    .breadcrumb-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .breadcrumb-link:hover {
-      text-decoration: underline;
-    }
-
-    .breadcrumb-separator {
-      color: var(--gray-400);
-    }
-
-    .breadcrumb-current {
-      color: var(--gray-800);
-      font-weight: 600;
-    }
-
-    .live-date {
-      font-size: 0.875rem;
-      color: var(--gray-600);
-      font-weight: 500;
-      padding: 0.5rem 1rem;
-      background: var(--gray-50);
-      border-radius: 0.5rem;
-      white-space: nowrap;
-    }
-
-    /* Font-specific classes */
-
-    /* Option 1: Fredoka + Nunito Sans */
-    .font-option-1 .sample-content h2,
-    .font-option-1 .breadcrumb-current {
-      font-family: 'Fredoka', sans-serif !important;
-    }
-
-    .font-option-1 .search-input,
-    .font-option-1 .breadcrumb,
-    .font-option-1 .breadcrumb-link,
-    .font-option-1 .live-date,
-    .font-option-1 .sample-content p,
-    .font-option-1 .btn {
-      font-family: 'Nunito Sans', sans-serif !important;
-    }
-
-    /* Option 2: Lora + Source Sans 3 */
-    .font-option-2 .sample-content h2,
-    .font-option-2 .breadcrumb-current {
-      font-family: 'Lora', serif !important;
-    }
-
-    .font-option-2 .search-input,
-    .font-option-2 .breadcrumb,
-    .font-option-2 .breadcrumb-link,
-    .font-option-2 .live-date,
-    .font-option-2 .sample-content p,
-    .font-option-2 .btn {
-      font-family: 'Source Sans 3', sans-serif !important;
-    }
-
-    /* Option 3: Josefin Sans + Karla */
-    .font-option-3 .sample-content h2,
-    .font-option-3 .breadcrumb-current {
-      font-family: 'Josefin Sans', sans-serif !important;
-    }
-
-    .font-option-3 .search-input,
-    .font-option-3 .breadcrumb,
-    .font-option-3 .breadcrumb-link,
-    .font-option-3 .live-date,
-    .font-option-3 .sample-content p,
-    .font-option-3 .btn {
-      font-family: 'Karla', sans-serif !important;
-    }
-
-    /* Option 4: Quicksand + Rubik */
-    .font-option-4 .sample-content h2,
-    .font-option-4 .breadcrumb-current {
-      font-family: 'Quicksand', sans-serif !important;
-    }
-
-    .font-option-4 .search-input,
-    .font-option-4 .breadcrumb,
-    .font-option-4 .breadcrumb-link,
-    .font-option-4 .live-date,
-    .font-option-4 .sample-content p,
-    .font-option-4 .btn {
-      font-family: 'Rubik', sans-serif !important;
-    }
-
-    /* Option 5: Raleway + Manrope */
-    .font-option-5 .sample-content h2,
-    .font-option-5 .breadcrumb-current {
-      font-family: 'Raleway', sans-serif !important;
-    }
-
-    .font-option-5 .search-input,
-    .font-option-5 .breadcrumb,
-    .font-option-5 .breadcrumb-link,
-    .font-option-5 .live-date,
-    .font-option-5 .sample-content p,
-    .font-option-5 .btn {
-      font-family: 'Manrope', sans-serif !important;
-    }
-
-    /* Option 6: Lora + Rubik */
-    .font-option-6 .sample-content h2,
-    .font-option-6 .breadcrumb-current {
-      font-family: 'Lora', serif !important;
-    }
-
-    .font-option-6 .search-input,
-    .font-option-6 .breadcrumb,
-    .font-option-6 .breadcrumb-link,
-    .font-option-6 .live-date,
-    .font-option-6 .sample-content p,
-    .font-option-6 .btn {
-      font-family: 'Rubik', sans-serif !important;
-    }
-
-    .sample-content {
-      padding: 2rem 1.5rem;
-      border-top: 1px solid var(--gray-200);
-    }
-
-    .sample-content h2 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--gray-800);
-      font-weight: 600;
-    }
-
-    .sample-content p {
-      font-size: 1rem;
-      color: var(--gray-700);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-
-    .sample-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: var(--radius-lg);
-      font-weight: 600;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: var(--secondary);
-      color: white;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn-secondary:hover {
-      background: var(--secondary);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-
-    @media (max-width: 768px) {
+      /* Mock Header Styles */
       .mock-header {
-        padding: 0 1rem;
-        gap: 1rem;
+        height: 92px;
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1.5rem;
+      }
+
+      .hamburger {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 18px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 2px;
       }
 
       .logo {
-        width: 100px;
+        width: 120px;
+        height: auto;
+        flex-shrink: 0;
       }
 
       .search-bar {
-        display: none;
+        flex: 1;
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        height: 53px;
+        padding: 0 1rem;
+        gap: 0.75rem;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+      }
+
+      .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        color: var(--gray-800);
+        background: transparent;
+      }
+
+      .search-input::placeholder {
+        color: var(--gray-400);
       }
 
       .breadcrumb {
-        display: none;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+      }
+
+      .breadcrumb-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .breadcrumb-link:hover {
+        text-decoration: underline;
+      }
+
+      .breadcrumb-separator {
+        color: var(--gray-400);
+      }
+
+      .breadcrumb-current {
+        color: var(--gray-800);
+        font-weight: 600;
       }
 
       .live-date {
-        font-size: 0.75rem;
-        padding: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+        white-space: nowrap;
       }
-    }
 
-    .personality {
-      padding: 0.75rem 1.5rem;
-      background: var(--secondary-light);
-      border-left: 4px solid var(--secondary);
-      font-size: 0.875rem;
-      color: var(--gray-700);
-      font-style: italic;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="page-header">
-      <h1>Font Comparison</h1>
-      <p>Explore five distinctive font combinations for Pampered Pooch</p>
+      /* Font-specific classes */
+
+      /* Option 1: Fredoka + Nunito Sans */
+      .font-option-1 .sample-content h2,
+      .font-option-1 .breadcrumb-current {
+        font-family: 'Fredoka', sans-serif !important;
+      }
+
+      .font-option-1 .search-input,
+      .font-option-1 .breadcrumb,
+      .font-option-1 .breadcrumb-link,
+      .font-option-1 .live-date,
+      .font-option-1 .sample-content p,
+      .font-option-1 .btn {
+        font-family: 'Nunito Sans', sans-serif !important;
+      }
+
+      /* Option 2: Lora + Source Sans 3 */
+      .font-option-2 .sample-content h2,
+      .font-option-2 .breadcrumb-current {
+        font-family: 'Lora', serif !important;
+      }
+
+      .font-option-2 .search-input,
+      .font-option-2 .breadcrumb,
+      .font-option-2 .breadcrumb-link,
+      .font-option-2 .live-date,
+      .font-option-2 .sample-content p,
+      .font-option-2 .btn {
+        font-family: 'Source Sans 3', sans-serif !important;
+      }
+
+      /* Option 3: Josefin Sans + Karla */
+      .font-option-3 .sample-content h2,
+      .font-option-3 .breadcrumb-current {
+        font-family: 'Josefin Sans', sans-serif !important;
+      }
+
+      .font-option-3 .search-input,
+      .font-option-3 .breadcrumb,
+      .font-option-3 .breadcrumb-link,
+      .font-option-3 .live-date,
+      .font-option-3 .sample-content p,
+      .font-option-3 .btn {
+        font-family: 'Karla', sans-serif !important;
+      }
+
+      /* Option 4: Quicksand + Rubik */
+      .font-option-4 .sample-content h2,
+      .font-option-4 .breadcrumb-current {
+        font-family: 'Quicksand', sans-serif !important;
+      }
+
+      .font-option-4 .search-input,
+      .font-option-4 .breadcrumb,
+      .font-option-4 .breadcrumb-link,
+      .font-option-4 .live-date,
+      .font-option-4 .sample-content p,
+      .font-option-4 .btn {
+        font-family: 'Rubik', sans-serif !important;
+      }
+
+      /* Option 5: Raleway + Manrope */
+      .font-option-5 .sample-content h2,
+      .font-option-5 .breadcrumb-current {
+        font-family: 'Raleway', sans-serif !important;
+      }
+
+      .font-option-5 .search-input,
+      .font-option-5 .breadcrumb,
+      .font-option-5 .breadcrumb-link,
+      .font-option-5 .live-date,
+      .font-option-5 .sample-content p,
+      .font-option-5 .btn {
+        font-family: 'Manrope', sans-serif !important;
+      }
+
+      /* Option 6: Lora + Rubik */
+      .font-option-6 .sample-content h2,
+      .font-option-6 .breadcrumb-current {
+        font-family: 'Lora', serif !important;
+      }
+
+      .font-option-6 .search-input,
+      .font-option-6 .breadcrumb,
+      .font-option-6 .breadcrumb-link,
+      .font-option-6 .live-date,
+      .font-option-6 .sample-content p,
+      .font-option-6 .btn {
+        font-family: 'Rubik', sans-serif !important;
+      }
+
+      .sample-content {
+        padding: 2rem 1.5rem;
+        border-top: 1px solid var(--gray-200);
+      }
+
+      .sample-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--gray-800);
+        font-weight: 600;
+      }
+
+      .sample-content p {
+        font-size: 1rem;
+        color: var(--gray-700);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .sample-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-secondary:hover {
+        background: var(--secondary);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 768px) {
+        .mock-header {
+          padding: 0 1rem;
+          gap: 1rem;
+        }
+
+        .logo {
+          width: 100px;
+        }
+
+        .search-bar {
+          display: none;
+        }
+
+        .breadcrumb {
+          display: none;
+        }
+
+        .live-date {
+          font-size: 0.75rem;
+          padding: 0.5rem;
+        }
+      }
+
+      .personality {
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary-light);
+        border-left: 4px solid var(--secondary);
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>Font Comparison</h1>
+        <p>Explore five distinctive font combinations for Pampered Pooch</p>
+      </div>
+
+      <!-- Option 1: Fredoka + Nunito Sans -->
+      <div class="font-section font-option-1">
+        <div class="font-label">
+          <span>Option 1: Playful & Rounded</span>
+          <span class="number">1</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Fredoka &nbsp;|&nbsp;
+          <strong>Body:</strong> Nunito Sans
+        </div>
+        <div class="personality">
+          Personality: Super friendly, approachable, fun-loving — perfect for a
+          welcoming pet care environment
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 2: Lora + Source Sans 3 -->
+      <div class="font-section font-option-2">
+        <div class="font-label">
+          <span>Option 2: Editorial Elegance</span>
+          <span class="number">2</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Lora &nbsp;|&nbsp;
+          <strong>Body:</strong> Source Sans 3
+        </div>
+        <div class="personality">
+          Personality: Sophisticated, refined, trustworthy — elegant serif
+          paired with clean sans for premium feel
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 3: Josefin Sans + Karla -->
+      <div class="font-section font-option-3">
+        <div class="font-label">
+          <span>Option 3: Geometric Charm</span>
+          <span class="number">3</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Josefin Sans &nbsp;|&nbsp;
+          <strong>Body:</strong> Karla
+        </div>
+        <div class="personality">
+          Personality: Stylish, geometric, distinctive — modern sans-serif with
+          unique character and personality
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 4: Quicksand + Rubik -->
+      <div class="font-section font-option-4">
+        <div class="font-label">
+          <span>Option 4: Warm Modern</span>
+          <span class="number">4</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Quicksand &nbsp;|&nbsp;
+          <strong>Body:</strong> Rubik
+        </div>
+        <div class="personality">
+          Personality: Smooth, rounded, contemporary — soft curves with a
+          modern, approachable aesthetic
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 5: Raleway + Manrope -->
+      <div class="font-section font-option-5">
+        <div class="font-label">
+          <span>Option 5: Bold & Contemporary</span>
+          <span class="number">5</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Raleway &nbsp;|&nbsp;
+          <strong>Body:</strong> Manrope
+        </div>
+        <div class="personality">
+          Personality: Clean, versatile, professional — elegant sans-serif
+          pairing with strong readability
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 6: Lora + Rubik -->
+      <div class="font-section font-option-6">
+        <div class="font-label">
+          <span>Option 6: Refined Warmth</span>
+          <span class="number">6</span>
+        </div>
+        <div class="font-names">
+          <strong>Display:</strong> Lora &nbsp;|&nbsp;
+          <strong>Body:</strong> Rubik
+        </div>
+        <div class="personality">
+          Personality: Sophisticated yet friendly — elegant serif headlines
+          balanced with warm, rounded body text
+        </div>
+        <div class="mock-header">
+          <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <img
+            src="../public/images/logo.png"
+            alt="Pampered Pooch"
+            class="logo"
+          />
+
+          <div class="search-bar">
+            <svg
+              class="search-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search animals, customers..."
+            />
+          </div>
+
+          <div class="breadcrumb">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Font Demo</span>
+          </div>
+
+          <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
+        </div>
+        <div class="sample-content">
+          <h2>Welcome to Pampered Pooch</h2>
+          <p>
+            Manage your pet grooming records with ease. Our friendly interface
+            makes it simple to track customer information, animal details, and
+            appointment history.
+          </p>
+          <div class="sample-buttons">
+            <button class="btn btn-primary">Add New Customer</button>
+            <button class="btn btn-secondary">Search Records</button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Option 1: Fredoka + Nunito Sans -->
-    <div class="font-section font-option-1">
-      <div class="font-label">
-        <span>Option 1: Playful & Rounded</span>
-        <span class="number">1</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Fredoka &nbsp;|&nbsp; <strong>Body:</strong> Nunito Sans
-      </div>
-      <div class="personality">
-        Personality: Super friendly, approachable, fun-loving — perfect for a welcoming pet care environment
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Option 2: Lora + Source Sans 3 -->
-    <div class="font-section font-option-2">
-      <div class="font-label">
-        <span>Option 2: Editorial Elegance</span>
-        <span class="number">2</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Lora &nbsp;|&nbsp; <strong>Body:</strong> Source Sans 3
-      </div>
-      <div class="personality">
-        Personality: Sophisticated, refined, trustworthy — elegant serif paired with clean sans for premium feel
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Option 3: Josefin Sans + Karla -->
-    <div class="font-section font-option-3">
-      <div class="font-label">
-        <span>Option 3: Geometric Charm</span>
-        <span class="number">3</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Josefin Sans &nbsp;|&nbsp; <strong>Body:</strong> Karla
-      </div>
-      <div class="personality">
-        Personality: Stylish, geometric, distinctive — modern sans-serif with unique character and personality
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Option 4: Quicksand + Rubik -->
-    <div class="font-section font-option-4">
-      <div class="font-label">
-        <span>Option 4: Warm Modern</span>
-        <span class="number">4</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Quicksand &nbsp;|&nbsp; <strong>Body:</strong> Rubik
-      </div>
-      <div class="personality">
-        Personality: Smooth, rounded, contemporary — soft curves with a modern, approachable aesthetic
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Option 5: Raleway + Manrope -->
-    <div class="font-section font-option-5">
-      <div class="font-label">
-        <span>Option 5: Bold & Contemporary</span>
-        <span class="number">5</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Raleway &nbsp;|&nbsp; <strong>Body:</strong> Manrope
-      </div>
-      <div class="personality">
-        Personality: Clean, versatile, professional — elegant sans-serif pairing with strong readability
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Option 6: Lora + Rubik -->
-    <div class="font-section font-option-6">
-      <div class="font-label">
-        <span>Option 6: Refined Warmth</span>
-        <span class="number">6</span>
-      </div>
-      <div class="font-names">
-        <strong>Display:</strong> Lora &nbsp;|&nbsp; <strong>Body:</strong> Rubik
-      </div>
-      <div class="personality">
-        Personality: Sophisticated yet friendly — elegant serif headlines balanced with warm, rounded body text
-      </div>
-      <div class="mock-header">
-        <button class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <img src="../public/images/logo.png" alt="Pampered Pooch" class="logo">
-
-        <div class="search-bar">
-          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" class="search-input" placeholder="Search animals, customers...">
-        </div>
-
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-current">Font Demo</span>
-        </div>
-
-        <div class="live-date">Nov 15, 2025 • 2:34 PM</div>
-      </div>
-      <div class="sample-content">
-        <h2>Welcome to Pampered Pooch</h2>
-        <p>Manage your pet grooming records with ease. Our friendly interface makes it simple to track customer information, animal details, and appointment history.</p>
-        <div class="sample-buttons">
-          <button class="btn btn-primary">Add New Customer</button>
-          <button class="btn btn-secondary">Search Records</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

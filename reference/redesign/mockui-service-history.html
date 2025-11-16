@@ -1,1185 +1,1223 @@
 <!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Complete Service History - Pampered Pooch Database</title>
     <style>
-        /* Font Imports - Brand Typography */
+      /* Font Imports - Brand Typography */
 
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
-        /* Design System Variables */
+      @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+      /* Design System Variables */
 
-         :root {
-            /* === TYPOGRAPHY === */
-            --font-display: 'Lora', Georgia, serif;
-            --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-accent: 'Rubik', -apple-system, sans-serif;
-            --font-family: var(--font-body);
-            /* Legacy fallback */
-            /* === PRIMARY COLORS (From Logo - Golden Brown) === */
-            --primary: #d9944a;
-            /* Golden brown - main brand color */
-            --primary-hover: #c97d3d;
-            /* Darker brown on hover */
-            --primary-light: #fef4e8;
-            /* Very light peach for backgrounds */
-            --primary-dark: #8b5a2b;
-            /* Deep brown for contrast */
-            /* === SECONDARY COLORS (From Logo - Teal Green) === */
-            --secondary: #1b9e7e;
-            /* Teal green - trust, nature */
-            --secondary-hover: #178a6c;
-            /* Darker teal on hover */
-            --secondary-light: #e6f7f3;
-            /* Pale mint for backgrounds */
-            --secondary-dark: #0f6652;
-            /* Deep teal for text */
-            /* === ACCENT COLORS (From Logo - Light Aqua) === */
-            --accent: #2db894;
-            /* Bright teal - CTAs, highlights */
-            --accent-hover: #24a382;
-            /* Darker on hover */
-            --accent-light: #d4f4f8;
-            /* Pale aqua - subtle backgrounds */
-            --accent-bubbles: #a8e6f0;
-            /* Bubble effect color */
-            /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
-            --cream: #f4d19b;
-            /* Warm cream */
-            --tan: #e8b876;
-            /* Golden tan */
-            --peach: #f9e5d0;
-            /* Soft peach */
-            /* === SEMANTIC COLORS === */
-            --success: #2db894;
-            /* Use accent teal for success */
-            --warning: #e8b876;
-            /* Use tan for warnings */
-            --error: #d97066;
-            /* Muted coral red */
-            --info: #a8e6f0;
-            /* Light aqua for info */
-            /* === NEUTRAL COLORS (Warmer Grays) === */
-            --white: #ffffff;
-            --gray-50: #faf8f6;
-            /* Warm white */
-            --gray-100: #f2ebe5;
-            /* Cream beige */
-            --gray-200: #e8dfd7;
-            /* Light tan */
-            --gray-300: #d4c7bb;
-            /* Medium tan */
-            --gray-400: #a89b8f;
-            /* Warm gray */
-            --gray-500: #7d7169;
-            /* Medium brown-gray */
-            --gray-600: #5d544d;
-            /* Dark brown-gray */
-            --gray-700: #3d3935;
-            /* Very dark brown */
-            --gray-800: #2a2622;
-            /* Almost black brown */
-            --gray-900: #1a1614;
-            /* Darkest brown */
-            /* === SPACING SCALE === */
-            --space-1: 0.25rem;
-            /* 4px */
-            --space-2: 0.5rem;
-            /* 8px */
-            --space-3: 0.75rem;
-            /* 12px */
-            --space-4: 1rem;
-            /* 16px */
-            --space-5: 1.25rem;
-            /* 20px */
-            --space-6: 1.5rem;
-            /* 24px */
-            --space-8: 2rem;
-            /* 32px */
-            --space-10: 2.5rem;
-            /* 40px */
-            --space-12: 3rem;
-            /* 48px */
-            --space-16: 4rem;
-            /* 64px */
-            --space-18: 4.5rem;
-            /* 72px */
-            --space-20: 5rem;
-            /* 80px */
-            --space-24: 6rem;
-            /* 96px */
-            /* === BORDER RADIUS (Softer, More Organic) === */
-            --radius-sm: 0.5rem;
-            /* 8px - was 6px */
-            --radius-md: 0.75rem;
-            /* 12px - was 8px */
-            --radius-lg: 1rem;
-            /* 16px - was 12px */
-            --radius-xl: 1.5rem;
-            /* 24px - was 16px */
-            --radius-2xl: 2rem;
-            /* 32px - was 24px */
-            --radius-3xl: 2.5rem;
-            /* 40px - new! */
-            --radius-full: 9999px;
-            /* Full pill shape */
-            /* === SHADOWS & ELEVATION === */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            /* Brand-colored shadows for special elements */
-            --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
-            --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
-            --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
-            /* === LAYOUT CONSTANTS === */
-            --sidebar-width: 280px;
-            --header-height: 92px;
-            --max-content-width: 1400px;
-            /* === ANIMATION DURATIONS === */
-            --duration-fast: 150ms;
-            --duration-normal: 250ms;
-            --duration-slow: 350ms;
-            --duration-slower: 500ms;
-            /* === ANIMATION EASINGS === */
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-            --ease-in: cubic-bezier(0.4, 0, 1, 1);
-            --ease-out: cubic-bezier(0, 0, 0.2, 1);
-            --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
-            /* === Z-INDEX SCALE === */
-            --z-base: 0;
-            --z-dropdown: 100;
-            --z-sticky: 100;
-            --z-overlay: 150;
-            --z-sidebar: 200;
-            --z-modal: 300;
-            --z-toast: 400;
-            --z-tooltip: 500;
+      :root {
+        /* === TYPOGRAPHY === */
+        --font-display: 'Lora', Georgia, serif;
+        --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-accent: 'Rubik', -apple-system, sans-serif;
+        --font-family: var(--font-body);
+        /* Legacy fallback */
+        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+        --primary: #d9944a;
+        /* Golden brown - main brand color */
+        --primary-hover: #c97d3d;
+        /* Darker brown on hover */
+        --primary-light: #fef4e8;
+        /* Very light peach for backgrounds */
+        --primary-dark: #8b5a2b;
+        /* Deep brown for contrast */
+        /* === SECONDARY COLORS (From Logo - Teal Green) === */
+        --secondary: #1b9e7e;
+        /* Teal green - trust, nature */
+        --secondary-hover: #178a6c;
+        /* Darker teal on hover */
+        --secondary-light: #e6f7f3;
+        /* Pale mint for backgrounds */
+        --secondary-dark: #0f6652;
+        /* Deep teal for text */
+        /* === ACCENT COLORS (From Logo - Light Aqua) === */
+        --accent: #2db894;
+        /* Bright teal - CTAs, highlights */
+        --accent-hover: #24a382;
+        /* Darker on hover */
+        --accent-light: #d4f4f8;
+        /* Pale aqua - subtle backgrounds */
+        --accent-bubbles: #a8e6f0;
+        /* Bubble effect color */
+        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+        --cream: #f4d19b;
+        /* Warm cream */
+        --tan: #e8b876;
+        /* Golden tan */
+        --peach: #f9e5d0;
+        /* Soft peach */
+        /* === SEMANTIC COLORS === */
+        --success: #2db894;
+        /* Use accent teal for success */
+        --warning: #e8b876;
+        /* Use tan for warnings */
+        --error: #d97066;
+        /* Muted coral red */
+        --info: #a8e6f0;
+        /* Light aqua for info */
+        /* === NEUTRAL COLORS (Warmer Grays) === */
+        --white: #ffffff;
+        --gray-50: #faf8f6;
+        /* Warm white */
+        --gray-100: #f2ebe5;
+        /* Cream beige */
+        --gray-200: #e8dfd7;
+        /* Light tan */
+        --gray-300: #d4c7bb;
+        /* Medium tan */
+        --gray-400: #a89b8f;
+        /* Warm gray */
+        --gray-500: #7d7169;
+        /* Medium brown-gray */
+        --gray-600: #5d544d;
+        /* Dark brown-gray */
+        --gray-700: #3d3935;
+        /* Very dark brown */
+        --gray-800: #2a2622;
+        /* Almost black brown */
+        --gray-900: #1a1614;
+        /* Darkest brown */
+        /* === SPACING SCALE === */
+        --space-1: 0.25rem;
+        /* 4px */
+        --space-2: 0.5rem;
+        /* 8px */
+        --space-3: 0.75rem;
+        /* 12px */
+        --space-4: 1rem;
+        /* 16px */
+        --space-5: 1.25rem;
+        /* 20px */
+        --space-6: 1.5rem;
+        /* 24px */
+        --space-8: 2rem;
+        /* 32px */
+        --space-10: 2.5rem;
+        /* 40px */
+        --space-12: 3rem;
+        /* 48px */
+        --space-16: 4rem;
+        /* 64px */
+        --space-18: 4.5rem;
+        /* 72px */
+        --space-20: 5rem;
+        /* 80px */
+        --space-24: 6rem;
+        /* 96px */
+        /* === BORDER RADIUS (Softer, More Organic) === */
+        --radius-sm: 0.5rem;
+        /* 8px - was 6px */
+        --radius-md: 0.75rem;
+        /* 12px - was 8px */
+        --radius-lg: 1rem;
+        /* 16px - was 12px */
+        --radius-xl: 1.5rem;
+        /* 24px - was 16px */
+        --radius-2xl: 2rem;
+        /* 32px - was 24px */
+        --radius-3xl: 2.5rem;
+        /* 40px - new! */
+        --radius-full: 9999px;
+        /* Full pill shape */
+        /* === SHADOWS & ELEVATION === */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg:
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl:
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        /* Brand-colored shadows for special elements */
+        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+        /* === LAYOUT CONSTANTS === */
+        --sidebar-width: 280px;
+        --header-height: 92px;
+        --max-content-width: 1400px;
+        /* === ANIMATION DURATIONS === */
+        --duration-fast: 150ms;
+        --duration-normal: 250ms;
+        --duration-slow: 350ms;
+        --duration-slower: 500ms;
+        /* === ANIMATION EASINGS === */
+        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-in: cubic-bezier(0.4, 0, 1, 1);
+        --ease-out: cubic-bezier(0, 0, 0.2, 1);
+        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+        /* === Z-INDEX SCALE === */
+        --z-base: 0;
+        --z-dropdown: 100;
+        --z-sticky: 100;
+        --z-overlay: 150;
+        --z-sidebar: 200;
+        --z-modal: 300;
+        --z-toast: 400;
+        --z-tooltip: 500;
+      }
+      /* Reset */
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: linear-gradient(
+          160deg,
+          #fef9f5 0%,
+          /* Warm cream */ #f8f2ec 25%,
+          /* Peachy beige */ #f0ebe6 50%,
+          /* Soft tan */ #e8f4f2 75%,
+          /* Pale mint */ #f5fbfa 100% /* Light aqua */
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 20s ease infinite;
+        min-height: 100vh;
+        color: var(--gray-800);
+        overflow-x: hidden;
+      }
+      /* Paw Print Pattern Overlay */
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.6;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
         }
-        /* Reset */
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        50% {
+          background-position: 100% 50%;
         }
+      }
+      /* === ANIMATIONS === */
 
-        html {
-            font-size: 16px;
-            line-height: 1.6;
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-
-        body {
-            font-family: var(--font-body);
-            background: linear-gradient( 160deg, #fef9f5 0%, /* Warm cream */
-            #f8f2ec 25%, /* Peachy beige */
-            #f0ebe6 50%, /* Soft tan */
-            #e8f4f2 75%, /* Pale mint */
-            #f5fbfa 100%/* Light aqua */
-            );
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
-            min-height: 100vh;
-            color: var(--gray-800);
-            overflow-x: hidden;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        /* Paw Print Pattern Overlay */
+      }
 
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.6;
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-
-        @keyframes gradientShift {
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        /* === ANIMATIONS === */
+      }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
         }
-
-        @keyframes bounce {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
+        50% {
+          transform: translateY(-20px);
         }
+      }
 
-        @keyframes float {
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
         }
-
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.8;
-                transform: scale(1.05);
-            }
+        50% {
+          transform: translateY(-10px);
         }
+      }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
         }
-        /* === TYPOGRAPHY APPLICATION === */
-        /* Headings use elegant serif */
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: var(--font-display);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            color: var(--gray-900);
-            line-height: 1.2;
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
         }
-        /* Body text uses warm sans-serif */
+      }
 
-        body,
-        p,
-        li,
-        td,
-        th {
-            font-family: var(--font-body);
-            font-weight: 400;
-            color: var(--gray-700);
-            line-height: 1.6;
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
-        /* UI elements (buttons, badges, labels) use geometric sans */
+      }
+      /* === TYPOGRAPHY APPLICATION === */
+      /* Headings use elegant serif */
 
-        button,
-        .btn,
-        .badge,
-        label,
-        input,
-        select,
-        textarea {
-            font-family: var(--font-accent);
-            letter-spacing: 0.01em;
-        }
-        /* Layout Structure */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--gray-900);
+        line-height: 1.2;
+      }
+      /* Body text uses warm sans-serif */
 
-        .app-layout {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        /* Persistent Header */
+      body,
+      p,
+      li,
+      td,
+      th {
+        font-family: var(--font-body);
+        font-weight: 400;
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+      /* UI elements (buttons, badges, labels) use geometric sans */
 
-        .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: var(--space-4) var(--space-6);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-md);
-        }
+      button,
+      .btn,
+      .badge,
+      label,
+      input,
+      select,
+      textarea {
+        font-family: var(--font-accent);
+        letter-spacing: 0.01em;
+      }
+      /* Layout Structure */
 
+      .app-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      /* Persistent Header */
+
+      .app-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: var(--space-4) var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-18);
+        margin: 0 0 0 0;
+      }
+      /* Hamburger Menu */
+
+      .hamburger-menu {
+        position: relative;
+      }
+
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        cursor: pointer;
+        height: 48px;
+        width: 48px;
+        border-radius: var(--radius-lg);
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+      }
+
+      .hamburger:hover {
+        background: var(--gray-200);
+      }
+
+      .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: var(--gray-700);
+        border-radius: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+      /* Sidebar */
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid var(--gray-200);
+        box-shadow: var(--shadow-xl);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar.pinned {
+        position: relative;
+        transform: translateX(0);
+        transition: none;
+      }
+
+      .sidebar-header {
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: var(--header-height);
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon-sidebar {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-primary);
+      }
+
+      .brand-text-sidebar h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-sidebar p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .sidebar-controls {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .sidebar-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        color: var(--gray-600);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      .sidebar-btn.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu {
+        flex: 1;
+        padding: var(--space-4);
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        margin-bottom: var(--space-1);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-footer {
+        padding: var(--space-4);
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+      }
+
+      .date-sidebar {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      /* Resize Handle */
+
+      .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -2px;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        cursor: col-resize;
+        z-index: 10;
+        transition: background 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover,
+      .sidebar-resize-handle.dragging {
+        background: var(--primary);
+      }
+
+      .sidebar-resize-handle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 40px;
+        background: var(--gray-300);
+        border-radius: 1px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover::before,
+      .sidebar-resize-handle.dragging::before {
+        opacity: 1;
+      }
+      /* Brand Logo */
+
+      .brand-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        cursor: pointer;
+      }
+
+      .brand-icon-header {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-primary);
+      }
+
+      .brand-text-header h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-header p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+      /* Search Bar */
+
+      .search-section {
+        flex: 1;
+        max-width: 600px;
+      }
+
+      .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow:
+          0 0 0 4px rgba(217, 148, 74, 0.1),
+          var(--shadow-md);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+        margin-left: var(--space-4);
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--space-4);
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--gray-800);
+        font-family: var(--font-family);
+      }
+
+      .search-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-right: var(--space-2);
+      }
+      /* Breadcrumb Section */
+
+      .breadcrumb-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        /* Empty by default, styled when breadcrumbs are added */
+      }
+      /* Header Actions */
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-left: auto;
+      }
+
+      .date-display {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0 var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      /* Main Content */
+
+      .main-content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        margin: var(--space-6);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        transition: margin-left 0.3s ease;
+      }
+
+      .app-layout.sidebar-pinned .main-content {
+        margin-left: calc(var(--sidebar-width) + var(--space-6));
+      }
+
+      .btn {
+        padding: var(--space-2) var(--space-3);
+        border: none;
+        border-radius: var(--radius-md);
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background: var(--gray-100);
+        color: var(--gray-700);
+      }
+
+      .btn-secondary:hover {
+        background: var(--gray-200);
+      }
+      /* Overlay for dropdown */
+
+      .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 150;
+        display: none;
+      }
+
+      .nav-overlay.active {
+        display: block;
+      }
+      /* ===== PAGE HEADER ===== */
+
+      .content-wrapper {
+        padding: var(--space-8);
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-8);
+        padding-bottom: var(--space-6);
+        border-bottom: 2px solid var(--gray-200);
+      }
+
+      .page-title-section {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .animal-avatar-large {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--accent)
+        );
+        border-radius: var(--radius-2xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-dark);
+        font-family: var(--font-accent);
+        font-size: 3rem;
+        font-weight: 800;
+        box-shadow: var(--shadow-lg);
+        flex-shrink: 0;
+      }
+
+      .page-title-content h1 {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 var(--space-2) 0;
+        letter-spacing: -0.02em;
+      }
+
+      .page-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.125rem;
+        font-weight: 400;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-5);
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius-lg);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all var(--duration-normal) var(--ease-smooth);
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        background: var(--gray-200);
+        transform: translateY(-1px);
+      }
+
+      .back-link:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .back-link svg {
+        width: 16px;
+        height: 16px;
+      }
+      /* ===== SERVICE HISTORY ===== */
+
+      .service-history {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .service-item {
+        padding: var(--space-4) 0;
+        transition: transform var(--duration-slow) var(--ease-bounce);
+        opacity: 0;
+        animation: slideInUp 0.4s var(--ease-out) forwards;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .service-item:first-child {
+        padding-top: 0;
+      }
+
+      .service-item + .service-item {
+        border-top: 1px solid var(--gray-200);
+      }
+
+      .service-item:hover {
+        transform: translateX(4px);
+      }
+
+      .service-item:focus-within {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .service-date {
+        font-family: var(--font-accent);
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-bottom: var(--space-1);
+      }
+
+      .service-date svg {
+        width: 20px;
+        height: 20px;
+        color: var(--primary);
+      }
+
+      .service-price {
+        font-family: var(--font-accent);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--success);
+      }
+
+      .service-inline {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+      }
+
+      .service-details {
+        font-family: var(--font-body);
+        font-size: 1rem;
+        color: var(--gray-700);
+        line-height: 1.6;
+        flex: 1;
+        min-width: 220px;
+      }
+
+      .service-inline .service-price,
+      .service-inline .service-meta {
+        flex-shrink: 0;
+      }
+
+      .service-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-top: 0;
+        flex-wrap: wrap;
+      }
+
+      .service-tech {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-2) var(--space-4);
+        background: var(--secondary-light);
+        color: var(--secondary-dark);
+        border: 1px solid var(--secondary);
+        border-radius: var(--radius-full);
+        font-family: var(--font-accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .service-tech svg {
+        width: 14px;
+        height: 14px;
+      }
+      /* Stagger animation delays */
+
+      .service-item:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .service-item:nth-child(2) {
+        animation-delay: 0.05s;
+      }
+
+      .service-item:nth-child(3) {
+        animation-delay: 0.1s;
+      }
+
+      .service-item:nth-child(4) {
+        animation-delay: 0.15s;
+      }
+
+      .service-item:nth-child(5) {
+        animation-delay: 0.2s;
+      }
+
+      .service-item:nth-child(6) {
+        animation-delay: 0.25s;
+      }
+
+      .service-item:nth-child(7) {
+        animation-delay: 0.3s;
+      }
+
+      .service-item:nth-child(8) {
+        animation-delay: 0.35s;
+      }
+
+      .service-item:nth-child(9) {
+        animation-delay: 0.4s;
+      }
+
+      .service-item:nth-child(10) {
+        animation-delay: 0.45s;
+      }
+
+      .service-item:nth-child(n + 11) {
+        animation-delay: 0.5s;
+      }
+      /* ===== HISTORY CARD ===== */
+
+      .history-card {
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        margin-bottom: var(--space-6);
+        background: white;
+      }
+
+      .history-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 50%,
+          var(--secondary) 100%
+        );
+        padding: var(--space-6);
+        color: white;
+      }
+
+      .history-body {
+        padding: var(--space-6);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+        margin-bottom: var(--space-1);
+        letter-spacing: -0.01em;
+      }
+
+      .stat-label {
+        font-family: var(--font-accent);
+        font-size: 0.875rem;
+        opacity: 0.95;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      /* Mobile Responsive */
+
+      @media (max-width: 768px) {
         .header-content {
-            display: flex;
-            align-items: center;
-            gap: var(--space-18);
-            margin: 0 0 0 0;
+          gap: var(--space-4);
         }
-        /* Hamburger Menu */
-
-        .hamburger-menu {
-            position: relative;
+        .brand-text-header {
+          display: none;
         }
-
-        .hamburger {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            cursor: pointer;
-            height: 48px;
-            width: 48px;
-            border-radius: var(--radius-lg);
-            transition: all 0.2s ease;
-            background: var(--gray-100);
-        }
-
-        .hamburger:hover {
-            background: var(--gray-200);
-        }
-
-        .hamburger span {
-            width: 20px;
-            height: 2px;
-            background: var(--gray-700);
-            border-radius: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-        /* Sidebar */
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-xl);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar.pinned {
-            position: relative;
-            transform: translateX(0);
-            transition: none;
-        }
-
-        .sidebar-header {
-            padding: var(--space-4) var(--space-5);
-            border-bottom: 1px solid var(--gray-200);
-            background: var(--gray-50);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: var(--header-height);
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-        }
-
-        .brand-icon-sidebar {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: var(--shadow-primary);
-        }
-
-        .brand-text-sidebar h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--gray-800);
-        }
-
-        .brand-text-sidebar p {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            margin: 0;
-        }
-
-        .sidebar-controls {
-            display: flex;
-            gap: var(--space-2);
-        }
-
-        .sidebar-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            color: var(--gray-600);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-btn:hover {
-            background: var(--gray-200);
-            color: var(--gray-800);
-        }
-
-        .sidebar-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .nav-menu {
-            flex: 1;
-            padding: var(--space-4);
-            overflow-y: auto;
-        }
-
-        .nav-item {
-            margin-bottom: var(--space-1);
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3) var(--space-4);
-            color: var(--gray-700);
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-
-        .nav-link:hover {
-            background: var(--gray-100);
-            color: var(--gray-900);
-        }
-
-        .nav-link.active {
-            background: var(--primary-light);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-footer {
-            padding: var(--space-4);
-            border-top: 1px solid var(--gray-200);
-            background: var(--gray-50);
-        }
-
-        .date-sidebar {
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: var(--space-2) var(--space-4);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-align: center;
-        }
-        /* Resize Handle */
-
-        .sidebar-resize-handle {
-            position: absolute;
-            top: 0;
-            right: -2px;
-            width: 4px;
-            height: 100%;
-            background: transparent;
-            cursor: col-resize;
-            z-index: 10;
-            transition: background 0.2s ease;
-        }
-
-        .sidebar-resize-handle:hover,
-        .sidebar-resize-handle.dragging {
-            background: var(--primary);
-        }
-
-        .sidebar-resize-handle::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 2px;
-            height: 40px;
-            background: var(--gray-300);
-            border-radius: 1px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .sidebar-resize-handle:hover::before,
-        .sidebar-resize-handle.dragging::before {
-            opacity: 1;
-        }
-        /* Brand Logo */
-
-        .brand-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            cursor: pointer;
-        }
-
-        .brand-icon-header {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: var(--shadow-primary);
-        }
-
-        .brand-text-header h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--gray-800);
-        }
-
-        .brand-text-header p {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            margin: 0;
-        }
-        /* Search Bar */
-
         .search-section {
-            flex: 1;
-            max-width: 600px;
+          max-width: none;
         }
-
-        .search-bar {
-            position: relative;
-            display: flex;
-            align-items: center;
-            background: white;
-            border: 2px solid var(--gray-200);
-            border-radius: var(--radius-xl);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-bar:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
-        }
-
-        .search-icon {
-            width: 20px;
-            height: 20px;
-            color: var(--gray-400);
-            margin-left: var(--space-4);
-            flex-shrink: 0;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: var(--space-4);
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            font-weight: 500;
-            background: transparent;
-            color: var(--gray-800);
-            font-family: var(--font-family);
-        }
-
-        .search-actions {
-            display: flex;
-            gap: var(--space-2);
-            margin-right: var(--space-2);
-        }
-        /* Breadcrumb Section */
-
-        .breadcrumb-section {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            /* Empty by default, styled when breadcrumbs are added */
-        }
-        /* Header Actions */
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--space-4);
-            margin-left: auto;
-        }
-
         .date-display {
-            display: flex;
-            align-items: center;
-            height: 48px;
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: 0 var(--space-4);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-            white-space: nowrap;
+          display: none;
         }
-        /* Main Content */
-
-        .main-content {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            margin: var(--space-6);
-            border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-            transition: margin-left 0.3s ease;
+        /* Mobile sidebar adjustments */
+        .sidebar {
+          width: min(280px, 80vw);
         }
-
         .app-layout.sidebar-pinned .main-content {
-            margin-left: calc(var(--sidebar-width) + var(--space-6));
+          margin-left: var(--space-6);
         }
-
-        .btn {
-            padding: var(--space-2) var(--space-3);
-            border: none;
-            border-radius: var(--radius-md);
-            font-family: var(--font-family);
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
+        .sidebar.pinned {
+          position: fixed;
         }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-700);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray-200);
-        }
-        /* Overlay for dropdown */
-
-        .nav-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: transparent;
-            z-index: 150;
-            display: none;
-        }
-
-        .nav-overlay.active {
-            display: block;
-        }
-        /* ===== PAGE HEADER ===== */
-
-        .content-wrapper {
-            padding: var(--space-8);
-        }
-
         .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-8);
-            padding-bottom: var(--space-6);
-            border-bottom: 2px solid var(--gray-200);
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-4);
         }
-
         .page-title-section {
-            display: flex;
-            align-items: center;
-            gap: var(--space-4);
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
         }
-
-        .animal-avatar-large {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient( 135deg, var(--primary-light), var(--accent));
-            border-radius: var(--radius-2xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-dark);
-            font-family: var(--font-accent);
-            font-size: 3rem;
-            font-weight: 800;
-            box-shadow: var(--shadow-lg);
-            flex-shrink: 0;
-        }
-
         .page-title-content h1 {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin: 0 0 var(--space-2) 0;
-            letter-spacing: -0.02em;
+          font-size: 2rem;
         }
-
-        .page-subtitle {
-            font-family: var(--font-body);
-            font-size: 1.125rem;
-            font-weight: 400;
-            color: var(--gray-600);
-            margin: 0;
+        .animal-avatar-large {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
         }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-            padding: var(--space-3) var(--space-5);
-            background: var(--gray-100);
-            color: var(--gray-700);
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            font-family: var(--font-accent);
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all var(--duration-normal) var(--ease-smooth);
-            text-decoration: none;
-        }
-
-        .back-link:hover {
-            background: var(--gray-200);
-            transform: translateY(-1px);
-        }
-
-        .back-link:focus-visible {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .back-link svg {
-            width: 16px;
-            height: 16px;
-        }
-        /* ===== SERVICE HISTORY ===== */
-
-        .service-history {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .service-item {
-            padding: var(--space-4) 0;
-            transition: transform var(--duration-slow) var(--ease-bounce);
-            opacity: 0;
-            animation: slideInUp 0.4s var(--ease-out) forwards;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-        }
-
-        .service-item:first-child {
-            padding-top: 0;
-        }
-
-        .service-item+.service-item {
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .service-item:hover {
-            transform: translateX(4px);
-        }
-
-        .service-item:focus-within {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        .service-date {
-            font-family: var(--font-accent);
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            margin-bottom: var(--space-1);
-        }
-
-        .service-date svg {
-            width: 20px;
-            height: 20px;
-            color: var(--primary);
-        }
-
-        .service-price {
-            font-family: var(--font-accent);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        .service-inline {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-4);
-            flex-wrap: wrap;
-        }
-
-        .service-details {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            color: var(--gray-700);
-            line-height: 1.6;
-            flex: 1;
-            min-width: 220px;
-        }
-
-        .service-inline .service-price,
-        .service-inline .service-meta {
-            flex-shrink: 0;
-        }
-
-        .service-meta {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            margin-top: 0;
-            flex-wrap: wrap;
-        }
-
-        .service-tech {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-1);
-            padding: var(--space-2) var(--space-4);
-            background: var(--secondary-light);
-            color: var(--secondary-dark);
-            border: 1px solid var(--secondary);
-            border-radius: var(--radius-full);
-            font-family: var(--font-accent);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .service-tech svg {
-            width: 14px;
-            height: 14px;
-        }
-        /* Stagger animation delays */
-
-        .service-item:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .service-item:nth-child(2) {
-            animation-delay: 0.05s;
-        }
-
-        .service-item:nth-child(3) {
-            animation-delay: 0.1s;
-        }
-
-        .service-item:nth-child(4) {
-            animation-delay: 0.15s;
-        }
-
-        .service-item:nth-child(5) {
-            animation-delay: 0.2s;
-        }
-
-        .service-item:nth-child(6) {
-            animation-delay: 0.25s;
-        }
-
-        .service-item:nth-child(7) {
-            animation-delay: 0.3s;
-        }
-
-        .service-item:nth-child(8) {
-            animation-delay: 0.35s;
-        }
-
-        .service-item:nth-child(9) {
-            animation-delay: 0.4s;
-        }
-
-        .service-item:nth-child(10) {
-            animation-delay: 0.45s;
-        }
-
-        .service-item:nth-child(n+11) {
-            animation-delay: 0.5s;
-        }
-        /* ===== HISTORY CARD ===== */
-
-        .history-card {
-            border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-            margin-bottom: var(--space-6);
-            background: white;
-        }
-
-        .history-header {
-            background: linear-gradient( 135deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
-            padding: var(--space-6);
-            color: white;
-        }
-
-        .history-body {
-            padding: var(--space-6);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--space-6);
+          grid-template-columns: repeat(2, 1fr);
         }
+      }
 
-        .stat-item {
-            text-align: center;
+      @media (max-width: 480px) {
+        .app-header {
+          padding: var(--space-3) var(--space-4);
         }
-
-        .stat-number {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            display: block;
-            margin-bottom: var(--space-1);
-            letter-spacing: -0.01em;
+        .search-actions {
+          flex-direction: column;
+          gap: var(--space-1);
         }
-
-        .stat-label {
-            font-family: var(--font-accent);
-            font-size: 0.875rem;
-            opacity: 0.95;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .btn {
+          font-size: 0.75rem;
+          padding: var(--space-2);
         }
-        /* Mobile Responsive */
-
-        @media (max-width: 768px) {
-            .header-content {
-                gap: var(--space-4);
-            }
-            .brand-text-header {
-                display: none;
-            }
-            .search-section {
-                max-width: none;
-            }
-            .date-display {
-                display: none;
-            }
-            /* Mobile sidebar adjustments */
-            .sidebar {
-                width: min(280px, 80vw);
-            }
-            .app-layout.sidebar-pinned .main-content {
-                margin-left: var(--space-6);
-            }
-            .sidebar.pinned {
-                position: fixed;
-            }
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: var(--space-4);
-            }
-            .page-title-section {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .page-title-content h1 {
-                font-size: 2rem;
-            }
-            .animal-avatar-large {
-                width: 80px;
-                height: 80px;
-                font-size: 2rem;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .sidebar {
+          width: min(260px, 85vw);
         }
-
-        @media (max-width: 480px) {
-            .app-header {
-                padding: var(--space-3) var(--space-4);
-            }
-            .search-actions {
-                flex-direction: column;
-                gap: var(--space-1);
-            }
-            .btn {
-                font-size: 0.75rem;
-                padding: var(--space-2);
-            }
-            .sidebar {
-                width: min(260px, 85vw);
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="app-layout">
-        <!-- Persistent Header with Navigation -->
-        <header class="app-header">
-            <div class="header-content">
-                <!-- Hamburger Menu -->
-                <div class="hamburger-menu">
-                    <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
+      <!-- Persistent Header with Navigation -->
+      <header class="app-header">
+        <div class="header-content">
+          <!-- Hamburger Menu -->
+          <div class="hamburger-menu">
+            <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
 
-                <!-- Brand Logo -->
-                <div class="brand-header" onclick="navigate('dashboard')">
-                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
-                </div>
+          <!-- Brand Logo -->
+          <div class="brand-header" onclick="navigate('dashboard')">
+            <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+          </div>
 
-                <!-- Search Bar -->
-                <div class="search-section">
-                    <div class="search-bar">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+          <!-- Search Bar -->
+          <div class="search-section">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
                 />
               </svg>
-                        <input type="text" class="search-input" id="searchInput" placeholder="Search animals, breeds, owners..." value="" />
-                        <div class="search-actions">
-                            <button class="btn btn-primary" onclick="performSearch()">
+              <input
+                type="text"
+                class="search-input"
+                id="searchInput"
+                placeholder="Search animals, breeds, owners..."
+                value=""
+              />
+              <div class="search-actions">
+                <button class="btn btn-primary" onclick="performSearch()">
                   Search
                 </button>
-                            <button class="btn btn-secondary" onclick="clearSearch()">
+                <button class="btn btn-secondary" onclick="clearSearch()">
                   Clear
                 </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Breadcrumb Display Area -->
-                <div class="breadcrumb-section">
-                    <!-- Breadcrumbs will be inserted here when needed -->
-                </div>
-
-                <!-- Header Actions -->
-                <div class="header-actions">
-                    <div class="date-display" id="currentDate"></div>
-                </div>
+              </div>
             </div>
-        </header>
+          </div>
 
-        <!-- Navigation Overlay -->
-        <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
+          <!-- Breadcrumb Display Area -->
+          <div class="breadcrumb-section">
+            <!-- Breadcrumbs will be inserted here when needed -->
+          </div>
 
-        <!-- Left Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <!-- Resize Handle -->
-            <div class="sidebar-resize-handle" id="resizeHandle"></div>
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <div class="date-display" id="currentDate"></div>
+          </div>
+        </div>
+      </header>
 
-            <!-- Sidebar Header -->
-            <div class="sidebar-header">
-                <div class="sidebar-brand">
-                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" style="width: 100px; height: auto" />
-                </div>
+      <!-- Navigation Overlay -->
+      <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
 
-                <div class="sidebar-controls">
-                    <button class="sidebar-btn" id="pinBtn" onclick="togglePin()" title="Pin sidebar">
+      <!-- Left Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <!-- Resize Handle -->
+        <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand">
+            <img
+              src="images/logo-tiny.png"
+              alt="Pampered Pooch Logo"
+              style="width: 100px; height: auto"
+            />
+          </div>
+
+          <div class="sidebar-controls">
+            <button
+              class="sidebar-btn"
+              id="pinBtn"
+              onclick="togglePin()"
+              title="Pin sidebar"
+            >
               <svg
                 width="16"
                 height="16"
@@ -1191,7 +1229,11 @@
                 />
               </svg>
             </button>
-                    <button class="sidebar-btn" onclick="toggleSidebar()" title="Close sidebar">
+            <button
+              class="sidebar-btn"
+              onclick="toggleSidebar()"
+              title="Close sidebar"
+            >
               <svg
                 width="16"
                 height="16"
@@ -1203,729 +1245,745 @@
                 />
               </svg>
             </button>
-                </div>
-            </div>
+          </div>
+        </div>
 
-            <!-- Navigation Menu -->
-            <div class="nav-menu">
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="navigate('dashboard')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('dashboard')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
                 />
-              </svg> Dashboard
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="navigate('search')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              </svg>
+              Dashboard
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('search')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
                 />
-              </svg> Search Results
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="navigate('customers')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              </svg>
+              Search Results
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('customers')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-              </svg> Add Customer
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="navigate('breeds')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              </svg>
+              Add Customer
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('breeds')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                 />
-              </svg> Manage Breeds
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" onclick="navigate('analytics')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              </svg>
+              Manage Breeds
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('analytics')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
                 />
-              </svg> Daily Analytics
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link active" onclick="navigate('history')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              </svg>
+              Daily Analytics
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link active" onclick="navigate('history')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
                 />
-              </svg> Service History
-                    </a>
-                </div>
+              </svg>
+              Service History
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="date-sidebar" id="sidebarDate"></div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- Page Header -->
+          <div class="page-header">
+            <div class="page-title-section">
+              <div class="animal-avatar-large">C</div>
+              <div class="page-title-content">
+                <h1>All Notes for Cody</h1>
+                <p class="page-subtitle">Complete service history</p>
+              </div>
             </div>
+            <a href="#" class="back-link">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to Animal Info
+            </a>
+          </div>
 
-            <!-- Sidebar Footer -->
-            <div class="sidebar-footer">
-                <div class="date-sidebar" id="sidebarDate"></div>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-wrapper">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <div class="page-title-section">
-                        <div class="animal-avatar-large">C</div>
-                        <div class="page-title-content">
-                            <h1>All Notes for Cody</h1>
-                            <p class="page-subtitle">Complete service history</p>
-                        </div>
-                    </div>
-                    <a href="#" class="back-link">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg> Back to Animal Info
-                    </a>
+          <div class="history-card">
+            <div class="history-header">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <span class="stat-number">11</span>
+                  <span class="stat-label">Total Services</span>
                 </div>
-
-                <div class="history-card">
-                    <div class="history-header">
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-number">11</span>
-                                <span class="stat-label">Total Services</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">6+ Years</span>
-                                <span class="stat-label">Customer Since</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">$50-$60</span>
-                                <span class="stat-label">Price Range</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">Regular</span>
-                                <span class="stat-label">Visit Pattern</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="history-body">
-                        <!-- Service History -->
-                        <div class="service-history">
-                            <!-- 2021 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 10-09-2021
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        Full clip 3 legs 7 short ears & face leave top knot
-                                    </div>
-                                    <div class="service-price">$60</div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  CC
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 25-05-2021
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 3 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  bb
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2020 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 08-12-2020
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 5 short ears and face
-                                    </div>
-                                    <div class="service-price">$55</div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  BB
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 27-08-2020
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 3 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  CC
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 10-03-2020
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 3 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  hm
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2019 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 08-11-2019
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 5 short ears and face
-                                    </div>
-                                    <div class="service-price">$55</div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  bb
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2017 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 18-12-2017
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 7 short ears and face cc.
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  cc
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 11-05-2017
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 5 short ears and face
-                                    </div>
-                                    <div class="service-price">$50</div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  cc
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2016 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 13-10-2016
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 7 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  th
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 08-03-2016
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 7 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  cc
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2015 Services -->
-                            <div class="service-item">
-                                <div class="service-date">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> 14-11-2015
-                                </div>
-                                <div class="service-inline">
-                                    <div class="service-details">
-                                        full clip 7 short ears and face
-                                    </div>
-                                    <div class="service-meta">
-                                        <span class="service-tech">
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  cc
-                </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-item">
+                  <span class="stat-number">6+ Years</span>
+                  <span class="stat-label">Customer Since</span>
                 </div>
-
+                <div class="stat-item">
+                  <span class="stat-number">$50-$60</span>
+                  <span class="stat-label">Price Range</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">Regular</span>
+                  <span class="stat-label">Visit Pattern</span>
+                </div>
+              </div>
             </div>
-        </main>
+            <div class="history-body">
+              <!-- Service History -->
+              <div class="service-history">
+                <!-- 2021 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    10-09-2021
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      Full clip 3 legs 7 short ears & face leave top knot
+                    </div>
+                    <div class="service-price">$60</div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        CC
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    25-05-2021
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 3 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        bb
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 2020 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    08-12-2020
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 5 short ears and face
+                    </div>
+                    <div class="service-price">$55</div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        BB
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    27-08-2020
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 3 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        CC
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    10-03-2020
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 3 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        hm
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 2019 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    08-11-2019
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 5 short ears and face
+                    </div>
+                    <div class="service-price">$55</div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        bb
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 2017 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    18-12-2017
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 7 short ears and face cc.
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        cc
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    11-05-2017
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 5 short ears and face
+                    </div>
+                    <div class="service-price">$50</div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        cc
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 2016 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    13-10-2016
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 7 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        th
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    08-03-2016
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 7 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        cc
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 2015 Services -->
+                <div class="service-item">
+                  <div class="service-date">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    14-11-2015
+                  </div>
+                  <div class="service-inline">
+                    <div class="service-details">
+                      full clip 7 short ears and face
+                    </div>
+                    <div class="service-meta">
+                      <span class="service-tech">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                        cc
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        // Initialize app state and data
-        ;
-        (function() {
-            // App state
-            let appSidebarOpen = false
-            let appSidebarPinned = false
-            let isResizing = false
-            let sidebarWidth = 280 // Default width
+      // Initialize app state and data
+      ;(function () {
+        // App state
+        let appSidebarOpen = false
+        let appSidebarPinned = false
+        let isResizing = false
+        let sidebarWidth = 280 // Default width
 
-            // Set current date and time
-            function updateDate() {
-                const now = new Date()
+        // Set current date and time
+        function updateDate() {
+          const now = new Date()
 
-                // Format time as "2:38pm"
-                const timeOptions = {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true,
-                }
-                const timeText = now
-                    .toLocaleTimeString('en-US', timeOptions)
-                    .toLowerCase()
+          // Format time as "2:38pm"
+          const timeOptions = {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          }
+          const timeText = now
+            .toLocaleTimeString('en-US', timeOptions)
+            .toLowerCase()
 
-                // Format date as "Tue, Sep 16 2025"
-                const dateOptions = {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                }
-                const dateText = now.toLocaleDateString('en-US', dateOptions)
+          // Format date as "Tue, Sep 16 2025"
+          const dateOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }
+          const dateText = now.toLocaleDateString('en-US', dateOptions)
 
-                // Combine as "2:38pm Tue, Sep 16 2025"
-                const fullDateTime = `${timeText} ${dateText}`
+          // Combine as "2:38pm Tue, Sep 16 2025"
+          const fullDateTime = `${timeText} ${dateText}`
 
-                document.getElementById('currentDate').textContent = fullDateTime
+          document.getElementById('currentDate').textContent = fullDateTime
 
-                // Keep sidebar date simple (without time)
-                const sidebarDate = document.getElementById('sidebarDate')
-                if (sidebarDate) {
-                    const simpleDateOptions = {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                    }
-                    const simpleDateText = now.toLocaleDateString(
-                        'en-US',
-                        simpleDateOptions
-                    )
-                    sidebarDate.textContent = simpleDateText
-                }
+          // Keep sidebar date simple (without time)
+          const sidebarDate = document.getElementById('sidebarDate')
+          if (sidebarDate) {
+            const simpleDateOptions = {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
             }
+            const simpleDateText = now.toLocaleDateString(
+              'en-US',
+              simpleDateOptions
+            )
+            sidebarDate.textContent = simpleDateText
+          }
+        }
 
-            // Toggle sidebar
-            window.toggleSidebar = function() {
-                const sidebar = document.getElementById('sidebar')
-                const hamburger = document.getElementById('hamburgerBtn')
-                const overlay = document.getElementById('navOverlay')
-                const appLayout = document.querySelector('.app-layout')
+        // Toggle sidebar
+        window.toggleSidebar = function () {
+          const sidebar = document.getElementById('sidebar')
+          const hamburger = document.getElementById('hamburgerBtn')
+          const overlay = document.getElementById('navOverlay')
+          const appLayout = document.querySelector('.app-layout')
 
-                if (appSidebarPinned) {
-                    // If pinned, toggle the pinned state instead
-                    togglePin()
-                    return
-                }
+          if (appSidebarPinned) {
+            // If pinned, toggle the pinned state instead
+            togglePin()
+            return
+          }
 
-                appSidebarOpen = !appSidebarOpen
+          appSidebarOpen = !appSidebarOpen
 
-                sidebar.classList.toggle('active', appSidebarOpen)
-                hamburger.classList.toggle('active', appSidebarOpen)
-                overlay.classList.toggle('active', appSidebarOpen)
+          sidebar.classList.toggle('active', appSidebarOpen)
+          hamburger.classList.toggle('active', appSidebarOpen)
+          overlay.classList.toggle('active', appSidebarOpen)
 
-                if (appSidebarOpen) {
-                    document.body.style.overflow = 'hidden'
-                } else {
-                    document.body.style.overflow = ''
-                }
+          if (appSidebarOpen) {
+            document.body.style.overflow = 'hidden'
+          } else {
+            document.body.style.overflow = ''
+          }
+        }
+
+        // Toggle pin state
+        window.togglePin = function () {
+          const sidebar = document.getElementById('sidebar')
+          const pinBtn = document.getElementById('pinBtn')
+          const appLayout = document.querySelector('.app-layout')
+          const overlay = document.getElementById('navOverlay')
+          const hamburger = document.getElementById('hamburgerBtn')
+
+          appSidebarPinned = !appSidebarPinned
+
+          if (appSidebarPinned) {
+            sidebar.classList.add('pinned')
+            sidebar.classList.add('active')
+            appLayout.classList.add('sidebar-pinned')
+            pinBtn.classList.add('active')
+            overlay.classList.remove('active')
+            hamburger.classList.add('active')
+            document.body.style.overflow = ''
+            appSidebarOpen = true
+          } else {
+            sidebar.classList.remove('pinned')
+            appLayout.classList.remove('sidebar-pinned')
+            pinBtn.classList.remove('active')
+
+            // If not pinned and we want to close, close completely
+            if (appSidebarOpen) {
+              toggleSidebar()
             }
+          }
+        }
 
-            // Toggle pin state
-            window.togglePin = function() {
-                const sidebar = document.getElementById('sidebar')
-                const pinBtn = document.getElementById('pinBtn')
-                const appLayout = document.querySelector('.app-layout')
-                const overlay = document.getElementById('navOverlay')
-                const hamburger = document.getElementById('hamburgerBtn')
+        // Initialize resize functionality
+        function initResize() {
+          const resizeHandle = document.getElementById('resizeHandle')
+          const sidebar = document.getElementById('sidebar')
 
-                appSidebarPinned = !appSidebarPinned
+          let startX, startWidth
 
-                if (appSidebarPinned) {
-                    sidebar.classList.add('pinned')
-                    sidebar.classList.add('active')
-                    appLayout.classList.add('sidebar-pinned')
-                    pinBtn.classList.add('active')
-                    overlay.classList.remove('active')
-                    hamburger.classList.add('active')
-                    document.body.style.overflow = ''
-                    appSidebarOpen = true
-                } else {
-                    sidebar.classList.remove('pinned')
-                    appLayout.classList.remove('sidebar-pinned')
-                    pinBtn.classList.remove('active')
+          function startResize(e) {
+            isResizing = true
+            startX = e.clientX
+            startWidth = sidebarWidth
 
-                    // If not pinned and we want to close, close completely
-                    if (appSidebarOpen) {
-                        toggleSidebar()
-                    }
-                }
+            resizeHandle.classList.add('dragging')
+            document.body.style.cursor = 'col-resize'
+            document.body.style.userSelect = 'none'
+
+            document.addEventListener('mousemove', handleResize)
+            document.addEventListener('mouseup', stopResize)
+          }
+
+          function handleResize(e) {
+            if (!isResizing) return
+
+            const deltaX = e.clientX - startX
+            const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+            sidebarWidth = newWidth
+            document.documentElement.style.setProperty(
+              '--sidebar-width',
+              `${newWidth}px`
+            )
+            sidebar.style.width = `${newWidth}px`
+          }
+
+          function stopResize() {
+            isResizing = false
+            resizeHandle.classList.remove('dragging')
+            document.body.style.cursor = ''
+            document.body.style.userSelect = ''
+
+            document.removeEventListener('mousemove', handleResize)
+            document.removeEventListener('mouseup', stopResize)
+          }
+
+          resizeHandle.addEventListener('mousedown', startResize)
+        }
+
+        // Navigation functions
+        window.navigate = function (section) {
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active')
+          })
+
+          // Add active class to clicked nav link
+          event.target.closest('.nav-link').classList.add('active')
+
+          // Close sidebar if not pinned
+          if (appSidebarOpen && !appSidebarPinned) {
+            toggleSidebar()
+          }
+
+          alert(`Navigating to ${section}...`)
+        }
+
+        window.performSearch = function () {
+          const query = document.getElementById('searchInput').value
+          if (!query.trim()) {
+            alert('Please enter a search term')
+            return
+          }
+          alert(`Searching for: ${query}`)
+        }
+
+        window.clearSearch = function () {
+          document.getElementById('searchInput').value = ''
+          document.getElementById('searchInput').focus()
+        }
+
+        // Close sidebar when clicking outside (only if not pinned)
+        document.addEventListener('click', function (e) {
+          if (
+            !e.target.closest('.sidebar') &&
+            !e.target.closest('.hamburger-menu') &&
+            appSidebarOpen &&
+            !appSidebarPinned
+          ) {
+            toggleSidebar()
+          }
+        })
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+          updateDate()
+          initResize()
+
+          // Handle window resize
+          window.addEventListener('resize', function () {
+            if (window.innerWidth <= 768 && appSidebarPinned) {
+              togglePin() // Unpin on mobile
             }
+          })
+        })
 
-            // Initialize resize functionality
-            function initResize() {
-                const resizeHandle = document.getElementById('resizeHandle')
-                const sidebar = document.getElementById('sidebar')
-
-                let startX, startWidth
-
-                function startResize(e) {
-                    isResizing = true
-                    startX = e.clientX
-                    startWidth = sidebarWidth
-
-                    resizeHandle.classList.add('dragging')
-                    document.body.style.cursor = 'col-resize'
-                    document.body.style.userSelect = 'none'
-
-                    document.addEventListener('mousemove', handleResize)
-                    document.addEventListener('mouseup', stopResize)
-                }
-
-                function handleResize(e) {
-                    if (!isResizing) return
-
-                    const deltaX = e.clientX - startX
-                    const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
-
-                    sidebarWidth = newWidth
-                    document.documentElement.style.setProperty(
-                        '--sidebar-width',
-                        `${newWidth}px`
-                    )
-                    sidebar.style.width = `${newWidth}px`
-                }
-
-                function stopResize() {
-                    isResizing = false
-                    resizeHandle.classList.remove('dragging')
-                    document.body.style.cursor = ''
-                    document.body.style.userSelect = ''
-
-                    document.removeEventListener('mousemove', handleResize)
-                    document.removeEventListener('mouseup', stopResize)
-                }
-
-                resizeHandle.addEventListener('mousedown', startResize)
-            }
-
-            // Navigation functions
-            window.navigate = function(section) {
-                // Remove active class from all nav links
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active')
-                })
-
-                // Add active class to clicked nav link
-                event.target.closest('.nav-link').classList.add('active')
-
-                // Close sidebar if not pinned
-                if (appSidebarOpen && !appSidebarPinned) {
-                    toggleSidebar()
-                }
-
-                alert(`Navigating to ${section}...`)
-            }
-
-            window.performSearch = function() {
-                const query = document.getElementById('searchInput').value
-                if (!query.trim()) {
-                    alert('Please enter a search term')
-                    return
-                }
-                alert(`Searching for: ${query}`)
-            }
-
-            window.clearSearch = function() {
-                document.getElementById('searchInput').value = ''
-                document.getElementById('searchInput').focus()
-            }
-
-            // Close sidebar when clicking outside (only if not pinned)
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.sidebar') &&
-                    !e.target.closest('.hamburger-menu') &&
-                    appSidebarOpen &&
-                    !appSidebarPinned
-                ) {
-                    toggleSidebar()
-                }
-            })
-
-            // Initialize
-            document.addEventListener('DOMContentLoaded', function() {
-                updateDate()
-                initResize()
-
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth <= 768 && appSidebarPinned) {
-                        togglePin() // Unpin on mobile
-                    }
-                })
-            })
-
-            // Update date and time every second
-            setInterval(updateDate, 1000)
-        })()
+        // Update date and time every second
+        setInterval(updateDate, 1000)
+      })()
     </script>
-</body>
-
+  </body>
 </html>

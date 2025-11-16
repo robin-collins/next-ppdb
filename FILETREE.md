@@ -116,6 +116,8 @@ ppdb-ts/
 
 ## Recent Changes
 
+- 2025-11-16: Baseline verification complete. No structural file changes; formatted reference HTML under `reference/redesign/` with Prettier to satisfy formatting checks.
+
 ### Database Schema Migration
 
 Complete production-ready migration infrastructure for safely upgrading from legacy `ppdb-original.sql` schema:
