@@ -4,11 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer Detail - Pampered Pooch Database</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <style>
+      /* Font Imports - Brand Typography */
+      @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+
       /* ===========================
          DESIGN TOKENS (CSS Custom Properties)
          =========================== */
@@ -72,6 +71,7 @@
         --space-10: 2.5rem; /* 40px */
         --space-12: 3rem; /* 48px */
         --space-16: 4rem; /* 64px */
+        --space-18: 4.5rem; /* 72px */
         --space-20: 5rem; /* 80px */
         --space-24: 6rem; /* 96px */
 
@@ -131,10 +131,17 @@
       /* ===========================
          GLOBAL RESET & BASE STYLES
          =========================== */
-      * {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+        line-height: 1.6;
       }
 
       body {
@@ -168,42 +175,6 @@
         opacity: 0.6;
       }
 
-      /* Typography application */
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        color: var(--gray-900);
-        line-height: 1.2;
-      }
-
-      body,
-      p,
-      li,
-      td,
-      th {
-        font-family: var(--font-body);
-        font-weight: 400;
-        color: var(--gray-700);
-        line-height: 1.6;
-      }
-
-      button,
-      .btn,
-      .badge,
-      label,
-      input,
-      select,
-      textarea {
-        font-family: var(--font-accent);
-        letter-spacing: 0.01em;
-      }
-
       @keyframes gradientShift {
         0%,
         100% {
@@ -214,6 +185,7 @@
         }
       }
 
+      /* === ANIMATIONS === */
       @keyframes slideInUp {
         from {
           opacity: 0;
@@ -229,6 +201,17 @@
         from {
           opacity: 0;
           transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
         }
         to {
           opacity: 1;
@@ -256,9 +239,71 @@
         }
       }
 
-      /* ===========================
-         HEADER COMPONENT
-         =========================== */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* === TYPOGRAPHY APPLICATION === */
+      /* Headings use elegant serif */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--gray-900);
+        line-height: 1.2;
+      }
+
+      /* Body text uses warm sans-serif */
+      body,
+      p,
+      li,
+      td,
+      th {
+        font-family: var(--font-body);
+        font-weight: 400;
+        color: var(--gray-700);
+        line-height: 1.6;
+      }
+
+      /* UI elements (buttons, badges, labels) use geometric sans */
+      button,
+      .btn,
+      .badge,
+      label,
+      input,
+      select,
+      textarea {
+        font-family: var(--font-accent);
+        letter-spacing: 0.01em;
+      }
+
+      /* Layout Structure */
+      .app-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Persistent Header */
       .app-header {
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
@@ -266,29 +311,34 @@
         padding: var(--space-4) var(--space-6);
         position: sticky;
         top: 0;
-        z-index: var(--z-sticky);
+        z-index: 100;
         box-shadow: var(--shadow-md);
       }
 
       .header-content {
         display: flex;
         align-items: center;
-        gap: var(--space-6);
-        max-width: var(--max-content-width);
-        margin: 0 auto;
+        gap: var(--space-18);
+        margin: 0 0 0 0;
       }
 
       /* Hamburger Menu */
+      .hamburger-menu {
+        position: relative;
+      }
+
       .hamburger {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         gap: 4px;
         cursor: pointer;
-        padding: var(--space-3);
+        height: 48px;
+        width: 48px;
         border-radius: var(--radius-lg);
-        transition: all var(--duration-normal) var(--ease-smooth);
+        transition: all 0.2s ease;
         background: var(--gray-100);
-        border: none;
       }
 
       .hamburger:hover {
@@ -300,7 +350,7 @@
         height: 2px;
         background: var(--gray-700);
         border-radius: 1px;
-        transition: all var(--duration-slow) var(--ease-smooth);
+        transition: all 0.3s ease;
       }
 
       .hamburger.active span:nth-child(1) {
@@ -315,38 +365,282 @@
         transform: rotate(-45deg) translate(6px, -6px);
       }
 
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid var(--gray-200);
+        box-shadow: var(--shadow-xl);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar.pinned {
+        position: relative;
+        transform: translateX(0);
+        transition: none;
+      }
+
+      .sidebar-header {
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: var(--header-height);
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .brand-icon-sidebar {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: var(--shadow-primary);
+      }
+
+      .brand-text-sidebar h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+      }
+
+      .brand-text-sidebar p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      .sidebar-controls {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .sidebar-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        color: var(--gray-600);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-800);
+      }
+
+      .sidebar-btn.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .nav-menu {
+        flex: 1;
+        padding: var(--space-4);
+        overflow-y: auto;
+      }
+
+      .nav-item {
+        margin-bottom: var(--space-1);
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        color: var(--gray-700);
+        text-decoration: none;
+        border-radius: var(--radius-lg);
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+      }
+
+      .nav-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-footer {
+        padding: var(--space-4);
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+      }
+
+      .date-sidebar {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      /* Resize Handle */
+      .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -2px;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        cursor: col-resize;
+        z-index: 10;
+        transition: background 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover,
+      .sidebar-resize-handle.dragging {
+        background: var(--primary);
+      }
+
+      .sidebar-resize-handle::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 40px;
+        background: var(--gray-300);
+        border-radius: 1px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-resize-handle:hover::before,
+      .sidebar-resize-handle.dragging::before {
+        opacity: 1;
+      }
+
       /* Brand Logo */
       .brand-header {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        text-decoration: none;
+        cursor: pointer;
       }
 
-      .brand-icon {
+      .brand-icon-header {
         width: 40px;
         height: 40px;
         background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: var(--radius-full);
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.25rem;
-        flex-shrink: 0;
         box-shadow: var(--shadow-primary);
       }
 
-      .brand-text-header {
-        font-family: var(--font-display);
+      .brand-text-header h1 {
+        font-size: 1.25rem;
         font-weight: 700;
-        color: var(--gray-900);
-        font-size: 1.125rem;
+        margin: 0;
+        color: var(--gray-800);
       }
 
-      /* Breadcrumb */
-      .breadcrumb {
+      .brand-text-header p {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin: 0;
+      }
+
+      /* Search Bar */
+      .search-section {
         flex: 1;
+        max-width: 600px;
+      }
+
+      .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+        margin-left: var(--space-4);
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--space-4);
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--gray-800);
+        font-family: var(--font-family);
+      }
+
+      .search-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-right: var(--space-2);
+      }
+
+      /* Breadcrumb Section */
+      .breadcrumb-section {
         display: flex;
         align-items: center;
         gap: var(--space-2);
@@ -376,90 +670,59 @@
         font-weight: 600;
       }
 
-      /* Date Display */
+      /* Header Actions */
       .header-actions {
         display: flex;
         align-items: center;
         gap: var(--space-4);
+        margin-left: auto;
       }
 
       .date-display {
-        padding: var(--space-2) var(--space-4);
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        border-radius: var(--radius-full);
-        font-family: var(--font-accent);
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
-
-      /* Navigation Dropdown */
-      .nav-dropdown {
-        position: absolute;
-        top: calc(100% + var(--space-2));
-        left: 0;
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-xl);
-        min-width: 280px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all var(--duration-slow) var(--ease-smooth);
-        z-index: var(--z-dropdown);
-      }
-
-      .nav-dropdown.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      .nav-link {
         display: flex;
         align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-4);
-        color: var(--gray-700);
-        text-decoration: none;
-        transition: all var(--duration-normal) var(--ease-smooth);
-        border-radius: var(--radius-lg);
-        margin: var(--space-2);
-        font-family: var(--font-body);
-      }
-
-      .nav-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-900);
-      }
-
-      .nav-link.active {
+        height: 48px;
         background: var(--primary-light);
-        color: var(--primary-dark);
+        color: var(--primary);
+        padding: 0 var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
         font-weight: 600;
+        white-space: nowrap;
       }
 
-      .nav-icon {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-      }
-
-      /* ===========================
-         MAIN CONTENT LAYOUT
-         =========================== */
+      /* Main Content */
       .main-content {
         flex: 1;
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
         margin: var(--space-6);
-        margin-top: 0;
         border-radius: var(--radius-2xl);
         box-shadow: var(--shadow-xl);
         overflow: hidden;
+        transition: margin-left 0.3s ease;
         position: relative;
         z-index: 1;
+      }
+
+      .app-layout.sidebar-pinned .main-content {
+        margin-left: calc(var(--sidebar-width) + var(--space-6));
+      }
+
+      /* Overlay for dropdown */
+      .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 150;
+        display: none;
+      }
+
+      .nav-overlay.active {
+        display: block;
       }
 
       .content-wrapper {
@@ -862,16 +1125,28 @@
          RESPONSIVE BEHAVIOR
          =========================== */
       @media (max-width: 768px) {
-        .content-grid {
-          grid-template-columns: 1fr;
+        .header-content {
+          gap: var(--space-4);
         }
 
         .brand-text-header {
           display: none;
         }
 
-        .header-content {
-          gap: var(--space-4);
+        .search-section {
+          display: none;
+        }
+
+        .breadcrumb-section {
+          display: none;
+        }
+
+        .date-display {
+          display: none;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
         }
 
         .page-title-section h1 {
@@ -894,9 +1169,26 @@
           margin: var(--space-4);
           border-radius: var(--radius-xl);
         }
+
+        /* Mobile sidebar adjustments */
+        .sidebar {
+          width: min(280px, 80vw);
+        }
+
+        .app-layout.sidebar-pinned .main-content {
+          margin-left: var(--space-6);
+        }
+
+        .sidebar.pinned {
+          position: fixed;
+        }
       }
 
       @media (max-width: 480px) {
+        .app-header {
+          padding: var(--space-3) var(--space-4);
+        }
+
         .page-title-section h1 {
           font-size: 1.75rem;
         }
@@ -904,365 +1196,630 @@
         .content-wrapper {
           padding: var(--space-4);
         }
+
+        .sidebar {
+          width: min(260px, 85vw);
+        }
       }
     </style>
   </head>
   <body>
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="header-content">
-        <!-- Hamburger Menu -->
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <!-- Navigation Dropdown -->
-        <nav class="nav-dropdown" id="navDropdown">
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
-            Dashboard
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            Search Animals
-          </a>
-          <a href="#" class="nav-link active">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            Customer Detail
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Add Customer
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-            </svg>
-            Manage Breeds
-          </a>
-          <a href="#" class="nav-link">
-            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            Daily Analytics
-          </a>
-        </nav>
-
-        <!-- Brand Logo -->
-        <a href="#" class="brand-header">
-          <div class="brand-icon-header" aria-hidden="true">
-        <img
-          src="images/logo-tiny.png"
-          alt="Pampered Pooch Logo"
-          width="40"
-          height="40"
-          style="border-radius: var(--radius-lg);"
-        />
-      </div>
-          <span class="brand-text-header">Pampered Pooch</span>
-        </a>
-
-        <!-- Breadcrumb Navigation -->
-        <div class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">›</span>
-          <a href="#" class="breadcrumb-link">Customers</a>
-          <span class="breadcrumb-separator">›</span>
-          <span class="breadcrumb-current">James</span>
-        </div>
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-          <div class="date-display" id="currentDate"></div>
-        </div>
-      </div>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-      <div class="content-wrapper">
-        <!-- Page Title -->
-        <div class="page-title-section">
-          <div>
-            <h1>
-              <span class="page-title-icon">👤</span>
-              Customer Detail
-            </h1>
-            <p class="page-subtitle">Manage customer information and associated animals</p>
-          </div>
-        </div>
-
-        <!-- Two-Column Grid -->
-        <div class="content-grid">
-          <!-- MAIN COLUMN: Customer Information -->
-          <div class="main-column">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="card-title">
-                  <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                  Customer Information
-                </h2>
-              </div>
-              <div class="card-content">
-                <form id="customerForm">
-                  <div class="form-grid">
-                    <!-- First Name -->
-                    <div class="form-group">
-                      <label class="form-label" for="firstName">First Name</label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        class="form-input"
-                        placeholder="Enter first name"
-                        value=""
-                      />
-                    </div>
-
-                    <!-- Surname -->
-                    <div class="form-group">
-                      <label class="form-label" for="surname">Surname *</label>
-                      <input
-                        type="text"
-                        id="surname"
-                        class="form-input"
-                        placeholder="Enter surname"
-                        value="James"
-                        required
-                      />
-                    </div>
-
-                    <!-- Address -->
-                    <div class="form-group full-width">
-                      <label class="form-label" for="address">Address</label>
-                      <textarea
-                        id="address"
-                        class="form-textarea"
-                        placeholder="Enter street address"
-                      ></textarea>
-                    </div>
-
-                    <!-- Suburb -->
-                    <div class="form-group">
-                      <label class="form-label" for="suburb">Suburb</label>
-                      <input
-                        type="text"
-                        id="suburb"
-                        class="form-input"
-                        placeholder="Enter suburb/city"
-                        value=""
-                      />
-                    </div>
-
-                    <!-- Postcode -->
-                    <div class="form-group">
-                      <label class="form-label" for="postcode">Postcode</label>
-                      <input
-                        type="text"
-                        id="postcode"
-                        class="form-input"
-                        placeholder="Enter postcode"
-                        value=""
-                      />
-                    </div>
-
-                    <!-- Phone 1 -->
-                    <div class="form-group">
-                      <label class="form-label" for="phone1">Phone 1</label>
-                      <input
-                        type="tel"
-                        id="phone1"
-                        class="form-input"
-                        placeholder="Enter primary phone"
-                        value="0428111261"
-                      />
-                    </div>
-
-                    <!-- Phone 2 -->
-                    <div class="form-group">
-                      <label class="form-label" for="phone2">Phone 2</label>
-                      <input
-                        type="tel"
-                        id="phone2"
-                        class="form-input"
-                        placeholder="Enter secondary phone"
-                        value=""
-                      />
-                    </div>
-
-                    <!-- Phone 3 -->
-                    <div class="form-group">
-                      <label class="form-label" for="phone3">Phone 3</label>
-                      <input
-                        type="tel"
-                        id="phone3"
-                        class="form-input"
-                        placeholder="Enter tertiary phone"
-                        value=""
-                      />
-                    </div>
-
-                    <!-- Email -->
-                    <div class="form-group">
-                      <label class="form-label" for="email">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        class="form-input"
-                        placeholder="Enter email address"
-                        value=""
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Action Buttons -->
-                  <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                      Update Record
-                    </button>
-                    <button type="button" class="btn btn-danger" id="deleteCustomerBtn">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                      </svg>
-                      Delete Customer
-                    </button>
-                  </div>
-                </form>
-              </div>
+    <div class="app-layout">
+      <!-- Persistent Header with Navigation -->
+      <header class="app-header">
+        <div class="header-content">
+          <!-- Hamburger Menu -->
+          <div class="hamburger-menu">
+            <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
           </div>
 
-          <!-- SIDEBAR COLUMN: Associated Animals -->
-          <div class="sidebar-column">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="card-title">
-                  <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                  </svg>
-                  Associated Animals
-                </h2>
-                <button class="btn btn-success" id="addAnimalBtn">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                  </svg>
-                  Add
+          <!-- Brand Logo -->
+          <div class="brand-header" onclick="navigate('dashboard')">
+            <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-section">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              <input type="text" class="search-input" id="searchInput" placeholder="Search animals, breeds, owners..." value="" />
+              <div class="search-actions">
+                <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
                 </button>
               </div>
-              <div class="card-content" id="animalsList">
-                <!-- Animal Mini Card 1 -->
-                <div class="animal-mini-card">
-                  <div class="animal-avatar">C</div>
-                  <div class="animal-info">
-                    <h3 class="animal-name">Cody</h3>
-                    <div class="animal-details">
-                      <span class="animal-detail-item">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </div>
+          </div>
+
+          <!-- Breadcrumb Display Area -->
+          <div class="breadcrumb-section">
+            <a href="#" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">›</span>
+            <a href="#" class="breadcrumb-link">Customers</a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-current">James</span>
+          </div>
+
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <div class="date-display" id="currentDate"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Overlay -->
+      <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
+
+      <!-- Left Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <!-- Resize Handle -->
+        <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand">
+            <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" style="width: 100px; height: auto" />
+          </div>
+
+          <div class="sidebar-controls">
+            <button class="sidebar-btn" id="pinBtn" onclick="togglePin()" title="Pin sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z"
+                />
+              </svg>
+            </button>
+            <button class="sidebar-btn" onclick="toggleSidebar()" title="Close sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('dashboard')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                />
+              </svg> Dashboard
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('search')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg> Search Results
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link active" onclick="navigate('customer-detail')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg> Customer Detail
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('customers')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg> Add Customer
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('breeds')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg> Manage Breeds
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('analytics')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                />
+              </svg> Daily Analytics
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" onclick="navigate('history')">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg> Customer History
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <div class="date-sidebar" id="sidebarDate"></div>
+        </div>
+      </nav>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- Page Title -->
+          <div class="page-title-section">
+            <div>
+              <h1>
+                <span class="page-title-icon">👤</span>
+                Customer Detail
+              </h1>
+              <p class="page-subtitle">Manage customer information and associated animals</p>
+            </div>
+          </div>
+
+          <!-- Two-Column Grid -->
+          <div class="content-grid">
+            <!-- MAIN COLUMN: Customer Information -->
+            <div class="main-column">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Customer Information
+                  </h2>
+                </div>
+                <div class="card-content">
+                  <form id="customerForm">
+                    <div class="form-grid">
+                      <!-- First Name -->
+                      <div class="form-group">
+                        <label class="form-label" for="firstName">First Name</label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          class="form-input"
+                          placeholder="Enter first name"
+                          value=""
+                        />
+                      </div>
+
+                      <!-- Surname -->
+                      <div class="form-group">
+                        <label class="form-label" for="surname">Surname *</label>
+                        <input
+                          type="text"
+                          id="surname"
+                          class="form-input"
+                          placeholder="Enter surname"
+                          value="James"
+                          required
+                        />
+                      </div>
+
+                      <!-- Address -->
+                      <div class="form-group full-width">
+                        <label class="form-label" for="address">Address</label>
+                        <textarea
+                          id="address"
+                          class="form-textarea"
+                          placeholder="Enter street address"
+                        ></textarea>
+                      </div>
+
+                      <!-- Suburb -->
+                      <div class="form-group">
+                        <label class="form-label" for="suburb">Suburb</label>
+                        <input
+                          type="text"
+                          id="suburb"
+                          class="form-input"
+                          placeholder="Enter suburb/city"
+                          value=""
+                        />
+                      </div>
+
+                      <!-- Postcode -->
+                      <div class="form-group">
+                        <label class="form-label" for="postcode">Postcode</label>
+                        <input
+                          type="text"
+                          id="postcode"
+                          class="form-input"
+                          placeholder="Enter postcode"
+                          value=""
+                        />
+                      </div>
+
+                      <!-- Phone 1 -->
+                      <div class="form-group">
+                        <label class="form-label" for="phone1">Phone 1</label>
+                        <input
+                          type="tel"
+                          id="phone1"
+                          class="form-input"
+                          placeholder="Enter primary phone"
+                          value="0428111261"
+                        />
+                      </div>
+
+                      <!-- Phone 2 -->
+                      <div class="form-group">
+                        <label class="form-label" for="phone2">Phone 2</label>
+                        <input
+                          type="tel"
+                          id="phone2"
+                          class="form-input"
+                          placeholder="Enter secondary phone"
+                          value=""
+                        />
+                      </div>
+
+                      <!-- Phone 3 -->
+                      <div class="form-group">
+                        <label class="form-label" for="phone3">Phone 3</label>
+                        <input
+                          type="tel"
+                          id="phone3"
+                          class="form-input"
+                          placeholder="Enter tertiary phone"
+                          value=""
+                        />
+                      </div>
+
+                      <!-- Email -->
+                      <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          class="form-input"
+                          placeholder="Enter email address"
+                          value=""
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                      <button type="submit" class="btn btn-primary">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Jack Russell Long Coat
-                      </span>
-                      <span class="animal-detail-item">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        Update Record
+                      </button>
+                      <button type="button" class="btn btn-danger" id="deleteCustomerBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
-                        White and gold
-                      </span>
-                      <span class="animal-detail-item">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        Delete Customer
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIDEBAR COLUMN: Associated Animals -->
+            <div class="sidebar-column">
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">
+                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                    </svg>
+                    Associated Animals
+                  </h2>
+                  <button class="btn btn-success" id="addAnimalBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add
+                  </button>
+                </div>
+                <div class="card-content" id="animalsList">
+                  <!-- Animal Mini Card 1 -->
+                  <div class="animal-mini-card">
+                    <div class="animal-avatar">C</div>
+                    <div class="animal-info">
+                      <h3 class="animal-name">Cody</h3>
+                      <div class="animal-details">
+                        <span class="animal-detail-item">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                          </svg>
+                          Jack Russell Long Coat
+                        </span>
+                        <span class="animal-detail-item">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                          </svg>
+                          White and gold
+                        </span>
+                        <span class="animal-detail-item">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                          </svg>
+                          Male
+                        </span>
+                      </div>
+                    </div>
+                    <div class="animal-actions">
+                      <button class="btn btn-icon btn-ghost" title="View/Edit Animal" onclick="viewAnimal(1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
-                        Male
-                      </span>
+                      </button>
+                      <button class="btn btn-icon btn-danger" title="Delete Animal" onclick="deleteAnimal(1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                  <div class="animal-actions">
-                    <button class="btn btn-icon btn-ghost" title="View/Edit Animal" onclick="viewAnimal(1)">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </button>
-                    <button class="btn btn-icon btn-danger" title="Delete Animal" onclick="deleteAnimal(1)">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                      </svg>
-                    </button>
-                  </div>
                 </div>
-
-                <!-- Empty State (hidden by default when animals exist) -->
-                <!-- <div class="empty-state" style="display: none;">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                  </svg>
-                  <p>No animals associated with this customer</p>
-                </div> -->
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
 
     <script>
-      // =============================
-      // DATE & TIME UPDATE
-      // =============================
-      function updateDateTime() {
-        const now = new Date()
-        const options = {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
+      // Initialize app state and data
+      ;(function() {
+        // App state
+        let appSidebarOpen = false
+        let appSidebarPinned = false
+        let isResizing = false
+        let sidebarWidth = 280 // Default width
+
+        // Set current date and time
+        function updateDate() {
+          const now = new Date()
+
+          // Format time as "2:38pm"
+          const timeOptions = {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          }
+          const timeText = now
+            .toLocaleTimeString('en-US', timeOptions)
+            .toLowerCase()
+
+          // Format date as "Tue, Sep 16 2025"
+          const dateOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }
+          const dateText = now.toLocaleDateString('en-US', dateOptions)
+
+          // Combine as "2:38pm Tue, Sep 16 2025"
+          const fullDateTime = `${timeText} ${dateText}`
+
+          document.getElementById('currentDate').textContent = fullDateTime
+
+          // Keep sidebar date simple (without time)
+          const sidebarDate = document.getElementById('sidebarDate')
+          if (sidebarDate) {
+            const simpleDateOptions = {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+            }
+            const simpleDateText = now.toLocaleDateString(
+              'en-US',
+              simpleDateOptions
+            )
+            sidebarDate.textContent = simpleDateText
+          }
         }
-        document.getElementById('currentDate').textContent = now.toLocaleDateString(
-          'en-US',
-          options
-        )
-      }
 
-      updateDateTime()
-      setInterval(updateDateTime, 1000)
+        // Toggle sidebar
+        window.toggleSidebar = function() {
+          const sidebar = document.getElementById('sidebar')
+          const hamburger = document.getElementById('hamburgerBtn')
+          const overlay = document.getElementById('navOverlay')
+          const appLayout = document.querySelector('.app-layout')
 
-      // =============================
-      // HAMBURGER MENU TOGGLE
-      // =============================
-      const hamburgerBtn = document.getElementById('hamburgerBtn')
-      const navDropdown = document.getElementById('navDropdown')
+          if (appSidebarPinned) {
+            // If pinned, toggle the pinned state instead
+            togglePin()
+            return
+          }
 
-      hamburgerBtn.addEventListener('click', () => {
-        hamburgerBtn.classList.toggle('active')
-        navDropdown.classList.toggle('active')
-      })
+          appSidebarOpen = !appSidebarOpen
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (
-          !hamburgerBtn.contains(e.target) &&
-          !navDropdown.contains(e.target)
-        ) {
-          hamburgerBtn.classList.remove('active')
-          navDropdown.classList.remove('active')
+          sidebar.classList.toggle('active', appSidebarOpen)
+          hamburger.classList.toggle('active', appSidebarOpen)
+          overlay.classList.toggle('active', appSidebarOpen)
+
+          if (appSidebarOpen) {
+            document.body.style.overflow = 'hidden'
+          } else {
+            document.body.style.overflow = ''
+          }
         }
-      })
+
+        // Toggle pin state
+        window.togglePin = function() {
+          const sidebar = document.getElementById('sidebar')
+          const pinBtn = document.getElementById('pinBtn')
+          const appLayout = document.querySelector('.app-layout')
+          const overlay = document.getElementById('navOverlay')
+          const hamburger = document.getElementById('hamburgerBtn')
+
+          appSidebarPinned = !appSidebarPinned
+
+          if (appSidebarPinned) {
+            sidebar.classList.add('pinned')
+            sidebar.classList.add('active')
+            appLayout.classList.add('sidebar-pinned')
+            pinBtn.classList.add('active')
+            overlay.classList.remove('active')
+            hamburger.classList.add('active')
+            document.body.style.overflow = ''
+            appSidebarOpen = true
+          } else {
+            sidebar.classList.remove('pinned')
+            appLayout.classList.remove('sidebar-pinned')
+            pinBtn.classList.remove('active')
+
+            // If not pinned and we want to close, close completely
+            if (appSidebarOpen) {
+              toggleSidebar()
+            }
+          }
+        }
+
+        // Initialize resize functionality
+        function initResize() {
+          const resizeHandle = document.getElementById('resizeHandle')
+          const sidebar = document.getElementById('sidebar')
+
+          let startX, startWidth
+
+          function startResize(e) {
+            isResizing = true
+            startX = e.clientX
+            startWidth = sidebarWidth
+
+            resizeHandle.classList.add('dragging')
+            document.body.style.cursor = 'col-resize'
+            document.body.style.userSelect = 'none'
+
+            document.addEventListener('mousemove', handleResize)
+            document.addEventListener('mouseup', stopResize)
+          }
+
+          function handleResize(e) {
+            if (!isResizing) return
+
+            const deltaX = e.clientX - startX
+            const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+            sidebarWidth = newWidth
+            document.documentElement.style.setProperty(
+              '--sidebar-width',
+              `${newWidth}px`
+            )
+            sidebar.style.width = `${newWidth}px`
+          }
+
+          function stopResize() {
+            isResizing = false
+            resizeHandle.classList.remove('dragging')
+            document.body.style.cursor = ''
+            document.body.style.userSelect = ''
+
+            document.removeEventListener('mousemove', handleResize)
+            document.removeEventListener('mouseup', stopResize)
+          }
+
+          resizeHandle.addEventListener('mousedown', startResize)
+        }
+
+        // Navigation functions
+        window.navigate = function(section) {
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active')
+          })
+
+          // Add active class to clicked nav link
+          event.target.closest('.nav-link').classList.add('active')
+
+          // Close sidebar if not pinned
+          if (appSidebarOpen && !appSidebarPinned) {
+            toggleSidebar()
+          }
+
+          alert(`Navigating to ${section}...`)
+        }
+
+        // Search functions
+        window.performSearch = function() {
+          const query = document.getElementById('searchInput').value
+          if (!query.trim()) {
+            alert('Please enter a search term')
+            return
+          }
+
+          alert(`Searching for: "${query}"\n\nThis is a mockup UI. In production, this would navigate to the search results page.`)
+        }
+
+        window.clearSearch = function() {
+          document.getElementById('searchInput').value = ''
+          document.getElementById('searchInput').focus()
+        }
+
+        // Close sidebar when clicking outside (only if not pinned)
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.sidebar') &&
+            !e.target.closest('.hamburger-menu') &&
+            appSidebarOpen &&
+            !appSidebarPinned
+          ) {
+            toggleSidebar()
+          }
+        })
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+          updateDate()
+          initResize()
+
+          // Search on Enter key
+          document
+            .getElementById('searchInput')
+            .addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                window.performSearch()
+              }
+            })
+
+          // Handle window resize
+          window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768 && appSidebarPinned) {
+              togglePin() // Unpin on mobile
+            }
+          })
+        })
+
+        // Update date and time every second
+        setInterval(updateDate, 1000)
+      })()
 
       // =============================
       // FORM SUBMISSION
