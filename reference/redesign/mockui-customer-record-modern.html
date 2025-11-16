@@ -85,14 +85,11 @@
         /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
         --shadow-md:
-          0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
+          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         --shadow-lg:
-          0 10px 15px -3px rgb(0 0 0 / 0.1),
-          0 4px 6px -4px rgb(0 0 0 / 0.1);
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         --shadow-xl:
-          0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 
         /* Brand-colored shadows for special elements */
@@ -507,7 +504,11 @@
       .customer-avatar-large {
         width: 120px;
         height: 120px;
-        background: linear-gradient(135deg, var(--primary-light), var(--accent));
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          var(--accent)
+        );
         border-radius: var(--radius-2xl);
         display: flex;
         align-items: center;
@@ -742,7 +743,11 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
         border-radius: 0;
         transition: height var(--duration-normal) var(--ease-smooth);
       }
@@ -777,7 +782,11 @@
       .animal-avatar {
         width: 48px;
         height: 48px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -1221,7 +1230,7 @@
                       alt="Pampered Pooch Logo"
                       width="35"
                       height="35"
-                      style="border-radius: var(--radius-lg);"
+                      style="border-radius: var(--radius-lg)"
                     />
                   </div>
                   <div class="brand-text-dropdown">
@@ -1302,7 +1311,7 @@
                 alt="Pampered Pooch Logo"
                 width="40"
                 height="40"
-                style="border-radius: var(--radius-lg);"
+                style="border-radius: var(--radius-lg)"
               />
             </div>
             <div class="brand-text-header">

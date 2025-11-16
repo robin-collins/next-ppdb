@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Baseline verification: Repository passes type-check, lint, format, and tests; applied Prettier writes to reference HTML files to satisfy fmt:check (2025-11-16)
+
 - **MockUI Font Updates**: Updated all 11 mockui HTML files to use new font specifications (2025-11-15)
   - **Changed From**: Cormorant (display), DM Sans (body), Outfit (accent)
   - **Changed To**: Lora (display), Rubik (body & accent)

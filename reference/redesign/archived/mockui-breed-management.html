@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -84,12 +84,12 @@
 
         /* === SHADOWS & ELEVATION === */
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-          0 4px 6px -4px rgb(0 0 0 / 0.1);
-        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-md:
+          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg:
+          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl:
+          0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 
         /* Brand-colored shadows for special elements */
@@ -365,7 +365,11 @@
       .brand-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--accent) 100%
+        );
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -1196,89 +1200,309 @@
           cost: 65,
           category: 'dogs',
         },
-        { name: 'Australian Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
+        {
+          name: 'Australian Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
         { name: 'Basenji', time: '01:00:00', cost: 60, category: 'dogs' },
         { name: 'Basset Hound', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Beagle', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'Bearded Collie', time: '01:00:00', cost: 95, category: 'dogs' },
-        { name: 'Bedlington Terrier', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Bernese Mountain Dog', time: '02:00:00', cost: 115, category: 'dogs' },
+        {
+          name: 'Bearded Collie',
+          time: '01:00:00',
+          cost: 95,
+          category: 'dogs',
+        },
+        {
+          name: 'Bedlington Terrier',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
+        {
+          name: 'Bernese Mountain Dog',
+          time: '02:00:00',
+          cost: 115,
+          category: 'dogs',
+        },
         { name: 'Bichon Frise', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Bloodhound', time: '01:00:00', cost: 80, category: 'dogs' },
         { name: 'Border Collie', time: '01:00:00', cost: 85, category: 'dogs' },
-        { name: 'Border Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
+        {
+          name: 'Border Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
         { name: 'Borzoi', time: '01:00:00', cost: 95, category: 'dogs' },
-        { name: 'Boston Terrier', time: '01:00:00', cost: 55, category: 'dogs' },
+        {
+          name: 'Boston Terrier',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
         { name: 'Boxer', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Brittany', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Bull Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
         { name: 'Bulldog', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Bullmastiff', time: '01:00:00', cost: 85, category: 'dogs' },
         { name: 'Cairn Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Cavalier King Charles Spaniel', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Cavalier King Charles Spaniel',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Cavoodle', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Chihuahua', time: '01:00:00', cost: 50, category: 'dogs' },
-        { name: 'Chihuahua Long Coat', time: '01:00:00', cost: 55, category: 'dogs' },
-        { name: 'Chihuahua Smooth Coat', time: '01:00:00', cost: 45, category: 'dogs' },
-        { name: 'Chinese Crested', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'Chinese Crested Powderpuff', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Chihuahua Long Coat',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
+        {
+          name: 'Chihuahua Smooth Coat',
+          time: '01:00:00',
+          cost: 45,
+          category: 'dogs',
+        },
+        {
+          name: 'Chinese Crested',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
+        {
+          name: 'Chinese Crested Powderpuff',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Chow Chow', time: '02:00:00', cost: 115, category: 'dogs' },
-        { name: 'Cocker Spaniel', time: '02:00:00', cost: 85, category: 'dogs' },
+        {
+          name: 'Cocker Spaniel',
+          time: '02:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
         { name: 'Collie Rough', time: '01:00:00', cost: 95, category: 'dogs' },
         { name: 'Collie Smooth', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Dachshund', time: '01:00:00', cost: 55, category: 'dogs' },
-        { name: 'Dachshund Long Haired', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Dachshund Miniature', time: '01:00:00', cost: 50, category: 'dogs' },
-        { name: 'Dachshund Wire Haired', time: '01:00:00', cost: 60, category: 'dogs' },
+        {
+          name: 'Dachshund Long Haired',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Dachshund Miniature',
+          time: '01:00:00',
+          cost: 50,
+          category: 'dogs',
+        },
+        {
+          name: 'Dachshund Wire Haired',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
         { name: 'Dalmatian', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Doberman', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'English Cocker Spaniel', time: '02:00:00', cost: 85, category: 'dogs' },
-        { name: 'English Setter', time: '01:00:00', cost: 85, category: 'dogs' },
-        { name: 'English Springer Spaniel', time: '01:00:00', cost: 80, category: 'dogs' },
+        {
+          name: 'English Cocker Spaniel',
+          time: '02:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
+        {
+          name: 'English Setter',
+          time: '01:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
+        {
+          name: 'English Springer Spaniel',
+          time: '01:00:00',
+          cost: 80,
+          category: 'dogs',
+        },
         { name: 'Finnish Spitz', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Fox Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Fox Terrier Smooth', time: '01:00:00', cost: 55, category: 'dogs' },
-        { name: 'Fox Terrier Wire', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'French Bulldog', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'German Shepherd', time: '01:00:00', cost: 85, category: 'dogs' },
-        { name: 'German Shorthaired Pointer', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Fox Terrier Smooth',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
+        {
+          name: 'Fox Terrier Wire',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'French Bulldog',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
+        {
+          name: 'German Shepherd',
+          time: '01:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
+        {
+          name: 'German Shorthaired Pointer',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'German Spitz', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Golden Retriever', time: '01:00:00', cost: 85, category: 'dogs' },
+        {
+          name: 'Golden Retriever',
+          time: '01:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
         { name: 'Gordon Setter', time: '01:00:00', cost: 85, category: 'dogs' },
         { name: 'Great Dane', time: '01:00:00', cost: 95, category: 'dogs' },
         { name: 'Greyhound', time: '01:00:00', cost: 65, category: 'dogs' },
         { name: 'Groodle', time: '01:00:00', cost: 115, category: 'dogs' },
-        { name: 'Hungarian Vizsla', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Hungarian Vizsla',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Irish Setter', time: '01:00:00', cost: 85, category: 'dogs' },
         { name: 'Irish Terrier', time: '01:00:00', cost: 70, category: 'dogs' },
-        { name: 'Irish Wolfhound', time: '01:00:00', cost: 95, category: 'dogs' },
-        { name: 'Italian Greyhound', time: '01:00:00', cost: 55, category: 'dogs' },
-        { name: 'Jack Russell Terrier', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'Jack Russell Terrier Rough', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Jack Russell Terrier Smooth', time: '01:00:00', cost: 55, category: 'dogs' },
+        {
+          name: 'Irish Wolfhound',
+          time: '01:00:00',
+          cost: 95,
+          category: 'dogs',
+        },
+        {
+          name: 'Italian Greyhound',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
+        {
+          name: 'Jack Russell Terrier',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
+        {
+          name: 'Jack Russell Terrier Rough',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Jack Russell Terrier Smooth',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
         { name: 'Japanese Chin', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Japanese Spitz', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Japanese Spitz',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Keeshond', time: '01:00:00', cost: 85, category: 'dogs' },
-        { name: 'Kerry Blue Terrier', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'King Charles Spaniel', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Kerry Blue Terrier',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
+        {
+          name: 'King Charles Spaniel',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Labradoodle', time: '01:00:00', cost: 115, category: 'dogs' },
         { name: 'Labrador', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Lakeland Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
+        {
+          name: 'Lakeland Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
         { name: 'Lhasa Apso', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Lowchen', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Maltese', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Maltese Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Manchester Terrier', time: '01:00:00', cost: 55, category: 'dogs' },
-        { name: 'Maremma Sheepdog', time: '01:00:00', cost: 95, category: 'dogs' },
+        {
+          name: 'Maltese Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Manchester Terrier',
+          time: '01:00:00',
+          cost: 55,
+          category: 'dogs',
+        },
+        {
+          name: 'Maremma Sheepdog',
+          time: '01:00:00',
+          cost: 95,
+          category: 'dogs',
+        },
         { name: 'Mastiff', time: '01:00:00', cost: 95, category: 'dogs' },
-        { name: 'Miniature Pinscher', time: '01:00:00', cost: 50, category: 'dogs' },
-        { name: 'Miniature Poodle', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Miniature Schnauzer', time: '01:00:00', cost: 70, category: 'dogs' },
+        {
+          name: 'Miniature Pinscher',
+          time: '01:00:00',
+          cost: 50,
+          category: 'dogs',
+        },
+        {
+          name: 'Miniature Poodle',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
+        {
+          name: 'Miniature Schnauzer',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
         { name: 'Newfoundland', time: '02:00:00', cost: 120, category: 'dogs' },
-        { name: 'Norfolk Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Norwegian Elkhound', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Norwich Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Old English Sheepdog', time: '02:00:00', cost: 120, category: 'dogs' },
+        {
+          name: 'Norfolk Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Norwegian Elkhound',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
+        {
+          name: 'Norwich Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Old English Sheepdog',
+          time: '02:00:00',
+          cost: 120,
+          category: 'dogs',
+        },
         { name: 'Papillon', time: '01:00:00', cost: 60, category: 'dogs' },
         { name: 'Pekingese', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Pharaoh Hound', time: '01:00:00', cost: 65, category: 'dogs' },
@@ -1287,37 +1511,122 @@
         { name: 'Poodle', time: '01:00:00', cost: 85, category: 'dogs' },
         { name: 'Pug', time: '01:00:00', cost: 50, category: 'dogs' },
         { name: 'Puli', time: '01:00:00', cost: 95, category: 'dogs' },
-        { name: 'Pyrenean Mountain Dog', time: '02:00:00', cost: 120, category: 'dogs' },
-        { name: 'Rhodesian Ridgeback', time: '01:00:00', cost: 75, category: 'dogs' },
+        {
+          name: 'Pyrenean Mountain Dog',
+          time: '02:00:00',
+          cost: 120,
+          category: 'dogs',
+        },
+        {
+          name: 'Rhodesian Ridgeback',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
         { name: 'Rottweiler', time: '01:00:00', cost: 80, category: 'dogs' },
-        { name: 'Saint Bernard', time: '02:00:00', cost: 120, category: 'dogs' },
+        {
+          name: 'Saint Bernard',
+          time: '02:00:00',
+          cost: 120,
+          category: 'dogs',
+        },
         { name: 'Saluki', time: '01:00:00', cost: 75, category: 'dogs' },
         { name: 'Samoyed', time: '01:00:00', cost: 95, category: 'dogs' },
         { name: 'Schipperke', time: '01:00:00', cost: 65, category: 'dogs' },
         { name: 'Schnauzer', time: '01:00:00', cost: 80, category: 'dogs' },
-        { name: 'Scottish Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Sealyham Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
+        {
+          name: 'Scottish Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Sealyham Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
         { name: 'Shar Pei', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Shetland Sheepdog', time: '01:00:00', cost: 75, category: 'dogs' },
+        {
+          name: 'Shetland Sheepdog',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
         { name: 'Shiba Inu', time: '01:00:00', cost: 70, category: 'dogs' },
         { name: 'Shih Tzu', time: '01:00:00', cost: 70, category: 'dogs' },
-        { name: 'Siberian Husky', time: '01:00:00', cost: 85, category: 'dogs' },
+        {
+          name: 'Siberian Husky',
+          time: '01:00:00',
+          cost: 85,
+          category: 'dogs',
+        },
         { name: 'Skye Terrier', time: '01:00:00', cost: 70, category: 'dogs' },
-        { name: 'Soft Coated Wheaten Terrier', time: '01:00:00', cost: 75, category: 'dogs' },
+        {
+          name: 'Soft Coated Wheaten Terrier',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
         { name: 'Spaniel', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Staffordshire Bull Terrier', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'Swedish Vallhund', time: '01:00:00', cost: 70, category: 'dogs' },
-        { name: 'Tibetan Spaniel', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Tibetan Terrier', time: '01:00:00', cost: 75, category: 'dogs' },
+        {
+          name: 'Staffordshire Bull Terrier',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
+        {
+          name: 'Swedish Vallhund',
+          time: '01:00:00',
+          cost: 70,
+          category: 'dogs',
+        },
+        {
+          name: 'Tibetan Spaniel',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Tibetan Terrier',
+          time: '01:00:00',
+          cost: 75,
+          category: 'dogs',
+        },
         { name: 'Toy Poodle', time: '01:00:00', cost: 65, category: 'dogs' },
         { name: 'Weimaraner', time: '01:00:00', cost: 75, category: 'dogs' },
-        { name: 'Welsh Corgi Cardigan', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Welsh Corgi Pembroke', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'Welsh Springer Spaniel', time: '01:00:00', cost: 80, category: 'dogs' },
+        {
+          name: 'Welsh Corgi Cardigan',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Welsh Corgi Pembroke',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
+        {
+          name: 'Welsh Springer Spaniel',
+          time: '01:00:00',
+          cost: 80,
+          category: 'dogs',
+        },
         { name: 'Welsh Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
-        { name: 'West Highland White Terrier', time: '01:00:00', cost: 65, category: 'dogs' },
+        {
+          name: 'West Highland White Terrier',
+          time: '01:00:00',
+          cost: 65,
+          category: 'dogs',
+        },
         { name: 'Whippet', time: '01:00:00', cost: 60, category: 'dogs' },
-        { name: 'Yorkshire Terrier', time: '01:00:00', cost: 60, category: 'dogs' },
+        {
+          name: 'Yorkshire Terrier',
+          time: '01:00:00',
+          cost: 60,
+          category: 'dogs',
+        },
         { name: 'Cat', time: '01:00:00', cost: 115, category: 'cats' },
         { name: 'Guinea Pig', time: '01:00:00', cost: 70, category: 'other' },
         { name: 'Rabbit', time: '00:00:01', cost: 95, category: 'other' },
@@ -1344,19 +1653,18 @@
       setInterval(updateDateTime, 1000)
 
       // Hamburger menu toggle
-      document.getElementById('hamburger').addEventListener('click', function () {
-        this.classList.toggle('active')
-        document.getElementById('navDropdown').classList.toggle('active')
-      })
+      document
+        .getElementById('hamburger')
+        .addEventListener('click', function () {
+          this.classList.toggle('active')
+          document.getElementById('navDropdown').classList.toggle('active')
+        })
 
       // Close dropdown when clicking outside
       document.addEventListener('click', function (e) {
         const hamburger = document.getElementById('hamburger')
         const dropdown = document.getElementById('navDropdown')
-        if (
-          !hamburger.contains(e.target) &&
-          !dropdown.contains(e.target)
-        ) {
+        if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
           hamburger.classList.remove('active')
           dropdown.classList.remove('active')
         }
@@ -1369,7 +1677,7 @@
 
         // Calculate average time
         let totalSeconds = 0
-        breeds.forEach((breed) => {
+        breeds.forEach(breed => {
           const [h, m, s] = breed.time.split(':').map(Number)
           totalSeconds += h * 3600 + m * 60 + s
         })
@@ -1489,7 +1797,7 @@
       // Update breed
       function updateBreed(index) {
         const inputs = document.querySelectorAll(`[data-index="${index}"]`)
-        inputs.forEach((input) => {
+        inputs.forEach(input => {
           const field = input.dataset.field
           if (field === 'cost') {
             breeds[index][field] = parseFloat(input.value)

@@ -123,3 +123,22 @@ export async function PUT(
 
   return NextResponse.json(transformedAnimal)
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const animalID = parseInt(id)
+
+  // Best-effort cleanup of related notes before deleting animal (legacy DB may lack FK cascades)
+  await prisma.notes.deleteMany({
+    where: { animalID },
+  })
+
+  await prisma.animal.delete({
+    where: { animalID },
+  })
+
+  return NextResponse.json({ success: true })
+}
