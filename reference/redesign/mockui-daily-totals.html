@@ -1,1366 +1,1879 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daily Totals/Analytics - Pampered Pooch Database</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <style>
-      /* ========================================
-         DESIGN TOKENS (from STYLE_GUIDE.md)
-         ======================================== */
-      :root {
-        /* === TYPOGRAPHY === */
-        --font-display: 'Lora', Georgia, serif;
-        --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
-        --font-accent: 'Rubik', -apple-system, sans-serif;
-        --font-family: var(--font-body); /* Legacy fallback */
+        /* Font Imports - Brand Typography */
 
-        /* === PRIMARY COLORS (From Logo - Golden Brown) === */
-        --primary: #d9944a; /* Golden brown - main brand color */
-        --primary-hover: #c97d3d; /* Darker brown on hover */
-        --primary-light: #fef4e8; /* Very light peach for backgrounds */
-        --primary-dark: #8b5a2b; /* Deep brown for contrast */
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+        /* Design System Variables */
 
-        /* === SECONDARY COLORS (From Logo - Teal Green) === */
-        --secondary: #1b9e7e; /* Teal green - trust, nature */
-        --secondary-hover: #178a6c; /* Darker teal on hover */
-        --secondary-light: #e6f7f3; /* Pale mint for backgrounds */
-        --secondary-dark: #0f6652; /* Deep teal for text */
-
-        /* === ACCENT COLORS (From Logo - Light Aqua) === */
-        --accent: #2db894; /* Bright teal - CTAs, highlights */
-        --accent-hover: #24a382; /* Darker on hover */
-        --accent-light: #d4f4f8; /* Pale aqua - subtle backgrounds */
-        --accent-bubbles: #a8e6f0; /* Bubble effect color */
-
-        /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
-        --cream: #f4d19b; /* Warm cream */
-        --tan: #e8b876; /* Golden tan */
-        --peach: #f9e5d0; /* Soft peach */
-
-        /* === SEMANTIC COLORS === */
-        --success: #2db894; /* Use accent teal for success */
-        --warning: #e8b876; /* Use tan for warnings */
-        --error: #d97066; /* Muted coral red */
-        --info: #a8e6f0; /* Light aqua for info */
-
-        /* === NEUTRAL COLORS (Warmer Grays) === */
-        --white: #ffffff;
-        --gray-50: #faf8f6; /* Warm white */
-        --gray-100: #f2ebe5; /* Cream beige */
-        --gray-200: #e8dfd7; /* Light tan */
-        --gray-300: #d4c7bb; /* Medium tan */
-        --gray-400: #a89b8f; /* Warm gray */
-        --gray-500: #7d7169; /* Medium brown-gray */
-        --gray-600: #5d544d; /* Dark brown-gray */
-        --gray-700: #3d3935; /* Very dark brown */
-        --gray-800: #2a2622; /* Almost black brown */
-        --gray-900: #1a1614; /* Darkest brown */
-
-        /* === SPACING SCALE === */
-        --space-1: 0.25rem; /* 4px */
-        --space-2: 0.5rem; /* 8px */
-        --space-3: 0.75rem; /* 12px */
-        --space-4: 1rem; /* 16px */
-        --space-5: 1.25rem; /* 20px */
-        --space-6: 1.5rem; /* 24px */
-        --space-8: 2rem; /* 32px */
-        --space-10: 2.5rem; /* 40px */
-        --space-12: 3rem; /* 48px */
-        --space-16: 4rem; /* 64px */
-        --space-20: 5rem; /* 80px */
-        --space-24: 6rem; /* 96px */
-
-        /* === BORDER RADIUS (Softer, More Organic) === */
-        --radius-sm: 0.5rem; /* 8px */
-        --radius-md: 0.75rem; /* 12px */
-        --radius-lg: 1rem; /* 16px */
-        --radius-xl: 1.5rem; /* 24px */
-        --radius-2xl: 2rem; /* 32px */
-        --radius-3xl: 2.5rem; /* 40px */
-        --radius-full: 9999px; /* Full pill shape */
-
-        /* === SHADOWS & ELEVATION === */
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-          0 4px 6px -4px rgb(0 0 0 / 0.1);
-        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
-        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-
-        /* Brand-colored shadows for special elements */
-        --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
-        --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
-        --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
-
-        /* === LAYOUT CONSTANTS === */
-        --sidebar-width: 280px;
-        --header-height: 92px;
-        --max-content-width: 1400px;
-
-        /* === ANIMATION DURATIONS === */
-        --duration-fast: 150ms;
-        --duration-normal: 250ms;
-        --duration-slow: 350ms;
-        --duration-slower: 500ms;
-
-        /* === ANIMATION EASINGS === */
-        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-        --ease-in: cubic-bezier(0.4, 0, 1, 1);
-        --ease-out: cubic-bezier(0, 0, 0.2, 1);
-        --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
-
-        /* === Z-INDEX SCALE === */
-        --z-base: 0;
-        --z-dropdown: 100;
-        --z-sticky: 100;
-        --z-overlay: 150;
-        --z-sidebar: 200;
-        --z-modal: 300;
-        --z-toast: 400;
-        --z-tooltip: 500;
-      }
-
-      /* ========================================
-         RESET & BASE STYLES
-         ======================================== */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: var(--font-body);
-        background: linear-gradient(
-          160deg,
-          #fef9f5 0%,
-          /* Warm cream */ #f8f2ec 25%,
-          /* Peachy beige */ #f0ebe6 50%,
-          /* Soft tan */ #e8f4f2 75%,
-          /* Pale mint */ #f5fbfa 100% /* Light aqua */
-        );
-        background-size: 400% 400%;
-        animation: gradientShift 20s ease infinite;
-        min-height: 100vh;
-        color: var(--gray-800);
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-      }
-
-      @keyframes gradientShift {
-        0%,
-        100% {
-          background-position: 0% 50%;
+         :root {
+            /* === TYPOGRAPHY === */
+            --font-display: 'Lora', Georgia, serif;
+            --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-accent: 'Rubik', -apple-system, sans-serif;
+            --font-family: var(--font-body);
+            /* Legacy fallback */
+            /* === PRIMARY COLORS (From Logo - Golden Brown) === */
+            --primary: #d9944a;
+            /* Golden brown - main brand color */
+            --primary-hover: #c97d3d;
+            /* Darker brown on hover */
+            --primary-light: #fef4e8;
+            /* Very light peach for backgrounds */
+            --primary-dark: #8b5a2b;
+            /* Deep brown for contrast */
+            /* === SECONDARY COLORS (From Logo - Teal Green) === */
+            --secondary: #1b9e7e;
+            /* Teal green - trust, nature */
+            --secondary-hover: #178a6c;
+            /* Darker teal on hover */
+            --secondary-light: #e6f7f3;
+            /* Pale mint for backgrounds */
+            --secondary-dark: #0f6652;
+            /* Deep teal for text */
+            /* === ACCENT COLORS (From Logo - Light Aqua) === */
+            --accent: #2db894;
+            /* Bright teal - CTAs, highlights */
+            --accent-hover: #24a382;
+            /* Darker on hover */
+            --accent-light: #d4f4f8;
+            /* Pale aqua - subtle backgrounds */
+            --accent-bubbles: #a8e6f0;
+            /* Bubble effect color */
+            /* === TERTIARY COLORS (From Logo - Cream/Tan) === */
+            --cream: #f4d19b;
+            /* Warm cream */
+            --tan: #e8b876;
+            /* Golden tan */
+            --peach: #f9e5d0;
+            /* Soft peach */
+            /* === SEMANTIC COLORS === */
+            --success: #2db894;
+            /* Use accent teal for success */
+            --warning: #e8b876;
+            /* Use tan for warnings */
+            --error: #d97066;
+            /* Muted coral red */
+            --info: #a8e6f0;
+            /* Light aqua for info */
+            /* === NEUTRAL COLORS (Warmer Grays) === */
+            --white: #ffffff;
+            --gray-50: #faf8f6;
+            /* Warm white */
+            --gray-100: #f2ebe5;
+            /* Cream beige */
+            --gray-200: #e8dfd7;
+            /* Light tan */
+            --gray-300: #d4c7bb;
+            /* Medium tan */
+            --gray-400: #a89b8f;
+            /* Warm gray */
+            --gray-500: #7d7169;
+            /* Medium brown-gray */
+            --gray-600: #5d544d;
+            /* Dark brown-gray */
+            --gray-700: #3d3935;
+            /* Very dark brown */
+            --gray-800: #2a2622;
+            /* Almost black brown */
+            --gray-900: #1a1614;
+            /* Darkest brown */
+            /* === SPACING SCALE === */
+            --space-1: 0.25rem;
+            /* 4px */
+            --space-2: 0.5rem;
+            /* 8px */
+            --space-3: 0.75rem;
+            /* 12px */
+            --space-4: 1rem;
+            /* 16px */
+            --space-5: 1.25rem;
+            /* 20px */
+            --space-6: 1.5rem;
+            /* 24px */
+            --space-8: 2rem;
+            /* 32px */
+            --space-10: 2.5rem;
+            /* 40px */
+            --space-12: 3rem;
+            /* 48px */
+            --space-16: 4rem;
+            /* 64px */
+            --space-18: 4.5rem;
+            /* 72px */
+            --space-20: 5rem;
+            /* 80px */
+            --space-24: 6rem;
+            /* 96px */
+            /* === BORDER RADIUS (Softer, More Organic) === */
+            --radius-sm: 0.5rem;
+            /* 8px - was 6px */
+            --radius-md: 0.75rem;
+            /* 12px - was 8px */
+            --radius-lg: 1rem;
+            /* 16px - was 12px */
+            --radius-xl: 1.5rem;
+            /* 24px - was 16px */
+            --radius-2xl: 2rem;
+            /* 32px - was 24px */
+            --radius-3xl: 2.5rem;
+            /* 40px - new! */
+            --radius-full: 9999px;
+            /* Full pill shape */
+            /* === SHADOWS & ELEVATION === */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            /* Brand-colored shadows for special elements */
+            --shadow-primary: 0 10px 30px -5px rgba(217, 148, 74, 0.3);
+            --shadow-secondary: 0 10px 30px -5px rgba(27, 158, 126, 0.3);
+            --shadow-accent: 0 10px 30px -5px rgba(45, 184, 148, 0.3);
+            /* === LAYOUT CONSTANTS === */
+            --sidebar-width: 280px;
+            --header-height: 92px;
+            --max-content-width: 1400px;
+            /* === ANIMATION DURATIONS === */
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --duration-slow: 350ms;
+            --duration-slower: 500ms;
+            /* === ANIMATION EASINGS === */
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-in: cubic-bezier(0.4, 0, 1, 1);
+            --ease-out: cubic-bezier(0, 0, 0.2, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+            /* === Z-INDEX SCALE === */
+            --z-base: 0;
+            --z-dropdown: 100;
+            --z-sticky: 100;
+            --z-overlay: 150;
+            --z-sidebar: 200;
+            --z-modal: 300;
+            --z-toast: 400;
+            --z-tooltip: 500;
         }
-        50% {
-          background-position: 100% 50%;
-        }
-      }
-
-      body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.6;
-      }
-
-      /* ========================================
-         TYPOGRAPHY APPLICATION
-         ======================================== */
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        color: var(--gray-900);
-        line-height: 1.2;
-      }
-
-      p,
-      li,
-      td,
-      th {
-        font-family: var(--font-body);
-        font-weight: 400;
-        color: var(--gray-700);
-        line-height: 1.6;
-      }
-
-      button,
-      .btn,
-      .badge,
-      label,
-      input,
-      select,
-      textarea {
-        font-family: var(--font-accent);
-        letter-spacing: 0.01em;
-      }
-
-      /* ========================================
-         HEADER NAVIGATION BAR
-         ======================================== */
-      .app-header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding: var(--space-4) var(--space-6);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: var(--shadow-md);
-      }
-
-      .header-content {
-        display: flex;
-        align-items: center;
-        gap: var(--space-6);
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      /* Hamburger Menu */
-      .hamburger {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        cursor: pointer;
-        padding: var(--space-3);
-        border-radius: var(--radius-lg);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        background: var(--gray-100);
-        border: none;
-      }
-
-      .hamburger:hover {
-        background: var(--primary-light);
-      }
-
-      .hamburger span {
-        width: 20px;
-        height: 2px;
-        background: var(--gray-700);
-        border-radius: 1px;
-        transition: all var(--duration-normal) var(--ease-smooth);
-      }
-
-      .hamburger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-      }
-
-      .hamburger.active span:nth-child(2) {
-        opacity: 0;
-      }
-
-      .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-      }
-
-      /* Brand Logo */
-      .brand-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-      }
-
-      .brand-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: var(--radius-full);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.25rem;
-        font-weight: 700;
-        box-shadow: var(--shadow-primary);
-      }
-
-      .brand-text-header {
-        font-family: var(--font-display);
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--gray-900);
-      }
-
-      /* Breadcrumb */
-      .breadcrumb {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        font-family: var(--font-body);
-        font-size: 0.875rem;
-        color: var(--gray-600);
-      }
-
-      .breadcrumb-link {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color var(--duration-fast) var(--ease-smooth);
-      }
-
-      .breadcrumb-link:hover {
-        color: var(--primary-hover);
-        text-decoration: underline;
-      }
-
-      .breadcrumb-separator {
-        color: var(--gray-400);
-      }
-
-      .breadcrumb-current {
-        color: var(--gray-800);
-        font-weight: 600;
-      }
-
-      /* Header Actions */
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--space-4);
-      }
-
-      .date-display {
-        padding: var(--space-2) var(--space-4);
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        border-radius: var(--radius-full);
-        font-size: 0.875rem;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-
-      /* Navigation Dropdown */
-      .nav-dropdown {
-        position: absolute;
-        top: calc(100% + var(--space-2));
-        left: 0;
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-xl);
-        min-width: 280px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        z-index: 200;
-      }
-
-      .nav-dropdown.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      .nav-list {
-        list-style: none;
-        padding: var(--space-2);
-      }
-
-      .nav-item {
-        margin: 0;
-      }
-
-      .nav-link {
-        display: flex;
-        align-items: center;
-        gap: var(--space-3);
-        padding: var(--space-3) var(--space-4);
-        color: var(--gray-700);
-        text-decoration: none;
-        border-radius: var(--radius-lg);
-        font-family: var(--font-body);
-        transition: all var(--duration-normal) var(--ease-smooth);
-        font-weight: 500;
-      }
-
-      .nav-link:hover {
-        background: var(--primary-light);
-        color: var(--primary-dark);
-      }
-
-      .nav-link.active {
-        background: var(--primary-light);
-        color: var(--primary-dark);
-        font-weight: 600;
-      }
-
-      .nav-icon {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-      }
-
-      /* ========================================
-         MAIN CONTENT CONTAINER
-         ======================================== */
-      .main-content {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        margin: var(--space-6);
-        margin-top: 0;
-        border-radius: var(--radius-2xl);
-        box-shadow: var(--shadow-xl);
-        overflow: hidden;
-        position: relative;
-        z-index: 1;
-      }
-
-      .content-wrapper {
-        padding: var(--space-8);
-      }
-
-      /* ========================================
-         PAGE TITLE SECTION
-         ======================================== */
-      .page-title-section {
-        margin-bottom: var(--space-8);
-        animation: fadeInDown 0.5s ease-out;
-      }
-
-      .page-title-section h1 {
-        font-family: var(--font-display);
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin: 0 0 var(--space-2) 0;
-        letter-spacing: -0.02em;
-      }
-
-      .page-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.125rem;
-        font-weight: 400;
-        color: var(--gray-600);
-        margin: 0;
-      }
-
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* ========================================
-         STATS GRID (Primary Metrics)
-         ======================================== */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: var(--space-6);
-        margin-bottom: var(--space-8);
-      }
-
-      .stat-card {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        padding: var(--space-6);
-        box-shadow: var(--shadow-sm);
-        transition: all var(--duration-slow) var(--ease-bounce);
-        position: relative;
-        overflow: hidden;
-        animation: slideInUp 0.4s var(--ease-out) forwards;
-        opacity: 0;
-      }
-
-      .stat-card:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-
-      .stat-card:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-
-      .stat-card:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-
-      @keyframes slideInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-primary);
-      }
-
-      .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-      }
-
-      .stat-card.revenue::before {
-        background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
-      }
-
-      .stat-card.revenue:hover {
-        box-shadow: var(--shadow-accent);
-      }
-
-      .stat-card.date::before {
-        background: linear-gradient(135deg, var(--tan) 0%, var(--primary) 100%);
-      }
-
-      .stat-card.date:hover {
-        box-shadow: var(--shadow-secondary);
-      }
-
-      .stat-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: var(--space-4);
-      }
-
-      .stat-label {
-        font-family: var(--font-accent);
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--gray-500);
-      }
-
-      .stat-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--primary-light);
-        border-radius: var(--radius-lg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-      }
-
-      .stat-card.revenue .stat-icon {
-        background: var(--accent-light);
-        color: var(--accent);
-      }
-
-      .stat-card.date .stat-icon {
-        background: var(--peach);
-        color: var(--tan);
-      }
-
-      .stat-value {
-        font-size: 3rem;
-        font-weight: 800;
-        color: var(--gray-900);
-        line-height: 1;
-        margin-bottom: var(--space-2);
-      }
-
-      .stat-value.currency::before {
-        content: '$';
-        font-size: 2rem;
-        margin-right: var(--space-2);
-        color: var(--success);
-      }
-
-      .stat-subtext {
-        font-size: 0.875rem;
-        color: var(--gray-600);
-        font-weight: 500;
-      }
-
-      .stat-change {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-1);
-        padding: var(--space-1) var(--space-2);
-        background: var(--accent-light);
-        color: var(--secondary-dark);
-        border-radius: var(--radius-sm);
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-left: var(--space-2);
-      }
-
-      .stat-change.negative {
-        background: rgba(217, 112, 102, 0.1);
-        color: var(--error);
-      }
-
-      /* ========================================
-         CHARTS SECTION
-         ======================================== */
-      .charts-section {
-        margin-bottom: var(--space-8);
-      }
-
-      .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: var(--space-6);
-      }
-
-      .section-title {
-        font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin: 0;
-      }
-
-      .view-toggle {
-        display: flex;
-        gap: var(--space-2);
-        background: var(--gray-100);
-        padding: var(--space-1);
-        border-radius: var(--radius-lg);
-      }
-
-      .toggle-btn {
-        padding: var(--space-2) var(--space-4);
-        border: none;
-        background: transparent;
-        color: var(--gray-600);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        font-size: 0.875rem;
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        transition: all var(--duration-normal) var(--ease-smooth);
-      }
-
-      .toggle-btn.active {
-        background: white;
-        color: var(--primary);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .toggle-btn:hover:not(.active) {
-        background: var(--primary-light);
-        color: var(--primary-dark);
-      }
-
-      .charts-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-        gap: var(--space-6);
-      }
-
-      .chart-card {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        transition: all var(--duration-normal) var(--ease-smooth);
-      }
-
-      .chart-card:hover {
-        box-shadow: var(--shadow-md);
-      }
-
-      .chart-header {
-        padding: var(--space-5) var(--space-6);
-        border-bottom: 1px solid var(--gray-200);
-        background: var(--gray-50);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .chart-title {
-        font-family: var(--font-display);
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-      }
-
-      .chart-icon {
-        width: 20px;
-        height: 20px;
-        color: var(--primary);
-      }
-
-      .chart-content {
-        padding: var(--space-6);
-      }
-
-      .chart-placeholder {
-        width: 100%;
-        height: 300px;
-        background: linear-gradient(
-          135deg,
-          var(--primary-light) 0%,
-          var(--accent-light) 100%
-        );
-        border-radius: var(--radius-lg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--gray-500);
-        font-family: var(--font-body);
-        font-style: italic;
-        border: 2px dashed var(--gray-300);
-      }
-
-      /* ========================================
-         WEEKLY/MONTHLY TABLE
-         ======================================== */
-      .table-section {
-        animation: fadeInUp 0.5s ease-out 0.4s backwards;
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .table-card {
-        background: white;
-        border: 1px solid var(--gray-200);
-        border-radius: var(--radius-xl);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-      }
-
-      .table-header {
-        padding: var(--space-5) var(--space-6);
-        border-bottom: 1px solid var(--gray-200);
-        background: var(--gray-50);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: var(--font-body);
-      }
-
-      .data-table thead {
-        background: var(--gray-50);
-      }
-
-      .data-table th {
-        padding: var(--space-4);
-        text-align: left;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: var(--gray-700);
-        border-bottom: 2px solid var(--gray-200);
-        white-space: nowrap;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .data-table td {
-        padding: var(--space-4);
-        border-bottom: 1px solid var(--gray-100);
-        vertical-align: middle;
-        font-size: 0.875rem;
-        color: var(--gray-800);
-      }
-
-      .data-table tr:hover {
-        background: var(--primary-light);
-      }
-
-      .data-table tr:last-child td {
-        border-bottom: none;
-      }
-
-      .table-date {
-        font-weight: 600;
-        color: var(--gray-800);
-      }
-
-      .table-number {
-        font-weight: 600;
-        color: var(--gray-900);
-      }
-
-      .table-currency {
-        font-weight: 700;
-        color: var(--success);
-      }
-
-      .trend-indicator {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-1);
-        font-size: 0.75rem;
-        font-weight: 600;
-      }
-
-      .trend-indicator.up {
-        color: var(--success);
-      }
-
-      .trend-indicator.down {
-        color: var(--error);
-      }
-
-      /* ========================================
-         RESPONSIVE STYLES
-         ======================================== */
-      @media (max-width: 768px) {
-        .brand-text-header {
-          display: none;
+        /* Reset */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .breadcrumb {
-          display: none;
+        html {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient( 160deg, #fef9f5 0%, /* Warm cream */
+            #f8f2ec 25%, /* Peachy beige */
+            #f0ebe6 50%, /* Soft tan */
+            #e8f4f2 75%, /* Pale mint */
+            #f5fbfa 100%/* Light aqua */
+            );
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            min-height: 100vh;
+            color: var(--gray-800);
+            overflow-x: hidden;
+        }
+        /* Paw Print Pattern Overlay */
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231b9e7e' fill-opacity='0.02'%3E%3Cellipse cx='40' cy='45' rx='4' ry='5'/%3E%3Cellipse cx='30' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='50' cy='38' rx='2.5' ry='3.5'/%3E%3Cellipse cx='34' cy='32' rx='2.5' ry='3.5'/%3E%3Cellipse cx='46' cy='32' rx='2.5' ry='3.5'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        @keyframes gradientShift {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        /* === ANIMATIONS === */
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* === TYPOGRAPHY APPLICATION === */
+        /* Headings use elegant serif */
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+        /* Body text uses warm sans-serif */
+
+        body,
+        p,
+        li,
+        td,
+        th {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        /* UI elements (buttons, badges, labels) use geometric sans */
+
+        button,
+        .btn,
+        .badge,
+        label,
+        input,
+        select,
+        textarea {
+            font-family: var(--font-accent);
+            letter-spacing: 0.01em;
+        }
+        /* Layout Structure */
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Persistent Header */
+
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--space-4) var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
         }
 
         .header-content {
-          gap: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-18);
+            margin: 0 0 0 0;
+        }
+        /* Hamburger Menu */
+
+        .hamburger-menu {
+            position: relative;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            height: 48px;
+            width: 48px;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            background: var(--gray-100);
+        }
+
+        .hamburger:hover {
+            background: var(--gray-200);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-700);
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        /* Sidebar */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-xl);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.pinned {
+            position: relative;
+            transform: translateX(0);
+            transition: none;
+        }
+
+        .sidebar-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: var(--header-height);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .brand-icon-sidebar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .brand-text-sidebar h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .brand-text-sidebar p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        .sidebar-controls {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .sidebar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .sidebar-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: var(--space-4);
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-1);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .date-sidebar {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        /* Resize Handle */
+
+        .sidebar-resize-handle {
+            position: absolute;
+            top: 0;
+            right: -2px;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            cursor: col-resize;
+            z-index: 10;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-resize-handle:hover,
+        .sidebar-resize-handle.dragging {
+            background: var(--primary);
+        }
+
+        .sidebar-resize-handle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 40px;
+            background: var(--gray-300);
+            border-radius: 1px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-resize-handle:hover::before,
+        .sidebar-resize-handle.dragging::before {
+            opacity: 1;
+        }
+        /* Brand Logo */
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            cursor: pointer;
+        }
+
+        .brand-icon-header {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .brand-text-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .brand-text-header p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin: 0;
+        }
+        /* Search Bar */
+
+        .search-section {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--gray-400);
+            margin-left: var(--space-4);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: var(--space-4);
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 500;
+            background: transparent;
+            color: var(--gray-800);
+            font-family: var(--font-family);
+        }
+
+        .search-actions {
+            display: flex;
+            gap: var(--space-2);
+            margin-right: var(--space-2);
+        }
+        /* Breadcrumb Section */
+
+        .breadcrumb-section {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            /* Empty by default, styled when breadcrumbs are added */
+        }
+        /* Header Actions */
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-left: auto;
+        }
+
+        .date-display {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0 var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        /* Main Content */
+
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: var(--space-6);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            transition: margin-left 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-layout.sidebar-pinned .main-content {
+            margin-left: calc(var(--sidebar-width) + var(--space-6));
+        }
+
+        .btn {
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+        /* Overlay for dropdown */
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 150;
+            display: none;
+        }
+
+        .nav-overlay.active {
+            display: block;
+        }
+
+        /* ========================================
+           CONTENT WRAPPER
+           ======================================== */
+        .content-wrapper {
+            padding: var(--space-8);
+        }
+
+        /* ========================================
+           PAGE TITLE SECTION
+           ======================================== */
+        .page-title-section {
+            margin-bottom: var(--space-8);
+            animation: fadeInDown 0.5s ease-out;
         }
 
         .page-title-section h1 {
-          font-size: 2rem;
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 var(--space-2) 0;
+            letter-spacing: -0.02em;
         }
 
+        .page-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            font-weight: 400;
+            color: var(--gray-600);
+            margin: 0;
+        }
+
+        /* ========================================
+           STATS GRID (Primary Metrics)
+           ======================================== */
         .stats-grid {
-          grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
         }
 
-        .charts-grid {
-          grid-template-columns: 1fr;
+        .stat-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-slow) var(--ease-bounce);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.4s var(--ease-out) forwards;
+            opacity: 0;
         }
 
-        .table-card {
-          overflow-x: auto;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .view-toggle {
-          flex-direction: column;
-          width: 100%;
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
         }
 
-        .toggle-btn {
-          width: 100%;
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .stat-card.revenue::before {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+        }
+
+        .stat-card.revenue:hover {
+            box-shadow: var(--shadow-accent);
+        }
+
+        .stat-card.date::before {
+            background: linear-gradient(135deg, var(--tan) 0%, var(--primary) 100%);
+        }
+
+        .stat-card.date:hover {
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .stat-label {
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-500);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .stat-card.revenue .stat-icon {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .stat-card.date .stat-icon {
+            background: var(--peach);
+            color: var(--tan);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-value.currency::before {
+            content: '$';
+            font-size: 2rem;
+            margin-right: var(--space-2);
+            color: var(--success);
+        }
+
+        .stat-subtext {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-2);
+            background: var(--accent-light);
+            color: var(--secondary-dark);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: var(--space-2);
+        }
+
+        .stat-change.negative {
+            background: rgba(217, 112, 102, 0.1);
+            color: var(--error);
+        }
+
+        /* ========================================
+           CHARTS SECTION
+           ======================================== */
+        .charts-section {
+            margin-bottom: var(--space-8);
         }
 
         .section-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
         }
-      }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: var(--space-2);
+            background: var(--gray-100);
+            padding: var(--space-1);
+            border-radius: var(--radius-lg);
+        }
+
+        .toggle-btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-smooth);
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-normal) var(--ease-smooth);
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chart-title {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .chart-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .chart-content {
+            padding: var(--space-6);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(
+                135deg,
+                var(--primary-light) 0%,
+                var(--accent-light) 100%
+            );
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            font-family: var(--font-body);
+            font-style: italic;
+            border: 2px dashed var(--gray-300);
+        }
+
+        /* ========================================
+           WEEKLY/MONTHLY TABLE
+           ======================================== */
+        .table-section {
+            animation: fadeInUp 0.5s ease-out 0.4s backwards;
+        }
+
+        .table-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-body);
+        }
+
+        .data-table thead {
+            background: var(--gray-50);
+        }
+
+        .data-table th {
+            padding: var(--space-4);
+            text-align: left;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+        }
+
+        .data-table tr:hover {
+            background: var(--primary-light);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-date {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .table-number {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .table-currency {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .trend-indicator.up {
+            color: var(--success);
+        }
+
+        .trend-indicator.down {
+            color: var(--error);
+        }
+
+        /* Mobile Responsive */
+
+        @media (max-width: 768px) {
+            .header-content {
+                gap: var(--space-4);
+            }
+            .brand-text-header {
+                display: none;
+            }
+            .search-section {
+                max-width: none;
+            }
+            .date-display {
+                display: none;
+            }
+            /* Mobile sidebar adjustments */
+            .sidebar {
+                width: min(280px, 80vw);
+            }
+            .app-layout.sidebar-pinned .main-content {
+                margin-left: var(--space-6);
+            }
+            .sidebar.pinned {
+                position: fixed;
+            }
+            .page-title-section h1 {
+                font-size: 2rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-card {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .view-toggle {
+                flex-direction: column;
+                width: 100%;
+            }
+            .toggle-btn {
+                width: 100%;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header {
+                padding: var(--space-3) var(--space-4);
+            }
+            .search-actions {
+                flex-direction: column;
+                gap: var(--space-1);
+            }
+            .btn {
+                font-size: 0.75rem;
+                padding: var(--space-2);
+            }
+            .sidebar {
+                width: min(260px, 85vw);
+            }
+        }
     </style>
-  </head>
-  <body>
-    <!-- ========================================
-         HEADER NAVIGATION BAR
-         ======================================== -->
-    <header class="app-header">
-      <div class="header-content">
-        <!-- Hamburger Menu -->
-        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+</head>
 
-        <!-- Navigation Dropdown -->
-        <nav class="nav-dropdown" id="navDropdown">
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-                Dashboard
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                Search Animals
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <line x1="19" y1="8" x2="19" y2="14"></line>
-                  <line x1="22" y1="11" x2="16" y2="11"></line>
-                </svg>
-                Add Customer
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                Manage Breeds
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link active">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="1" x2="12" y2="23"></line>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-                Daily Analytics
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<body>
+    <div class="app-layout">
+        <!-- Persistent Header with Navigation -->
+        <header class="app-header">
+            <div class="header-content">
+                <!-- Hamburger Menu -->
+                <div class="hamburger-menu">
+                    <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Brand Logo -->
+                <div class="brand-header" onclick="navigate('dashboard')">
+                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search animals, breeds, owners..." value="" />
+                        <div class="search-actions">
+                            <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                            <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
+                </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breadcrumb Display Area -->
+                <div class="breadcrumb-section">
+                    <!-- Breadcrumbs will be inserted here when needed -->
+                </div>
+
+                <!-- Header Actions -->
+                <div class="header-actions">
+                    <div class="date-display" id="currentDate"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Overlay -->
+        <div class="nav-overlay" id="navOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Left Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <!-- Resize Handle -->
+            <div class="sidebar-resize-handle" id="resizeHandle"></div>
+
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" style="width: 100px; height: auto" />
+                </div>
+
+                <div class="sidebar-controls">
+                    <button class="sidebar-btn" id="pinBtn" onclick="togglePin()" title="Pin sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z"
+                />
+              </svg>
+            </button>
+                    <button class="sidebar-btn" onclick="toggleSidebar()" title="Close sidebar">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('dashboard')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"
+                />
+              </svg> Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('search')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg> Search Results
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('customers')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg> Add Customer
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('breeds')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg> Manage Breeds
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="navigate('analytics')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"
+                />
+              </svg> Daily Analytics
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="navigate('history')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg> Customer History
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="date-sidebar" id="sidebarDate"></div>
+            </div>
+        </nav>
+        <!-- Main Content - Daily Totals Page -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Page Title Section -->
+                <div class="page-title-section">
+                    <h1>Daily Totals / Analytics</h1>
+                    <p class="page-subtitle">
+                        Real-time dashboard for today's business metrics and historical trends
+                    </p>
+                </div>
+
+                <!-- Primary Stats Grid -->
+                <div class="stats-grid">
+                    <!-- Current Date/Time Card -->
+                    <div class="stat-card date">
+                        <div class="stat-header">
+                            <span class="stat-label">Report Generated</span>
+                            <div class="stat-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                Customer History
-              </a>
-            </li>
-          </ul>
-        </nav>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="reportDateTime" style="font-size: 1.5rem; font-weight: 700;">
+                            July 31, 2025, 4:09 pm
+                        </div>
+                        <div class="stat-subtext">Live updated every second</div>
+                    </div>
 
-        <!-- Brand Logo -->
-        <div class="brand-header">
-          <div class="brand-icon-header" aria-hidden="true">
-        <img
-          src="images/logo-tiny.png"
-          alt="Pampered Pooch Logo"
-          width="40"
-          height="40"
-          style="border-radius: var(--radius-lg);"
-        />
-      </div>
-          <span class="brand-text-header">Pampered Pooch</span>
-        </div>
-
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
-          <a href="#" class="breadcrumb-link">Home</a>
-          <span class="breadcrumb-separator">›</span>
-          <span class="breadcrumb-current">Daily Totals</span>
-        </nav>
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-          <div class="date-display" id="currentDate"></div>
-        </div>
-      </div>
-    </header>
-
-    <!-- ========================================
-         MAIN CONTENT
-         ======================================== -->
-    <main class="main-content">
-      <div class="content-wrapper">
-        <!-- Page Title Section -->
-        <div class="page-title-section">
-          <h1>Daily Totals / Analytics</h1>
-          <p class="page-subtitle">
-            Real-time dashboard for today's business metrics and historical trends
-          </p>
-        </div>
-
-        <!-- Primary Stats Grid -->
-        <div class="stats-grid">
-          <!-- Current Date/Time Card -->
-          <div class="stat-card date">
-            <div class="stat-header">
-              <span class="stat-label">Report Generated</span>
-              <div class="stat-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-              </div>
-            </div>
-            <div class="stat-value" id="reportDateTime" style="font-size: 1.5rem; font-weight: 700;">
-              July 31, 2025, 4:09 pm
-            </div>
-            <div class="stat-subtext">Live updated every second</div>
-          </div>
-
-          <!-- Total Animals Card -->
-          <div class="stat-card">
-            <div class="stat-header">
-              <span class="stat-label">Total Animals</span>
-              <div class="stat-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <!-- Total Animals Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Animals</span>
+                            <div class="stat-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="8" r="5"></circle>
                   <path d="M3 21c0-3.5 3-6 9-6s9 2.5 9 6"></path>
                   <path d="M12 11c1.5 0 2.5-1.5 2.5-3s-1-3-2.5-3-2.5 1.5-2.5 3 1 3 2.5 3z"></path>
                 </svg>
-              </div>
-            </div>
-            <div class="stat-value" id="totalAnimals">12</div>
-            <div class="stat-subtext">
-              Processed today
-              <span class="stat-change">
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalAnimals">12</div>
+                        <div class="stat-subtext">
+                            Processed today
+                            <span class="stat-change">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
                 +3
               </span>
-            </div>
-          </div>
+                        </div>
+                    </div>
 
-          <!-- Total Revenue Card -->
-          <div class="stat-card revenue">
-            <div class="stat-header">
-              <span class="stat-label">Total Revenue</span>
-              <div class="stat-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <!-- Total Revenue Card -->
+                    <div class="stat-card revenue">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Revenue</span>
+                            <div class="stat-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <line x1="12" y1="1" x2="12" y2="23"></line>
                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                 </svg>
-              </div>
-            </div>
-            <div class="stat-value currency" id="totalRevenue">845.00</div>
-            <div class="stat-subtext">
-              Earned today
-              <span class="stat-change">
+                            </div>
+                        </div>
+                        <div class="stat-value currency" id="totalRevenue">845.00</div>
+                        <div class="stat-subtext">
+                            Earned today
+                            <span class="stat-change">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
                 +$215
               </span>
-            </div>
-          </div>
-        </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Charts Section -->
-        <section class="charts-section">
-          <div class="section-header">
-            <h2 class="section-title">Trends & Analytics</h2>
-            <div class="view-toggle">
-              <button class="toggle-btn active" data-period="daily">Daily</button>
-              <button class="toggle-btn" data-period="weekly">Weekly</button>
-              <button class="toggle-btn" data-period="monthly">Monthly</button>
-            </div>
-          </div>
+                <!-- Charts Section -->
+                <section class="charts-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Trends & Analytics</h2>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-period="daily">Daily</button>
+                            <button class="toggle-btn" data-period="weekly">Weekly</button>
+                            <button class="toggle-btn" data-period="monthly">Monthly</button>
+                        </div>
+                    </div>
 
-          <div class="charts-grid">
-            <!-- Revenue Chart -->
-            <div class="chart-card">
-              <div class="chart-header">
-                <h3 class="chart-title">
-                  <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="charts-grid">
+                        <!-- Revenue Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                  Revenue Over Time
-                </h3>
-              </div>
-              <div class="chart-content">
-                <div class="chart-placeholder">
-                  Chart: Line graph showing daily revenue trends
-                </div>
-              </div>
-            </div>
+                  </svg> Revenue Over Time
+                                </h3>
+                            </div>
+                            <div class="chart-content">
+                                <div class="chart-placeholder">
+                                    Chart: Line graph showing daily revenue trends
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Animal Count Chart -->
-            <div class="chart-card">
-              <div class="chart-header">
-                <h3 class="chart-title">
-                  <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <!-- Animal Count Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="20" x2="12" y2="10"></line>
                     <line x1="18" y1="20" x2="18" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="16"></line>
-                  </svg>
-                  Animals Processed
-                </h3>
-              </div>
-              <div class="chart-content">
-                <div class="chart-placeholder">
-                  Chart: Bar graph showing animal counts by day
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+                  </svg> Animals Processed
+                                </h3>
+                            </div>
+                            <div class="chart-content">
+                                <div class="chart-placeholder">
+                                    Chart: Bar graph showing animal counts by day
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-        <!-- Weekly/Monthly Table -->
-        <section class="table-section">
-          <div class="table-card">
-            <div class="table-header">
-              <h2 class="chart-title">
-                <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <!-- Weekly/Monthly Table -->
+                <section class="table-section">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h2 class="chart-title">
+                                <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
                   <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                Last 7 Days Summary
-              </h2>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Day</th>
-                  <th>Animals</th>
-                  <th>Revenue</th>
-                  <th>Avg/Animal</th>
-                  <th>Trend</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="table-date">Jul 31, 2025</td>
-                  <td>Thursday</td>
-                  <td class="table-number">12</td>
-                  <td class="table-currency">$845.00</td>
-                  <td class="table-number">$70.42</td>
-                  <td>
-                    <span class="trend-indicator up">
+                </svg> Last 7 Days Summary
+                            </h2>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Animals</th>
+                                    <th>Revenue</th>
+                                    <th>Avg/Animal</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="table-date">Jul 31, 2025</td>
+                                    <td>Thursday</td>
+                                    <td class="table-number">12</td>
+                                    <td class="table-currency">$845.00</td>
+                                    <td class="table-number">$70.42</td>
+                                    <td>
+                                        <span class="trend-indicator up">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                       +25%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 30, 2025</td>
-                  <td>Wednesday</td>
-                  <td class="table-number">9</td>
-                  <td class="table-currency">$630.00</td>
-                  <td class="table-number">$70.00</td>
-                  <td>
-                    <span class="trend-indicator down">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 30, 2025</td>
+                                    <td>Wednesday</td>
+                                    <td class="table-number">9</td>
+                                    <td class="table-currency">$630.00</td>
+                                    <td class="table-number">$70.00</td>
+                                    <td>
+                                        <span class="trend-indicator down">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="6 9 12 15 18 9"></polyline>
                       </svg>
                       -10%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 29, 2025</td>
-                  <td>Tuesday</td>
-                  <td class="table-number">10</td>
-                  <td class="table-currency">$715.00</td>
-                  <td class="table-number">$71.50</td>
-                  <td>
-                    <span class="trend-indicator up">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 29, 2025</td>
+                                    <td>Tuesday</td>
+                                    <td class="table-number">10</td>
+                                    <td class="table-currency">$715.00</td>
+                                    <td class="table-number">$71.50</td>
+                                    <td>
+                                        <span class="trend-indicator up">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                       +5%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 28, 2025</td>
-                  <td>Monday</td>
-                  <td class="table-number">8</td>
-                  <td class="table-currency">$560.00</td>
-                  <td class="table-number">$70.00</td>
-                  <td>
-                    <span class="trend-indicator up">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 28, 2025</td>
+                                    <td>Monday</td>
+                                    <td class="table-number">8</td>
+                                    <td class="table-currency">$560.00</td>
+                                    <td class="table-number">$70.00</td>
+                                    <td>
+                                        <span class="trend-indicator up">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                       +15%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 27, 2025</td>
-                  <td>Sunday</td>
-                  <td class="table-number">3</td>
-                  <td class="table-currency">$210.00</td>
-                  <td class="table-number">$70.00</td>
-                  <td>
-                    <span class="trend-indicator down">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 27, 2025</td>
+                                    <td>Sunday</td>
+                                    <td class="table-number">3</td>
+                                    <td class="table-currency">$210.00</td>
+                                    <td class="table-number">$70.00</td>
+                                    <td>
+                                        <span class="trend-indicator down">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="6 9 12 15 18 9"></polyline>
                       </svg>
                       -50%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 26, 2025</td>
-                  <td>Saturday</td>
-                  <td class="table-number">14</td>
-                  <td class="table-currency">$980.00</td>
-                  <td class="table-number">$70.00</td>
-                  <td>
-                    <span class="trend-indicator up">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 26, 2025</td>
+                                    <td>Saturday</td>
+                                    <td class="table-number">14</td>
+                                    <td class="table-currency">$980.00</td>
+                                    <td class="table-number">$70.00</td>
+                                    <td>
+                                        <span class="trend-indicator up">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                       +40%
                     </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-date">Jul 25, 2025</td>
-                  <td>Friday</td>
-                  <td class="table-number">11</td>
-                  <td class="table-currency">$770.00</td>
-                  <td class="table-number">$70.00</td>
-                  <td>
-                    <span class="trend-indicator up">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-date">Jul 25, 2025</td>
+                                    <td>Friday</td>
+                                    <td class="table-number">11</td>
+                                    <td class="table-currency">$770.00</td>
+                                    <td class="table-number">$70.00</td>
+                                    <td>
+                                        <span class="trend-indicator up">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                       +10%
                     </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-    </main>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
 
-    <!-- ========================================
-         JAVASCRIPT
-         ======================================== -->
     <script>
-      // ========================================
-      // HAMBURGER MENU TOGGLE
-      // ========================================
-      const hamburgerBtn = document.getElementById('hamburgerBtn')
-      const navDropdown = document.getElementById('navDropdown')
+        // Initialize app state and data
+        ;
+        (function() {
+            // App state
+            let appSidebarOpen = false
+            let appSidebarPinned = false
+            let isResizing = false
+            let sidebarWidth = 280 // Default width
 
-      hamburgerBtn.addEventListener('click', () => {
-        hamburgerBtn.classList.toggle('active')
-        navDropdown.classList.toggle('active')
-      })
+            // Set current date and time
+            function updateDate() {
+                const now = new Date()
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (
-          !hamburgerBtn.contains(e.target) &&
-          !navDropdown.contains(e.target)
-        ) {
-          hamburgerBtn.classList.remove('active')
-          navDropdown.classList.remove('active')
-        }
-      })
+                // Format time as "2:38pm"
+                const timeOptions = {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                }
+                const timeText = now
+                    .toLocaleTimeString('en-US', timeOptions)
+                    .toLowerCase()
 
-      // ========================================
-      // LIVE DATE/TIME UPDATE
-      // ========================================
-      function updateDateTime() {
-        const now = new Date()
-        const options = {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-        }
-        const formattedDate = now.toLocaleDateString('en-US', options)
+                // Format date as "Tue, Sep 16 2025"
+                const dateOptions = {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                }
+                const dateText = now.toLocaleDateString('en-US', dateOptions)
 
-        // Update header date display
-        document.getElementById('currentDate').textContent = formattedDate
+                // Combine as "2:38pm Tue, Sep 16 2025"
+                const fullDateTime = `${timeText} ${dateText}`
 
-        // Update report date/time with full format
-        const fullOptions = {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-        }
-        const fullFormatted = now
-          .toLocaleDateString('en-US', fullOptions)
-          .replace(',', ', ')
-        document.getElementById('reportDateTime').textContent = fullFormatted
-      }
+                document.getElementById('currentDate').textContent = fullDateTime
 
-      // Update immediately and then every second
-      updateDateTime()
-      setInterval(updateDateTime, 1000)
+                // Keep sidebar date simple (without time)
+                const sidebarDate = document.getElementById('sidebarDate')
+                if (sidebarDate) {
+                    const simpleDateOptions = {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                    }
+                    const simpleDateText = now.toLocaleDateString(
+                        'en-US',
+                        simpleDateOptions
+                    )
+                    sidebarDate.textContent = simpleDateText
+                }
 
-      // ========================================
-      // VIEW TOGGLE (Daily/Weekly/Monthly)
-      // ========================================
-      const toggleBtns = document.querySelectorAll('.toggle-btn')
+                // Update report date/time with full format
+                const fullOptions = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                }
+                const reportElement = document.getElementById('reportDateTime')
+                if (reportElement) {
+                    const fullFormatted = now
+                        .toLocaleDateString('en-US', fullOptions)
+                        .replace(',', ', ')
+                    reportElement.textContent = fullFormatted
+                }
+            }
 
-      toggleBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          // Remove active class from all buttons
-          toggleBtns.forEach((b) => b.classList.remove('active'))
+            // Toggle sidebar
+            window.toggleSidebar = function() {
+                const sidebar = document.getElementById('sidebar')
+                const hamburger = document.getElementById('hamburgerBtn')
+                const overlay = document.getElementById('navOverlay')
+                const appLayout = document.querySelector('.app-layout')
 
-          // Add active class to clicked button
-          btn.classList.add('active')
+                if (appSidebarPinned) {
+                    // If pinned, toggle the pinned state instead
+                    togglePin()
+                    return
+                }
 
-          // Get selected period
-          const period = btn.dataset.period
+                appSidebarOpen = !appSidebarOpen
 
-          // In a real app, this would fetch different data
-          console.log(`Switching to ${period} view`)
+                sidebar.classList.toggle('active', appSidebarOpen)
+                hamburger.classList.toggle('active', appSidebarOpen)
+                overlay.classList.toggle('active', appSidebarOpen)
 
-          // Update table header based on period
-          const tableHeader = document.querySelector('.table-header .chart-title')
-          if (period === 'daily') {
-            tableHeader.innerHTML = `
+                if (appSidebarOpen) {
+                    document.body.style.overflow = 'hidden'
+                } else {
+                    document.body.style.overflow = ''
+                }
+            }
+
+            // Toggle pin state
+            window.togglePin = function() {
+                const sidebar = document.getElementById('sidebar')
+                const pinBtn = document.getElementById('pinBtn')
+                const appLayout = document.querySelector('.app-layout')
+                const overlay = document.getElementById('navOverlay')
+                const hamburger = document.getElementById('hamburgerBtn')
+
+                appSidebarPinned = !appSidebarPinned
+
+                if (appSidebarPinned) {
+                    sidebar.classList.add('pinned')
+                    sidebar.classList.add('active')
+                    appLayout.classList.add('sidebar-pinned')
+                    pinBtn.classList.add('active')
+                    overlay.classList.remove('active')
+                    hamburger.classList.add('active')
+                    document.body.style.overflow = ''
+                    appSidebarOpen = true
+                } else {
+                    sidebar.classList.remove('pinned')
+                    appLayout.classList.remove('sidebar-pinned')
+                    pinBtn.classList.remove('active')
+
+                    // If not pinned and we want to close, close completely
+                    if (appSidebarOpen) {
+                        toggleSidebar()
+                    }
+                }
+            }
+
+            // Initialize resize functionality
+            function initResize() {
+                const resizeHandle = document.getElementById('resizeHandle')
+                const sidebar = document.getElementById('sidebar')
+
+                let startX, startWidth
+
+                function startResize(e) {
+                    isResizing = true
+                    startX = e.clientX
+                    startWidth = sidebarWidth
+
+                    resizeHandle.classList.add('dragging')
+                    document.body.style.cursor = 'col-resize'
+                    document.body.style.userSelect = 'none'
+
+                    document.addEventListener('mousemove', handleResize)
+                    document.addEventListener('mouseup', stopResize)
+                }
+
+                function handleResize(e) {
+                    if (!isResizing) return
+
+                    const deltaX = e.clientX - startX
+                    const newWidth = Math.max(200, Math.min(500, startWidth + deltaX))
+
+                    sidebarWidth = newWidth
+                    document.documentElement.style.setProperty(
+                        '--sidebar-width',
+                        `${newWidth}px`
+                    )
+                    sidebar.style.width = `${newWidth}px`
+                }
+
+                function stopResize() {
+                    isResizing = false
+                    resizeHandle.classList.remove('dragging')
+                    document.body.style.cursor = ''
+                    document.body.style.userSelect = ''
+
+                    document.removeEventListener('mousemove', handleResize)
+                    document.removeEventListener('mouseup', stopResize)
+                }
+
+                resizeHandle.addEventListener('mousedown', startResize)
+            }
+
+            // Navigation functions
+            window.navigate = function(section) {
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active')
+                })
+
+                // Add active class to clicked nav link
+                event.target.closest('.nav-link').classList.add('active')
+
+                // Close sidebar if not pinned
+                if (appSidebarOpen && !appSidebarPinned) {
+                    toggleSidebar()
+                }
+
+                alert(`Navigating to ${section}...`)
+            }
+
+            window.performSearch = function() {
+                const query = document.getElementById('searchInput').value
+                if (!query.trim()) {
+                    alert('Please enter a search term')
+                    return
+                }
+                alert(`Searching for: ${query}`)
+            }
+
+            window.clearSearch = function() {
+                document.getElementById('searchInput').value = ''
+                document.getElementById('searchInput').focus()
+            }
+
+            // View toggle functions (Daily/Weekly/Monthly)
+            const toggleBtns = document.querySelectorAll('.toggle-btn')
+
+            toggleBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    toggleBtns.forEach((b) => b.classList.remove('active'))
+
+                    // Add active class to clicked button
+                    btn.classList.add('active')
+
+                    // Get selected period
+                    const period = btn.dataset.period
+
+                    // In a real app, this would fetch different data
+                    console.log(`Switching to ${period} view`)
+
+                    // Update table header based on period
+                    const tableHeader = document.querySelector('.table-header .chart-title')
+                    if (period === 'daily') {
+                        tableHeader.innerHTML = `
               <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -1369,8 +1882,8 @@
               </svg>
               Last 7 Days Summary
             `
-          } else if (period === 'weekly') {
-            tableHeader.innerHTML = `
+                    } else if (period === 'weekly') {
+                        tableHeader.innerHTML = `
               <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -1379,8 +1892,8 @@
               </svg>
               Last 4 Weeks Summary
             `
-          } else if (period === 'monthly') {
-            tableHeader.innerHTML = `
+                    } else if (period === 'monthly') {
+                        tableHeader.innerHTML = `
               <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -1389,33 +1902,38 @@
               </svg>
               Last 12 Months Summary
             `
-          }
-        })
-      })
+                    }
+                })
+            })
 
-      // ========================================
-      // SIMULATE LIVE DATA UPDATES (Optional)
-      // ========================================
-      // In a real application, this would fetch from API
-      function simulateDataUpdate() {
-        // Randomly update animal count (for demo purposes)
-        const currentCount = parseInt(
-          document.getElementById('totalAnimals').textContent
-        )
-        // Small chance of increment during business hours
-        if (Math.random() > 0.95) {
-          const newCount = currentCount + 1
-          document.getElementById('totalAnimals').textContent = newCount
+            // Close sidebar when clicking outside (only if not pinned)
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.sidebar') &&
+                    !e.target.closest('.hamburger-menu') &&
+                    appSidebarOpen &&
+                    !appSidebarPinned
+                ) {
+                    toggleSidebar()
+                }
+            })
 
-          // Update revenue proportionally
-          const avgPrice = 70
-          const newRevenue = (newCount * avgPrice).toFixed(2)
-          document.getElementById('totalRevenue').textContent = newRevenue
-        }
-      }
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function() {
+                updateDate()
+                initResize()
 
-      // Uncomment to enable live updates every 10 seconds
-      // setInterval(simulateDataUpdate, 10000)
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth <= 768 && appSidebarPinned) {
+                        togglePin() // Unpin on mobile
+                    }
+                })
+            })
+
+            // Update date and time every second
+            setInterval(updateDate, 1000)
+        })()
     </script>
-  </body>
+</body>
+
 </html>
