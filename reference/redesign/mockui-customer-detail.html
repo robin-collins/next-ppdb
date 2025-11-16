@@ -591,9 +591,56 @@
         margin: 0;
       }
 
+      /* Search Bar */
+      .search-section {
+        flex: 1;
+        max-width: 600px;
+      }
+
+      .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-xl);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(217, 148, 74, 0.1), var(--shadow-md);
+      }
+
+      .search-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--gray-400);
+        margin-left: var(--space-4);
+        flex-shrink: 0;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--space-4);
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--gray-800);
+        font-family: var(--font-family);
+      }
+
+      .search-actions {
+        display: flex;
+        gap: var(--space-2);
+        margin-right: var(--space-2);
+      }
+
       /* Breadcrumb Section */
       .breadcrumb-section {
-        flex: 1;
         display: flex;
         align-items: center;
         gap: var(--space-2);
@@ -1086,6 +1133,14 @@
           display: none;
         }
 
+        .search-section {
+          display: none;
+        }
+
+        .breadcrumb-section {
+          display: none;
+        }
+
         .date-display {
           display: none;
         }
@@ -1165,6 +1220,26 @@
           <!-- Brand Logo -->
           <div class="brand-header" onclick="navigate('dashboard')">
             <img src="images/logo-tiny.png" alt="Pampered Pooch Logo" />
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-section">
+            <div class="search-bar">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+              </svg>
+              <input type="text" class="search-input" id="searchInput" placeholder="Search animals, breeds, owners..." value="" />
+              <div class="search-actions">
+                <button class="btn btn-primary" onclick="performSearch()">
+                  Search
+                </button>
+                <button class="btn btn-secondary" onclick="clearSearch()">
+                  Clear
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Breadcrumb Display Area -->
@@ -1693,6 +1768,22 @@
           alert(`Navigating to ${section}...`)
         }
 
+        // Search functions
+        window.performSearch = function() {
+          const query = document.getElementById('searchInput').value
+          if (!query.trim()) {
+            alert('Please enter a search term')
+            return
+          }
+
+          alert(`Searching for: "${query}"\n\nThis is a mockup UI. In production, this would navigate to the search results page.`)
+        }
+
+        window.clearSearch = function() {
+          document.getElementById('searchInput').value = ''
+          document.getElementById('searchInput').focus()
+        }
+
         // Close sidebar when clicking outside (only if not pinned)
         document.addEventListener('click', function(e) {
           if (!e.target.closest('.sidebar') &&
@@ -1708,6 +1799,15 @@
         document.addEventListener('DOMContentLoaded', function() {
           updateDate()
           initResize()
+
+          // Search on Enter key
+          document
+            .getElementById('searchInput')
+            .addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                window.performSearch()
+              }
+            })
 
           // Handle window resize
           window.addEventListener('resize', function() {
