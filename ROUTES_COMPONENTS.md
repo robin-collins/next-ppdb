@@ -259,6 +259,7 @@ Pages:
 | `/`                     | Unified search and results       | Implemented                  |
 | `/customer/[id]`        | Customer detail with animals     | Implemented                  |
 | `/customers/add`        | New customer form                | Implemented                  |
+| `/customers/history`    | Historical/inactive customers    | To implement                 |
 | `/animals/[id]`         | Animal detail + service notes    | To implement                 |
 | `/animals/new`          | New animal for existing customer | To implement (optional flow) |
 | `/breeds`               | Breed management CRUD            | To implement                 |
@@ -281,6 +282,7 @@ APIs:
 | `/api/customers/[id]`       | GET    | Customer with animals              | Implemented  |
 | `/api/customers/[id]`       | PUT    | Update customer                    | Implemented  |
 | `/api/customers/[id]`       | DELETE | Delete customer                    | Implemented  |
+| `/api/customers/history`    | GET    | List inactive customers by period  | To implement |
 | `/api/breeds`               | GET    | List breeds                        | To implement |
 | `/api/breeds`               | POST   | Create breed                       | To implement |
 | `/api/breeds/[id]`          | PUT    | Update breed                       | To implement |
@@ -294,6 +296,7 @@ Suggested sidebar items (ensure active highlighting via `currentPath`):
 
 - Dashboard/Search (`/`)
 - Add Customer (`/customers/add`)
+- Customer History (`/customers/history`)
 - Breeds (`/breeds`)
 - Daily Totals (`/reports/daily-totals`)
 - Backup (optional) (`/admin/backup`)
@@ -312,3 +315,94 @@ Suggested sidebar items (ensure active highlighting via `currentPath`):
 - Validate customer detail editing and deletion rules.
 - After adding `/animals/[id]`, verify notes add/delete and updates propagate to list.
 - Once breeds/report endpoints are added, validate CRUD and totals accuracy against seed data.
+
+## Potential / MVP Considerations (from mock UI analysis)
+
+These items are visible or implied in mockups under `reference/redesign/mockui-*.html`. They may extend beyond strict legacy parity but improve usability and visual fidelity. Treat as optional unless promoted to “Confirmed”.
+
+- Search & Results (`mockui-search_results.html`)
+  - Sort controls (e.g., by relevance, surname, last visit) | Component | src/components/SortMenu.tsx
+  - Filter chips (sex, breed, has notes) | Component | src/components/FilterChips.tsx
+  - Pagination control UI (next/prev, page numbers) | Component | src/components/Pagination.tsx
+  - Relevance badge/toggle visibility | Component | src/components/Badge.tsx
+  - Result skeleton loaders | Component | src/components/LoadingState.tsx
+
+- Customer Detail (`mockui-customer-detail.html`, `mockui-customer-record-modern.html`)
+  - Breadcrumbs header (Dashboard > Customers > Name) | Component | src/components/Breadcrumbs.tsx
+  - Customer avatar/initials | Component | src/components/Avatar.tsx
+  - Status badges (Active/Inactive) | Component | src/components/Badge.tsx
+  - Toast/notification for save/update | Component | src/components/Toast.tsx
+  - Confirm dialog for delete | Component | src/components/ConfirmDialog.tsx
+  - Customer history page (tab/route) | Page | src/app/customers/[id]/history/page.tsx
+  - Click-to-call and mailto actions | Enhancement | src/components/customer/ContactDetailsCard.tsx
+
+- Animal Detail (`mockui-animal-detail.html`, `mockui-cody-animal-record-complete.html`, `mockui-service-history.html`)
+  - Owner summary strip with quick contact actions | Component | src/components/animals/AnimalHeader.tsx (confirmed as new)
+  - Breed select with async search | Enhancement | src/components/animals/AnimalInfoCard.tsx
+  - Date pickers for visits | Component | src/components/DatePicker.tsx
+  - Rich notes timeline (icons, compact rows) | Enhancement | src/components/animals/ServiceNotesCard.tsx
+  - All notes full-page view | Page | src/app/animals/[id]/history/page.tsx
+  - Technician code helper (chips/autocomplete) | Component | src/components/NoteTags.tsx
+
+- Add Customer / Add Animal (`mockui-add-customer.html`, `mockui-add-animal.html`)
+  - Inline field validation hints/tooltips | Enhancement | existing form components
+  - Success redirect with toast | Enhancement | page components
+
+- Breeds Management (`mockui-breed_management_modern.html`)
+  - Table column sorting and search inputs | Enhancement | src/app/breeds/page.tsx
+  - Inline validation for time/cost formats | Enhancement | src/components/breeds/BreedTable.tsx
+  - Bulk actions (optional) | Enhancement | src/components/breeds/BreedTable.tsx
+  - Keyboard shortcuts (search/new/pagination) | Enhancement | src/app/breeds/page.tsx
+
+- Daily Totals (`mockui-daily-totals.html`)
+  - Date selector (view past day totals) | Component | src/components/reports/DateSelector.tsx
+  - Export/print actions | Component | src/components/reports/ReportActions.tsx
+
+- Global/Shared
+  - Breadcrumbs | Component | src/components/Breadcrumbs.tsx
+  - Avatar | Component | src/components/Avatar.tsx
+  - Badge | Component | src/components/Badge.tsx
+  - Toast/Notification | Component | src/components/Toast.tsx
+  - ConfirmDialog | Component | src/components/ConfirmDialog.tsx
+  - Pagination | Component | src/components/Pagination.tsx
+  - DatePicker | Component | src/components/DatePicker.tsx
+  - Loading/Skeleton | Component | src/components/LoadingState.tsx
+  - Empty-state variations with mascot | Enhancement | src/components/EmptyState.tsx
+
+- Add Animal (`mockui-add-animal.html`)
+  - Customer context strip (avatar, name, phone) | Component | src/components/animals/CustomerContext.tsx
+  - Breed-based pricing auto-fill | Enhancement | src/components/animals/AnimalInfoCard.tsx (breed → cost mapping)
+  - Calendar button integration for native date input | Enhancement | src/components/DatePicker.tsx
+
+- Animal Detail (`mockui-cody-animal-record-complete.html`)
+  - Back to Search CTA | Enhancement | src/app/animals/[id]/page.tsx
+  - View Customer CTA | Enhancement | src/app/animals/[id]/page.tsx
+  - Change Dates specialized action | Enhancement | src/components/animals/AnimalInfoCard.tsx
+
+- Breeds Management (`mockui-breed_management_modern.html`)
+  - Breed search box | Component | src/components/breeds/BreedSearch.tsx
+  - Category filter buttons (All/Dogs/Cats/Other) | Component | src/components/breeds/BreedFilters.tsx
+  - Paginated table with info footer | Component | src/components/breeds/BreedTable.tsx (pagination area)
+  - Keyboard shortcuts (Ctrl/Cmd+F search, +N new) | Enhancement | page-level handlers
+
+- Daily Totals / Analytics (`mockui-daily-totals.html`)
+  - Stats cards (Report Generated, Total Animals, Total Revenue) | Component | src/components/reports/StatsCard.tsx
+  - Period toggle (Daily/Weekly/Monthly) | Component | src/components/reports/PeriodToggle.tsx
+  - Chart cards (revenue line, animals bar) | Component | src/components/reports/ChartCard.tsx
+  - Trends table (last 7 days) | Component | src/components/reports/TrendsTable.tsx
+
+## Confirmed Additions From Mock UI (Required for Parity)
+
+Based on `mockui-customer-history.html` (maps to legacy “Old Customers”):
+
+- Page: `/customers/history`
+  - File: `src/app/customers/history/page.tsx`
+  - Purpose: List inactive customers with filters for 12+/24+/36+ months, search, stats
+  - Rendering: CSR
+  - Components:
+    - `HistoryFilters` (period select + search)
+    - `CustomerHistoryTable` (sticky header table with last visit badges)
+    - `StatsBar` (total/displayed/oldest visit)
+- API: GET `/api/customers/history?months=&q=`
+  - Returns filtered, searchable list with pagination-ready shape
+  - Implementation detail: derive inactivity from max(animal.thisvisit,lastvisit) per customer

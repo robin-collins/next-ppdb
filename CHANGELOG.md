@@ -48,6 +48,10 @@ All notable changes to this project will be documented in this file.
   - **References**: Cross-references `reference/PPDB/*` analysis documents and current Prisma schema
   - **Outcome**: Single source of truth for implementing remaining MVP features (animals detail, notes, breeds, reports)
 
+- **Mock UI Analysis Additions**: Appended “Potential / MVP Considerations” to `ROUTES_COMPONENTS.md` and `TODO_ROUTES_COMPONENTS.md` from `reference/redesign/mockui-*.html` (2025-11-16)
+  - **Scope**: Search sorting/filters/pagination, breadcrumbs, avatar/badges, toasts, confirm dialogs, date pickers, notes timeline, customer and animal history routes, breeds enhancements, reports actions
+  - **Purpose**: Track optional items visible in mockups; implement as needed without blocking MVP parity
+
 - **Mock UI prompt pack**: Added `update_mockui_prompts.md` with 13 ready-to-use prompt templates (2025-11-15)
   - **Purpose**: Provides consistent instructions for updating each mock UI HTML reference to match `STYLE_GUIDE.md`
   - **Coverage**: Includes breed management, animal/customer detail, add-record forms, service history, daily totals, and search results prototypes under `reference/redesign/`
@@ -656,3 +660,9 @@ All notable changes to this project will be documented in this file.
 - **Type System**: Aligned interfaces between store, components, and API responses
 - **Mock UI Service History**: Rebuilt `reference/redesign/mockui-service-history.html` entries with a compact inline layout (date header + flex row for notes, price, technician) and updated styles to reduce vertical spacing
 - **Mock UI Service History**: Stats overview now forms the header of a single glassmorphic card, with every note rendered as a divider-separated row so the list reads as one continuous timeline
+
+### Documentation
+
+- Refined ROUTES_COMPONENTS.md to add confirmed Customers History page `/customers/history` and API `/api/customers/history` from mock UI analysis (2025-11-16)
+- Updated TODO_ROUTES_COMPONENTS.md with new page, API, and components (HistoryFilters, CustomerHistoryTable, StatsBar) (2025-11-16)
+- Adjusted reference/CURRENT_PLAN.md MVP priorities to include Customers History and reorganized Should/Nice-to-have items (2025-11-16)

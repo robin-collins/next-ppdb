@@ -107,6 +107,10 @@ ppdb-ts/
 │   └── store/
 │       ├── animalsStore.ts         # Fixed linting issues, added types
 │       └── customersStore.ts       # Fixed linting issues, added types
+├── ROUTES_COMPONENTS.md            # MVP routes/components blueprint (updated: customers history)
+├── TODO_ROUTES_COMPONENTS.md       # MVP task checklist (updated: customers history tasks)
+└── reference/
+    └── CURRENT_PLAN.md             # MVP development plan (updated priorities)
 └── tsconfig.json
 ```
 

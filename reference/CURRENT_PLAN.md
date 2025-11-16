@@ -521,20 +521,25 @@ pnpm dlx prisma generate
 3. ✅ **Customer lookup** - Essential workflow
 4. ✅ **Service notes display** - Historical data
 5. ✅ **Basic CRUD operations** - Data management
+6. ⏳ **Customer History (Old Customers)** - Inactive list (12+/24+/36+) with search/stats
 
 ### **Should Have (Week 2)**
 
-6. **Add/Edit forms** - Data entry
-7. **Breed management** - Pricing reference
-8. **Daily totals** - Business reporting
-9. **Data export** - Backup functionality
+1. **Add/Edit forms** - Data entry
+2. **Breed management** - Pricing reference
+3. **Daily totals** - Business reporting
+4. **Data export** - Backup functionality
+5. **All service notes page** - Animal notes history
+6. **Click-to-call/mailto** - Contact QoL on customer/animal pages
 
 ### **Nice to Have (Later)**
 
 10. Mobile responsive design
-11. Advanced filtering
-12. Print functionality
+11. Advanced filtering and sort menus
+12. Print/export analytics, report actions
 13. User authentication
+14. Analytics charts and period toggles (Daily/Weekly/Monthly)
+15. Keyboard shortcuts (search/new/pagination)
 
 ## 🔧 **Why This Stack for MVP**
 
