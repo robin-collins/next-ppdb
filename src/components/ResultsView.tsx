@@ -6,8 +6,15 @@ interface Animal {
   breed: string
   colour: string | null
   customer: {
+    id: number
     surname: string
+    firstname?: string | null
+    address?: string | null
+    suburb?: string | null
+    postcode?: number | null
     phone1?: string | null
+    phone2?: string | null
+    phone3?: string | null
   }
   lastVisit: Date
   cost: number

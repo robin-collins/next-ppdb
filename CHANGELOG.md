@@ -1,3 +1,5 @@
+- Next.js Suspense requirement: Wrapped `src/app/page.tsx` content in `<Suspense fallback={null}>` to satisfy `useSearchParams()` prerendering requirement on the home page. (2025-11-16)
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -34,6 +36,17 @@ All notable changes to this project will be documented in this file.
   - **Accessibility**: Added aria-hidden attributes to logo containers for screen readers
 
 ### Added
+
+- **TODO_ROUTES_COMPONENTS.md**: Created actionable MVP checklist derived from `ROUTES_COMPONENTS.md` (2025-11-16)
+  - **Format**: Task list with checkboxes `- [ ] Name | Type | Path - description`
+  - **Coverage**: Pages, APIs, and Components; marks already built items as `[x]`
+  - **Purpose**: Operationalizes the blueprint into executable tasks for implementation tracking
+
+- **Routes & Components Blueprint**: Added `ROUTES_COMPONENTS.md` documenting all routes, endpoints, pages, and components required to deliver MVP parity with the legacy PPDB system (2025-11-16)
+  - **Scope**: Full mapping from legacy features to Next.js routes and API handlers
+  - **Details**: Includes page/component hierarchies, endpoint tables, props/data flow, rendering strategy
+  - **References**: Cross-references `reference/PPDB/*` analysis documents and current Prisma schema
+  - **Outcome**: Single source of truth for implementing remaining MVP features (animals detail, notes, breeds, reports)
 
 - **Mock UI prompt pack**: Added `update_mockui_prompts.md` with 13 ready-to-use prompt templates (2025-11-15)
   - **Purpose**: Provides consistent instructions for updating each mock UI HTML reference to match `STYLE_GUIDE.md`
@@ -472,6 +485,12 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Next.js build failure: Corrected route handler signatures in `src/app/api/customers/[id]/route.ts` by removing an over-specific type on the second argument (`{ params: { id: string } }`). The second parameter now uses the framework’s inferred `RouteContext`, resolving "invalid GET export: Type '{ params: { id: string } }' is not a valid type for the function's second argument." (2025-11-16)
+- Next.js 15 params typing: Updated `src/app/api/customers/[id]/route.ts` to use the async params pattern (`{ params }: { params: Promise<{ id: string }> }`) for GET/PUT/DELETE, avoiding implicit-any while complying with Next’s accepted handler overloads. (2025-11-16)
+- Prisma type error in `src/app/api/animals/[id]/route.ts`: Replaced normalized field references with production schema fields for notes (`orderBy: { date: 'desc' }`, `note.notes`, `note.date`) to align with the drop-in replacement policy and restore successful type-checking. (2025-11-16)
+- Prisma model alignment in `src/app/api/animals/[id]/route.ts`: Mapped animal sex field to production schema `SEX` (uppercase) in both reads and updates, fixing TypeScript errors and ensuring correct DB writes. (2025-11-16)
+- Prisma model alignment in `src/app/api/animals/route.ts`: Updated sex field mapping to use `SEX` (uppercase) for transformations and creation, maintaining compatibility with the production schema. (2025-11-16)
+- Type alignment: Updated `src/components/ResultsView.tsx` local `Animal` interface to match `AnimalCard`’s expected shape (full `customer` fields), resolving a conflicting duplicate `Animal` type error. (2025-11-16)
 - `reference/redesign/mockui-customer-history.html`: Removed the mock "Insert New Customer Record" card and made the form handler optional so the historical customer table continues rendering when the form section is absent.
 - **Add Customer Page lint**: Replaced `any` with a typed `ValidationDetail` helper and escaped the apostrophe in the tips list so `/customers/add` passes ESLint.
 - **Database Schema Alignment**: Fixed Prisma schema to allow NULL values in `animal.colour` field

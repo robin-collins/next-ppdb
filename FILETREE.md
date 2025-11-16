@@ -180,6 +180,7 @@ Complete production-ready migration infrastructure for safely upgrading from leg
 - **src/lib/prisma.ts**: Created Prisma client configuration file
 - **prisma/schema.prisma**: Updated with auto-increment ID fields and default output location
 - **API Routes**: Fixed Next.js 15 async params compatibility and type mappings
+- **API Routes**: Corrected `src/app/api/customers/[id]/route.ts` handler signatures to rely on inferred `RouteContext` for the second argument, fixing Next.js 15 type check failure
 - **Type System**: Aligned interfaces between database schema and frontend components
 
 ### Linting Fixes Applied
@@ -196,6 +197,8 @@ Complete production-ready migration infrastructure for safely upgrading from leg
 - `FILETREE.md`: This file structure documentation
 - `TODO.md`: Comprehensive UI redesign implementation plan with design system, components, and testing
 - `SCORES.md`: Comprehensive search scoring algorithm documentation with diagrams and examples
+- `ROUTES_COMPONENTS.md`: Routes, endpoints, pages, and components blueprint for MVP parity
+- `TODO_ROUTES_COMPONENTS.md`: Executable checklist of MVP tasks with statuses
 - `src/lib/prisma.ts`: Prisma client configuration and initialization
 
 ### UI Redesign Implementation (Completed)

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAnimalsStore } from '@/store/animalsStore'
 import Header from '@/components/Header'
@@ -7,7 +7,7 @@ import Sidebar from '@/components/Sidebar'
 import EmptyState from '@/components/EmptyState'
 import ResultsView from '@/components/ResultsView'
 
-export default function HomePage() {
+function HomePageInner() {
   const searchParams = useSearchParams()
   const { animals, loading, searchAnimals } = useAnimalsStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -97,5 +97,13 @@ export default function HomePage() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <HomePageInner />
+    </Suspense>
   )
 }

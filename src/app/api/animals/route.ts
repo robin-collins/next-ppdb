@@ -364,7 +364,7 @@ export async function GET(request: NextRequest) {
       name: animal.animalname,
       breed: animal.breed.breedname,
       colour: animal.colour,
-      sex: animal.sex,
+      sex: animal.SEX,
       cost: animal.cost,
       lastVisit: animal.lastvisit,
       thisVisit: animal.thisvisit,
@@ -418,7 +418,7 @@ export async function POST(request: NextRequest) {
       customerID: data.customerId,
       animalname: data.name,
       breedID: 1, // We need to handle breed lookup properly - for now using default
-      sex: data.sex === 'Male' ? 'Male' : 'Female',
+      SEX: data.sex === 'Male' ? 'Male' : 'Female',
       colour: data.colour || null,
       cost: data.cost || 0,
       lastvisit: data.lastVisit
@@ -438,7 +438,7 @@ export async function POST(request: NextRequest) {
     name: animal.animalname,
     breed: animal.breed.breedname,
     colour: animal.colour,
-    sex: animal.sex,
+    sex: animal.SEX,
     cost: animal.cost,
     lastVisit: animal.lastvisit,
     thisVisit: animal.thisvisit,
