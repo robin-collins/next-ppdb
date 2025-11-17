@@ -29,7 +29,29 @@ export async function PUT(
   const body = await request.json()
 
   const name = body?.name as string | undefined
-  const avgtime = (body?.avgtime ?? null) as string | null
+  const avgtimeInput = (body?.avgtime ?? null) as string | null
+
+  // Convert avgtime string (e.g., "45" minutes) to MySQL TIME format (HH:MM:SS)
+  let avgtime: Date | null | undefined = undefined
+  if (avgtimeInput !== undefined) {
+    if (avgtimeInput === null) {
+      avgtime = null
+    } else if (typeof avgtimeInput === 'string') {
+      // If it's already in HH:MM:SS format, use it directly
+      if (/^\d{2}:\d{2}:\d{2}$/.test(avgtimeInput)) {
+        avgtime = new Date(`1970-01-01T${avgtimeInput}.000Z`)
+      }
+      // If it's just a number (minutes), convert to HH:MM:SS
+      else if (/^\d+$/.test(avgtimeInput)) {
+        const minutes = parseInt(avgtimeInput, 10)
+        const hours = Math.floor(minutes / 60)
+        const mins = minutes % 60
+        const timeStr = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`
+        avgtime = new Date(`1970-01-01T${timeStr}.000Z`)
+      }
+    }
+  }
+
   const avgcostInput = body?.avgcost
   const avgcost: number | null =
     avgcostInput === undefined || avgcostInput === null
@@ -46,7 +68,7 @@ export async function PUT(
     where: { breedID },
     data: {
       ...(name !== undefined && { breedname: name }),
-      avgtime,
+      ...(avgtime !== undefined && { avgtime }),
       avgcost: avgcost,
     },
   })

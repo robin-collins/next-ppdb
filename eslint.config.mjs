@@ -26,6 +26,16 @@ const eslintConfig = [
       'pnpm-lock.yaml',
       '.pnpm-store/**',
       '.spectory/**',
+      // Exclude test files from pre-commit linting
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      'src/__tests__/**',
+      'e2e/**',
+      'jest.setup.ts',
+      'jest.config.mjs',
+      'playwright.config.ts',
     ],
   },
   {

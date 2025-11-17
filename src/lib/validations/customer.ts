@@ -12,7 +12,13 @@ const phoneSchema = z
   .max(10, 'Phone number cannot exceed 10 characters')
   .optional()
   .or(z.literal(''))
-  .transform(val => (!val || val === '' ? null : normalizePhone(val)))
+  .transform(val =>
+    val === undefined
+      ? undefined
+      : !val || val === ''
+        ? null
+        : normalizePhone(val)
+  )
 
 // Email validator (max 200 chars as per DB schema)
 const emailSchema = z
@@ -21,7 +27,9 @@ const emailSchema = z
   .email('Invalid email format')
   .optional()
   .or(z.literal(''))
-  .transform(val => (!val || val === '' ? null : val))
+  .transform(val =>
+    val === undefined ? undefined : !val || val === '' ? null : val
+  )
 
 // Postcode validator (stored as smallint 0-9999)
 const postcodeSchema = z
@@ -70,7 +78,63 @@ export const createCustomerSchema = z.object({
   email: emailSchema,
 })
 
-export const updateCustomerSchema = createCustomerSchema.partial()
+// For updates, we need special handling to distinguish between:
+// - Field not provided (undefined) -> don't update
+// - Field provided as empty string -> set to null
+// - Field provided with value -> set to value
+export const updateCustomerSchema = z.object({
+  surname: z
+    .string()
+    .min(1, 'Surname is required')
+    .max(20, 'Surname cannot exceed 20 characters')
+    .optional(),
+  firstname: z
+    .string()
+    .max(20, 'First name cannot exceed 20 characters')
+    .transform(val => (val === '' ? null : val))
+    .optional(),
+  address: z
+    .string()
+    .max(50, 'Address cannot exceed 50 characters')
+    .transform(val => (val === '' ? null : val))
+    .optional(),
+  suburb: z
+    .string()
+    .max(20, 'Suburb cannot exceed 20 characters')
+    .transform(val => (val === '' ? null : val))
+    .optional(),
+  postcode: postcodeSchema.optional(),
+  phone1: z
+    .string()
+    .max(10, 'Phone number cannot exceed 10 characters')
+    .transform(val => {
+      if (val === '') return null
+      return normalizePhone(val)
+    })
+    .optional(),
+  phone2: z
+    .string()
+    .max(10, 'Phone number cannot exceed 10 characters')
+    .transform(val => {
+      if (val === '') return null
+      return normalizePhone(val)
+    })
+    .optional(),
+  phone3: z
+    .string()
+    .max(10, 'Phone number cannot exceed 10 characters')
+    .transform(val => {
+      if (val === '') return null
+      return normalizePhone(val)
+    })
+    .optional(),
+  email: z
+    .string()
+    .max(200, 'Email cannot exceed 200 characters')
+    .email('Invalid email format')
+    .transform(val => (val === '' ? null : val))
+    .optional(),
+})
 
 export type SearchCustomersInput = z.infer<typeof searchCustomersSchema>
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>

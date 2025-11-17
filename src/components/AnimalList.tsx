@@ -104,7 +104,7 @@ export default function AnimalList({
                 <td className="p-2">{animal.breed}</td>
                 <td className="p-2">
                   <Link
-                    href={`/customers/${animal.customer.id}`}
+                    href={`/customer/${animal.customer.id}`}
                     className="text-blue-600 hover:underline"
                   >
                     {animal.customer.surname}

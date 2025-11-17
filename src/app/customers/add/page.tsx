@@ -99,7 +99,7 @@ export default function AddCustomerPage() {
 
       // Redirect to customer detail page after a short delay
       setTimeout(() => {
-        router.push(`/customers/${data.id}`)
+        router.push(`/customer/${data.id}`)
       }, 1500)
     } catch (error) {
       console.error('Error creating customer:', error)

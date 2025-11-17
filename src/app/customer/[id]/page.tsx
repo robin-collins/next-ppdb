@@ -107,7 +107,7 @@ export default function CustomerDetailPage() {
 
   const handleAddAnimal = () => {
     // Navigate to add animal page
-    router.push(`/animals/new?customerId=${customerId}`)
+    router.push(`/customer/${customerId}/newAnimal`)
   }
 
   const handleViewAnimals = () => {

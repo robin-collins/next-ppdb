@@ -26,6 +26,15 @@ export async function PUT(
 ) {
   const { noteId } = await params
   const id = parseInt(noteId)
+
+  // Check if note exists
+  const existingNote = await prisma.notes.findUnique({
+    where: { noteID: id },
+  })
+  if (!existingNote) {
+    return NextResponse.json({ error: 'Note not found' }, { status: 404 })
+  }
+
   const body = await request.json()
   const updates: {
     notes?: string
@@ -53,6 +62,15 @@ export async function DELETE(
 ) {
   const { noteId } = await params
   const id = parseInt(noteId)
+
+  // Check if note exists
+  const existingNote = await prisma.notes.findUnique({
+    where: { noteID: id },
+  })
+
+  if (!existingNote) {
+    return NextResponse.json({ error: 'Note not found' }, { status: 404 })
+  }
 
   await prisma.notes.delete({
     where: { noteID: id },

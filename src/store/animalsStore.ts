@@ -91,7 +91,7 @@ interface AnimalsState {
   // API Actions
   searchAnimals: (params: SearchParams) => Promise<void>
   fetchAnimal: (id: number) => Promise<void>
-  createAnimal: (data: CreateAnimalData) => Promise<void>
+  createAnimal: (data: CreateAnimalData) => Promise<Animal>
   updateAnimal: (id: number, data: UpdateAnimalData) => Promise<void>
   deleteAnimal: (id: number) => Promise<void>
   addNote: (
@@ -195,20 +195,25 @@ export const useAnimalsStore = create<AnimalsState>()(
               throw new Error(errorData.error || 'Failed to create animal')
             }
 
+            const createdAnimal = await response.json()
+
             // Refresh the current search
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
               await get().searchAnimals(searchParams)
             }
+
+            set({ loading: false })
+            return createdAnimal
           } catch (error) {
             set({
               error:
                 error instanceof Error
                   ? error.message
                   : 'Failed to create animal',
+              loading: false,
             })
-          } finally {
-            set({ loading: false })
+            throw error
           }
         },
 

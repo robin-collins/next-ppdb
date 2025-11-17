@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateCustomerSchema } from '@/lib/validations/customer'
+import type { Prisma } from '@/generated/prisma'
 
 // GET /api/customers/[id] - Get single customer with all animals
 export async function GET(
@@ -114,22 +115,22 @@ export async function PUT(
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 })
     }
 
-    // Update customer
+    // Update customer - build update data object to handle null values properly
+    const updateData: Prisma.customerUpdateInput = {}
+
+    if (data.surname !== undefined) updateData.surname = data.surname
+    if (data.firstname !== undefined) updateData.firstname = data.firstname
+    if (data.address !== undefined) updateData.address = data.address
+    if (data.suburb !== undefined) updateData.suburb = data.suburb
+    if (data.postcode !== undefined) updateData.postcode = data.postcode
+    if (data.phone1 !== undefined) updateData.phone1 = data.phone1
+    if (data.phone2 !== undefined) updateData.phone2 = data.phone2
+    if (data.phone3 !== undefined) updateData.phone3 = data.phone3
+    if (data.email !== undefined) updateData.email = data.email
+
     const customer = await prisma.customer.update({
       where: { customerID: customerId },
-      data: {
-        ...(data.surname !== undefined && { surname: data.surname }),
-        ...(data.firstname !== undefined && {
-          firstname: data.firstname || null,
-        }),
-        ...(data.address !== undefined && { address: data.address || null }),
-        ...(data.suburb !== undefined && { suburb: data.suburb || null }),
-        ...(data.postcode !== undefined && { postcode: data.postcode || null }),
-        ...(data.phone1 !== undefined && { phone1: data.phone1 || null }),
-        ...(data.phone2 !== undefined && { phone2: data.phone2 || null }),
-        ...(data.phone3 !== undefined && { phone3: data.phone3 || null }),
-        ...(data.email !== undefined && { email: data.email || null }),
-      },
+      data: updateData,
       include: {
         animal: {
           include: { breed: true },
