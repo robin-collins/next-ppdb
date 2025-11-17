@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Database AUTO_INCREMENT Fix Script
- * 
+ *
  * This script fixes the missing AUTO_INCREMENT attributes on primary key columns.
  * It handles foreign key constraints by temporarily disabling them.
  */
@@ -16,7 +16,7 @@ async function main() {
   try {
     // Execute all statements in a transaction to ensure they use the same session
     console.log('Applying all fixes in a single transaction...\n')
-    
+
     await prisma.$executeRawUnsafe(`
       SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
       
@@ -26,7 +26,7 @@ async function main() {
       
       SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
     `)
-    
+
     console.log('✓ customer.customerID now has AUTO_INCREMENT')
     console.log('✓ breed.breedID now has AUTO_INCREMENT')
     console.log('✓ animal.animalID now has AUTO_INCREMENT')
@@ -34,14 +34,16 @@ async function main() {
 
     // Step 6: Verify the fixes
     console.log('Step 6: Verifying fixes...')
-    
-    const customerTable = await prisma.$queryRawUnsafe('SHOW CREATE TABLE customer')
+
+    const customerTable = await prisma.$queryRawUnsafe(
+      'SHOW CREATE TABLE customer'
+    )
     const breedTable = await prisma.$queryRawUnsafe('SHOW CREATE TABLE breed')
     const animalTable = await prisma.$queryRawUnsafe('SHOW CREATE TABLE animal')
     const notesTable = await prisma.$queryRawUnsafe('SHOW CREATE TABLE notes')
-    
+
     console.log('✓ All tables verified\n')
-    
+
     console.log('═'.repeat(70))
     console.log('✅ DATABASE FIX COMPLETE!')
     console.log('═'.repeat(70))
@@ -52,7 +54,6 @@ async function main() {
     console.log('  ✓ notes.noteID (already fixed)')
     console.log('\nYou can now create customers, animals, and breeds!')
     console.log('═'.repeat(70))
-
   } catch (error) {
     console.error('\n❌ ERROR:', error.message)
     console.error('\nFailed to apply database fix.')
@@ -64,9 +65,7 @@ async function main() {
   }
 }
 
-main()
-  .catch((error) => {
-    console.error('Fatal error:', error)
-    process.exit(1)
-  })
-
+main().catch(error => {
+  console.error('Fatal error:', error)
+  process.exit(1)
+})

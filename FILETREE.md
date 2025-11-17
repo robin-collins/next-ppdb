@@ -29,7 +29,8 @@ ppdb-ts/
 │   ├── breeds/                     #    Breed API tests (list, get, create, update, delete)
 │   └── notes/                      #    Service note API tests (create, get, update, delete)
 ├── scripts/                        # Build and utility scripts
-│   └── test-hurl.sh                # ✅ Hurl test runner script (created 2025-11-16)
+│   ├── test-hurl.sh                # ✅ Hurl test runner script (created 2025-11-16)
+│   └── build-on-main.sh            # ✅ Conditional build script for main branch commits (created 2025-11-17)
 ├── FIX_ALL_AUTOINCREMENT.sh        # Comprehensive AUTO_INCREMENT fix script (created 2025-11-16)
 ├── FIX_DATABASE_NOW.sh             # Automated database fix script for notes (created 2025-11-16)
 ├── FINISH_DATABASE_FIX.md          # Manual fix guide for remaining tables (created 2025-11-16)

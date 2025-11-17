@@ -23,6 +23,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Conditional Build Check for Main Branch** (2025-11-17):
+  - Added `scripts/build-on-main.sh`: Runs `pnpm build` only when committing to main branch
+  - Updated `lint-staged` configuration: Build verification runs after all linting/formatting checks
+  - Ensures main branch remains in buildable state while allowing faster commits on feature branches
+  - Build skipped on non-main branches to maintain developer velocity
+
 - Baseline verification: Repository passes type-check, lint, format, and tests; applied Prettier writes to reference HTML files to satisfy fmt:check (2025-11-16)
 
 ### Fixed

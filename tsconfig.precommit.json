@@ -9,6 +9,7 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "src/__tests__/**/*",
-    "e2e/**/*"
+    "e2e/**/*",
+    "src/generated/**/*"
   ]
 }
