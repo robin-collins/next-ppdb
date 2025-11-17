@@ -48,6 +48,8 @@ ppdb-ts/
 │       ├── SKILL.md                # Skill definition with frontmatter and instructions
 │       └── references/
 │           └── report-template.md  # Comprehensive report template with all sections
+├── temp/                          # Temporary working files and audits (created 2025-11-17)
+│   └── api_audit.md               # API endpoint audit and OpenAPI completion tracking
 ├── e2e/
 │   ├── homepage.spec.ts            # Legacy smoke test with Next.js compilation handling
 │   ├── search-flow.spec.ts         # E2E tests for complete search workflow (5 tests)
