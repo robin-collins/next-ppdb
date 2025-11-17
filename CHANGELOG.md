@@ -6,6 +6,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **OpenAPI Documentation Infrastructure** (2025-11-17):
+  - Created `/api/docs` page with Swagger UI for interactive API documentation
+  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.1.0 specification
+  - Implemented comprehensive Animal API documentation covering all CRUD operations:
+    - GET /api/animals (search/list) with relevance-based ranking and pagination
+    - POST /api/animals (create new animal)
+    - GET /api/animals/{id} (get single animal with relations)
+    - PUT /api/animals/{id} (update existing animal)
+    - DELETE /api/animals/{id} (delete animal and cascade notes)
+  - Added OpenAPI models directory structure: `src/lib/openapi/models/`
+  - Created comprehensive Zod DTOs for Animals: AnimalDTO, CreateAnimalDTO, UpdateAnimalDTO, AnimalSearchQuery
+  - Added shared base DTOs: ErrorResponseDTO, SuccessResponseDTO, PaginationDTO
+  - Included detailed schema definitions with descriptions, validations, and constraints
+  - Configured Swagger UI with proper client-side rendering (SSR disabled)
+  - Documented request/response formats, path/query parameters, and HTTP status codes
+
 ### Changed
 
 - **Transformed JSDoc Standards to Programmatic OpenAPI Standards** (2025-11-17):
