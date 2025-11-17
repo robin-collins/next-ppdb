@@ -8,21 +8,25 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **OpenAPI Documentation Infrastructure** (2025-11-17):
+- **Complete OpenAPI Documentation for All APIs** (2025-11-17):
   - Created `/api/docs` page with Swagger UI for interactive API documentation
-  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.1.0 specification
-  - Implemented comprehensive Animal API documentation covering all CRUD operations:
-    - GET /api/animals (search/list) with relevance-based ranking and pagination
-    - POST /api/animals (create new animal)
-    - GET /api/animals/{id} (get single animal with relations)
-    - PUT /api/animals/{id} (update existing animal)
-    - DELETE /api/animals/{id} (delete animal and cascade notes)
+  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.0.3 specification (1228 lines)
+  - **Animals API** (5 endpoints): Search/list with relevance ranking, create, get/update/delete by ID
+  - **Customers API** (5 endpoints): Search/list with relevance ranking, create, get/update/delete by ID
+  - **Breeds API** (4 endpoints): List all, create, get/update/delete by ID
+  - **Notes API** (3 endpoints): Get/update/delete service notes by ID
+  - **Total: 17 fully documented REST API endpoints** with:
+    - Complete request/response schemas with data types and constraints
+    - Path, query, and body parameter documentation
+    - HTTP status code descriptions (200, 201, 400, 404)
+    - Field-level validation rules and examples
+    - Foreign key relationships and cascade behavior
   - Added OpenAPI models directory structure: `src/lib/openapi/models/`
   - Created comprehensive Zod DTOs for Animals: AnimalDTO, CreateAnimalDTO, UpdateAnimalDTO, AnimalSearchQuery
   - Added shared base DTOs: ErrorResponseDTO, SuccessResponseDTO, PaginationDTO
-  - Included detailed schema definitions with descriptions, validations, and constraints
-  - Configured Swagger UI with proper client-side rendering (SSR disabled)
-  - Documented request/response formats, path/query parameters, and HTTP status codes
+  - Configured Swagger UI with SSR disabled for React 19 compatibility
+  - Fixed OpenAPI version from 3.1.0 to 3.0.3 for swagger-ui-react compatibility
+  - Documentation ready for: interactive testing, Postman/Insomnia import, client SDK generation
 
 ### Changed
 
