@@ -23,6 +23,34 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Enhanced OpenAPI Implementation Documentation** (2025-11-17):
+  - Added Context7 references for all packages: `@omer-x/next-openapi-route-handler`, `@omer-x/next-openapi-json-generator`, `swagger-ui-react`, Zod v4, Next.js 15
+  - Documented current installed versions: next-openapi-route-handler@2.0.0, next-openapi-json-generator@2.0.2, swagger-ui-react@5.30.2, zod@4.0.17
+  - Added detailed annotations for all code examples with Context7 library references
+  - Created comprehensive "Known Challenges, Limitations & Resolutions" section with 9 common issues:
+    1. Swagger UI SSR errors and dynamic import requirements
+    2. Immutable props after mount behavior
+    3. Datetime format validation nuances in Zod v4
+    4. CORS configuration requirements
+    5. Type safety best practices
+    6. Route handler caching in Next.js 15
+    7. OpenAPI spec size management
+    8. Error response documentation
+    9. File upload handling with FormData
+  - Enhanced all implementation steps with key parameter explanations and validation notes
+  - Added practical examples and workarounds for common pitfalls
+  - Updated Resources section with Context7 references for easy documentation lookup
+  - **Created comprehensive Implementation To-Do List** with 15 phases covering:
+    - Pre-implementation checklist (environment verification, branch creation)
+    - Infrastructure setup (directory structure, TypeScript paths)
+    - DTO creation for all models (Animals, Customers, Breeds, Notes)
+    - Route conversion for all 20 API endpoints with testing checkpoints
+    - OpenAPI documentation page creation with Swagger UI
+    - Testing and validation at each phase
+    - Documentation updates and optional enhancements
+    - Review and merge procedures
+    - Total: 170+ actionable checklist items with status tracking (⬜/🔄/✅/⚠️)
+
 - **Conditional Build Check for Main Branch** (2025-11-17):
   - Added `scripts/build-on-main.sh`: Runs `pnpm build` only when committing to main branch
   - Updated `lint-staged` configuration: Build verification runs after all linting/formatting checks

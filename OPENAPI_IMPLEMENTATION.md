@@ -27,6 +27,24 @@
 
 **Package**: `@omer-x/next-openapi-route-handler` + `@omer-x/next-openapi-json-generator`
 
+**References**:
+
+- 📚 [Next OpenAPI Route Handler](https://github.com/omermecitoglu/next-openapi-route-handler) - Source: `/omermecitoglu/next-openapi-route-handler`
+- 📚 [Swagger UI React](https://github.com/swagger-api/swagger-ui) - Source: `/swagger-api/swagger-ui`
+
+### Current Installed Versions
+
+```json
+{
+  "@omer-x/next-openapi-json-generator": "^2.0.2",
+  "@omer-x/next-openapi-route-handler": "^2.0.0",
+  "swagger-ui-react": "^5.30.2",
+  "@types/swagger-ui-react": "^5.18.0",
+  "zod": "^4.0.17",
+  "next": "15.4.5"
+}
+```
+
 ### Installation (Completed Already.)
 
 <!-- ```bash
@@ -34,11 +52,252 @@ pnpm add @omer-x/next-openapi-route-handler @omer-x/next-openapi-json-generator
 pnpm add -D swagger-ui-react @types/swagger-ui-react
 ``` -->
 
+## Implementation To-Do List
+
+**Status Tracking**: Mark items as you complete them
+
+- ⬜ Not started
+- 🔄 In progress
+- ✅ Complete
+- ⚠️ Blocked/Issue
+
+### Phase 0: Pre-Implementation Checklist
+
+- ⬜ Review this entire document and all Context7 references
+- ⬜ Ensure development server runs without errors: `pnpm dev`
+- ⬜ Verify all packages are installed (versions listed above)
+- ⬜ Run baseline tests to ensure nothing is broken: `pnpm test`
+- ⬜ Create a feature branch: `git checkout -b feature/openapi-implementation`
+- ⬜ Back up current API routes (optional safety measure)
+
+### Phase 1: Infrastructure Setup
+
+- ⬜ Create directory structure: `src/lib/openapi/models/`
+- ⬜ Create base type file: `src/lib/openapi/models/index.ts` (for shared types)
+- ⬜ Verify TypeScript can resolve `@/lib/openapi/*` paths
+- ⬜ Test that Swagger UI CSS import works in Next.js 15
+
+### Phase 2: Create Animal DTOs
+
+- ⬜ Create `src/lib/openapi/models/animal.ts`
+- ⬜ Define `AnimalDTO` with all fields (id, name, breed, sex, colour, cost, lastVisit, thisVisit, comments)
+- ⬜ Add nested `customer` object (id, firstname, surname, email)
+- ⬜ Add nested `serviceNotes` array
+- ⬜ Create `CreateAnimalDTO` (without id, with customerId)
+- ⬜ Create `UpdateAnimalDTO` using `.partial()`
+- ⬜ Create `AnimalSearchQuery` (q: optional string)
+- ⬜ Add `.describe()` to all fields for OpenAPI documentation
+- ⬜ Verify datetime format: use `z.string().datetime()` or `z.iso.datetime()` based on data format
+- ⬜ Export all DTOs
+
+### Phase 3: Convert Animals API Routes
+
+#### GET /api/animals (List/Search)
+
+- ⬜ Open `src/app/api/animals/route.ts`
+- ⬜ Import `defineRoute` from `@omer-x/next-openapi-route-handler`
+- ⬜ Import `AnimalDTO` and `AnimalSearchQuery`
+- ⬜ Convert `GET` function to `defineRoute` format
+- ⬜ Add `operationId: 'searchAnimals'`
+- ⬜ Add `summary` and `description`
+- ⬜ Add `tags: ['Animals']`
+- ⬜ Add `queryParams: AnimalSearchQuery`
+- ⬜ Add `responses` object with 200 status
+- ⬜ Update handler to use `request.queryParams` instead of manual extraction
+- ⬜ Keep existing search logic unchanged
+- ⬜ Test in browser: search should still work
+- ⬜ Verify TypeScript types are correct (no `any`)
+
+#### POST /api/animals (Create)
+
+- ⬜ In same file, convert `POST` function to `defineRoute`
+- ⬜ Add `operationId: 'createAnimal'`
+- ⬜ Add `requestBody` with `CreateAnimalDTO`
+- ⬜ Add responses: 201 (success), 400 (validation error), 404 (customer not found)
+- ⬜ Update handler to use `request.body` (already validated!)
+- ⬜ Keep existing creation logic
+- ⬜ Test creating an animal via UI or curl
+- ⬜ Test with invalid data to verify 400 response
+
+#### GET /api/animals/[id] (Get Single)
+
+- ⬜ Open `src/app/api/animals/[id]/route.ts`
+- ⬜ Convert `GET` function to `defineRoute`
+- ⬜ Add `pathParams: z.object({ id: z.string() })`
+- ⬜ Add `operationId: 'getAnimal'`
+- ⬜ Add responses: 200, 404
+- ⬜ Update handler to use `request.pathParams.id`
+- ⬜ Test fetching a single animal
+- ⬜ Test with invalid ID to verify 404
+
+#### PUT /api/animals/[id] (Update)
+
+- ⬜ In same file, convert `PUT` function to `defineRoute`
+- ⬜ Add `operationId: 'updateAnimal'`
+- ⬜ Add `pathParams` and `requestBody: UpdateAnimalDTO`
+- ⬜ Add responses: 200, 400, 404
+- ⬜ Update handler to use validated params
+- ⬜ Test updating an animal
+- ⬜ Test partial updates (only some fields)
+
+#### DELETE /api/animals/[id] (Delete)
+
+- ⬜ In same file, convert `DELETE` function
+- ⬜ Add `operationId: 'deleteAnimal'`
+- ⬜ Add responses: 204, 404
+- ⬜ Test deleting an animal
+- ⬜ Verify cascade behavior with notes
+
+#### Animals API Testing
+
+- ⬜ Run all animal Hurl tests: `pnpm test:hurl`
+- ⬜ Verify all tests still pass
+- ⬜ Check that validation errors return proper 400 responses
+- ⬜ Commit progress: `git commit -m "Convert Animals API to OpenAPI"`
+
+### Phase 4: Create Customer DTOs
+
+- ⬜ Create `src/lib/openapi/models/customer.ts`
+- ⬜ Define `CustomerDTO` (id, firstname, surname, phone1, phone2, phone3, address, postcode, email)
+- ⬜ Create `CreateCustomerDTO`
+- ⬜ Create `UpdateCustomerDTO`
+- ⬜ Create `CustomerSearchQuery`
+- ⬜ Handle postcode as number (even though displayed as string)
+- ⬜ Make all phone fields optional
+- ⬜ Export all DTOs
+
+### Phase 5: Convert Customers API Routes
+
+- ⬜ Convert `GET /api/customers` (search/list)
+- ⬜ Convert `POST /api/customers` (create)
+- ⬜ Convert `GET /api/customers/[id]` (get single)
+- ⬜ Convert `PUT /api/customers/[id]` (update)
+- ⬜ Convert `DELETE /api/customers/[id]` (delete)
+- ⬜ Run customer Hurl tests
+- ⬜ Commit: `git commit -m "Convert Customers API to OpenAPI"`
+
+### Phase 6: Create Breed DTOs
+
+- ⬜ Create `src/lib/openapi/models/breed.ts`
+- ⬜ Define `BreedDTO` (id, breed)
+- ⬜ Create `CreateBreedDTO`
+- ⬜ Create `UpdateBreedDTO`
+- ⬜ Export all DTOs
+
+### Phase 7: Convert Breeds API Routes
+
+- ⬜ Convert `GET /api/breeds` (list all)
+- ⬜ Convert `POST /api/breeds` (create)
+- ⬜ Convert `GET /api/breeds/[id]` (get single)
+- ⬜ Convert `PUT /api/breeds/[id]` (update)
+- ⬜ Convert `DELETE /api/breeds/[id]` (delete)
+- ⬜ Run breed Hurl tests
+- ⬜ Commit: `git commit -m "Convert Breeds API to OpenAPI"`
+
+### Phase 8: Create Note DTOs
+
+- ⬜ Create `src/lib/openapi/models/note.ts`
+- ⬜ Define `NoteDTO` (noteID, animalID, notes, date)
+- ⬜ Create `CreateNoteDTO`
+- ⬜ Create `UpdateNoteDTO`
+- ⬜ Handle date field properly (datetime validation)
+- ⬜ Export all DTOs
+
+### Phase 9: Convert Notes API Routes
+
+- ⬜ Convert `POST /api/animals/[id]/notes` (create note)
+- ⬜ Convert `GET /api/notes/[noteId]` (get single note)
+- ⬜ Convert `PUT /api/notes/[noteId]` (update note)
+- ⬜ Convert `DELETE /api/notes/[noteId]` (delete note)
+- ⬜ Run notes Hurl tests
+- ⬜ Commit: `git commit -m "Convert Notes API to OpenAPI"`
+
+### Phase 10: Create OpenAPI Documentation Page
+
+- ⬜ Create `src/app/api/docs/page.tsx`
+- ⬜ Import `generateOpenApiSpec` from `@omer-x/next-openapi-json-generator`
+- ⬜ Import `dynamic` from `next/dynamic`
+- ⬜ Import all DTOs (Animals, Customers, Breeds, Notes)
+- ⬜ Add dynamic import for Swagger UI with `ssr: false`
+- ⬜ Import `swagger-ui-react/swagger-ui.css`
+- ⬜ Generate spec with all DTOs
+- ⬜ Configure `include: ['/api/']` and `exclude: ['/api/docs']`
+- ⬜ Add `spec.info` metadata (title, version, description, contact)
+- ⬜ Add `spec.servers` (localhost:3000, production URL)
+- ⬜ Return SwaggerUI component with spec
+- ⬜ Test: Visit `http://localhost:3000/api/docs`
+- ⬜ Verify all endpoints appear in Swagger UI
+- ⬜ Verify schemas are documented correctly
+- ⬜ Test "Try it out" functionality for a few endpoints
+
+### Phase 11: Create OpenAPI JSON Endpoint
+
+- ⬜ Create `src/app/api/docs/openapi.json/route.ts`
+- ⬜ Import `generateOpenApiSpec`
+- ⬜ Import all DTOs
+- ⬜ Create `GET` handler (can use plain async function, not defineRoute)
+- ⬜ Generate spec with same configuration as docs page
+- ⬜ Add metadata
+- ⬜ Return `NextResponse.json(spec)`
+- ⬜ Test: Visit `http://localhost:3000/api/docs/openapi.json`
+- ⬜ Verify JSON is valid OpenAPI 3.1.0 spec
+- ⬜ Save JSON locally for reference
+
+### Phase 12: Testing & Validation
+
+- ⬜ Run full test suite: `pnpm test`
+- ⬜ Run E2E tests: `pnpm test:e2e`
+- ⬜ Run all Hurl tests: `pnpm test:hurl`
+- ⬜ Verify 100% pass rate
+- ⬜ Test each endpoint in Swagger UI manually
+- ⬜ Test validation errors (submit invalid data)
+- ⬜ Test 404 responses (use invalid IDs)
+- ⬜ Check TypeScript compilation: `pnpm type-check`
+- ⬜ Check linting: `pnpm lint`
+- ⬜ Check formatting: `pnpm fmt:check`
+
+### Phase 13: Documentation Updates
+
+- ⬜ Update `CLAUDE.md` with OpenAPI documentation location
+- ⬜ Update `README.md` to mention API docs at `/api/docs`
+- ⬜ Add script to `package.json`: `"docs": "open http://localhost:3000/api/docs"`
+- ⬜ Document any deviations from the plan in FAILURELOG.md
+- ⬜ Update CHANGELOG.md with implementation completion
+
+### Phase 14: Optional Enhancements
+
+- ⬜ Add authentication/authorization to Swagger UI (if needed)
+- ⬜ Create Hurl test generator script (optional)
+- ⬜ Add OpenAPI spec validation in CI/CD
+- ⬜ Configure CORS for production
+- ⬜ Add rate limiting documentation
+- ⬜ Create client SDK generator workflow
+
+### Phase 15: Review & Merge
+
+- ⬜ Run complete check: `pnpm check`
+- ⬜ Self-review all changes
+- ⬜ Test on clean install: `rm -rf node_modules && pnpm install`
+- ⬜ Create pull request with detailed description
+- ⬜ Address any review feedback
+- ⬜ Merge to main branch
+- ⬜ Verify main branch builds: `pnpm build`
+- ⬜ Deploy documentation to production
+- ⬜ Share `/api/docs` URL with team
+
 ## Implementation Steps
 
 ### Step 1: Create OpenAPI Models
 
 Create DTOs (Data Transfer Objects) with Zod schemas:
+
+**📚 Context7 References**:
+
+- Zod v4 Object Schemas: `/colinhacks/zod/v4.0.1`
+- Zod `.describe()` adds descriptions that appear in OpenAPI documentation
+- Zod `.optional()` marks fields as optional in OpenAPI spec
+- Zod `.enum()` creates validated string enums
+- Zod `z.iso.datetime()` validates ISO 8601 datetime strings (recommended for API dates)
 
 ```typescript
 // src/lib/openapi/models/animal.ts
@@ -92,7 +351,31 @@ export const AnimalSearchQuery = z.object({
 })
 ```
 
+**⚠️ Important Notes**:
+
+- `z.string().datetime()` in Zod v4 validates ISO 8601 format (e.g., `2020-01-01T06:15:00Z`)
+- By default, timezone offsets are NOT allowed. Use `z.iso.datetime({ offset: true })` to allow them
+- Use `z.iso.datetime({ local: true })` to allow timezone-less times
+- `.partial()` creates an update DTO where all fields become optional
+- Reference: Zod ISO Datetime Validation (`/colinhacks/zod/v4.0.1`)
+
 ### Step 2: Convert Route Handlers
+
+**📚 Context7 References**:
+
+- `defineRoute()` API: `/omermecitoglu/next-openapi-route-handler`
+- Next.js Route Handlers: `/websites/nextjs_app`
+- `NextRequest` and `NextResponse` are standard Next.js 15 APIs
+
+**Key `defineRoute` Parameters**:
+
+- `operationId`: Unique identifier for the operation (used in OpenAPI spec)
+- `summary`: Short description (appears in Swagger UI)
+- `tags`: Categorization for grouping endpoints
+- `queryParams`: Zod schema for query string validation
+- `requestBody`: Zod schema for POST/PUT/PATCH body validation
+- `responses`: Object defining status codes and response schemas
+- `action`: Handler function receiving validated `pathParams`, `queryParams`, and `body`
 
 **Before (Current):**
 
@@ -174,7 +457,31 @@ export const POST = defineRoute(
 )
 ```
 
+**⚠️ Important Notes**:
+
+- Automatic validation: `defineRoute` validates request data against Zod schemas before calling your handler
+- Type safety: TypeScript infers types from Zod schemas - `request.body` and `request.queryParams` are fully typed
+- Error handling: Validation errors automatically return 400 Bad Request with Zod error details
+- Custom error handler: Use optional `handleErrors` parameter to customize error responses
+- Reference: Define Next.js API Route Handler (`/omermecitoglu/next-openapi-route-handler`)
+
 ### Step 3: Create OpenAPI Docs Page
+
+**📚 Context7 References**:
+
+- Dynamic imports in Next.js: `/websites/nextjs_app`
+- Swagger UI React: `/swagger-api/swagger-ui`
+- `generateOpenApiSpec()` from `@omer-x/next-openapi-json-generator`
+
+**Key Configuration**:
+
+- `ssr: false`: Swagger UI must be client-side only (uses browser-specific APIs)
+- `include`: Filter which routes to document (e.g., `['/api/']`)
+- `exclude`: Exclude specific routes (e.g., `['/api/docs']` to avoid self-documenting)
+- `spec.info`: OpenAPI metadata (title, version, description, contact)
+- `spec.servers`: API server URLs for different environments
+
+**⚠️ Critical**: Always use `dynamic(() => import('swagger-ui-react'), { ssr: false })` to prevent SSR errors
 
 ```typescript
 // src/app/api/docs/page.tsx
@@ -464,12 +771,132 @@ pnpm generate:hurl-tests
 5. **Validate**: Test as you go
 6. **Document**: Update CHANGELOG.md
 
+## Known Challenges, Limitations & Resolutions
+
+### 1. Swagger UI SSR Errors
+
+**Problem**: Swagger UI uses browser-specific APIs and fails during server-side rendering
+**Symptom**: `ReferenceError: window is not defined` or similar SSR errors
+**Solution**: Always use dynamic import with `ssr: false`
+
+```typescript
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
+```
+
+**Reference**: Dynamic Import with Next.js (`/websites/nextjs_app`)
+
+### 2. Swagger UI Props Are Immutable After Mount
+
+**Problem**: Many SwaggerUI props are only applied once on mount and don't update on prop changes
+**Affected Props**: `layout`, `docExpansion`, `defaultModelExpandDepth`, `defaultModelRendering`, `displayOperationId`, `plugins`, `presets`, `tryItOutEnabled`, etc.
+**Impact**: You cannot dynamically change these configurations after initial render
+**Workaround**: Force component remount by changing its `key` prop if dynamic updates are needed
+
+**Reference**: SwaggerUI Component Props (`/swagger-api/swagger-ui`)
+
+### 3. Datetime Format Validation
+
+**Problem**: Default `z.string().datetime()` in Zod v4 does NOT allow timezone offsets
+**Symptom**: Valid ISO strings like `"2020-01-01T06:15:00+02:00"` fail validation
+**Solution**: Use appropriate options:
+
+- `z.iso.datetime({ offset: true })` - Allow timezone offsets
+- `z.iso.datetime({ local: true })` - Allow timezone-less times
+- `z.iso.datetime({ precision: 3 })` - Enforce millisecond precision
+
+**Reference**: Zod ISO Datetime Validation (`/colinhacks/zod/v4.0.1`)
+
+### 4. CORS Configuration for Swagger UI Testing
+
+**Problem**: Browser-based testing in Swagger UI may fail due to CORS
+**Required Headers**:
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, PUT, PATCH, OPTIONS
+Access-Control-Allow-Headers: Content-Type, api_key, Authorization
+```
+
+**Solution**: Configure CORS in Next.js middleware or route handlers for development
+
+**Reference**: CORS Headers Configuration (`/swagger-api/swagger-ui`)
+
+### 5. Type Safety with defineRoute
+
+**Problem**: TypeScript type inference can be complex with deeply nested schemas
+**Best Practice**: Extract and name your Zod schemas separately (don't inline)
+**Good**:
+
+```typescript
+const AnimalDTO = z.object({ ... });
+export const GET = defineRoute({ responses: { 200: { schema: AnimalDTO } } }, ...)
+```
+
+**Bad**:
+
+```typescript
+export const GET = defineRoute({ responses: { 200: { schema: z.object({ ... }) } } }, ...)
+```
+
+### 6. Route Handler Caching in Next.js 15
+
+**Problem**: GET route handlers are not cached by default in Next.js 15
+**Impact**: May affect performance for documentation endpoints
+**Solution**: Opt into caching if needed:
+
+```typescript
+export const dynamic = 'force-static'
+export async function GET() { ... }
+```
+
+**Reference**: Next.js Route Handler Caching (`/websites/nextjs_app`)
+
+### 7. OpenAPI Spec Size
+
+**Problem**: Large DTOs with many nested objects can create very large OpenAPI specs
+**Impact**: Slow Swagger UI loading, large JSON payloads
+**Mitigation**:
+
+- Use pagination for large responses
+- Split large specs into multiple documentation pages
+- Consider excluding internal-only endpoints
+
+### 8. Error Response Documentation
+
+**Problem**: `defineRoute` automatically handles validation errors but doesn't document them well
+**Solution**: Explicitly document error responses:
+
+```typescript
+responses: {
+  400: { description: 'Validation error - check request format' },
+  404: { description: 'Resource not found' },
+  500: { description: 'Internal server error' }
+}
+```
+
+### 9. File Upload Handling
+
+**Problem**: OpenAPI route handler requires special configuration for `FormData`
+**Solution**: Use `hasFormData: true` parameter in `defineRoute`:
+
+```typescript
+export const POST = defineRoute({
+  hasFormData: true,
+  requestBody: { schema: z.object({ file: z.instanceof(File) }) },
+  ...
+}, async (request) => { ... })
+```
+
+**Reference**: defineRoute Function Parameters (`/omermecitoglu/next-openapi-route-handler`)
+
 ## Resources
 
-- [Next OpenAPI Route Handler Docs](https://github.com/omermecitoglu/next-openapi-route-handler)
+- [Next OpenAPI Route Handler Docs](https://github.com/omermecitoglu/next-openapi-route-handler) - Context7: `/omermecitoglu/next-openapi-route-handler`
 - [Next OpenAPI JSON Generator Docs](https://github.com/omermecitoglu/next-openapi-json-generator)
 - [OpenAPI 3.1 Specification](https://spec.openapis.org/oas/v3.1.0)
-- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/) - Context7: `/swagger-api/swagger-ui`
+- [Zod Documentation](https://zod.dev) - Context7: `/colinhacks/zod/v4.0.1`
+- [Next.js App Router](https://nextjs.org/docs/app) - Context7: `/websites/nextjs_app`
 
 ---
 
