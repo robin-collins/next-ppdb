@@ -438,6 +438,263 @@ export async function GET() {
           },
         },
       },
+      '/api/breeds': {
+        get: {
+          operationId: 'listBreeds',
+          summary: 'List all breeds',
+          description:
+            'Get a complete list of all animal breeds, sorted alphabetically',
+          tags: ['Breeds'],
+          responses: {
+            200: {
+              description: 'List of all breeds',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/Breed' },
+                  },
+                },
+              },
+            },
+          },
+        },
+        post: {
+          operationId: 'createBreed',
+          summary: 'Create a new breed',
+          description: 'Add a new animal breed to the system',
+          tags: ['Breeds'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/CreateBreed' },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: 'Breed created successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Breed' },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid request data',
+            },
+          },
+        },
+      },
+      '/api/breeds/{id}': {
+        get: {
+          operationId: 'getBreed',
+          summary: 'Get a single breed by ID',
+          description: 'Retrieve detailed information about a specific breed',
+          tags: ['Breeds'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Breed ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Breed details',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Breed' },
+                },
+              },
+            },
+            404: {
+              description: 'Breed not found',
+            },
+          },
+        },
+        put: {
+          operationId: 'updateBreed',
+          summary: 'Update an existing breed',
+          description: 'Update one or more fields of an existing breed',
+          tags: ['Breeds'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Breed ID',
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/UpdateBreed' },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Breed updated successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Breed' },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid request data',
+            },
+            404: {
+              description: 'Breed not found',
+            },
+          },
+        },
+        delete: {
+          operationId: 'deleteBreed',
+          summary: 'Delete a breed',
+          description:
+            'Permanently delete a breed (fails if animals are associated)',
+          tags: ['Breeds'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Breed ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Breed deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Cannot delete breed with associated animals',
+            },
+            404: {
+              description: 'Breed not found',
+            },
+          },
+        },
+      },
+      '/api/notes/{noteId}': {
+        get: {
+          operationId: 'getNote',
+          summary: 'Get a single service note by ID',
+          description: 'Retrieve a specific service note',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'noteId',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Note ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Note details',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Note' },
+                },
+              },
+            },
+            404: {
+              description: 'Note not found',
+            },
+          },
+        },
+        put: {
+          operationId: 'updateNote',
+          summary: 'Update an existing service note',
+          description: 'Update the content or date of a service note',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'noteId',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Note ID',
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/UpdateNote' },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Note updated successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Note' },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid request data',
+            },
+            404: {
+              description: 'Note not found',
+            },
+          },
+        },
+        delete: {
+          operationId: 'deleteNote',
+          summary: 'Delete a service note',
+          description: 'Permanently delete a service note',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'noteId',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Note ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Note deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                    },
+                  },
+                },
+              },
+            },
+            404: {
+              description: 'Note not found',
+            },
+          },
+        },
+      },
     },
     components: {
       schemas: {
@@ -841,6 +1098,125 @@ export async function GET() {
               format: 'email',
               maxLength: 200,
               description: 'Email address',
+            },
+          },
+        },
+        Breed: {
+          type: 'object',
+          description: 'Animal breed with optional average time and cost',
+          required: ['id', 'name'],
+          properties: {
+            id: {
+              type: 'integer',
+              description: 'Breed ID',
+            },
+            name: {
+              type: 'string',
+              maxLength: 100,
+              description: 'Breed name',
+            },
+            avgtime: {
+              type: 'string',
+              nullable: true,
+              description:
+                'Average grooming time (can be HH:MM:SS format or minutes as string)',
+              example: '01:30:00',
+            },
+            avgcost: {
+              type: 'number',
+              nullable: true,
+              description: 'Average grooming cost',
+              example: 50,
+            },
+          },
+        },
+        CreateBreed: {
+          type: 'object',
+          description: 'Data required to create a new breed',
+          required: ['name'],
+          properties: {
+            name: {
+              type: 'string',
+              minLength: 1,
+              maxLength: 100,
+              description: 'Breed name (required)',
+            },
+            avgtime: {
+              type: 'string',
+              maxLength: 50,
+              nullable: true,
+              description: 'Average grooming time (HH:MM:SS format or minutes)',
+              example: '45',
+            },
+            avgcost: {
+              oneOf: [{ type: 'number' }, { type: 'string' }],
+              nullable: true,
+              description:
+                'Average grooming cost (can be number or numeric string)',
+              example: 50,
+            },
+          },
+        },
+        UpdateBreed: {
+          type: 'object',
+          description: 'Partial breed data for updates. All fields optional.',
+          properties: {
+            name: {
+              type: 'string',
+              minLength: 1,
+              maxLength: 100,
+              description: 'Breed name',
+            },
+            avgtime: {
+              type: 'string',
+              maxLength: 50,
+              nullable: true,
+              description: 'Average grooming time',
+            },
+            avgcost: {
+              oneOf: [{ type: 'number' }, { type: 'string' }],
+              nullable: true,
+              description: 'Average grooming cost',
+            },
+          },
+        },
+        Note: {
+          type: 'object',
+          description: 'Service note for an animal grooming visit',
+          required: ['noteID', 'animalID', 'notes', 'date'],
+          properties: {
+            noteID: {
+              type: 'integer',
+              description: 'Note ID',
+            },
+            animalID: {
+              type: 'integer',
+              description: 'ID of the animal this note belongs to',
+            },
+            notes: {
+              type: 'string',
+              description: 'Service note content',
+            },
+            date: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date of the service (ISO 8601 format)',
+            },
+          },
+        },
+        UpdateNote: {
+          type: 'object',
+          description:
+            'Partial note data for updates. At least one field required.',
+          properties: {
+            notes: {
+              type: 'string',
+              description: 'Service note content',
+            },
+            date: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date of the service (ISO 8601 format)',
             },
           },
         },
