@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server'
 /**
  * OpenAPI JSON Specification Endpoint
  *
- * Returns the OpenAPI 3.1.0 specification as JSON.
+ * Returns the OpenAPI 3.0.3 specification as JSON.
  * This can be imported into tools like Postman, Insomnia, or used for code generation.
  */
 export async function GET() {
   const spec = {
-    openapi: '3.1.0',
+    openapi: '3.0.3',
     info: {
       title: 'Pampered Pooch Pet Grooming API',
       version: '1.0.0',

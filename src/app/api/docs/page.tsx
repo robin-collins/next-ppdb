@@ -15,7 +15,7 @@ const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 // Inline OpenAPI spec for testing
 const spec = {
-  openapi: '3.1.0',
+  openapi: '3.0.3',
   info: {
     title: 'Pampered Pooch Pet Grooming API',
     version: '1.0.0',
