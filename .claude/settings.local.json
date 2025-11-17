@@ -9,7 +9,8 @@
       "mcp__context7__get-library-docs",
       "Bash(git add:*)",
       "Bash(pnpm prettier:*)",
-      "Bash(pnpm eslint:*)"
+      "Bash(pnpm eslint:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": [],
     "ask": []
