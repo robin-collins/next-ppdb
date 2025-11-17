@@ -6,7 +6,11 @@
       "Bash(git rev-parse:*)",
       "Bash(bash scripts/build-on-main.sh:*)",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs"
+      "mcp__context7__get-library-docs",
+      "Bash(git add:*)",
+      "Bash(pnpm prettier:*)",
+      "Bash(pnpm eslint:*)",
+      "Bash(pnpm lint:*)"
     ],
     "deny": [],
     "ask": []

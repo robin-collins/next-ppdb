@@ -6,6 +6,65 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **CRITICAL: CSS Reset Padding Conflict** (2025-11-17):
+  - **Root Cause:** Universal CSS reset rule `* { padding: 0; }` in `src/app/globals.css` (line 124) was overriding ALL Tailwind padding utility classes due to CSS specificity conflicts
+  - **Impact:** All pages across the application had zero padding on elements that specified `p-*`, `px-*`, `py-*` classes
+  - **Discovery:** Identified during MOCKUI_ANALYSIS.md methodology while implementing Daily Totals page using DevTools `getComputedStyle()` extraction
+  - **Fix:** Replaced universal selector reset with selective element-based reset targeting `body, h1-h6, p, ul, ol, li, figure, figcaption, blockquote, dl, dd`
+  - **Verification:** Confirmed all padding values now render correctly: content wrapper (32px), stat cards (24px), chart headers (20px 24px), chart content (24px), table cells (16px)
+  - **Files Modified:** `src/app/globals.css` - Modified CSS reset pattern to avoid utility class conflicts
+  - **Testing:** Verified Daily Totals page with full DevTools audit - all 7+ padding values now match mockui specifications
+  - **Note:** This was a GLOBAL fix that affects all pages in the application, not just Daily Totals
+
+### Added
+
+- **Customer History Page Implementation** (2025-11-17):
+  - Implemented `src/app/customers/history/page.tsx` to match `reference/redesign/mockui-customer-history.html` design
+  - Added mandatory Header and Sidebar components with proper navigation breadcrumbs
+  - Implemented responsive table layout with customer, animal, address, phone, and last visit data
+  - Added filter bar with search input and inactive period selector (All, 12+, 24+, 36+ months)
+  - Implemented stats bar showing Total Records, Displayed, and Oldest Visit
+  - Added customer table with animated rows and hover effects
+  - Implemented date badges with color coding (normal, old 24+ months in orange, very-old 36+ months in red)
+  - Added animal avatar initials with gradient background and playful hover rotation
+  - Implemented empty state with icon and helpful messaging
+  - Added glassmorphic main content container with backdrop blur
+  - Implemented real-time search filtering and time period filtering
+  - Added CSS classes to `globals.css`: card, card-header, card-title, card-icon, card-content, filter-bar, search-wrapper, filter-group, filter-label, filter-select, stats-bar, stat-item, stat-number, stat-label, table-wrapper, customer-table, customer-name, customer-address, customer-phone, customer-animal, animal-avatar-small, animal-info, animal-name, animal-breed, date-badge, search-bar, search-icon, search-input, empty-state, empty-state-icon
+  - Updated Sidebar component to use correct route path `/customers/history` instead of `/history`
+  - Added `.content-wrapper` class with responsive padding (32px desktop, 24px tablet, 16px mobile)
+  - Page now fully responsive with mobile-first breakpoints at 768px and 480px
+  - All typography uses correct font families: Lora for headings, Rubik for body text
+  - All colors use design tokens from STYLE_GUIDE.md (primary, secondary, accent, gray scale)
+  - All spacing uses CSS custom properties (--space-1 through --space-24)
+  - Page includes animated gradient background and paw print pattern overlay (inherited from layout)
+
+### Added
+
+- **Complete OpenAPI Documentation for All APIs** (2025-11-17):
+  - Created `/api/docs` page with Swagger UI for interactive API documentation
+  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.0.3 specification (1500+ lines)
+  - **Animals API** (5 endpoints): Search/list with relevance ranking, create, get/update/delete by ID
+  - **Customers API** (6 endpoints): Search/list with relevance ranking, create, get/update/delete by ID, visit history
+  - **Breeds API** (4 endpoints): List all, create, get/update/delete by ID
+  - **Notes API** (5 endpoints): List animal notes, create note for animal, get/update/delete service notes by ID
+  - **Reports API** (1 endpoint): Daily totals report with date range filtering
+  - **Admin API** (1 endpoint): Database backup generation
+  - **Total: 20 fully documented REST API endpoints** with:
+    - Complete request/response schemas with data types and constraints
+    - Path, query, and body parameter documentation
+    - HTTP status code descriptions (200, 201, 400, 404)
+    - Field-level validation rules and examples
+    - Foreign key relationships and cascade behavior
+  - Added OpenAPI models directory structure: `src/lib/openapi/models/`
+  - Created comprehensive Zod DTOs for Animals: AnimalDTO, CreateAnimalDTO, UpdateAnimalDTO, AnimalSearchQuery
+  - Added shared base DTOs: ErrorResponseDTO, SuccessResponseDTO, PaginationDTO
+  - Configured Swagger UI with SSR disabled for React 19 compatibility
+  - Fixed OpenAPI version from 3.1.0 to 3.0.3 for swagger-ui-react compatibility
+  - Documentation ready for: interactive testing, Postman/Insomnia import, client SDK generation
+
 ### Changed
 
 - **Transformed JSDoc Standards to Programmatic OpenAPI Standards** (2025-11-17):
@@ -74,6 +133,12 @@ All notable changes to this project will be documented in this file.
 - Baseline verification: Repository passes type-check, lint, format, and tests; applied Prettier writes to reference HTML files to satisfy fmt:check (2025-11-16)
 
 ### Fixed
+
+- **API Route Implementation - Missing GET Endpoint** (2025-11-17):
+  - Implemented missing GET method in `/api/animals/[id]/notes` route
+  - Route now supports both GET (list notes) and POST (create note) operations as per API documentation
+  - Returns array of service notes for specified animal, ordered by date descending
+  - Aligns implementation with authoritative routing documentation (ROUTES.md, API_ROUTES.md)
 
 - **Pre-commit Hook Configuration** (2025-11-17):
   - Fixed unused variable errors in `src/lib/logger.ts`: Prefixed `LogLevel` type with underscore, removed unused generic `T` from `withApiLogger`

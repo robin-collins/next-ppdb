@@ -13,6 +13,25 @@ When comparing a mock ui versus a live page, follow the following analysis insru
 
 This is a Next.js 15 pet grooming database application (PPDB) for "Pampered Pooch" that manages customer, animal, breed, and service records. The application features a modern glassmorphic UI with animated gradients, a searchable animal database with relevance-based ranking, and Prisma ORM connected to a MySQL database.
 
+## Routing Standards
+
+**IMPORTANT**: All routing in this application follows strict standards documented in:
+
+- **@ROUTING_ENFORCEMENT.md** - Mandatory routing patterns and enforcement policy
+- **@ROUTES.md** - Complete URL structure and navigation patterns
+- **@reference/API_ROUTES.md** - Collated API endpoint reference
+
+All navigation MUST use route helpers from `src/lib/routes.ts` - **no hardcoded route strings allowed**.
+
+## API Documentation
+
+Interactive OpenAPI documentation is available at:
+
+- **Swagger UI**: http://localhost:3000/api/docs
+- **OpenAPI JSON**: http://localhost:3000/api/docs/openapi.json
+
+Currently documents 17 core endpoints across Animals, Customers, Breeds, and Notes APIs.
+
 ## Development Commands
 
 ### Core Development
