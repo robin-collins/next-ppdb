@@ -1,6 +1,13 @@
 {
   "permissions": {
-    "allow": ["Bash(python3:*)"],
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(chmod:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(bash scripts/build-on-main.sh:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
+    ],
     "deny": [],
     "ask": []
   }

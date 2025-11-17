@@ -15,3 +15,11 @@ export const updateServiceNoteSchema = createServiceNoteSchema
 
 export type CreateServiceNoteInput = z.infer<typeof createServiceNoteSchema>
 export type UpdateServiceNoteInput = z.infer<typeof updateServiceNoteSchema>
+
+// Lightweight schema aligning with current MVP API for adding a note
+export const addAnimalNoteSchema = z.object({
+  notes: z.string().min(1, 'notes is required'),
+  serviceDate: z.string().datetime().optional(),
+})
+
+export type AddAnimalNoteInput = z.infer<typeof addAnimalNoteSchema>

@@ -413,11 +413,31 @@ export async function POST(request: NextRequest) {
 
   const data = validationResult.data
 
+  // Look up the breed by name to get breedID
+  const breed = await prisma.breed.findFirst({
+    where: { breedname: data.breed },
+  })
+
+  if (!breed) {
+    return NextResponse.json(
+      {
+        error: 'Invalid breed',
+        details: [
+          {
+            path: ['breed'],
+            message: `Breed "${data.breed}" not found. Please select a valid breed.`,
+          },
+        ],
+      },
+      { status: 400 }
+    )
+  }
+
   const animal = await prisma.animal.create({
     data: {
       customerID: data.customerId,
       animalname: data.name,
-      breedID: 1, // We need to handle breed lookup properly - for now using default
+      breedID: breed.breedID,
       SEX: data.sex === 'Male' ? 'Male' : 'Female',
       colour: data.colour || null,
       cost: data.cost || 0,

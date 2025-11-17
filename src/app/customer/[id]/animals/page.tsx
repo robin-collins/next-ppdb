@@ -83,9 +83,7 @@ export default function CustomerAnimalsPage() {
                 </p>
               </div>
               <button
-                onClick={() =>
-                  router.push(`/animals/new?customerId=${customerId}`)
-                }
+                onClick={() => router.push(`/customer/${customerId}/newAnimal`)}
                 className="bg-success rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90"
               >
                 + Add Animal
@@ -100,9 +98,7 @@ export default function CustomerAnimalsPage() {
                 No animals registered for this customer.
               </p>
               <button
-                onClick={() =>
-                  router.push(`/animals/new?customerId=${customerId}`)
-                }
+                onClick={() => router.push(`/customer/${customerId}/newAnimal`)}
                 className="bg-primary hover:bg-primary-hover mt-4 rounded-lg px-6 py-2 text-white"
               >
                 Add First Animal

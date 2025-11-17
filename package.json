@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
+    "test:hurl": "bash scripts/test-hurl.sh",
     "playwright:install": "playwright install --with-deps",
     "clean:tests": "rimraf ./coverage ./test-results",
     "clean:next": "rimraf .next",
@@ -26,6 +27,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@omer-x/next-openapi-json-generator": "^2.0.2",
+    "@omer-x/next-openapi-route-handler": "^2.0.0",
     "@prisma/client": "^6.19.0",
     "next": "15.4.5",
     "react": "19.1.0",
@@ -45,6 +48,7 @@
     "@types/node": "^20.19.9",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "@types/swagger-ui-react": "^5.18.0",
     "eslint": "^9.32.0",
     "eslint-config-next": "15.4.5",
     "eslint-config-prettier": "^10.1.8",
@@ -57,6 +61,7 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "prisma": "^6.19.0",
     "rifraf": "^2.0.3",
+    "swagger-ui-react": "^5.30.2",
     "tailwindcss": "^4.1.11",
     "typescript": "5.8.3"
   },
@@ -67,6 +72,13 @@
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "bash -c 'tsc --project tsconfig.precommit.json --noEmit'",
+      "bash -c 'pnpm lint'"
+    ],
+    "*": [
+      "bash scripts/build-on-main.sh"
     ]
   },
   "packageManager": "pnpm@10.22.0"

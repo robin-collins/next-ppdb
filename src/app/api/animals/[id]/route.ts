@@ -76,16 +76,49 @@ export async function PUT(
 
   const data = validationResult.data
 
+  // Check if animal exists
+  const existingAnimal = await prisma.animal.findUnique({
+    where: { animalID: parseInt(id) },
+  })
+  if (!existingAnimal) {
+    return NextResponse.json({ error: 'Animal not found' }, { status: 404 })
+  }
+
+  // If breed name is provided, look up the breedID
+  let breedID: number | undefined = undefined
+  if (data.breed) {
+    const breed = await prisma.breed.findUnique({
+      where: { breedname: data.breed },
+    })
+    if (!breed) {
+      return NextResponse.json(
+        {
+          error: 'Breed not found',
+          details: `Breed "${data.breed}" does not exist`,
+        },
+        { status: 400 }
+      )
+    }
+    breedID = breed.breedID
+  }
+
   const animal = await prisma.animal.update({
     where: { animalID: parseInt(id) },
     data: {
-      animalname: data.name,
-      SEX: data.sex === 'Male' ? 'Male' : 'Female',
-      colour: data.colour,
-      cost: data.cost,
-      lastvisit: data.lastVisit ? new Date(data.lastVisit) : undefined,
-      thisvisit: data.thisVisit ? new Date(data.thisVisit) : undefined,
-      comments: data.comments,
+      ...(data.name !== undefined && { animalname: data.name }),
+      ...(data.sex !== undefined && {
+        SEX: data.sex === 'Male' ? 'Male' : 'Female',
+      }),
+      ...(data.colour !== undefined && { colour: data.colour }),
+      ...(data.cost !== undefined && { cost: data.cost }),
+      ...(data.lastVisit !== undefined && {
+        lastvisit: new Date(data.lastVisit),
+      }),
+      ...(data.thisVisit !== undefined && {
+        thisvisit: new Date(data.thisVisit),
+      }),
+      ...(data.comments !== undefined && { comments: data.comments }),
+      ...(breedID !== undefined && { breedID }),
     },
     include: { customer: true, breed: true, notes: true },
   })
@@ -130,6 +163,15 @@ export async function DELETE(
 ) {
   const { id } = await params
   const animalID = parseInt(id)
+
+  // Check if animal exists
+  const existingAnimal = await prisma.animal.findUnique({
+    where: { animalID },
+  })
+
+  if (!existingAnimal) {
+    return NextResponse.json({ error: 'Animal not found' }, { status: 404 })
+  }
 
   // Best-effort cleanup of related notes before deleting animal (legacy DB may lack FK cascades)
   await prisma.notes.deleteMany({

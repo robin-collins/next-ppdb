@@ -91,9 +91,14 @@ interface AnimalsState {
   // API Actions
   searchAnimals: (params: SearchParams) => Promise<void>
   fetchAnimal: (id: number) => Promise<void>
-  createAnimal: (data: CreateAnimalData) => Promise<void>
+  createAnimal: (data: CreateAnimalData) => Promise<Animal>
   updateAnimal: (id: number, data: UpdateAnimalData) => Promise<void>
   deleteAnimal: (id: number) => Promise<void>
+  addNote: (
+    animalId: number,
+    payload: { notes: string; serviceDate?: string }
+  ) => Promise<void>
+  deleteNote: (noteId: number, animalId?: number) => Promise<void>
 }
 
 export const useAnimalsStore = create<AnimalsState>()(
@@ -190,20 +195,25 @@ export const useAnimalsStore = create<AnimalsState>()(
               throw new Error(errorData.error || 'Failed to create animal')
             }
 
+            const createdAnimal = await response.json()
+
             // Refresh the current search
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
               await get().searchAnimals(searchParams)
             }
+
+            set({ loading: false })
+            return createdAnimal
           } catch (error) {
             set({
               error:
                 error instanceof Error
                   ? error.message
                   : 'Failed to create animal',
+              loading: false,
             })
-          } finally {
-            set({ loading: false })
+            throw error
           }
         },
 
@@ -274,6 +284,56 @@ export const useAnimalsStore = create<AnimalsState>()(
                 error instanceof Error
                   ? error.message
                   : 'Failed to delete animal',
+            })
+          } finally {
+            set({ loading: false })
+          }
+        },
+
+        addNote: async (animalId, payload) => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/animals/${animalId}/notes`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to add note')
+            }
+            // Refresh selected animal to get updated notes
+            await get().fetchAnimal(animalId)
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error ? error.message : 'Failed to add note',
+            })
+          } finally {
+            set({ loading: false })
+          }
+        },
+
+        deleteNote: async (noteId, animalId) => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/notes/${noteId}`, {
+              method: 'DELETE',
+            })
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Failed to delete note')
+            }
+            // Refresh selected animal if provided
+            if (animalId) {
+              await get().fetchAnimal(animalId)
+            }
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to delete note',
             })
           } finally {
             set({ loading: false })
