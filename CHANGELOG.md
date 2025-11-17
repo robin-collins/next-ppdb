@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Transformed JSDoc Standards to Programmatic OpenAPI Standards** (2025-11-17):
+  - Updated `.project/steering/jsdoc_standards.md` to reflect programmatic OpenAPI approach
+  - Replaced manual JSDoc `@swagger` comments with `defineRoute()` + Zod schemas pattern
+  - Added comprehensive DTO creation guidelines with Zod validation and descriptions
+  - Documented `defineRoute()` configuration parameters (operationId, summary, tags, queryParams, requestBody, responses)
+  - Added complete working examples for GET/POST/PUT/DELETE operations
+  - Included `generateOpenApiSpec()` setup for Swagger UI documentation page
+  - Updated project tags to match current API structure (Animals, Customers, Breeds, Notes)
+  - Added sections on best practices, common patterns, type safety, and validation
+  - Included troubleshooting guide for common issues (SSR errors, datetime validation, DTO visibility)
+  - Documented benefits: automatic validation, type safety, living documentation, testing integration
+
 ### Added
 
 - **Comprehensive Testing Suite Implementation**: Complete testing infrastructure with 134 passing tests across all layers (2025-11-16)

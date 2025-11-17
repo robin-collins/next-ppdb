@@ -97,6 +97,8 @@ ppdb-ts/
 ├── .project/
 │   ├── steering/
 │   │   ├── CHANGELOG.md                    # Project changelog
+│   │   ├── JSDoc_Rules                     # General JSDoc documentation guidelines for code elements
+│   │   ├── jsdoc_standards.md              # ✅ Programmatic OpenAPI documentation standards with defineRoute() (updated 2025-11-17)
 │   │   ├── manageable-tasks.md             # Task management guide
 │   │   ├── pnpm.md                         # pnpm usage guide
 │   │   └── report-writing.md               # Report writing standards

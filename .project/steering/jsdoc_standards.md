@@ -1,342 +1,433 @@
-# jsdoc_standards
+# OpenAPI Documentation Standards
 
-The following detailed standard is what all API route documentation should adhere to:
+**Versions**: `@omer-x/next-openapi-route-handler@^2.0.0`, `@omer-x/next-openapi-json-generator@^2.0.2`, `zod@^4.0.17`, `next@15.4.5`
+
+All API routes must use programmatic OpenAPI with `defineRoute()` and Zod schemas for automatic validation, type safety, and documentation generation.
 
 ## 1. Basic Structure and Format
 
-Every route in the API must be documented with a JSDoc comment block using the `@swagger` tag following the OpenAPI 3.0.0 specification. The documentation should be placed immediately before the route handler function.
+Every route uses `defineRoute()` from `@omer-x/next-openapi-route-handler`. DTOs are defined in `src/lib/openapi/models/`.
 
-```javascript
-/**
- * @swagger
- * /path/to/endpoint:
- *   method:
- *     // Documentation content
- */
-router.method('/path/to/endpoint', async (req, res) => {
+```typescript
+import { defineRoute } from '@omer-x/next-openapi-route-handler'
+import { NextResponse } from 'next/server'
+import { ResourceDTO } from '@/lib/openapi/models/resource'
+
+export const GET = defineRoute(
+  {
+    operationId: 'getResource',
+    summary: 'Brief description',
+    tags: ['Resources'],
+  },
+  async request => {
+    return NextResponse.json(data)
+  }
+)
 ```
 
-## 2. Core Documentation Elements
+## 2. Creating DTOs with Zod
 
-### 2.1 Route Path Definition
+DTOs must be created in `src/lib/openapi/models/` using Zod schemas. These serve as both validation and documentation.
 
-- The route path must match exactly the path defined in the Express route handler
-- Path parameters should be defined using curly braces: `/path/{paramName}`
-- Trailing slashes should be avoided for consistency
+```typescript
+// src/lib/openapi/models/animal.ts
+import { z } from 'zod'
 
-### 2.2 HTTP Method
+export const AnimalDTO = z.object({
+  id: z.number().describe('Unique animal identifier'),
+  name: z.string().max(12).describe('Animal name'),
+  sex: z.enum(['Male', 'Female']).describe('Animal sex'),
+  breed: z.string().describe('Breed name'),
+  lastVisit: z.string().datetime().describe('Last visit date (ISO 8601)'),
+})
 
-- The HTTP method (get, post, put, delete) should be indented under the path
-- Only one method should be defined per documentation block
-- Multiple methods for the same path should be documented separately
+export const CreateAnimalDTO = AnimalDTO.omit({ id: true }).extend({
+  customerId: z.number().describe('Customer ID'),
+})
 
-### 2.3 Summary and Description
+export const UpdateAnimalDTO = CreateAnimalDTO.partial()
 
-- Every endpoint must have a clear, concise `summary` field (single line)
-- A more detailed `description` field using the pipe symbol (`|`) for multi-line content
-- The description should:
-  - Explain the purpose of the endpoint in 2-3 sentences
-  - Describe key functionality and behaviors
-  - Note any important side effects or dependencies
-  - Use proper grammar and complete sentences
-  - For complex endpoints, include usage examples or explanations of how the endpoint works in the larger application context
-
-Example:
-
-```javascript
-/**
- * @swagger
- * /api/example:
- *   get:
- *     summary: Brief description of what this endpoint does
- *     description: |
- *       Detailed explanation of the endpoint functionality.
- *       This should cover what the endpoint does, how it works,
- *       and any important behaviors users should know about.
- *
- *       Use multiple paragraphs for complex explanations.
- */
+export const AnimalSearchQuery = z.object({
+  q: z.string().optional().describe('Search query'),
+})
 ```
 
-## 3. Tags and Categorization
+**Key Guidelines**:
 
-### 3.1 Tag Requirements
+- Use `.describe()` on every field for OpenAPI documentation
+- Use `.datetime()` for ISO 8601 dates
+- Create separate DTOs for create/update operations
+- Use `.partial()` for update DTOs
+- Export all DTOs for use in `generateOpenApiSpec()`
 
-- Each endpoint must be assigned to at least one tag, often multiple tags
-- Tags must come from the predefined list of application tags defined in the `tags` section
-- Multiple tags should be used when an endpoint serves multiple purposes
-- Common tag combinations include:
-  - `[Navigation, X]` for UI page routes
-  - `[API, X]` for data API endpoints
-  - `[System, Authentication]` for security-related endpoints
+## 3. defineRoute Configuration
 
-### 3.2 Defined Tags
+### 3.1 Required Fields
 
-The application uses the following tags for categorization:
+Every `defineRoute()` call must include:
 
-- Authentication - User authentication and authorization endpoints
-- Documents - Document management and processing endpoints
-- History - Document processing history and tracking
-- Navigation - General navigation endpoints for the web interface
-- System - Configuration, health checks, and administrative functions
-- Chat - Document chat functionality
-- Setup - Application setup and configuration
-- Metadata - Endpoints for managing document metadata
-- API - General API endpoints (usually combined with other tags)
-
-## 4. Security Requirements
-
-### 4.1 Security Definitions
-
-- Each protected endpoint must include appropriate security requirements
-- The application supports two authentication methods:
-  - `BearerAuth` - JWT-based authentication for web app users
-  - `ApiKeyAuth` - API key authentication for programmatic access
-
-### 4.2 Security Requirement Format
-
-Security requirements should be specified in the standard format:
-
-```javascript
- *     security:
- *       - BearerAuth: []
- *       - ApiKeyAuth: []
+```typescript
+export const GET = defineRoute({
+  operationId: 'uniqueOperationName',  // Unique across all routes
+  summary: 'Brief single-line description',
+  description: 'Detailed explanation of functionality, behaviors, and side effects',
+  tags: ['CategoryName'],
+}, async (request) => { ... })
 ```
 
-### 4.3 Security Notices
+### 3.2 Tags for Categorization
 
-- For endpoints that modify security settings (like key regeneration), include explicit security notices
-- Format these as bold text in the description using Markdown: `**Security Notice**: Important information.`
+Each endpoint must be assigned at least one tag. Use multiple tags when appropriate:
 
-## 5. Parameters Documentation
+- `Animals` - Animal management endpoints
+- `Customers` - Customer management endpoints
+- `Breeds` - Breed management endpoints
+- `Notes` - Service notes endpoints
+- `Authentication` - Auth endpoints (if implemented)
+- `System` - Health checks, configuration
 
-### 5.1 Path Parameters
+**Example**:
 
-Path parameters should be documented with:
-
-- Parameter name matching the path definition
-- Schema type (integer, string, etc.)
-- Required flag (almost always true for path parameters)
-- Description of the parameter purpose
-- Example value
-
-```javascript
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The resource ID
- *         example: 123
+```typescript
+tags: ['Animals'],  // Single tag
+tags: ['Animals', 'API'],  // Multiple tags
 ```
 
-### 5.2 Query Parameters
+## 4. Parameters Documentation
 
-Query parameters follow a similar format but include:
+### 4.1 Query Parameters
 
-- Default values where applicable
-- Enumerated values if the parameter has a restricted set of options
+Use `queryParams` with a Zod schema:
 
-```javascript
- *     parameters:
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Maximum number of records to return
+```typescript
+export const GET = defineRoute({
+  operationId: 'searchAnimals',
+  queryParams: AnimalSearchQuery,  // z.object({ q: z.string().optional() })
+  ...
+}, async (request) => {
+  const { q } = request.queryParams  // Type-safe!
+})
 ```
 
-### 5.3 Request Body
+### 4.2 Path Parameters
 
-For POST/PUT endpoints, document the request body with:
+Use `pathParams` with a Zod schema:
 
-- Required flag
-- Content type (usually application/json)
-- Schema definition including:
-  - Required properties list
-  - Property definitions with types
-  - Property descriptions
-  - Example values
-
-```javascript
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - propertyName
- *             properties:
- *               propertyName:
- *                 type: string
- *                 description: Description of the property
- *                 example: "Example value"
+```typescript
+export const GET = defineRoute({
+  operationId: 'getAnimal',
+  pathParams: z.object({
+    id: z.string().describe('Animal ID')
+  }),
+  ...
+}, async (request) => {
+  const { id } = request.pathParams  // Type-safe!
+})
 ```
 
-## 6. Response Documentation
+### 4.3 Request Body
 
-### 6.1 Response Status Codes
+Use `requestBody` with a Zod schema:
 
-Each endpoint must document all possible response status codes:
-
-- 200/201 for successful operations
-- 400 for invalid requests
-- 401 for authentication failures
-- 403 for authorization failures
-- 404 for resource not found
-- 500 for server errors
-- Any other status code the endpoint might return
-
-### 6.2 Response Content
-
-For each status code, document:
-
-- Description of what the status code means in this specific context
-- Content type of the response
-- Schema definition of the response body
-- For complex responses, use schema references to components
-
-```javascript
- *     responses:
- *       200:
- *         description: Detailed description of successful response
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ResponseSchema'
+```typescript
+export const POST = defineRoute(
+  {
+    operationId: 'createAnimal',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': { schema: CreateAnimalDTO },
+      },
+    },
+  },
+  async request => {
+    const data = request.body // Validated & type-safe!
+  }
+)
 ```
 
-### 6.3 Streaming Responses
+## 5. Response Documentation
 
-For streaming endpoints (like chat), document:
+### 5.1 Defining Responses
 
-- The streaming nature of the response
-- The format of each chunk
-- Examples of the stream events
+Document all possible status codes:
 
-```javascript
- *       200:
- *         description: |
- *           Response streaming started. Each event contains a message chunk.
- *         content:
- *           text/event-stream:
- *             schema:
- *               type: string
- *               example: |
- *                 data: {"chunk":"Example response chunk"}
- *
- *                 data: {"done":true}
+```typescript
+export const GET = defineRoute({
+  operationId: 'getAnimal',
+  responses: {
+    200: {
+      description: 'Animal found',
+      content: {
+        'application/json': { schema: AnimalDTO }
+      }
+    },
+    404: {
+      description: 'Animal not found'
+    },
+    500: {
+      description: 'Server error'
+    }
+  },
+}, async (request) => { ... })
 ```
 
-## 7. Schema Definitions and References
+### 5.2 Common Status Codes
 
-### 7.1 Schema Components
+- `200` - Successful GET/PUT
+- `201` - Successful POST (resource created)
+- `204` - Successful DELETE (no content)
+- `400` - Validation error
+- `404` - Resource not found
+- `500` - Server error
 
-- Complex object schemas should be defined as components in a central schema file
-- These components should be referenced using `$ref` syntax
-- Common schemas like Error responses should always use references
+## 6. Generating OpenAPI Documentation
 
-```javascript
- *               schema:
- *                 $ref: '#/components/schemas/Error'
+### 6.1 Create Documentation Page
+
+Create `src/app/api/docs/page.tsx`:
+
+```typescript
+import generateOpenApiSpec from '@omer-x/next-openapi-json-generator'
+import dynamic from 'next/dynamic'
+import { AnimalDTO, CreateAnimalDTO, UpdateAnimalDTO } from '@/lib/openapi/models/animal'
+// Import all DTOs...
+
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
+import 'swagger-ui-react/swagger-ui.css'
+
+export default async function ApiDocsPage() {
+  const spec = await generateOpenApiSpec({
+    AnimalDTO, CreateAnimalDTO, UpdateAnimalDTO,
+    // All DTOs...
+  }, {
+    include: ['/api/'],
+    exclude: ['/api/docs']
+  })
+
+  spec.info = {
+    title: 'Pampered Pooch API',
+    version: '1.0.0',
+    description: 'Pet grooming database API'
+  }
+
+  return <SwaggerUI spec={spec} />
+}
 ```
 
-### 7.2 Inline Schemas
+### 6.2 Create JSON Endpoint
 
-- Simple response schemas can be defined inline
-- Include:
-  - Object type
-  - Properties with types and descriptions
-  - Example values for each property
+Create `src/app/api/docs/openapi.json/route.ts`:
 
-```javascript
- *               schema:
- *                 type: object
- *                 properties:
- *                   success:
- *                     type: boolean
- *                     description: Whether the operation succeeded
- *                     example: true
+```typescript
+import { NextResponse } from 'next/server'
+import generateOpenApiSpec from '@omer-x/next-openapi-json-generator'
+// Import all DTOs...
+
+export async function GET() {
+  const spec = await generateOpenApiSpec(
+    {
+      /* DTOs */
+    },
+    {
+      /* options */
+    }
+  )
+  spec.info = { title: 'Pampered Pooch API', version: '1.0.0' }
+  return NextResponse.json(spec)
+}
 ```
 
-### 7.3 Array Schemas
+## 7. Complete Route Example
 
-Arrays should specify the item type, either as a reference or inline schema:
+```typescript
+// src/app/api/animals/route.ts
+import { defineRoute } from '@omer-x/next-openapi-route-handler'
+import { NextResponse } from 'next/server'
+import {
+  AnimalDTO,
+  CreateAnimalDTO,
+  AnimalSearchQuery,
+} from '@/lib/openapi/models/animal'
+import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
 
-```javascript
- *               schema:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/Item'
+export const GET = defineRoute(
+  {
+    operationId: 'searchAnimals',
+    summary: 'Search and list animals',
+    description: 'Search animals by name, breed, or customer information',
+    tags: ['Animals'],
+    queryParams: AnimalSearchQuery,
+    responses: {
+      200: {
+        description: 'List of matching animals',
+        content: {
+          'application/json': { schema: z.array(AnimalDTO) },
+        },
+      },
+    },
+  },
+  async request => {
+    const { q } = request.queryParams
+    // Implementation...
+    return NextResponse.json(results)
+  }
+)
+
+export const POST = defineRoute(
+  {
+    operationId: 'createAnimal',
+    summary: 'Create a new animal',
+    tags: ['Animals'],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': { schema: CreateAnimalDTO },
+      },
+    },
+    responses: {
+      201: {
+        description: 'Animal created',
+        content: {
+          'application/json': { schema: AnimalDTO },
+        },
+      },
+      400: { description: 'Validation error' },
+    },
+  },
+  async request => {
+    const data = request.body
+    // Implementation...
+    return NextResponse.json(result, { status: 201 })
+  }
+)
 ```
 
-## 8. Documentation Style and Formatting
+## 8. Best Practices
 
-### 8.1 Indentation and Formatting
+### 8.1 Naming Conventions
 
-- Consistent indentation using 2 spaces
-- Proper nesting of OpenAPI elements
-- Clear separation between different documentation sections
+- **operationId**: camelCase, unique across all routes (e.g., `searchAnimals`, `getAnimal`, `createAnimal`)
+- **DTO files**: kebab-case (e.g., `animal.ts`, `service-note.ts`)
+- **DTO exports**: PascalCase (e.g., `AnimalDTO`, `CreateAnimalDTO`)
+- **Properties**: camelCase (e.g., `firstName`, `lastVisit`)
 
-### 8.2 Naming Conventions
+### 8.2 Validation
 
-- Use camelCase for property names in schemas
-- Use snake_case for query parameter names
-- Use descriptive names for all elements
+- Always use `.describe()` on Zod fields
+- Use appropriate Zod validators (`.email()`, `.datetime()`, `.max()`, etc.)
+- Use `.optional()` for optional fields
+- Use `.enum()` for restricted values
 
-### 8.3 Example Values
+### 8.3 Type Safety
 
-- Every property should include a realistic example value
-- Examples should demonstrate typical usage
-- For enums, example should be one of the allowed values
+- Never use `any` types
+- Import types from generated DTOs
+- Let TypeScript infer types from Zod schemas
+- Use `z.infer<typeof YourDTO>` only when needed
 
-## 9. Special Documentation Types
+## 9. Common Patterns
 
-### 9.1 Page Routes (Navigation)
+### 9.1 List/Search Endpoints
 
-For routes that render HTML pages:
+```typescript
+export const GET = defineRoute({
+  operationId: 'listResources',
+  summary: 'List or search resources',
+  queryParams: SearchQuery,  // Optional search params
+  responses: {
+    200: {
+      content: {
+        'application/json': { schema: z.array(ResourceDTO) }
+      }
+    }
+  }
+}, async (request) => { ... })
+```
 
-- Tag with [Navigation] and relevant feature tag
-- Document the purpose of the page
-- Note any data dependencies
+### 9.2 Single Resource Endpoints
 
-### 9.2 API Data Endpoints
+```typescript
+export const GET = defineRoute({
+  operationId: 'getResource',
+  pathParams: z.object({ id: z.string() }),
+  responses: {
+    200: { content: { 'application/json': { schema: ResourceDTO } } },
+    404: { description: 'Not found' }
+  }
+}, async (request) => { ... })
+```
 
-For pure data API endpoints:
+### 9.3 Create Endpoints
 
-- Tag with [API] and relevant feature tag
-- Document the data structure comprehensively
-- Include pagination details if applicable
+```typescript
+export const POST = defineRoute({
+  operationId: 'createResource',
+  requestBody: {
+    required: true,
+    content: { 'application/json': { schema: CreateResourceDTO } }
+  },
+  responses: {
+    201: { content: { 'application/json': { schema: ResourceDTO } } },
+    400: { description: 'Validation error' }
+  }
+}, async (request) => { ... })
+```
 
-### 9.3 Authentication Endpoints
-
-For authentication-related endpoints:
-
-- Tag with [Authentication]
-- Include detailed security considerations
-- Document token/session behaviors
-
-## 10. Documentation Quality Standards
+## 10. Quality Standards
 
 ### 10.1 Completeness
 
-- No undocumented parameters or responses
-- All possible response codes covered
-- All security requirements specified
+- Every route must have `operationId`, `summary`, `tags`
+- All parameters must have descriptions
+- All response codes must be documented
+- All DTOs must be exported and included in `generateOpenApiSpec()`
 
 ### 10.2 Accuracy
 
-- Documentation must match actual implementation
-- Examples must be valid for the described schema
-- Security requirements must reflect actual restrictions
+- Documentation matches implementation
+- Response schemas match actual returned data
+- Validation rules in Zod match business logic
 
 ### 10.3 Consistency
 
-- Similar endpoints should follow similar documentation patterns
-- Standard responses (like errors) should be documented identically
-- Terminology should be consistent across all endpoints
+- Similar endpoints follow same patterns
+- Naming conventions are uniform
+- Error responses are documented identically
 
-This comprehensive standard ensures that all API documentation in the Paperless-AI application is thorough, consistent, and user-friendly, providing developers with all the information they need to use the API effectively.
+## 11. Benefits
+
+### 11.1 Automatic Validation
+
+`defineRoute()` validates requests before your handler runs. Invalid requests return 400 automatically.
+
+### 11.2 Type Safety
+
+TypeScript knows the exact shape of `request.body`, `request.queryParams`, and `request.pathParams`.
+
+### 11.3 Living Documentation
+
+Visit `/api/docs` for interactive Swagger UI. Documentation is always up-to-date because it's generated from code.
+
+### 11.4 Testing
+
+Export OpenAPI spec at `/api/docs/openapi.json` for use with API testing tools (Hurl, Postman, Insomnia).
+
+## 12. Troubleshooting
+
+### 12.1 SSR Errors with Swagger UI
+
+Always use `dynamic(() => import('swagger-ui-react'), { ssr: false })`.
+
+### 12.2 Datetime Validation Fails
+
+Use `z.string().datetime()` or `z.iso.datetime({ offset: true })` for ISO 8601 dates.
+
+### 12.3 DTO Not Appearing in Swagger
+
+Ensure DTO is exported from model file AND passed to `generateOpenApiSpec()`.
+
+### 12.4 Type Errors in Request Handler
+
+Check that Zod schema matches expected data shape. Use TypeScript's intellisense to see inferred types.
