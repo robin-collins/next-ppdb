@@ -10,12 +10,14 @@ All notable changes to this project will be documented in this file.
 
 - **Complete OpenAPI Documentation for All APIs** (2025-11-17):
   - Created `/api/docs` page with Swagger UI for interactive API documentation
-  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.0.3 specification (1228 lines)
+  - Created `/api/docs/openapi.json` endpoint serving OpenAPI 3.0.3 specification (1500+ lines)
   - **Animals API** (5 endpoints): Search/list with relevance ranking, create, get/update/delete by ID
-  - **Customers API** (5 endpoints): Search/list with relevance ranking, create, get/update/delete by ID
+  - **Customers API** (6 endpoints): Search/list with relevance ranking, create, get/update/delete by ID, visit history
   - **Breeds API** (4 endpoints): List all, create, get/update/delete by ID
-  - **Notes API** (3 endpoints): Get/update/delete service notes by ID
-  - **Total: 17 fully documented REST API endpoints** with:
+  - **Notes API** (5 endpoints): List animal notes, create note for animal, get/update/delete service notes by ID
+  - **Reports API** (1 endpoint): Daily totals report with date range filtering
+  - **Admin API** (1 endpoint): Database backup generation
+  - **Total: 20 fully documented REST API endpoints** with:
     - Complete request/response schemas with data types and constraints
     - Path, query, and body parameter documentation
     - HTTP status code descriptions (200, 201, 400, 404)
@@ -96,6 +98,12 @@ All notable changes to this project will be documented in this file.
 - Baseline verification: Repository passes type-check, lint, format, and tests; applied Prettier writes to reference HTML files to satisfy fmt:check (2025-11-16)
 
 ### Fixed
+
+- **API Route Implementation - Missing GET Endpoint** (2025-11-17):
+  - Implemented missing GET method in `/api/animals/[id]/notes` route
+  - Route now supports both GET (list notes) and POST (create note) operations as per API documentation
+  - Returns array of service notes for specified animal, ordered by date descending
+  - Aligns implementation with authoritative routing documentation (ROUTES.md, API_ROUTES.md)
 
 - **Pre-commit Hook Configuration** (2025-11-17):
   - Fixed unused variable errors in `src/lib/logger.ts`: Prefixed `LogLevel` type with underscore, removed unused generic `T` from `withApiLogger`

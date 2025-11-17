@@ -13,7 +13,7 @@ export async function GET() {
       title: 'Pampered Pooch Pet Grooming API',
       version: '1.0.0',
       description:
-        'RESTful API for managing customers, animals, breeds, and service notes for a pet grooming business',
+        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 20 fully documented endpoints with comprehensive CRUD operations and business intelligence features.',
       contact: {
         name: 'Tech Team',
         email: 'tech@pamperedpooch.com',
@@ -45,6 +45,14 @@ export async function GET() {
       {
         name: 'Notes',
         description: 'Service notes management endpoints',
+      },
+      {
+        name: 'Reports',
+        description: 'Reporting and analytics endpoints',
+      },
+      {
+        name: 'Admin',
+        description: 'Administrative operations',
       },
     ],
     paths: {
@@ -593,6 +601,94 @@ export async function GET() {
           },
         },
       },
+      '/api/animals/{id}/notes': {
+        get: {
+          operationId: 'listAnimalNotes',
+          summary: "List an animal's service notes",
+          description:
+            'Retrieve all service notes for a specific animal, ordered by date descending',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Animal ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: "List of animal's service notes",
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/Note' },
+                  },
+                },
+              },
+            },
+            404: {
+              description: 'Animal not found',
+            },
+          },
+        },
+        post: {
+          operationId: 'createAnimalNote',
+          summary: 'Create a service note for an animal',
+          description: 'Add a new service note to an animal',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Animal ID',
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['notes'],
+                  properties: {
+                    notes: {
+                      type: 'string',
+                      description: 'Service note content',
+                    },
+                    serviceDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      description:
+                        'Date of service (defaults to current date if not provided)',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: 'Note created successfully',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Note' },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid request data',
+            },
+            404: {
+              description: 'Animal not found',
+            },
+          },
+        },
+      },
       '/api/notes/{noteId}': {
         get: {
           operationId: 'getNote',
@@ -691,6 +787,206 @@ export async function GET() {
             },
             404: {
               description: 'Note not found',
+            },
+          },
+        },
+      },
+      '/api/customers/history': {
+        get: {
+          operationId: 'getCustomerHistory',
+          summary: 'Get customer visit history',
+          description:
+            'Retrieve historical visit data for all customers with aggregated statistics',
+          tags: ['Customers'],
+          responses: {
+            200: {
+              description: 'Customer history data',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        customerID: {
+                          type: 'integer',
+                          description: 'Customer ID',
+                        },
+                        surname: {
+                          type: 'string',
+                          description: 'Customer surname',
+                        },
+                        firstname: {
+                          type: 'string',
+                          nullable: true,
+                          description: 'Customer first name',
+                        },
+                        totalVisits: {
+                          type: 'integer',
+                          description: 'Total number of visits',
+                        },
+                        totalSpent: {
+                          type: 'number',
+                          description: 'Total amount spent',
+                        },
+                        lastVisitDate: {
+                          type: 'string',
+                          format: 'date-time',
+                          description: 'Date of last visit',
+                        },
+                        animals: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              animalID: {
+                                type: 'integer',
+                                description: 'Animal ID',
+                              },
+                              name: {
+                                type: 'string',
+                                description: 'Animal name',
+                              },
+                              breed: {
+                                type: 'string',
+                                description: 'Breed name',
+                              },
+                            },
+                          },
+                          description: 'List of customer animals',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/reports/daily-totals': {
+        get: {
+          operationId: 'getDailyTotals',
+          summary: 'Get daily totals report',
+          description:
+            'Retrieve aggregated daily service totals including revenue and visit counts',
+          tags: ['Reports'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'startDate',
+              schema: { type: 'string', format: 'date' },
+              description: 'Start date for report range (YYYY-MM-DD)',
+              required: false,
+            },
+            {
+              in: 'query',
+              name: 'endDate',
+              schema: { type: 'string', format: 'date' },
+              description: 'End date for report range (YYYY-MM-DD)',
+              required: false,
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Daily totals report data',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      dateRange: {
+                        type: 'object',
+                        properties: {
+                          start: {
+                            type: 'string',
+                            format: 'date',
+                            description: 'Report start date',
+                          },
+                          end: {
+                            type: 'string',
+                            format: 'date',
+                            description: 'Report end date',
+                          },
+                        },
+                      },
+                      dailyTotals: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            date: {
+                              type: 'string',
+                              format: 'date',
+                              description: 'Date',
+                            },
+                            totalVisits: {
+                              type: 'integer',
+                              description: 'Number of visits on this date',
+                            },
+                            totalRevenue: {
+                              type: 'number',
+                              description: 'Total revenue for this date',
+                            },
+                            averageServiceCost: {
+                              type: 'number',
+                              description: 'Average cost per service',
+                            },
+                          },
+                        },
+                        description: 'Daily breakdown of totals',
+                      },
+                      summary: {
+                        type: 'object',
+                        properties: {
+                          totalVisits: {
+                            type: 'integer',
+                            description: 'Total visits in date range',
+                          },
+                          totalRevenue: {
+                            type: 'number',
+                            description: 'Total revenue in date range',
+                          },
+                          averageDailyRevenue: {
+                            type: 'number',
+                            description: 'Average daily revenue',
+                          },
+                        },
+                        description: 'Summary statistics for the date range',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid date parameters',
+            },
+          },
+        },
+      },
+      '/api/admin/backup': {
+        get: {
+          operationId: 'getDatabaseBackup',
+          summary: 'Get database backup',
+          description:
+            'Generate and download a complete database backup in SQL format',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Database backup file',
+              content: {
+                'application/sql': {
+                  schema: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'SQL backup file',
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Backup generation failed',
             },
           },
         },
