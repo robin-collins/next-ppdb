@@ -5,12 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCustomersStore } from '@/store/customersStore'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
-import CustomerHeader from '@/components/customer/CustomerHeader'
 import CustomerInfoCard from '@/components/customer/CustomerInfoCard'
 import AssociatedAnimalsCard from '@/components/customer/AssociatedAnimalsCard'
-import ContactDetailsCard from '@/components/customer/ContactDetailsCard'
-import CustomerStatsCard from '@/components/customer/CustomerStatsCard'
-import QuickActionsCard from '@/components/customer/QuickActionsCard'
 
 export default function CustomerDetailPage() {
   const params = useParams()
@@ -110,16 +106,6 @@ export default function CustomerDetailPage() {
     router.push(`/customer/${customerId}/newAnimal`)
   }
 
-  const handleViewAnimals = () => {
-    // Filter animals for this customer on main page
-    router.push(`/?customer=${customerId}`)
-  }
-
-  const handleViewHistory = () => {
-    // Navigate to customer history page (to be implemented)
-    alert('Customer history feature coming soon!')
-  }
-
   const handleClickAnimal = (animalId: number) => {
     router.push(`/animals/${animalId}`)
   }
@@ -137,7 +123,7 @@ export default function CustomerDetailPage() {
         onSearch={() => {}}
         searchValue=""
         breadcrumbs={[
-          { label: 'Dashboard', href: '/' },
+          { label: 'Home', href: '/' },
           { label: 'Customers', href: '/' },
           { label: customer.surname, current: true },
         ]}
@@ -151,56 +137,39 @@ export default function CustomerDetailPage() {
         currentPath={`/customer/${customerId}`}
       />
 
-      <main
-        className={`flex-1 transition-all duration-300 ${
-          sidebarPinned ? 'ml-[var(--sidebar-width)]' : ''
-        }`}
-      >
-        <div className="mx-auto max-w-[1400px] space-y-8 p-6">
-          {/* Customer Header */}
-          <CustomerHeader
-            customer={customer}
-            onEdit={() => {
-              // Edit mode is handled within CustomerInfoCard
-            }}
-            onAddAnimal={handleAddAnimal}
-            onViewHistory={handleViewHistory}
-          />
+      <main className={`main-content ${sidebarPinned ? 'sidebar-pinned' : ''}`}>
+        <div className="content-wrapper">
+          {/* Page Title */}
+          <div className="page-title-section">
+            <div>
+              <h1>
+                <span className="page-title-icon">👤</span>
+                Customer Detail
+              </h1>
+              <p className="page-subtitle">
+                Manage customer information and associated animals
+              </p>
+            </div>
+          </div>
 
           {/* Two-Column Grid */}
-          <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+          <div className="content-grid">
             {/* Main Column */}
-            <div className="space-y-8">
+            <div className="main-column">
               <CustomerInfoCard
                 customer={customer}
                 onUpdate={handleUpdateCustomer}
+                onDelete={handleDeleteCustomer}
               />
+            </div>
+
+            {/* Sidebar Column */}
+            <div className="sidebar-column">
               <AssociatedAnimalsCard
                 animals={customer.animals}
                 onAddAnimal={handleAddAnimal}
                 onDeleteAnimal={handleDeleteAnimal}
                 onClickAnimal={handleClickAnimal}
-              />
-            </div>
-
-            {/* Sidebar Column */}
-            <div className="space-y-8">
-              <ContactDetailsCard
-                customer={customer}
-                onEdit={() => {
-                  // Edit mode is handled within CustomerInfoCard
-                }}
-              />
-              <CustomerStatsCard customer={customer} />
-              <QuickActionsCard
-                customerId={customerId}
-                onUpdateRecord={() => {
-                  // Edit mode is handled within CustomerInfoCard
-                }}
-                onAddAnimal={handleAddAnimal}
-                onViewAnimals={handleViewAnimals}
-                onViewHistory={handleViewHistory}
-                onDeleteCustomer={handleDeleteCustomer}
               />
             </div>
           </div>

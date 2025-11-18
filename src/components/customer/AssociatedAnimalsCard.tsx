@@ -1,7 +1,5 @@
 'use client'
 
-import AnimalDetailCard from './AnimalDetailCard'
-
 interface Animal {
   id: number
   name: string
@@ -26,18 +24,23 @@ export default function AssociatedAnimalsCard({
   onClickAnimal,
 }: AssociatedAnimalsCardProps) {
   return (
-    <div className="card overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
-      {/* Card Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-4">
-        <h2 className="flex items-center gap-3 text-xl font-bold text-gray-900">
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">
           <svg
-            className="h-5 w-5 text-indigo-600"
+            className="card-icon"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
-            fill="currentColor"
           >
-            <path d="M4.5 6.75c0-.69.56-1.25 1.25-1.25h12.5c.69 0 1.25.56 1.25 1.25v10.5c0 .69-.56 1.25-1.25 1.25H5.75c-.69 0-1.25-.56-1.25-1.25V6.75zM12 15.25l5.5-5.5L16 8.25l-4 4-1.75-1.75L8.75 12 12 15.25z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 10h16M4 14h16M4 18h16"
+            ></path>
           </svg>
-          Associated Animals ({animals.length})
+          Associated Animals
         </h2>
         <button
           onClick={onAddAnimal}
@@ -46,53 +49,158 @@ export default function AssociatedAnimalsCard({
         >
           <svg
             className="h-4 w-4"
-            viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            viewBox="0 0 24 24"
           >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            ></path>
           </svg>
-          Add Animal
+          Add
         </button>
       </div>
-
-      {/* Card Content */}
-      <div className="p-6">
+      <div className="card-content flex flex-col gap-4">
         {animals.length === 0 ? (
-          <div className="py-12 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z" />
-            </svg>
-            <p className="mt-4 text-gray-600">
-              No animals registered for this customer.
-            </p>
-            <button
-              onClick={onAddAnimal}
-              className="mt-4 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all hover:opacity-90"
-              style={{ background: 'var(--primary)' }}
-            >
-              Add First Animal
-            </button>
+          <div className="py-8 text-center text-gray-500">
+            <p>No animals associated with this customer.</p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-            {animals.map(animal => (
-              <AnimalDetailCard
-                key={animal.id}
-                animal={animal}
-                onDelete={onDeleteAnimal}
-                onClick={onClickAnimal}
-              />
-            ))}
-          </div>
+          animals.map((animal, index) => (
+            <div
+              key={animal.id}
+              className="animal-mini-card group relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-primary)]"
+              style={{ animationDelay: `${index * 0.1}s` }}
+              onClick={() => onClickAnimal?.(animal.id)}
+            >
+              {/* Top Border Gradient on Hover */}
+              <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100" />
+
+              {/* Avatar */}
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] text-lg font-bold text-white shadow-[var(--shadow-primary)] transition-transform group-hover:scale-110 group-hover:-rotate-6">
+                {animal.name.charAt(0)}
+              </div>
+
+              {/* Info */}
+              <div className="min-w-0 flex-1">
+                <h3 className="mb-1 font-[family-name:var(--font-display)] text-base font-bold text-gray-900">
+                  {animal.name}
+                </h3>
+                <div className="flex flex-wrap gap-3 text-xs text-gray-600">
+                  <span className="flex items-center gap-1">
+                    <svg
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                      ></path>
+                    </svg>
+                    {animal.breed}
+                  </span>
+                  {animal.colour && (
+                    <span className="flex items-center gap-1">
+                      <svg
+                        width="12"
+                        height="12"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                        ></path>
+                      </svg>
+                      {animal.colour}
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <svg
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      ></path>
+                    </svg>
+                    {animal.sex}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-700 transition-colors hover:bg-gray-200"
+                  title="View/Edit Animal"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onClickAnimal?.(animal.id)
+                  }}
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--error)] text-white transition-colors hover:bg-[#c86158]"
+                  title="Delete Animal"
+                  onClick={e => {
+                    e.stopPropagation()
+                    onDeleteAnimal?.(animal.id)
+                  }}
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))
         )}
       </div>
     </div>
