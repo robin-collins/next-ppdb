@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "dev": "node scripts/get-port.js",
+    "dev:killall": "sudo netstat -tunlp  | grep next | awk -F' ' '{print $7}' | awk -F'/' '{print $1}' | xargs -I {} kill -9 {} && sudo netstat -tunlpd | grep next",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

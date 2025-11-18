@@ -1,8 +1,9 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
+import Header from '@/components/Header'
+import Sidebar from '@/components/Sidebar'
 import BreedForm from '@/components/breeds/BreedForm'
 import BreedTable from '@/components/breeds/BreedTable'
-import Breadcrumbs from '@/components/Breadcrumbs'
 import Toast from '@/components/Toast'
 
 interface Breed {
@@ -17,6 +18,9 @@ export default function BreedsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -106,35 +110,83 @@ export default function BreedsPage() {
     }
   }
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    // Search functionality can be implemented later if needed
+  }
+
   return (
-    <div className="main-content">
-      <div className="content-wrapper">
-        <div className="mb-4">
-          <Breadcrumbs
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Breeds', current: true },
-            ]}
-          />
-        </div>
-        <BreedForm onCreate={onCreate} />
-        {error ? (
-          <div className="mt-4 text-red-600" role="alert" aria-live="polite">
-            {error}
+    <div className="flex min-h-screen flex-col">
+      {/* MANDATORY: Header */}
+      <Header
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        sidebarOpen={sidebarOpen}
+        onSearch={handleSearch}
+        searchValue={searchQuery}
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Breeds', current: true },
+        ]}
+      />
+
+      {/* MANDATORY: Sidebar */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        isPinned={sidebarPinned}
+        onClose={() => setSidebarOpen(false)}
+        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        currentPath="/breeds"
+      />
+
+      {/* Main content shifts when pinned */}
+      <main
+        className={`main-content ${sidebarPinned ? 'ml-[calc(var(--sidebar-width)+1.5rem)]' : ''}`}
+      >
+        <div className="content-wrapper">
+          {/* Page Header */}
+          <div className="page-header">
+            <div className="page-title-section">
+              <h1>Breed Management</h1>
+              <p className="page-subtitle">
+                Manage breed database with custom grooming times and pricing
+              </p>
+            </div>
           </div>
-        ) : null}
-        {loading ? <div className="mt-4">Loading…</div> : null}
-        <div className="mt-4">
-          <BreedTable rows={rows} onUpdate={onUpdate} onDelete={onDelete} />
+
+          {/* Add New Breed Section */}
+          <BreedForm onCreate={onCreate} />
+
+          {/* Error Display */}
+          {error ? (
+            <div
+              className="mt-4 rounded-lg bg-red-50 p-4 text-red-600"
+              role="alert"
+              aria-live="polite"
+            >
+              {error}
+            </div>
+          ) : null}
+
+          {/* Loading State */}
+          {loading ? (
+            <div className="mt-4 text-center text-gray-600">Loading…</div>
+          ) : null}
+
+          {/* Breed Table */}
+          <div className="mt-8">
+            <BreedTable rows={rows} onUpdate={onUpdate} onDelete={onDelete} />
+          </div>
+
+          {/* Toast Notification */}
+          {toast ? (
+            <Toast
+              message={toast}
+              type="success"
+              onClose={() => setToast(null)}
+            />
+          ) : null}
         </div>
-        {toast ? (
-          <Toast
-            message={toast}
-            type="success"
-            onClose={() => setToast(null)}
-          />
-        ) : null}
-      </div>
+      </main>
     </div>
   )
 }

@@ -2,6 +2,15 @@ Your task is to implement the Next.js page `${pagePath}` to match the design in 
 
 basic description of visual comparison to `${mockuiFile}`: `${notes}`
 
+## First things first.
+
+You running in a git worktree, thus you will need to ensure its setup before anything else. To do so you will need to write the following to a .env file aka `echo 'DATABASE_URL="mysql://tech:k1DDl3s2@10.10.10.203:3306/ppdb-app"' > .env`, then you will need to run `pnpm install` and following that `pnpm prisma generate`.
+
+## The nextjs dev server
+
+To confirm the above setup is complete, or to launch the nextjs dev server running on your worktree use `pnpm dev`
+When the nextjs dev server launches it will create a `.env.nextjs_dev.json` file in the root of the repo, this can be used to programmaticaly opbtain the nextjs dev servers `--port` setting as well as the running servers PID. To do so process the json via JS or use `jq .pid .env.nextjs_dev.json` for the PID or `jq .port .env.nextjs_dev.json` for --port setting.
+
 ## Critical Context Documents
 
 Read and follow these documents **exactly**:

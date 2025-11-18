@@ -6,6 +6,32 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Animal Detail Page Implementation** (2025-11-18):
+  - Completely reimplemented `src/app/animals/[id]/page.tsx` to match `reference/redesign/mockui-animal-detail.html` design
+  - Added mandatory Header component with breadcrumbs (Home > Animals > [Animal Name])
+  - Added mandatory Sidebar component with navigation and pinning functionality
+  - Implemented page header with large animal avatar (120px), animal name, breed, and sex
+  - Added customer info card with avatar, name, phone, and "View Customer" button
+  - Implemented animal details form card with all fields: name, breed, sex, colour, cost, last visit, this visit, comments
+  - Added service history card with note entry form and timeline list
+  - Implemented "Update Record" and "Change Dates" action buttons
+  - Added "Insert NOTE" button for adding service notes
+  - Implemented service notes list with date, details, and delete functionality
+  - Added date picker calendar icons for Last Visit and This Visit fields
+  - Fixed breed display issue: API returns breed as string, not object (handled both formats)
+  - All styling uses design tokens from STYLE_GUIDE.md (Lora + Rubik fonts, primary/secondary/accent colors)
+  - Layout uses two-column grid (main column + sidebar column) that collapses on mobile
+  - All form fields properly bound to state and update functionality
+  - Page includes animated gradient background and paw print pattern overlay (inherited from layout)
+  - Glassmorphic card styling with backdrop blur and elevation shadows
+  - Responsive design with proper breakpoints at 768px and 480px
+  - Connected to Zustand animalsStore for state management
+  - API integration: GET /api/animals/[id], PUT /api/animals/[id], POST /api/animals/[id]/notes, DELETE /api/notes/[noteId]
+  - Database connection configured with .env file (DATABASE_URL)
+  - Prisma client generated and connected to MySQL database
+
 ### Fixed
 
 - **CRITICAL: CSS Reset Padding Conflict** (2025-11-17):
