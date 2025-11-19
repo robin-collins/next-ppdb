@@ -49,7 +49,6 @@ export default function CustomerInfoCard({
     e.preventDefault()
     if (onUpdate) {
       await onUpdate(formData)
-      alert('Customer record updated successfully!')
     }
   }
 

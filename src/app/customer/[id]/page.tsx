@@ -7,6 +7,10 @@ import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 import CustomerInfoCard from '@/components/customer/CustomerInfoCard'
 import AssociatedAnimalsCard from '@/components/customer/AssociatedAnimalsCard'
+import CustomerStatsCard from '@/components/customer/CustomerStatsCard'
+import Toast from '@/components/Toast'
+
+import ConfirmationModal from '@/components/ConfirmationModal'
 
 export default function CustomerDetailPage() {
   const params = useParams()
@@ -20,10 +24,21 @@ export default function CustomerDetailPage() {
     fetchCustomer,
     updateCustomer,
     deleteCustomer,
+    deleteAnimal,
   } = useCustomersStore()
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarPinned, setSidebarPinned] = useState(false)
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info' | 'warning'
+    show: boolean
+  }>({ message: '', type: 'info', show: false })
+
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean
+    animalId: number | null
+  }>({ isOpen: false, animalId: null })
 
   useEffect(() => {
     if (customerId && !isNaN(customerId)) {
@@ -75,7 +90,17 @@ export default function CustomerDetailPage() {
         email: data.email === null ? undefined : data.email,
       }
       await updateCustomer(customerId, updateData)
+      setToast({
+        message: 'Customer record updated successfully',
+        type: 'success',
+        show: true,
+      })
     } catch (error) {
+      setToast({
+        message: 'Failed to update customer record',
+        type: 'error',
+        show: true,
+      })
       throw error
     }
   }
@@ -110,13 +135,51 @@ export default function CustomerDetailPage() {
     router.push(`/animals/${animalId}`)
   }
 
-  const handleDeleteAnimal = async (_animalId: number) => {
-    // This would require an animal store method
-    alert('Delete animal functionality to be implemented')
+  const handleDeleteAnimal = (animalId: number) => {
+    setDeleteModal({ isOpen: true, animalId })
+  }
+
+  const confirmDeleteAnimal = async () => {
+    if (deleteModal.animalId) {
+      try {
+        await deleteAnimal(deleteModal.animalId)
+        setToast({
+          message: 'Animal deleted successfully',
+          type: 'success',
+          show: true,
+        })
+      } catch {
+        setToast({
+          message: 'Failed to delete animal',
+          type: 'error',
+          show: true,
+        })
+      }
+    }
+    setDeleteModal({ isOpen: false, animalId: null })
   }
 
   return (
     <div className="flex min-h-screen flex-col">
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(prev => ({ ...prev, show: false }))}
+          durationMs={15000}
+        />
+      )}
+
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, animalId: null })}
+        onConfirm={confirmDeleteAnimal}
+        title="Delete Animal"
+        message="Are you sure you want to delete this animal? This action cannot be undone."
+        confirmLabel="Delete"
+        isDanger={true}
+      />
+
       <Header
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         sidebarOpen={sidebarOpen}
@@ -171,6 +234,7 @@ export default function CustomerDetailPage() {
                 onDeleteAnimal={handleDeleteAnimal}
                 onClickAnimal={handleClickAnimal}
               />
+              <CustomerStatsCard customer={customer} />
             </div>
           </div>
         </div>

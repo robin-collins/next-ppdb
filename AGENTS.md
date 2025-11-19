@@ -28,3 +28,11 @@ Recent history uses short, sentence-case subjects (e.g., "Add admin filters"). W
 ## Database & Environment Notes
 
 Keep secrets in `.env` and document any new keys for teammates. After editing `prisma/schema.prisma`, regenerate clients with `pnpm prisma generate` and review the resulting diff in `src/generated/prisma`. Apply pending migrations locally before requesting review and describe impactful schema changes in the PR summary.
+
+## UI/UX Standards
+
+- **Notifications**: Use animated, temporary Toast notifications (info, warning, error, success) instead of browser alerts.
+  - Duration: 3s for standard messages, 15s for important info/success confirmations.
+  - Positioning: Top-center, unobtrusive, floating over content but below header.
+  - Animation: Smooth fade-in/fade-out.
+  - Layout: Must not shift page layout.

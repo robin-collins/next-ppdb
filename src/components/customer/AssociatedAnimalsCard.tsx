@@ -147,11 +147,12 @@ export default function AssociatedAnimalsCard({
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
+              <div className="relative z-10 flex items-center gap-2">
                 <button
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-700 transition-colors hover:bg-gray-200"
                   title="View/Edit Animal"
                   onClick={e => {
+                    e.preventDefault()
                     e.stopPropagation()
                     onClickAnimal?.(animal.id)
                   }}
@@ -177,9 +178,10 @@ export default function AssociatedAnimalsCard({
                   </svg>
                 </button>
                 <button
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--error)] text-white transition-colors hover:bg-[#c86158]"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-transparent bg-[var(--error)] text-white transition-all duration-200 hover:scale-110 hover:border-[#8a3c35] hover:bg-[#c86158] hover:shadow-md"
                   title="Delete Animal"
                   onClick={e => {
+                    e.preventDefault()
                     e.stopPropagation()
                     onDeleteAnimal?.(animal.id)
                   }}

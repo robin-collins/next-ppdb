@@ -287,4 +287,11 @@ DATABASE_URL="mysql://user:pass@host:port/dbname"
 3. **Don't skip `prisma generate`** - After schema changes, types won't update until you run this
 4. **Phone search requires normalization** - Raw queries won't match formatted DB values
 5. **Sidebar width uses CSS variable** - Update `--sidebar-width` when resizing, not inline styles
-6. **Search needs non-empty query** - API returns empty array for blank searches
+
+## UI/UX Standards
+
+- **Notifications**: Use animated, temporary Toast notifications (info, warning, error, success) instead of browser alerts.
+  - Duration: 3s for standard messages, 15s for important info/success confirmations.
+  - Positioning: Top-center, unobtrusive, floating over content but below header.
+  - Animation: Smooth fade-in/fade-out.
+  - Layout: Must not shift page layout.

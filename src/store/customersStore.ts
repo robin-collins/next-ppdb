@@ -91,6 +91,7 @@ interface CustomersState {
   createCustomer: (data: CreateCustomerData) => Promise<Customer>
   updateCustomer: (id: number, data: UpdateCustomerData) => Promise<void>
   deleteCustomer: (id: number) => Promise<void>
+  deleteAnimal: (id: number) => Promise<void>
 }
 
 export const useCustomersStore = create<CustomersState>()(
@@ -283,6 +284,40 @@ export const useCustomersStore = create<CustomersState>()(
                 error instanceof Error
                   ? error.message
                   : 'Failed to delete customer',
+            })
+            throw error
+          } finally {
+            set({ loading: false })
+          }
+        },
+
+        deleteAnimal: async id => {
+          set({ loading: true, error: null })
+          try {
+            const response = await fetch(`/api/animals/${id}`, {
+              method: 'DELETE',
+            })
+
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(
+                errorData.error ||
+                  errorData.details ||
+                  'Failed to delete animal'
+              )
+            }
+
+            // Refresh selected customer to update the animals list
+            const { selectedCustomer } = get()
+            if (selectedCustomer) {
+              await get().fetchCustomer(selectedCustomer.id)
+            }
+          } catch (error) {
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to delete animal',
             })
             throw error
           } finally {

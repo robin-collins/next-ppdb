@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import Image from 'next/image'
 
 interface BreadcrumbItem {
   label: string
@@ -116,11 +117,14 @@ export default function Header({
           className="brand-header flex cursor-pointer items-center gap-3"
           onClick={() => (window.location.href = '/')}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z" />
-            </svg>
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="Pampered Pooch Logo"
+            width={250}
+            height={80}
+            className="h-[80px] w-auto object-contain"
+            priority
+          />
           <div className="brand-text hidden sm:block">
             <h1 className="text-xl font-bold text-gray-800">Pampered Pooch</h1>
             <p className="text-xs text-gray-600">Professional Pet Care</p>
@@ -128,7 +132,7 @@ export default function Header({
         </div>
 
         {/* Search Bar */}
-        <div className="flex flex-1 items-center" role="search">
+        <div className="flex items-center" role="search">
           <div className="relative flex h-[53px] w-full max-w-[600px] items-center rounded-xl border-2 border-gray-200 bg-white !px-6 shadow-sm transition-all focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_4px_rgba(99,102,241,0.1),0_4px_6px_-1px_rgb(0_0_0_/_0.1),0_2px_4px_-2px_rgb(0_0_0_/_0.1)]">
             <svg
               className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400"
@@ -143,7 +147,7 @@ export default function Header({
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search by name, phone, email, or breed..."
-              className="h-[53px] flex-1 border-none bg-transparent py-0 pr-3 text-base font-medium text-gray-800 outline-none"
+              className="h-[53px] w-[300px] border-none bg-transparent py-0 pr-3 text-base font-medium text-gray-800 outline-none lg:w-[400px]"
             />
             <div className="ml-3 flex items-center gap-3">
               <button
@@ -164,38 +168,38 @@ export default function Header({
           </div>
         </div>
 
+        {/* Breadcrumbs */}
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <div className="hidden flex-1 items-center xl:flex">
+            <nav className="flex items-center gap-2 text-sm">
+              {breadcrumbs.map((item, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  {item.current ? (
+                    <span className="font-medium text-gray-800">
+                      {item.label}
+                    </span>
+                  ) : (
+                    <a
+                      href={item.href}
+                      className="text-[var(--primary)] hover:underline"
+                    >
+                      {item.label}
+                    </a>
+                  )}
+                  {index < breadcrumbs.length - 1 && (
+                    <span className="text-gray-400">›</span>
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
+        )}
+
         {/* Date Display */}
-        <div className="date-display hidden rounded-full bg-[var(--primary-light)] !px-6 !py-2 text-sm font-semibold whitespace-nowrap text-[var(--primary)] lg:block">
+        <div className="ml-auto hidden flex-shrink-0 rounded-full bg-[var(--primary-light)] !px-6 !py-2 text-sm font-semibold whitespace-nowrap text-[var(--primary)] lg:block">
           {dateTime}
         </div>
       </div>
-
-      {/* Breadcrumbs */}
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <div className="mx-auto max-w-[1400px] px-6 py-3">
-          <nav className="flex items-center gap-2 text-sm">
-            {breadcrumbs.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                {item.current ? (
-                  <span className="font-medium text-gray-800">
-                    {item.label}
-                  </span>
-                ) : (
-                  <a
-                    href={item.href}
-                    className="text-[var(--primary)] hover:underline"
-                  >
-                    {item.label}
-                  </a>
-                )}
-                {index < breadcrumbs.length - 1 && (
-                  <span className="text-gray-400">›</span>
-                )}
-              </div>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   )
 }

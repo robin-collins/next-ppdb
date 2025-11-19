@@ -36,72 +36,78 @@ export default function CustomerStatsCard({
   const stats = calculateStats()
 
   return (
-    <div className="card overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
+    <div className="card">
       {/* Card Header */}
-      <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-        <h2 className="flex items-center gap-3 text-xl font-bold text-gray-900">
+      <div className="card-header">
+        <h2 className="card-title">
           <svg
-            className="h-5 w-5 text-indigo-600"
+            className="card-icon"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
-            fill="currentColor"
           >
-            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            ></path>
           </svg>
           Customer Statistics
         </h2>
       </div>
 
       {/* Card Content */}
-      <div className="p-6">
+      <div className="card-content">
         <div className="grid grid-cols-2 gap-4">
           {/* Years Active */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center transition-all hover:shadow-md">
             <div
               className="text-2xl font-extrabold"
               style={{ color: 'var(--primary)' }}
             >
               {stats.yearsActive}
             </div>
-            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-600 uppercase">
+            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-500 uppercase">
               Years Active
             </div>
           </div>
 
           {/* Animals */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center transition-all hover:shadow-md">
             <div
               className="text-2xl font-extrabold"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--secondary)' }}
             >
               {stats.animals}
             </div>
-            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-600 uppercase">
+            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-500 uppercase">
               Animals
             </div>
           </div>
 
           {/* Total Visits */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center transition-all hover:shadow-md">
             <div
               className="text-2xl font-extrabold"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--accent)' }}
             >
               {stats.totalVisits}
             </div>
-            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-600 uppercase">
+            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-500 uppercase">
               Total Visits
             </div>
           </div>
 
           {/* Total Spent */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+          <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-center transition-all hover:shadow-md">
             <div
               className="text-2xl font-extrabold"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--success)' }}
             >
               {stats.totalSpent}
             </div>
-            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-600 uppercase">
+            <div className="mt-1 text-xs font-semibold tracking-widest text-gray-500 uppercase">
               Total Spent
             </div>
           </div>
