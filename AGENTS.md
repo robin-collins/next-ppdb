@@ -17,6 +17,14 @@ Run `pnpm dev` for the Turbopack dev server on port 3000. Produce optimized bund
 
 Prettier owns formatting (`tabWidth: 2`, `singleQuote: true`, `semi: false`) and sorts Tailwind classes through the included plugin. ESLint extends the Next.js configuration; fix warnings instead of suppressing them. Name React components and stores with PascalCase filenames (e.g., `UserTable.tsx`), keep helpers in camelCase modules, and prefer named exports unless a file exposes a single entry point.
 
+### Button Styling Standards
+
+- **Colored Pill Buttons**: All primary/action buttons (colored backgrounds) must use the following interactive states:
+  - **Base**: `rounded-lg border-2 border-transparent transition-all duration-200`
+  - **Hover**: `hover:scale-110 hover:shadow-md`
+  - **Border on Hover**: A darker shade of the background color for the border (e.g., `hover:border-[#8a3c35]` for red buttons).
+  - **Background on Hover**: A slightly lighter/different shade (e.g., `hover:bg-[#c86158]`).
+
 ## Testing Guidelines
 
 There is not yet a committed test runner, so reviewers rely on `pnpm type-check`, linting, and manual verification. New automated coverage should be colocated with its feature using a `.test.ts` or `.test.tsx` suffix and should exercise user-visible behavior. Flag any new tooling (React Testing Library, Playwright, etc.) in the PR and wire its command into `package.json` so it can join future CI scripts.

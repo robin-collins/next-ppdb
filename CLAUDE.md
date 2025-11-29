@@ -278,7 +278,16 @@ DATABASE_URL="mysql://user:pass@host:port/dbname"
 - **Commit Style**: Sentence-case subjects, present tense, <72 chars
 - **Example**: "Add phone number normalization to search"
 - **Pre-commit**: Husky runs lint-staged (auto-fixes staged files)
-- **Branches**: Feature branches merged to `main` (current branch: `claude`)
+- **Branches**: Feature branches merged to `main`
+
+### Button Styling Standards
+
+- **Colored Pill Buttons**: All primary/action buttons (colored backgrounds) must use the following interactive states:
+  - **Base**: `rounded-lg border-2 border-transparent transition-all duration-200`
+  - **Hover**: `hover:scale-110 hover:shadow-md`
+  - **Border on Hover**: A darker shade of the background color for the border (e.g., `hover:border-[#8a3c35]` for red buttons).
+  - **Background on Hover**: A slightly lighter/different shade (e.g., `hover:bg-[#c86158]`).
+    (current branch: `claude`)
 
 ## Common Pitfalls
 

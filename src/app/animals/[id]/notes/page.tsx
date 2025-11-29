@@ -236,7 +236,7 @@ export default function ServiceHistoryPage() {
                       return (
                         <div
                           key={note.id}
-                          className="service-item"
+                          className="history-service-item"
                           style={{ animationDelay: `${index * 0.05}s` }}
                         >
                           <div className="service-date">

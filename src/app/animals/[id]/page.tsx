@@ -1,9 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAnimalsStore } from '@/store/animalsStore'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import { routes } from '@/lib/routes'
 
 export default function AnimalPage() {
   const params = useParams<{ id: string }>()
@@ -90,6 +92,20 @@ export default function AnimalPage() {
     if (selectedAnimal && confirm('Delete this note?')) {
       await deleteNote(noteId, selectedAnimal.id)
     }
+  }
+
+  const handleChangeDates = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const today = `${year}-${month}-${day}`
+
+    setFormData(prev => ({
+      ...prev,
+      lastVisit: prev.thisVisit,
+      thisVisit: today,
+    }))
   }
 
   if (error) {
@@ -472,7 +488,7 @@ export default function AnimalPage() {
                         <div className="form-actions">
                           <button
                             type="submit"
-                            className="btn btn-success btn-large"
+                            className="btn btn-success btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#047857] hover:bg-[#059669] hover:shadow-md"
                           >
                             <svg
                               fill="none"
@@ -490,7 +506,8 @@ export default function AnimalPage() {
                           </button>
                           <button
                             type="button"
-                            className="btn btn-warning btn-large"
+                            onClick={handleChangeDates}
+                            className="btn btn-warning btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#b45309] hover:bg-[#d97706] hover:shadow-md"
                           >
                             <svg
                               fill="none"
@@ -549,7 +566,7 @@ export default function AnimalPage() {
                       />
                       <button
                         type="submit"
-                        className="btn btn-primary btn-large"
+                        className="btn btn-primary btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[var(--primary-dark)] hover:bg-[var(--primary-hover)] hover:shadow-md"
                       >
                         <svg
                           fill="none"
@@ -606,7 +623,10 @@ export default function AnimalPage() {
                     {/* View All Link */}
                     {selectedAnimal.serviceNotes &&
                       selectedAnimal.serviceNotes.length > 0 && (
-                        <a href="#" className="view-all-link">
+                        <Link
+                          href={routes.animals.notes(selectedAnimal.id)}
+                          className="view-all-link"
+                        >
                           <svg
                             width="16"
                             height="16"
@@ -622,7 +642,7 @@ export default function AnimalPage() {
                             />
                           </svg>
                           All Animal Notes
-                        </a>
+                        </Link>
                       )}
                   </div>
                 </div>

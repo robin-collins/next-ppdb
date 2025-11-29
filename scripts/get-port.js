@@ -1,6 +1,7 @@
 const net = require('net')
 const fs = require('fs')
 const path = require('path')
+const { execSync } = require('child_process')
 const startPort = 3000
 
 // Check for and delete existing .env.nextjs_dev.json file at startup
@@ -32,6 +33,32 @@ process.on('exit', () => {
   cleanup()
 })
 
+// Get worktree information
+const getWorktreeInfo = () => {
+  try {
+    const worktreeRoot = execSync(
+      'git worktree list --porcelain | awk -v here="$(git rev-parse --show-toplevel)" \'$1=="worktree" && $2==here {print $2}\'',
+      { encoding: 'utf8', shell: '/bin/bash' }
+    ).trim()
+
+    const worktreeName = execSync(
+      'git worktree list --porcelain | awk -v here="$(git rev-parse --show-toplevel)" \'$1=="worktree" && $2==here {n=$2} END{if(n!=""){sub(/.*\\//,"",n); print n}}\'',
+      { encoding: 'utf8', shell: '/bin/bash' }
+    ).trim()
+
+    return {
+      worktreeRoot: worktreeRoot || null,
+      worktreeName: worktreeName || null,
+    }
+  } catch {
+    // Not in a git worktree or git not available
+    return {
+      worktreeRoot: null,
+      worktreeName: null,
+    }
+  }
+}
+
 const findPort = port => {
   const server = net.createServer()
   server.once('error', () => findPort(port + 1))
@@ -55,9 +82,12 @@ const findPort = port => {
       }
     })
 
+    const worktreeInfo = getWorktreeInfo()
     const devInfo = {
       port: port,
       pid: child.pid,
+      worktreeName: worktreeInfo.worktreeName,
+      worktreeRoot: worktreeInfo.worktreeRoot,
     }
     console.info('Server Running on port: ', port)
     console.info(

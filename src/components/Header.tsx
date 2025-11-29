@@ -92,7 +92,7 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-[100] border-b border-gray-200 bg-white pr-[24px] pl-[24px] shadow-md">
-      <div className="mx-auto flex h-[92px] max-w-[1400px] flex-nowrap items-center gap-6">
+      <div className="flex h-[92px] flex-nowrap items-center gap-6">
         {/* Hamburger Menu */}
         <div className="hamburger-menu">
           <button
@@ -153,14 +153,14 @@ export default function Header({
               <button
                 type="button"
                 onClick={handleSearchClick}
-                className="flex h-[37px] min-w-[88px] items-center justify-center gap-2 rounded-md bg-[var(--primary)] px-4 text-center text-sm font-semibold text-white transition-all hover:bg-[var(--primary-hover)]"
+                className="flex h-[37px] min-w-[88px] items-center justify-center gap-2 rounded-md border-2 border-transparent bg-[var(--primary)] px-4 text-center text-sm font-semibold text-white transition-all duration-200 hover:scale-110 hover:border-[var(--primary-dark)] hover:bg-[var(--primary-hover)] hover:shadow-md"
               >
                 Search
               </button>
               <button
                 type="button"
                 onClick={handleClear}
-                className="flex h-[37px] min-w-[80px] items-center justify-center gap-2 rounded-md bg-gray-100 px-4 text-center text-sm font-semibold text-gray-700 transition-all hover:bg-gray-200"
+                className="flex h-[37px] min-w-[80px] items-center justify-center gap-2 rounded-md border-2 border-transparent bg-gray-100 px-4 text-center text-sm font-semibold text-gray-700 transition-all duration-200 hover:scale-110 hover:border-gray-300 hover:bg-gray-200 hover:shadow-md"
               >
                 Clear
               </button>

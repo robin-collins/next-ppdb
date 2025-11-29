@@ -75,12 +75,12 @@
       "prettier --write"
     ],
     "*.{ts,tsx}": [
-      "bash -c 'tsc --project tsconfig.precommit.json --noEmit'",
+      "bash -c 'pnpm tsc --project tsconfig.precommit.json --noEmit'",
       "bash -c 'pnpm lint'"
     ],
     "*": [
       "bash scripts/build-on-main.sh"
     ]
   },
-  "packageManager": "pnpm@10.22.0"
+  "packageManager": "pnpm@10.24.0"
 }
