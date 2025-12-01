@@ -4,7 +4,7 @@
 
 I have generated a [docker-compose.yml](file:///home/tech/projects/ppdb-ts-oct/docker-compose.yml) file that sets up the following services:
 
-- **Traefik**: Reverse proxy with automatic SSL (Let's Encrypt).
+- **Traefik**: Reverse proxy with automatic SSL (Let's Encrypt), using version v3.6.2.
 - **MySQL**: Database service with persistent storage.
 - **phpMyAdmin**: Web interface for MySQL.
 - **Next.js App**: A placeholder service ready for your application.
