@@ -14,6 +14,7 @@
 export const routes = {
   home: () => '/',
   dashboard: () => '/dashboard',
+  setup: () => '/setup',
   search: (query?: string) =>
     query ? `/?q=${encodeURIComponent(query)}` : '/',
 
@@ -98,6 +99,11 @@ export const routes = {
     },
     admin: {
       backup: () => '/api/admin/backup',
+    },
+    health: () => '/api/health',
+    setup: {
+      upload: () => '/api/setup/upload',
+      import: (uploadId: string) => `/api/setup/import?uploadId=${uploadId}`,
     },
   },
 } as const

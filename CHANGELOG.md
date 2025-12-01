@@ -8,6 +8,48 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Intelligent Onboarding & Startup Diagnostics System** (2025-12-02):
+  - Comprehensive "fail fast, fail clearly" startup system for application initialization
+  - **Diagnostic System** (`/api/health`):
+    - 5 automated checks: DATABASE_URL validation, MySQL connection test, table existence, schema validation, data presence
+    - Cached results (30s TTL) for performance
+    - Clear pass/fail status with actionable error messages
+  - **Middleware Enhancement** (`src/middleware.ts`):
+    - Automatic redirect to `/setup` when database needs initialization
+    - Bypasses setup routes and static assets
+    - Cookie-based setup completion tracking
+  - **Setup Page** (`/setup`):
+    - Multi-step wizard: Diagnostics → Upload → Import → Complete
+    - Progress stepper UI with visual feedback
+    - Welcoming, intuitive onboarding experience
+  - **File Upload** (`/api/setup/upload`):
+    - Accepts `.sql`, `.zip`, `.tar.gz`, `.tgz` files up to 100MB
+    - Drag-and-drop with click fallback
+    - Automatic archive extraction and SQL file detection
+  - **Two-Stage Import System** (`/api/setup/import`):
+    - Stage 1: Raw mysql client imports to temporary database (fast)
+    - Stage 2: Prisma-based validation with per-record remediation (thorough)
+    - Server-Sent Events (SSE) for real-time progress streaming
+  - **Comprehensive Data Remediation**:
+    - Per-table, per-field documented repair strategies
+    - Handles: truncation, invalid dates ('0000-00-00'), orphan records, invalid emails, duplicate breed names
+    - "Unknown" breed auto-creation for unmapped breedIDs
+    - Orphan animals/notes gracefully skipped with logging
+  - **Verbose Progress Feedback**:
+    - Real-time percentage, record counts per table
+    - Color-coded log viewer (info, success, warning, error)
+    - Statistics: valid/repaired/skipped counts
+  - New files:
+    - `src/lib/diagnostics/` - types.ts, checks.ts, index.ts
+    - `src/lib/import/` - extractor.ts, remediation.ts, validator.ts, importer.ts
+    - `src/lib/setup/` - tempDb.ts
+    - `src/app/api/health/route.ts`
+    - `src/app/api/setup/upload/route.ts`
+    - `src/app/api/setup/import/route.ts`
+    - `src/app/setup/page.tsx`
+    - `src/components/setup/` - DiagnosticResults.tsx, FileUploader.tsx, ImportProgress.tsx, ImportLog.tsx
+  - Dependencies added: `adm-zip`, `tar`, `uuid`
+
 - **Breed Bulk Pricing Modification Feature** (2025-12-02):
   - New "Modify All Pricing" button in Breed Management page header
   - Animated expansion panel for configuring global pricing adjustments

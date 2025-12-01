@@ -4,9 +4,21 @@ import type { NextRequest } from 'next/server'
 /**
  * Next.js Middleware - Runs before every request
  *
- * This middleware logs all API requests automatically without
- * needing to wrap individual route handlers.
+ * This middleware:
+ * 1. Checks if setup is needed and redirects to /setup
+ * 2. Logs all API requests automatically (in debug mode)
  */
+
+// Routes that should bypass health check redirect
+const SETUP_BYPASS_PATHS = [
+  '/setup',
+  '/api/setup',
+  '/api/health',
+  '/_next',
+  '/favicon',
+  '/images',
+  '/api/docs',
+]
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -40,40 +52,72 @@ function _getStatusColor(status: number): string {
   return COLORS.reset
 }
 
-export function middleware(request: NextRequest) {
-  // Only log API routes
-  if (!request.nextUrl.pathname.startsWith('/api/')) {
-    return NextResponse.next()
-  }
+/**
+ * Check if the current path should bypass setup checks
+ */
+function shouldBypassSetupCheck(pathname: string): boolean {
+  return SETUP_BYPASS_PATHS.some(path => pathname.startsWith(path))
+}
 
-  if (!isDebugEnabled()) {
-    return NextResponse.next()
-  }
+/**
+ * Quick check if DATABASE_URL is configured
+ * This is a fast check that runs in Edge middleware
+ */
+function isDatabaseConfigured(): boolean {
+  const dbUrl = process.env.DATABASE_URL
+  if (!dbUrl) return false
 
-  const _startTime = Date.now()
-  const method = request.method
+  // Basic format validation
+  return dbUrl.startsWith('mysql://')
+}
+
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const query = request.nextUrl.search
-  const methodColor = getMethodColor(method)
 
-  // Log request
-  console.log(
-    `${COLORS.dim}[${getTimestamp()}]${COLORS.reset} ` +
-      `${methodColor}${method.padEnd(6)}${COLORS.reset} ` +
-      `${path}${query}`
-  )
+  // === SETUP CHECK ===
+  // Skip setup check for allowed paths
+  if (!shouldBypassSetupCheck(path)) {
+    // Check if setup is needed based on cookie or env
+    const setupComplete = request.cookies.get('ppdb_setup_complete')?.value
+
+    // If no setup cookie and database not configured, redirect to setup
+    if (!setupComplete && !isDatabaseConfigured()) {
+      return NextResponse.redirect(new URL('/setup', request.url))
+    }
+
+    // For paths that need full health check, client will verify via /api/health
+    // This allows us to avoid blocking requests while still enforcing setup
+  }
+
+  // === API LOGGING ===
+  // Only log API routes
+  if (path.startsWith('/api/') && isDebugEnabled()) {
+    const method = request.method
+    const query = request.nextUrl.search
+    const methodColor = getMethodColor(method)
+
+    // Log request
+    console.log(
+      `${COLORS.dim}[${getTimestamp()}]${COLORS.reset} ` +
+        `${methodColor}${method.padEnd(6)}${COLORS.reset} ` +
+        `${path}${query}`
+    )
+  }
 
   // Continue with the request
-  const response = NextResponse.next()
-
-  // Note: We can't easily log the response here because Next.js
-  // middleware doesn't have access to the final response status.
-  // SQL queries are logged via Prisma's event system in prisma.ts
-
-  return response
+  return NextResponse.next()
 }
 
 // Configure which routes use this middleware
 export const config = {
-  matcher: '/api/:path*',
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

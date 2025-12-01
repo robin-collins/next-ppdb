@@ -53,5 +53,28 @@
     52|│   │   ├── BreedForm.tsx            # Add new breed form
     53|│   │   ├── BreedTable.tsx           # Breed listing table with edit/delete/pricing actions (updated 2025-12-02)
     54|│   │   └── PricingModifier.tsx      # Animated pricing adjustment panel for breeds (created 2025-12-02)
-    55|│   ├── app/api/breeds/pricing/      # Bulk pricing update API
-    56|│   │   └── route.ts                 # POST handler for breed/animal pricing updates (created 2025-12-02)
+    55|│   ├── components/setup/            # Setup/onboarding UI components (created 2025-12-02)
+    56|│   │   ├── DiagnosticResults.tsx    # Health check results display with pass/fail cards
+    57|│   │   ├── FileUploader.tsx         # Drag-drop file uploader for SQL/archives
+    58|│   │   ├── ImportProgress.tsx       # Real-time import progress with SSE
+    59|│   │   └── ImportLog.tsx            # Verbose color-coded import log viewer
+    60|│   ├── lib/diagnostics/             # Startup diagnostic system (created 2025-12-02)
+    61|│   │   ├── types.ts                 # TypeScript interfaces for health checks
+    62|│   │   ├── checks.ts                # Individual diagnostic check functions
+    63|│   │   └── index.ts                 # Main diagnostic runner with caching
+    64|│   ├── lib/import/                  # Database import utilities (created 2025-12-02)
+    65|│   │   ├── extractor.ts             # Archive extraction (zip, tar.gz)
+    66|│   │   ├── remediation.ts           # Data repair and normalization functions
+    67|│   │   ├── validator.ts             # Per-table record validation with remediation
+    68|│   │   └── importer.ts              # Prisma batch import with progress tracking
+    69|│   ├── lib/setup/                   # Setup utilities (created 2025-12-02)
+    70|│   │   └── tempDb.ts                # Temporary database management
+    71|│   ├── app/setup/                   # Setup/onboarding page (created 2025-12-02)
+    72|│   │   └── page.tsx                 # Multi-step wizard: Diagnostics → Upload → Import → Complete
+    73|│   ├── app/api/health/              # Health check API (created 2025-12-02)
+    74|│   │   └── route.ts                 # GET: diagnostics, POST: clear cache
+    75|│   ├── app/api/setup/               # Setup APIs (created 2025-12-02)
+    76|│   │   ├── upload/route.ts          # POST: file upload and extraction
+    77|│   │   └── import/route.ts          # GET: SSE stream for import progress
+    78|│   ├── app/api/breeds/pricing/      # Bulk pricing update API
+    79|│   │   └── route.ts                 # POST handler for breed/animal pricing updates (created 2025-12-02)
