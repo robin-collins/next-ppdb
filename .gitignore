@@ -57,3 +57,5 @@ prompts/
 reference/archive
 # Database backups
 /backups
+scripts/.next/
+scripts/note-words.txt
