@@ -44,7 +44,7 @@ yarn-error.log*
 next-env.d.ts
 
 # reference/
-reports/
+reference/reports/
 
 /src/generated/prisma
 chrome-user-data-dir
