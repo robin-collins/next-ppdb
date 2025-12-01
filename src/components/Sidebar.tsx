@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface SidebarProps {
   isOpen: boolean
@@ -220,8 +221,8 @@ export default function Sidebar({
         />
 
         {/* Sidebar Header (matches main header top band) */}
-        <div className="sidebar_indent flex h-[92px] items-center border-b border-gray-200 bg-white pr-[24px] pl-[24px]">
-          <div className="flex items-center gap-3 whitespace-nowrap">
+        <div className="sidebar_indent flex h-[92px] items-center gap-6 border-b border-gray-200 bg-white pr-[24px] pl-[24px]">
+          <div className="hamburger-menu">
             {/* Hamburger/Unpin button */}
             <button
               onClick={isPinned ? onTogglePin : onClose}
@@ -247,25 +248,26 @@ export default function Sidebar({
                 </div>
               )}
             </button>
+          </div>
 
-            {/* Brand */}
-            <div className="brand-header flex cursor-default items-center gap-3 whitespace-nowrap">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.58 10.76C10.21 10.88 9.84 11 9.5 11C8.12 11 7 9.88 7 8.5C7 7.12 8.12 6 9.5 6C9.84 6 10.21 6.12 10.58 6.24L12.19 4.63C11.34 3.91 10.2 3.5 9 3.5C6.79 3.5 5 5.29 5 7.5S6.79 11.5 9 11.5C9.85 11.5 10.65 11.2 11.26 10.74L17.5 17H19.5L21 15.5V13.5L15.33 7.83L21 9Z" />
-                </svg>
-              </div>
-              <div className="brand-text hidden whitespace-nowrap sm:block">
-                <h3 className="text-xl font-bold text-gray-800">
-                  Pampered Pooch
-                </h3>
-                <p className="text-xs text-gray-600">Professional Pet Care</p>
-              </div>
+          {/* Brand */}
+          <div
+            className="brand-header flex cursor-pointer items-center gap-3 whitespace-nowrap"
+            onClick={() => (window.location.href = '/')}
+          >
+            <Image
+              src="/images/logo.png"
+              alt="Pampered Pooch Logo"
+              width={250}
+              height={80}
+              className="h-[80px] w-auto object-contain"
+              priority
+            />
+            <div className="brand-text hidden sm:block">
+              <h1 className="text-xl font-bold text-gray-800">
+                Pampered Pooch
+              </h1>
+              <p className="text-xs text-gray-600">Professional Pet Care</p>
             </div>
           </div>
         </div>
