@@ -13,6 +13,7 @@
  */
 export const routes = {
   home: () => '/',
+  dashboard: () => '/dashboard',
   search: (query?: string) =>
     query ? `/?q=${encodeURIComponent(query)}` : '/',
 

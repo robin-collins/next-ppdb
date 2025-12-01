@@ -90,7 +90,7 @@ export default function Sidebar({
 
   const navItems = [
     {
-      href: '/',
+      href: '/dashboard',
       label: 'Dashboard',
       icon: (
         <svg

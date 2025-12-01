@@ -36,6 +36,7 @@ const eslintConfig = [
       'jest.setup.ts',
       'jest.config.mjs',
       'playwright.config.ts',
+      'scripts/**/*',
     ],
   },
   {

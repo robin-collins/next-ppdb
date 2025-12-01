@@ -13,7 +13,7 @@ export async function GET() {
       title: 'Pampered Pooch Pet Grooming API',
       version: '1.0.0',
       description:
-        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 20 fully documented endpoints with comprehensive CRUD operations and business intelligence features.',
+        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 23 fully documented endpoints with comprehensive CRUD operations, count utilities, and business intelligence features.',
       contact: {
         name: 'Tech Team',
         email: 'tech@pamperedpooch.com',
@@ -415,7 +415,7 @@ export async function GET() {
           operationId: 'deleteCustomer',
           summary: 'Delete a customer',
           description:
-            'Permanently delete a customer and optionally their associated animals',
+            'Permanently delete a customer with options to migrate or delete associated animals. Animals can be selectively migrated to another customer.',
           tags: ['Customers'],
           parameters: [
             {
@@ -426,6 +426,29 @@ export async function GET() {
               description: 'Customer ID',
             },
           ],
+          requestBody: {
+            required: false,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    migrateToCustomerId: {
+                      type: 'integer',
+                      description:
+                        'Target customer ID to migrate selected animals to',
+                    },
+                    animalIds: {
+                      type: 'array',
+                      items: { type: 'integer' },
+                      description:
+                        'Array of animal IDs to migrate (others will be deleted)',
+                    },
+                  },
+                },
+              },
+            },
+          },
           responses: {
             200: {
               description: 'Customer deleted successfully',
@@ -435,6 +458,16 @@ export async function GET() {
                     type: 'object',
                     properties: {
                       success: { type: 'boolean' },
+                      migratedAnimals: {
+                        type: 'integer',
+                        description:
+                          'Number of animals migrated to target customer',
+                      },
+                      deletedAnimals: {
+                        type: 'integer',
+                        description:
+                          'Number of animals deleted with the customer',
+                      },
                     },
                   },
                 },
@@ -567,7 +600,143 @@ export async function GET() {
           operationId: 'deleteBreed',
           summary: 'Delete a breed',
           description:
-            'Permanently delete a breed (fails if animals are associated)',
+            'Permanently delete a breed. Animals can be migrated to another breed, otherwise deletion fails if animals are associated.',
+          tags: ['Breeds'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Breed ID',
+            },
+          ],
+          requestBody: {
+            required: false,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    migrateToBreedId: {
+                      type: 'integer',
+                      description:
+                        'Target breed ID to migrate animals to before deletion',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Breed deleted successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      migratedAnimals: {
+                        type: 'integer',
+                        description:
+                          'Number of animals migrated to target breed',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description:
+                'Cannot delete breed with associated animals (without migration)',
+            },
+            404: {
+              description: 'Breed not found',
+            },
+          },
+        },
+      },
+      '/api/customers/{id}/animals/count': {
+        get: {
+          operationId: 'getCustomerAnimalsCount',
+          summary: 'Get count of animals for a customer',
+          description:
+            'Returns the number of animals owned by a specific customer',
+          tags: ['Customers'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Customer ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Animal count',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      count: {
+                        type: 'integer',
+                        description: 'Number of animals',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: { description: 'Invalid customer ID' },
+          },
+        },
+      },
+      '/api/animals/{id}/notes/count': {
+        get: {
+          operationId: 'getAnimalNotesCount',
+          summary: 'Get count of notes for an animal',
+          description:
+            'Returns the number of service notes for a specific animal',
+          tags: ['Notes'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string', pattern: '^\\d+$' },
+              description: 'Animal ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Note count',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      count: {
+                        type: 'integer',
+                        description: 'Number of notes',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: { description: 'Invalid animal ID' },
+          },
+        },
+      },
+      '/api/breeds/{id}/animals/count': {
+        get: {
+          operationId: 'getBreedAnimalsCount',
+          summary: 'Get count of animals using a breed',
+          description:
+            'Returns the number of animals assigned to a specific breed',
           tags: ['Breeds'],
           parameters: [
             {
@@ -580,24 +749,22 @@ export async function GET() {
           ],
           responses: {
             200: {
-              description: 'Breed deleted successfully',
+              description: 'Animal count',
               content: {
                 'application/json': {
                   schema: {
                     type: 'object',
                     properties: {
-                      success: { type: 'boolean' },
+                      count: {
+                        type: 'integer',
+                        description: 'Number of animals using this breed',
+                      },
                     },
                   },
                 },
               },
             },
-            400: {
-              description: 'Cannot delete breed with associated animals',
-            },
-            404: {
-              description: 'Breed not found',
-            },
+            400: { description: 'Invalid breed ID' },
           },
         },
       },
@@ -1288,6 +1455,25 @@ export async function GET() {
               type: 'array',
               items: { $ref: '#/components/schemas/Animal' },
               description: 'List of animals owned by this customer',
+            },
+            totalNotesCount: {
+              type: 'integer',
+              description:
+                'Total number of service notes across all animals (only in detail response)',
+            },
+            earliestNoteDate: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              description:
+                'Date of earliest service note (only in detail response)',
+            },
+            latestNoteDate: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              description:
+                'Date of most recent service note (only in detail response)',
             },
           },
         },

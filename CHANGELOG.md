@@ -22,6 +22,22 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **OpenAPI Documentation Update** (2025-12-01):
+  - Added 3 missing count endpoints: `/api/customers/{id}/animals/count`, `/api/animals/{id}/notes/count`, `/api/breeds/{id}/animals/count`
+  - Updated Customer schema with stats fields: `totalNotesCount`, `earliestNoteDate`, `latestNoteDate`
+  - Updated `DELETE /api/customers/{id}` with request body (`migrateToCustomerId`, `animalIds`) and response (`migratedAnimals`, `deletedAnimals`)
+  - Updated `DELETE /api/breeds/{id}` with request body (`migrateToBreedId`) and response (`migratedAnimals`)
+  - Total documented endpoints increased from 20 to 23
+
+- **Dashboard Page** (2025-12-01):
+  - Created new `/dashboard` page with stylized pill button navigation
+  - Displays links to all major app features: Search, Add Customer, Manage Breeds, Daily Analytics, Customer History, Database Backup, API Docs
+  - Each button uses brand colors (primary/secondary/accent/warning/success) with hover effects
+  - Includes mascot image (CARTOON_DOG_7) with floating animation
+  - Quick tips section at bottom of page
+  - Sidebar "Dashboard" link now routes to `/dashboard` instead of `/`
+  - Added `dashboard()` route helper to `src/lib/routes.ts`
+
 - **Persistent Sidebar State** (2025-12-01):
   - Created `useSidebarState` hook in `src/hooks/useSidebarState.ts`
   - Sidebar pinned state now persists across page loads and navigation using localStorage
@@ -38,6 +54,11 @@ All notable changes to this project will be documented in this file.
   - Returns to hamburger/X animation when sidebar is unpinned
 
 ### Fixed
+
+- **Swagger UI Deprecation Warning** (2025-12-01):
+  - Suppressed `UNSAFE_componentWillReceiveProps` warning from swagger-ui-react's `ModelCollapse` component
+  - Added useEffect hook in `/api/docs/page.tsx` to filter this specific console.error
+  - Warning is a known library issue that doesn't affect functionality
 
 - **Precommit Type-Check Exclusion** (2025-12-01):
   - Excluded `scripts/**/*` from `tsconfig.precommit.json`
