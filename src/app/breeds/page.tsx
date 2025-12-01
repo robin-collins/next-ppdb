@@ -216,7 +216,13 @@ export default function BreedsPage() {
 
           {/* Breed Table */}
           <div className="mt-8">
-            <BreedTable rows={rows} onUpdate={onUpdate} onDelete={onDelete} />
+            <BreedTable
+              rows={rows}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+              onPricingUpdated={load}
+              onToast={(message, type) => setToast({ message, type })}
+            />
           </div>
 
           {/* Toast Notification */}

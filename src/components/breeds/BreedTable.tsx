@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import PricingModifier from './PricingModifier'
 
 interface BreedRow {
   id: number
@@ -15,6 +16,11 @@ interface BreedTableProps {
     partial: { name?: string; avgtime?: string | null; avgcost?: number | null }
   ) => Promise<void>
   onDelete: (id: number, migrateToBreedId?: number) => Promise<void>
+  onPricingUpdated?: () => void
+  onToast?: (
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning'
+  ) => void
 }
 
 // State for delete confirmation
@@ -28,16 +34,28 @@ interface DeleteConfirmState {
   rowRect: DOMRect | null // For positioning the modal
 }
 
+// State for pricing modifier
+interface PricingState {
+  breedId?: number
+  breedName?: string
+  currentAvgcost?: number | null
+}
+
 export default function BreedTable({
   rows,
   onUpdate,
   onDelete,
+  onPricingUpdated,
+  onToast,
 }: BreedTableProps) {
   const [editing, setEditing] = useState<Record<number, BreedRow>>({})
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmState | null>(
     null
   )
   const [searchQuery, setSearchQuery] = useState('')
+  const [globalPricingOpen, setGlobalPricingOpen] = useState(false)
+  const [individualPricing, setIndividualPricing] =
+    useState<PricingState | null>(null)
   const deleteInputRef = useRef<HTMLInputElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
 
@@ -131,6 +149,32 @@ export default function BreedTable({
     return rows.filter(row => row.name.toLowerCase().includes(query))
   }, [rows, searchQuery])
 
+  // Pricing success/error handlers
+  const handlePricingSuccess = useCallback(
+    (message: string) => {
+      onToast?.(message, 'success')
+      onPricingUpdated?.()
+    },
+    [onToast, onPricingUpdated]
+  )
+
+  const handlePricingError = useCallback(
+    (message: string) => {
+      onToast?.(message, 'error')
+    },
+    [onToast]
+  )
+
+  // Open individual pricing for a breed
+  const openIndividualPricing = useCallback((breed: BreedRow) => {
+    setGlobalPricingOpen(false) // Close global if open
+    setIndividualPricing({
+      breedId: breed.id,
+      breedName: breed.name,
+      currentAvgcost: breed.avgcost,
+    })
+  }, [])
+
   const startEdit = (row: BreedRow) => {
     setEditing(prev => ({ ...prev, [row.id]: { ...row } }))
   }
@@ -194,6 +238,26 @@ export default function BreedTable({
           <h2 className="section-title" id="breed-database-title">
             Existing Breeds Database
           </h2>
+          {/* Global Pricing Button */}
+          <button
+            onClick={() => {
+              setIndividualPricing(null) // Close individual if open
+              setGlobalPricingOpen(!globalPricingOpen)
+            }}
+            className={`ml-4 flex items-center gap-2 rounded-lg border-2 px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+              globalPricingOpen
+                ? 'border-indigo-600 bg-indigo-600 text-white shadow-md'
+                : 'border-indigo-300 bg-indigo-50 text-indigo-700 hover:scale-105 hover:border-indigo-500 hover:bg-indigo-100 hover:shadow-md'
+            }`}
+            title="Modify pricing for all breeds"
+            aria-expanded={globalPricingOpen}
+            aria-controls="global-pricing-panel"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+            </svg>
+            Modify All Pricing
+          </button>
         </div>
 
         <div className="controls-section" role="search">
@@ -219,6 +283,17 @@ export default function BreedTable({
         </div>
       </div>
 
+      {/* Global Pricing Modifier Panel */}
+      {globalPricingOpen && (
+        <div id="global-pricing-panel">
+          <PricingModifier
+            onClose={() => setGlobalPricingOpen(false)}
+            onSuccess={handlePricingSuccess}
+            onError={handlePricingError}
+          />
+        </div>
+      )}
+
       <div className="breed-table-container">
         <table className="breed-table" aria-label="Breed management table">
           <thead>
@@ -233,7 +308,7 @@ export default function BreedTable({
             {filteredRows.map(r => {
               const edit = editing[r.id]
               const breedRow = (
-                <tr key={r.id}>
+                <tr>
                   <td>
                     {edit ? (
                       <input
@@ -311,8 +386,8 @@ export default function BreedTable({
                           <button
                             className="btn btn-success btn-small"
                             onClick={() => save(r.id)}
-                            title={`Update ${r.name}`}
-                            aria-label={`Update ${r.name}`}
+                            title={`Save ${r.name}`}
+                            aria-label={`Save ${r.name}`}
                           >
                             <svg
                               width="14"
@@ -321,7 +396,7 @@ export default function BreedTable({
                               fill="currentColor"
                               aria-hidden="true"
                             >
-                              <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58 3.51-3.47 9.14-3.47 12.65 0L21 3v7.12z" />
+                              <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
                             </svg>
                           </button>
                           <button
@@ -369,6 +444,26 @@ export default function BreedTable({
                               <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                             </svg>
                           </button>
+                          <button
+                            aria-label={`Modify pricing for ${r.name}`}
+                            className={`btn btn-small border-transparent bg-transparent transition-all duration-200 ${
+                              individualPricing?.breedId === r.id
+                                ? 'text-green-600 [&>svg]:drop-shadow-[0_0_5px_rgba(34,197,94,0.9)]'
+                                : 'text-gray-400 hover:text-green-500 hover:[&>svg]:drop-shadow-[0_0_5px_rgba(34,197,94,0.9)]'
+                            }`}
+                            onClick={() => openIndividualPricing(r)}
+                            title={`Modify pricing for ${r.name}`}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+                            </svg>
+                          </button>
                         </>
                       )}
                     </div>
@@ -376,7 +471,28 @@ export default function BreedTable({
                 </tr>
               )
 
-              return breedRow
+              // Show individual pricing modifier after the selected breed row
+              const showPricingModifier = individualPricing?.breedId === r.id
+
+              return (
+                <React.Fragment key={r.id}>
+                  {breedRow}
+                  {showPricingModifier && (
+                    <tr>
+                      <td colSpan={4} className="p-0">
+                        <PricingModifier
+                          breedId={individualPricing.breedId}
+                          breedName={individualPricing.breedName}
+                          currentAvgcost={individualPricing.currentAvgcost}
+                          onClose={() => setIndividualPricing(null)}
+                          onSuccess={handlePricingSuccess}
+                          onError={handlePricingError}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              )
             })}
           </tbody>
         </table>

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation'
 import AnimalCard from './AnimalCard'
 import AnimalAvatar from './AnimalAvatar'
 import Pagination from './Pagination'
@@ -17,10 +18,30 @@ interface Animal {
     phone1?: string | null
     phone2?: string | null
     phone3?: string | null
+    email?: string | null
   }
   lastVisit: Date
   cost: number
   relevanceScore?: number
+}
+
+// Format phone number with spaces for readability: 0412345678 -> 0412 345 678
+function formatPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length === 10) {
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`
+  }
+  if (digits.length === 8) {
+    return `${digits.slice(0, 4)} ${digits.slice(4)}`
+  }
+  return phone
+}
+
+// Validate phone - filter out "Unknown", empty, and "0" values
+function isValidPhone(phone: string | null | undefined): phone is string {
+  if (!phone) return false
+  const trimmed = phone.trim().toLowerCase()
+  return trimmed !== '' && trimmed !== 'unknown' && trimmed !== '0'
 }
 
 interface ResultsViewProps {
@@ -50,6 +71,8 @@ export default function ResultsView({
   order,
   onSortChange,
 }: ResultsViewProps) {
+  const router = useRouter()
+
   const handleSort = (column: string) => {
     if (sort === column) {
       onSortChange(column, order === 'asc' ? 'desc' : 'asc')
@@ -202,20 +225,13 @@ export default function ResultsView({
         </div>
       )}
 
-      {/* List View (Table) */}
+      {/* List View (Table) - Compact single-line layout */}
       {viewMode === 'list' && (
         <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
           {/* Table Header */}
-          <div className="grid grid-cols-[2fr_2fr_2fr_1fr_1fr] gap-4 border-b border-gray-200 bg-gray-50 px-6 py-3 text-xs font-bold tracking-wider text-gray-500 uppercase">
+          <div className="grid grid-cols-[minmax(320px,2fr)_minmax(400px,3fr)] gap-6 border-b border-gray-200 bg-gray-50 px-4 py-3 text-xs font-bold tracking-wider text-gray-500 uppercase md:px-6">
             <SortHeader column="animal" label="Animal" />
-            <SortHeader column="customer" label="Customer" />
-            <div>Location</div>
-            <SortHeader
-              column="lastVisit"
-              label="Last Visit"
-              className="justify-center"
-            />
-            <div className="text-right">Cost</div>
+            <SortHeader column="customer" label="Customer & Contact" />
           </div>
 
           {/* Table Body */}
@@ -229,64 +245,231 @@ export default function ResultsView({
                 year: '2-digit',
               })
 
-              const fullAddress = [
-                animal.customer.address,
-                animal.customer.suburb,
-              ]
-                .filter(Boolean)
-                .join(', ')
+              // Get all valid phone numbers (filter out "Unknown" and empty values)
+              const allPhones = [
+                animal.customer.phone1,
+                animal.customer.phone2,
+                animal.customer.phone3,
+              ].filter(isValidPhone)
+
+              // Check if email looks valid (contains @)
+              const validEmail =
+                animal.customer.email && animal.customer.email.includes('@')
+                  ? animal.customer.email
+                  : null
+
+              // Format postcode to 4 digits with leading zeros
+              const formattedPostcode = animal.customer.postcode
+                ? animal.customer.postcode.toString().padStart(4, '0')
+                : null
+
+              // Handle phone/email clicks - prevent row click
+              const handleContactClick = (e: React.MouseEvent) => {
+                e.stopPropagation()
+              }
 
               return (
                 <div
                   key={animal.id}
-                  onClick={() => onAnimalClick(animal.id)}
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                  className={`hover:bg-primary-light grid cursor-pointer grid-cols-[2fr_2fr_2fr_1fr_1fr] items-center gap-4 px-6 py-4 transition-all hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                  style={{ animationDelay: `${index * 0.03}s` }}
+                  className={`grid grid-cols-[minmax(320px,2fr)_minmax(400px,3fr)] items-center gap-6 px-4 py-3 md:px-6 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
                   }`}
                 >
-                  {/* Animal Column */}
-                  <div className="flex items-center gap-3">
+                  {/* Animal Column - Single line: Avatar NAME Breed  color: XXX  cost: $XX  Last Visit: XXX */}
+                  <div
+                    onClick={() => onAnimalClick(animal.id)}
+                    className="-my-3 -ml-4 flex min-w-0 cursor-pointer items-center gap-2 py-3 pl-4 transition-colors hover:bg-[var(--primary-light)] md:-ml-6 md:pl-6"
+                    title="View animal details"
+                  >
                     <AnimalAvatar
                       animalName={animal.name}
                       breedName={animal.breed}
                       size="sm"
-                      className="transition-all hover:scale-105"
+                      className="flex-shrink-0"
                     />
-                    <div>
-                      <div className="font-bold text-gray-900">
-                        {animal.name}
+                    <div className="truncate font-bold text-[var(--gray-900)]">
+                      {animal.name}
+                    </div>
+                    <div className="truncate text-sm font-medium text-[var(--primary)]">
+                      {animal.breed}
+                    </div>
+                    {animal.colour && (
+                      <div className="text-sm whitespace-nowrap text-[var(--gray-500)]">
+                        <span className="font-bold">color:</span>{' '}
+                        {animal.colour}
                       </div>
-                      <div className="text-xs text-gray-500">
-                        {animal.breed}
-                      </div>
+                    )}
+                    <div className="text-sm font-bold whitespace-nowrap text-[var(--secondary)]">
+                      cost: ${animal.cost}
+                    </div>
+                    <div className="text-sm whitespace-nowrap text-[var(--gray-600)]">
+                      <span className="font-bold">Last Visit:</span>{' '}
+                      {formattedDate}
                     </div>
                   </div>
 
-                  {/* Customer Column */}
-                  <div>
-                    <div className="text-base font-bold text-gray-800">
+                  {/* Customer & Contact Column - Single line: Name | Address | SUBURB | POSTCODE | PHONE1 | email | PHONE2 | PHONE3 */}
+                  <div
+                    onClick={() =>
+                      router.push(`/customer/${animal.customer.id}`)
+                    }
+                    className="-my-3 -mr-4 flex min-w-0 cursor-pointer items-center gap-2 py-3 pr-4 transition-colors hover:bg-[var(--primary-light)] md:-mr-6 md:pr-6"
+                    title="View customer details"
+                  >
+                    {/* Customer Name */}
+                    <div className="font-bold whitespace-nowrap text-[var(--gray-800)] uppercase">
                       {animal.customer.surname}
-                      <span className="text-sm font-normal text-gray-600">
-                        , {animal.customer.firstname}
-                      </span>
+                      {animal.customer.firstname && (
+                        <span className="font-normal text-[var(--gray-600)] normal-case">
+                          , {animal.customer.firstname}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {animal.customer.phone1}
-                    </div>
-                  </div>
 
-                  {/* Location Column */}
-                  <div className="text-sm text-gray-600">{fullAddress}</div>
+                    {/* Address */}
+                    {animal.customer.address && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <div className="truncate text-sm text-[var(--gray-500)]">
+                          {animal.customer.address}
+                        </div>
+                      </>
+                    )}
 
-                  {/* Last Visit Column */}
-                  <div className="text-center text-sm font-medium text-gray-700">
-                    {formattedDate}
-                  </div>
+                    {/* Suburb */}
+                    {animal.customer.suburb && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <div className="text-sm font-semibold whitespace-nowrap text-[var(--secondary)] uppercase">
+                          {animal.customer.suburb}
+                        </div>
+                      </>
+                    )}
 
-                  {/* Cost Column */}
-                  <div className="text-primary text-right text-sm font-bold">
-                    ${animal.cost}
+                    {/* Postcode */}
+                    {formattedPostcode && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <div className="text-sm font-semibold whitespace-nowrap text-[var(--secondary)]">
+                          {formattedPostcode}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Phone 1 */}
+                    {allPhones[0] && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <a
+                          href={`tel:${allPhones[0].replace(/\s/g, '')}`}
+                          onClick={handleContactClick}
+                          className="flex items-center gap-1 text-sm font-semibold whitespace-nowrap text-[var(--secondary)] transition-colors hover:text-[var(--secondary-hover)]"
+                        >
+                          <svg
+                            className="h-3 w-3 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+                          <span className="font-mono">
+                            {formatPhone(allPhones[0])}
+                          </span>
+                        </a>
+                      </>
+                    )}
+
+                    {/* Email */}
+                    {validEmail && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <a
+                          href={`mailto:${validEmail}`}
+                          onClick={handleContactClick}
+                          className="flex items-center gap-1 truncate text-sm text-[var(--gray-600)] transition-colors hover:text-[var(--primary)]"
+                        >
+                          <svg
+                            className="h-3 w-3 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <span className="truncate">{validEmail}</span>
+                        </a>
+                      </>
+                    )}
+
+                    {/* Phone 2 */}
+                    {allPhones[1] && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <a
+                          href={`tel:${allPhones[1].replace(/\s/g, '')}`}
+                          onClick={handleContactClick}
+                          className="flex items-center gap-1 text-sm font-semibold whitespace-nowrap text-[var(--gray-600)] transition-colors hover:text-[var(--gray-800)]"
+                        >
+                          <svg
+                            className="h-3 w-3 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+                          <span className="font-mono">
+                            {formatPhone(allPhones[1])}
+                          </span>
+                        </a>
+                      </>
+                    )}
+
+                    {/* Phone 3 */}
+                    {allPhones[2] && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <a
+                          href={`tel:${allPhones[2].replace(/\s/g, '')}`}
+                          onClick={handleContactClick}
+                          className="flex items-center gap-1 text-sm font-semibold whitespace-nowrap text-[var(--gray-600)] transition-colors hover:text-[var(--gray-800)]"
+                        >
+                          <svg
+                            className="h-3 w-3 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+                          <span className="font-mono">
+                            {formatPhone(allPhones[2])}
+                          </span>
+                        </a>
+                      </>
+                    )}
                   </div>
                 </div>
               )

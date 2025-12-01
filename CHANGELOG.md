@@ -8,6 +8,22 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Breed Bulk Pricing Modification Feature** (2025-12-02):
+  - New "Modify All Pricing" button in Breed Management page header
+  - Animated expansion panel for configuring global pricing adjustments
+  - Supports fixed amount (e.g., +$10) or percentage increase (e.g., +25%)
+  - Individual breed pricing via "$" icon in Actions column for each breed
+  - **Confirmation modal** requires typing to confirm:
+    - Global updates: type "update all breed pricing"
+    - Individual breed: type the breed name
+  - Animal cost adjustment logic:
+    - Animals with cost < breed avgcost: increased by same amount/percentage
+    - Animals with cost = 0: unchanged (preserved)
+    - Animals with cost > breed avgcost: difference preserved after breed increase
+  - New API endpoint `POST /api/breeds/pricing` for bulk pricing updates
+  - Returns detailed summary of all breeds and animals updated
+  - Files: `src/app/api/breeds/pricing/route.ts`, `src/components/breeds/PricingModifier.tsx`, `src/components/breeds/BreedTable.tsx` (updated)
+
 - **Daily Totals Report Page** (2025-12-01):
   - New printable report page at `/reports/daily-totals` for end-of-day takings reconciliation
   - Date selector defaults to today, allows selecting any past date
@@ -21,18 +37,52 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Breed Management Save Icon** (2025-12-02):
+  - Changed edit mode save button icon from circular reload arrow to floppy disk (save) icon
+  - Updated button title/aria-label from "Update" to "Save" for better semantics
+  - File: `src/components/breeds/BreedTable.tsx`
+
+- **Search Result List View Redesign** (2025-12-02):
+  - Complete redesign to compact single-line layout with maximum information density
+  - **Two column layout**: Animal (2fr) | Customer & Contact (3fr)
+  - **Animal column (clickable)**: `Avatar NAME Breed  color: XXX  cost: $XX  Last Visit: XXX YY` all on one line
+    - NAME: Bold black
+    - Breed: Primary orange color
+    - Labeled format: "color: Red", "cost: $50", "Last Visit: Oct 21, 14"
+    - Whitespace separation (no pipes)
+    - Click navigates to animal details page
+  - **Customer & Contact column (clickable)**: `SURNAME, firstname | Address | SUBURB | POSTCODE | PHONE1 | email | PHONE2 | PHONE3` all on one line
+    - SURNAME: UPPERCASE bold black, firstname normal case gray
+    - Address: Gray text
+    - SUBURB: UPPERCASE teal/secondary color, bold
+    - POSTCODE: Teal/secondary color, bold
+    - PHONE1: Phone icon, teal (primary contact), click-to-call
+    - email: Envelope icon, click-to-email
+    - PHONE2/PHONE3: Phone icons, gray (secondary contacts), click-to-call
+    - Pipe separators between elements
+    - Click anywhere navigates to customer page
+  - **Full row hover**: Hover effect fills entire row (no padding/gaps)
+  - **Unified hover effects**: Both columns use same orange (`primary-light`) hover color while maintaining separate clickable areas
+  - **Phone formatting**: Spaces for readability (0412 345 678) with icons
+  - **Validation**: Filters "Unknown", empty, and "0" phone values
+  - **Alternating row colors**: White/gray-100 for better contrast and scanability
+  - **No "Unknown" placeholders**: Clean data display
+  - Files: `src/components/ResultsView.tsx`
+
 - **Search Result Card Redesign** (2025-12-01):
   - Prioritized essential information for staff efficiency based on user requirements
+  - **Responsive horizontal layout**: Desktop shows 1/3 animal details | 2/3 customer details with vertical divider; mobile uses vertical stacking
   - **Animal name**: Increased from 18px to 24px (text-2xl), bold
   - **Breed**: Now displayed in primary brand color below animal name
+  - **Color**: Shown in animal section (restored per user feedback)
   - **Customer name**: Increased to 18px, bold uppercase, with firstname in normal case
-  - **Phone number**: Large (18px), prominent with phone icon, click-to-call enabled
+  - **Phone numbers**: All valid phones displayed; primary in teal, secondary/tertiary in dark grey
   - **Email**: Now displayed on cards with envelope icon, click-to-email enabled
-  - **Location**: Suburb and postcode shown as clear inline text (not tiny badges)
-  - **Last visit**: Moved to subtle top-right corner position
-  - **Removed**: COLOR field entirely (not needed for staff workflow)
+  - **Location**: Suburb and postcode shown in teal (not tiny badges)
+  - **Last visit**: Moved to subtle position in animal section
   - **Removed**: "Unknown" placeholders - fields now hidden when empty
   - Phone numbers formatted with spaces for readability (0412 345 678)
+  - Click-to-call (`tel:`) and click-to-email (`mailto:`) links enabled
   - See `SEARCH-RESULT-CARDS.md` for full design specification
   - Files: `src/components/AnimalCard.tsx`
 

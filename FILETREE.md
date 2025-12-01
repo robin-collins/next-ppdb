@@ -49,3 +49,9 @@
     48|├── src/
     49|│   ├── hooks/                       # Custom React hooks
     50|│   │   └── useSidebarState.ts       # Persistent sidebar state hook with localStorage (created 2025-12-01)
+    51|│   ├── components/breeds/           # Breed management components
+    52|│   │   ├── BreedForm.tsx            # Add new breed form
+    53|│   │   ├── BreedTable.tsx           # Breed listing table with edit/delete/pricing actions (updated 2025-12-02)
+    54|│   │   └── PricingModifier.tsx      # Animated pricing adjustment panel for breeds (created 2025-12-02)
+    55|│   ├── app/api/breeds/pricing/      # Bulk pricing update API
+    56|│   │   └── route.ts                 # POST handler for breed/animal pricing updates (created 2025-12-02)

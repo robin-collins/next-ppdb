@@ -50,20 +50,18 @@ export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
     year: '2-digit',
   })
 
-  // Get first available phone number (filter out "Unknown" and empty values)
+  // Get all valid phone numbers (filter out "Unknown" and empty values)
   const isValidPhone = (phone: string | null | undefined): phone is string => {
     if (!phone) return false
     const trimmed = phone.trim().toLowerCase()
     return trimmed !== '' && trimmed !== 'unknown' && trimmed !== '0'
   }
 
-  const primaryPhone = isValidPhone(animal.customer.phone1)
-    ? animal.customer.phone1.trim()
-    : isValidPhone(animal.customer.phone2)
-      ? animal.customer.phone2.trim()
-      : isValidPhone(animal.customer.phone3)
-        ? animal.customer.phone3.trim()
-        : null
+  const allPhones = [
+    animal.customer.phone1,
+    animal.customer.phone2,
+    animal.customer.phone3,
+  ].filter(isValidPhone)
 
   // Check if email looks valid (contains @)
   const validEmail =
@@ -100,41 +98,48 @@ export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] transition-all group-hover:h-1.5" />
 
-      {/* Last Visit - Top Right Corner */}
-      <div className="absolute top-3 right-3 text-xs font-medium text-[var(--gray-500)]">
-        {formattedDate}
-      </div>
-
-      <div className="p-5">
-        {/* Animal Section - TOP */}
-        <div className="mb-4 flex items-center gap-4">
+      {/* Desktop: Horizontal layout (md and up) */}
+      {/* Mobile: Vertical layout (below md) */}
+      <div className="flex flex-col p-4 md:flex-row md:p-0">
+        {/* LEFT SECTION - Animal Details (1/3 on desktop) */}
+        <div className="flex items-start gap-3 rounded-lg transition-all hover:bg-[var(--primary-light)] md:w-1/3 md:flex-shrink-0 md:border-r md:border-[var(--gray-200)] md:p-4">
           <AnimalAvatar
             animalName={animal.name}
             breedName={animal.breed}
             size="md"
-            className="transition-all group-hover:scale-110 group-hover:shadow-[0_4px_16px_rgba(217,148,74,0.3)]"
+            className="flex-shrink-0"
           />
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-2xl leading-tight font-bold text-[var(--gray-900)]">
+            <h3 className="truncate text-xl leading-tight font-bold text-[var(--gray-900)] md:text-2xl">
               {animal.name}
             </h3>
-            <p className="truncate text-base font-medium text-[var(--primary)]">
+            <p className="truncate text-sm font-medium text-[var(--primary)] md:text-base">
               {animal.breed}
+            </p>
+            {/* Color - shown in animal section */}
+            {animal.colour && (
+              <p className="mt-1 truncate text-xs text-[var(--gray-500)]">
+                {animal.colour}
+              </p>
+            )}
+            {/* Last visit date */}
+            <p className="mt-1 text-xs text-[var(--gray-400)]">
+              Last Visit: <span className="font-bold">{formattedDate}</span>
             </p>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="mb-4 h-px bg-[var(--gray-200)]" />
+        {/* Horizontal Divider - Mobile only */}
+        <div className="my-3 h-px bg-[var(--gray-200)] md:hidden" />
 
-        {/* Customer Section - MIDDLE */}
+        {/* RIGHT SECTION - Customer Details (2/3 on desktop) */}
         <div
           onClick={handleCustomerClick}
-          className="-mx-2 mb-3 cursor-pointer rounded-lg p-2 transition-all hover:bg-[var(--primary-light)]"
+          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-2 rounded-lg transition-all hover:bg-[var(--primary-light)] md:gap-1 md:p-4"
           title="View customer details"
         >
-          {/* Customer Name - Large & Bold */}
-          <div className="text-lg font-bold tracking-wide text-[var(--gray-800)] uppercase">
+          {/* Customer Name - Large & Bold (matching animal name size) */}
+          <div className="text-xl font-bold tracking-wide text-[var(--gray-800)] uppercase md:text-2xl">
             {animal.customer.surname}
             {animal.customer.firstname && (
               <span className="font-normal text-[var(--gray-600)] normal-case">
@@ -143,50 +148,78 @@ export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
             )}
           </div>
 
-          {/* Location - Suburb + Postcode */}
-          {(animal.customer.suburb || formattedPostcode) && (
-            <div className="mt-1 text-base font-medium text-[var(--secondary)]">
-              {animal.customer.suburb}
-              {animal.customer.suburb && formattedPostcode && (
-                <span className="mx-2 text-[var(--gray-300)]">|</span>
+          {/* Location - Address | Suburb | Postcode */}
+          {(animal.customer.address ||
+            animal.customer.suburb ||
+            formattedPostcode) && (
+            <div className="flex flex-wrap items-center gap-x-1 text-base">
+              {animal.customer.address && (
+                <>
+                  <span className="text-sm text-[var(--gray-500)]">
+                    {animal.customer.address}
+                  </span>
+                  {(animal.customer.suburb || formattedPostcode) && (
+                    <span className="text-[var(--gray-300)]">|</span>
+                  )}
+                </>
               )}
-              {formattedPostcode}
+              {animal.customer.suburb && (
+                <span className="font-medium text-[var(--secondary)]">
+                  {animal.customer.suburb}
+                </span>
+              )}
+              {animal.customer.suburb && formattedPostcode && (
+                <span className="text-[var(--gray-300)]">|</span>
+              )}
+              {formattedPostcode && (
+                <span className="font-medium text-[var(--secondary)]">
+                  {formattedPostcode}
+                </span>
+              )}
             </div>
           )}
-        </div>
 
-        {/* Contact Section - BOTTOM */}
-        <div className="space-y-2">
-          {/* Phone - Large & Prominent */}
-          {primaryPhone && (
-            <a
-              href={`tel:${primaryPhone.replace(/\s/g, '')}`}
-              onClick={handlePhoneClick}
-              className="flex items-center gap-2 text-lg font-semibold text-[var(--secondary)] transition-colors hover:text-[var(--secondary-hover)]"
-            >
-              <svg
-                className="h-5 w-5 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                />
-              </svg>
-              <span className="font-mono">{formatPhone(primaryPhone)}</span>
-            </a>
-          )}
+          {/* Contact Section - All Phones */}
+          {/* Primary phone in teal, secondary/tertiary in dark grey */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {allPhones.map((phone, idx) => {
+              const isPrimary = idx === 0
+              return (
+                <a
+                  key={idx}
+                  href={`tel:${phone.replace(/\s/g, '')}`}
+                  onClick={handlePhoneClick}
+                  className={`flex items-center gap-1.5 text-base font-semibold transition-colors md:text-lg ${
+                    isPrimary
+                      ? 'text-[var(--secondary)] hover:text-[var(--secondary-hover)]'
+                      : 'text-[var(--gray-600)] hover:text-[var(--gray-800)]'
+                  }`}
+                >
+                  <svg
+                    className="h-4 w-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                  <span className="font-mono">{formatPhone(phone)}</span>
+                </a>
+              )
+            })}
+          </div>
 
-          {/* Email - only show if it looks like a valid email */}
+          {/* Email */}
           {validEmail && (
             <a
               href={`mailto:${validEmail}`}
               onClick={handleEmailClick}
-              className="flex items-center gap-2 truncate text-sm text-[var(--gray-600)] transition-colors hover:text-[var(--primary)]"
+              className="flex items-center gap-1.5 truncate text-sm text-[var(--gray-600)] transition-colors hover:text-[var(--primary)]"
             >
               <svg
                 className="h-4 w-4 flex-shrink-0"

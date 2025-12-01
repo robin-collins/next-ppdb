@@ -27,7 +27,9 @@
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__take_screenshot",
       "Bash(pnpm lint-staged:*)",
-      "mcp__chrome-devtools__select_page"
+      "mcp__chrome-devtools__select_page",
+      "mcp__chrome-devtools__hover",
+      "mcp__chrome-devtools__wait_for"
     ],
     "deny": [],
     "ask": []
