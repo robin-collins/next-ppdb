@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Daily Totals Page Layout** (2025-12-01):
+  - Reverted chart grid layout from horizontal (side-by-side) to vertical (stacked) layout
+  - Changed `lg:grid-cols-2` back to `lg:grid-cols-1` for Revenue Trends and Animals & Breeds graphs
+  - Graphs now display full content area width, vertically stacked
+
+- **ESLint Errors in Reports Module** (2025-12-01):
+  - Removed unused `Period` type from `src/app/api/reports/analytics/route.ts`
+  - Removed incomplete/unused path element with `x` variable from `src/app/reports/daily-totals/page.tsx`
+  - Removed unused `idx` parameter from breed breakdown map in `src/app/reports/daily-totals/page.tsx`
+
 ### Changed
 
 - **Animal Avatar Enhancement** (2025-11-30):
