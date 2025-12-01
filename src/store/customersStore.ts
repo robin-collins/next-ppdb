@@ -222,7 +222,20 @@ export const useCustomersStore = create<CustomersState>()(
 
             if (!response.ok) {
               const errorData = await response.json()
-              throw new Error(errorData.error || 'Failed to update customer')
+
+              // Create a custom error that includes field-level errors
+              const error = new Error(
+                errorData.message ||
+                  errorData.error ||
+                  'Failed to update customer'
+              ) as Error & { fieldErrors?: Record<string, string> }
+
+              // Attach field errors if present (for validation errors)
+              if (errorData.fieldErrors) {
+                error.fieldErrors = errorData.fieldErrors
+              }
+
+              throw error
             }
 
             const updatedCustomer = await response.json()

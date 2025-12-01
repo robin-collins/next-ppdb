@@ -3,7 +3,7 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({ onSuggestionClick }: EmptyStateProps) {
-  const suggestions = ['Cody', 'Maltese', 'James', 'Active pets']
+  const suggestions = ['Collins, Christine', 'German Shepherd', '85562340']
 
   return (
     <div className="flex min-h-[calc(100vh-var(--header-height)-3rem)] items-center justify-center !p-10">

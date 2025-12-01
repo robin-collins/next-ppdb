@@ -1,6 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { getEmailValidationError } from '@/lib/validations/customer'
+
+// Field error state interface
+interface FieldErrors {
+  [key: string]: string | null
+}
 
 interface CustomerInfoCardProps {
   customer: {
@@ -36,20 +42,154 @@ export default function CustomerInfoCard({
     email: customer.email || '',
   })
 
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Validate a single field and return error message or null
+  const validateField = useCallback(
+    (name: string, value: string): string | null => {
+      switch (name) {
+        case 'email':
+          return getEmailValidationError(value)
+        case 'surname':
+          if (!value || value.trim() === '') {
+            return 'Surname is required'
+          }
+          if (value.length > 20) {
+            return 'Surname cannot exceed 20 characters'
+          }
+          return null
+        case 'firstname':
+          if (value.length > 20) {
+            return 'First name cannot exceed 20 characters'
+          }
+          return null
+        case 'phone1':
+        case 'phone2':
+        case 'phone3': {
+          if (!value || value.trim() === '') return null
+          // Strip formatting characters for validation
+          const digitsOnly = value.replace(/[\s\-()]/g, '')
+          if (!/^\d+$/.test(digitsOnly)) {
+            return 'Phone must contain only digits'
+          }
+          if (digitsOnly.length > 11) {
+            return 'Phone number cannot exceed 11 digits'
+          }
+          return null
+        }
+        case 'postcode': {
+          if (!value || value.trim() === '') return null
+          if (!/^\d{4}$/.test(value)) {
+            return 'Postcode must be exactly 4 digits'
+          }
+          return null
+        }
+        default:
+          return null
+      }
+    },
+    []
+  )
+
+  // Validate all fields and return true if valid
+  const validateAllFields = useCallback((): boolean => {
+    const errors: FieldErrors = {}
+    let isValid = true
+
+    // Validate each field
+    Object.entries(formData).forEach(([name, value]) => {
+      const error = validateField(name, value)
+      if (error) {
+        errors[name] = error
+        isValid = false
+      }
+    })
+
+    setFieldErrors(errors)
+    return isValid
+  }, [formData, validateField])
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData(prev => ({
+    const { name, value } = e.target
+
+    // For phone fields, only allow digits (max 11)
+    if (['phone1', 'phone2', 'phone3'].includes(name)) {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 11)
+      setFormData(prev => ({ ...prev, [name]: digitsOnly }))
+    }
+    // For postcode, only allow digits (max 4)
+    else if (name === 'postcode') {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 4)
+      setFormData(prev => ({ ...prev, [name]: digitsOnly }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: null,
+      }))
+    }
+  }
+
+  // Validate on blur for immediate feedback
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
+    const error = validateField(name, value)
+    setFieldErrors(prev => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: error,
     }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (onUpdate) {
-      await onUpdate(formData)
+
+    // Validate all fields before submitting
+    if (!validateAllFields()) {
+      return // Don't submit if validation fails
     }
+
+    if (onUpdate) {
+      setIsSubmitting(true)
+      try {
+        await onUpdate(formData)
+      } catch (error) {
+        // Handle server-side validation errors
+        if (error instanceof Error) {
+          // Check if error message contains field-specific info
+          const serverError = error as Error & {
+            fieldErrors?: Record<string, string>
+          }
+          if (serverError.fieldErrors) {
+            setFieldErrors(prev => ({
+              ...prev,
+              ...serverError.fieldErrors,
+            }))
+          }
+        }
+        throw error
+      } finally {
+        setIsSubmitting(false)
+      }
+    }
+  }
+
+  // Helper to get input class based on error state
+  const getInputClassName = (fieldName: string) => {
+    const baseClass =
+      'w-full rounded-lg border-2 px-4 py-3 text-base transition-all focus:ring-4 focus:outline-none'
+    const hasError = fieldErrors[fieldName]
+    return hasError
+      ? `${baseClass} border-red-500 focus:border-red-500 focus:ring-red-100`
+      : `${baseClass} border-gray-200 focus:border-[var(--primary)] focus:ring-[rgba(217,148,74,0.1)]`
   }
 
   return (
@@ -87,11 +227,18 @@ export default function CustomerInfoCard({
                 type="text"
                 id="firstname"
                 name="firstname"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
+                className={getInputClassName('firstname')}
                 placeholder="Enter first name"
                 value={formData.firstname}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
+                maxLength={20}
               />
+              {fieldErrors.firstname && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.firstname}
+                </span>
+              )}
             </div>
 
             {/* Surname */}
@@ -106,12 +253,19 @@ export default function CustomerInfoCard({
                 type="text"
                 id="surname"
                 name="surname"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
+                className={getInputClassName('surname')}
                 placeholder="Enter surname"
                 value={formData.surname}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
+                maxLength={20}
                 required
               />
+              {fieldErrors.surname && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.surname}
+                </span>
+              )}
             </div>
 
             {/* Address */}
@@ -164,10 +318,17 @@ export default function CustomerInfoCard({
                 id="postcode"
                 name="postcode"
                 className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
-                placeholder="Enter postcode"
+                placeholder="4 digits (e.g., 3000)"
                 value={formData.postcode}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
+                maxLength={4}
               />
+              {fieldErrors.postcode && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.postcode}
+                </span>
+              )}
             </div>
 
             {/* Phone 1 */}
@@ -182,11 +343,17 @@ export default function CustomerInfoCard({
                 type="tel"
                 id="phone1"
                 name="phone1"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
+                className={getInputClassName('phone1')}
                 placeholder="Enter primary phone"
                 value={formData.phone1}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
               />
+              {fieldErrors.phone1 && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.phone1}
+                </span>
+              )}
             </div>
 
             {/* Phone 2 */}
@@ -201,11 +368,17 @@ export default function CustomerInfoCard({
                 type="tel"
                 id="phone2"
                 name="phone2"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
+                className={getInputClassName('phone2')}
                 placeholder="Enter secondary phone"
                 value={formData.phone2}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
               />
+              {fieldErrors.phone2 && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.phone2}
+                </span>
+              )}
             </div>
 
             {/* Phone 3 */}
@@ -220,11 +393,17 @@ export default function CustomerInfoCard({
                 type="tel"
                 id="phone3"
                 name="phone3"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
+                className={getInputClassName('phone3')}
                 placeholder="Enter tertiary phone"
                 value={formData.phone3}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
               />
+              {fieldErrors.phone3 && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.phone3}
+                </span>
+              )}
             </div>
 
             {/* Email */}
@@ -236,14 +415,21 @@ export default function CustomerInfoCard({
                 Email
               </label>
               <input
-                type="email"
+                type="text"
                 id="email"
                 name="email"
-                className="w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-base transition-all focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(217,148,74,0.1)] focus:outline-none"
-                placeholder="Enter email address"
+                className={getInputClassName('email')}
+                placeholder="Enter email address (e.g., name@example.com)"
                 value={formData.email}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
+                maxLength={200}
               />
+              {fieldErrors.email && (
+                <span className="text-sm text-red-600">
+                  {fieldErrors.email}
+                </span>
+              )}
             </div>
           </div>
 
@@ -251,23 +437,56 @@ export default function CustomerInfoCard({
           <div className="mt-6 flex gap-3 border-t border-gray-200 pt-6">
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-px hover:shadow-md"
+              disabled={isSubmitting}
+              className={`flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all ${
+                isSubmitting
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'hover:-translate-y-px hover:shadow-md'
+              }`}
               style={{ background: 'var(--primary)' }}
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
-              Update Record
+              {isSubmitting ? (
+                <>
+                  <svg
+                    className="h-4 w-4 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                  Update Record
+                </>
+              )}
             </button>
             <button
               type="button"

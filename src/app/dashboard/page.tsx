@@ -42,7 +42,7 @@ const navItems: NavItem[] = [
     href: routes.breeds.list(),
     label: 'Manage Breeds',
     description: 'View and edit breed database',
-    color: 'accent',
+    color: 'primary',
     icon: (
       <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -50,10 +50,10 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    href: routes.reports.dailyTotals(),
-    label: 'Daily Analytics',
-    description: 'View daily reports and totals',
-    color: 'warning',
+    href: routes.reports.analytics(),
+    label: 'Analytics Dashboard',
+    description: 'View revenue trends and statistics',
+    color: 'secondary',
     icon: (
       <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z" />
@@ -61,10 +61,21 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    href: routes.reports.dailyTotals(),
+    label: 'Daily Totals',
+    description: 'End of day takings report',
+    color: 'secondary',
+    icon: (
+      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
+      </svg>
+    ),
+  },
+  {
     href: routes.customers.history(),
     label: 'Customer History',
     description: 'Browse customer visit history',
-    color: 'success',
+    color: 'primary',
     icon: (
       <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
@@ -75,7 +86,7 @@ const navItems: NavItem[] = [
     href: '/admin/backup',
     label: 'Database Backup',
     description: 'Backup and restore data',
-    color: 'primary',
+    color: 'secondary',
     icon: (
       <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
@@ -86,7 +97,7 @@ const navItems: NavItem[] = [
     href: '/api/docs',
     label: 'API Docs',
     description: 'Interactive API documentation',
-    color: 'secondary',
+    color: 'primary',
     icon: (
       <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />

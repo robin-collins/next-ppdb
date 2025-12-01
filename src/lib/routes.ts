@@ -67,6 +67,7 @@ export const routes = {
    * Report Routes
    */
   reports: {
+    analytics: () => '/reports/analytics',
     dailyTotals: () => '/reports/daily-totals',
   },
 
@@ -92,6 +93,7 @@ export const routes = {
       byId: (id: number | string) => `/api/notes/${id}`,
     },
     reports: {
+      analytics: () => '/api/reports/analytics',
       dailyTotals: () => '/api/reports/daily-totals',
     },
     admin: {

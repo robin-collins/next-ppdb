@@ -36,6 +36,7 @@ interface CustomerDeleteConfirmState {
   animals: OrphanedAnimal[]
   loading: boolean
   migrateToCustomerId: number | null
+  acknowledgeDeleteAnimals: boolean // User acknowledged animals will be deleted if not rehoming
 }
 
 // Simple customer type for migration dropdown
@@ -206,6 +207,7 @@ export default function CustomerDetailPage() {
       animals: orphanedAnimals,
       loading: true,
       migrateToCustomerId: null,
+      acknowledgeDeleteAnimals: false,
     })
 
     // Fetch other customers for migration dropdown
@@ -327,20 +329,31 @@ export default function CustomerDetailPage() {
   const confirmDeleteCustomer = async () => {
     if (!customerDeleteConfirm) return
 
-    // Get selected animal IDs to migrate
+    // Get selected animal IDs
     const selectedAnimalIds = customerDeleteConfirm.animals
       .filter(a => a.selected)
       .map(a => a.id)
 
     // Build request body
-    const hasDataToSend =
+    const shouldMigrate =
       selectedAnimalIds.length > 0 && customerDeleteConfirm.migrateToCustomerId
-    const requestBody = hasDataToSend
+    const shouldDeleteAnimals =
+      selectedAnimalIds.length > 0 &&
+      !customerDeleteConfirm.migrateToCustomerId &&
+      customerDeleteConfirm.acknowledgeDeleteAnimals
+
+    const hasDataToSend = shouldMigrate || shouldDeleteAnimals
+    const requestBody = shouldMigrate
       ? {
           migrateToCustomerId: customerDeleteConfirm.migrateToCustomerId,
           animalIds: selectedAnimalIds,
         }
-      : undefined
+      : shouldDeleteAnimals
+        ? {
+            deleteAnimals: true,
+            animalIds: selectedAnimalIds,
+          }
+        : undefined
 
     try {
       const res = await fetch(`/api/customers/${customerDeleteConfirm.id}`, {
@@ -742,6 +755,47 @@ export default function CustomerDetailPage() {
                         permanently deleted with this customer.
                       </p>
                     )}
+
+                    {/* Acknowledge deletion checkbox - shown when animals selected but not rehoming */}
+                    {customerDeleteConfirm.animals.some(a => a.selected) &&
+                      !customerDeleteConfirm.migrateToCustomerId && (
+                        <div className="mt-4 rounded-lg border-2 border-red-300 bg-red-50 p-3">
+                          <label className="flex cursor-pointer items-start gap-3">
+                            <input
+                              type="checkbox"
+                              checked={
+                                customerDeleteConfirm.acknowledgeDeleteAnimals
+                              }
+                              onChange={e =>
+                                setCustomerDeleteConfirm(prev =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        acknowledgeDeleteAnimals:
+                                          e.target.checked,
+                                      }
+                                    : null
+                                )
+                              }
+                              className="mt-0.5 h-5 w-5 rounded border-red-300 text-red-600 focus:ring-red-500"
+                            />
+                            <span className="text-sm font-medium text-red-800">
+                              I understand that{' '}
+                              <strong>
+                                {
+                                  customerDeleteConfirm.animals.filter(
+                                    a => a.selected
+                                  ).length
+                                }{' '}
+                                animal(s)
+                              </strong>{' '}
+                              will be <strong>permanently deleted</strong>{' '}
+                              because I have not selected a customer to rehome
+                              them to.
+                            </span>
+                          </label>
+                        </div>
+                      )}
                   </div>
                 )}
 
@@ -780,13 +834,14 @@ export default function CustomerDetailPage() {
                     const selectedAnimals =
                       customerDeleteConfirm.animals.filter(a => a.selected)
                     const hasSelectedAnimals = selectedAnimals.length > 0
-                    const needsMigrationTarget =
+                    const needsMigrationOrAcknowledge =
                       hasSelectedAnimals &&
-                      !customerDeleteConfirm.migrateToCustomerId
+                      !customerDeleteConfirm.migrateToCustomerId &&
+                      !customerDeleteConfirm.acknowledgeDeleteAnimals
                     const nameTyped =
                       customerDeleteConfirm.typedName ===
                       customerDeleteConfirm.name
-                    const canDelete = nameTyped && !needsMigrationTarget
+                    const canDelete = nameTyped && !needsMigrationOrAcknowledge
 
                     return (
                       <button
@@ -811,7 +866,10 @@ export default function CustomerDetailPage() {
                           {hasSelectedAnimals &&
                           customerDeleteConfirm.migrateToCustomerId
                             ? ` & Rehome ${selectedAnimals.length} Animal${selectedAnimals.length > 1 ? 's' : ''}`
-                            : ''}
+                            : hasSelectedAnimals &&
+                                customerDeleteConfirm.acknowledgeDeleteAnimals
+                              ? ` & ${selectedAnimals.length} Animal${selectedAnimals.length > 1 ? 's' : ''}`
+                              : ''}
                         </span>
                       </button>
                     )

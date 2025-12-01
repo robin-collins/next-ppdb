@@ -129,9 +129,22 @@ export async function PUT(
     const validationResult = updateCustomerSchema.safeParse(body)
 
     if (!validationResult.success) {
+      // Transform Zod errors into field-level errors for the client
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of validationResult.error.issues) {
+        const fieldName = issue.path[0]?.toString() || 'unknown'
+        // Only keep the first error for each field
+        if (!fieldErrors[fieldName]) {
+          fieldErrors[fieldName] = issue.message
+        }
+      }
+
       return NextResponse.json(
         {
-          error: 'Invalid request data',
+          error: 'Validation failed',
+          message:
+            'Some fields contain invalid data. Please correct the highlighted fields.',
+          fieldErrors,
           details: validationResult.error.issues,
         },
         { status: 400 }
@@ -228,18 +241,27 @@ export async function DELETE(
       )
     }
 
-    // Check for body with migrateToCustomerId and animalIds
+    // Check for body with migrateToCustomerId, animalIds, or deleteAnimals
     let migrateToCustomerId: number | null = null
     let animalIdsToMigrate: number[] = []
+    let deleteAnimalsExplicitly = false
+    let animalIdsToDelete: number[] = []
     try {
       const body = await request.json()
       if (body?.migrateToCustomerId) {
         migrateToCustomerId = parseInt(body.migrateToCustomerId)
       }
       if (Array.isArray(body?.animalIds)) {
-        animalIdsToMigrate = body.animalIds.map((id: number | string) =>
+        const parsedIds = body.animalIds.map((id: number | string) =>
           parseInt(String(id))
         )
+        if (body?.deleteAnimals === true) {
+          // User explicitly wants to delete these animals
+          deleteAnimalsExplicitly = true
+          animalIdsToDelete = parsedIds
+        } else {
+          animalIdsToMigrate = parsedIds
+        }
       }
     } catch {
       // No body or invalid JSON - proceed without migration
@@ -266,14 +288,18 @@ export async function DELETE(
 
     if (allAnimalIds.length > 0) {
       // Determine which animals to migrate vs delete
-      const animalsToMigrate =
-        animalIdsToMigrate.length > 0
-          ? allAnimalIds.filter(id => animalIdsToMigrate.includes(id))
-          : [] // If no specific IDs provided, don't migrate any
+      let animalsToMigrate: number[] = []
 
-      const animalsToDelete = allAnimalIds.filter(
-        id => !animalsToMigrate.includes(id)
-      )
+      if (animalIdsToMigrate.length > 0 && migrateToCustomerId) {
+        animalsToMigrate = allAnimalIds.filter(id =>
+          animalIdsToMigrate.includes(id)
+        )
+      }
+
+      // Animals to delete: explicitly requested OR not selected for migration
+      const animalsToDelete = deleteAnimalsExplicitly
+        ? allAnimalIds.filter(id => animalIdsToDelete.includes(id))
+        : allAnimalIds.filter(id => !animalsToMigrate.includes(id))
 
       // If there are animals to migrate, verify target customer
       if (animalsToMigrate.length > 0) {

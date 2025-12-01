@@ -101,7 +101,7 @@ export default function BreedForm({ onCreate }: BreedFormProps) {
               setAvgcost(e.target.value === '' ? '' : Number(e.target.value))
             }
             min="0"
-            step="5"
+            step="1"
             aria-describedby="cost-hint"
           />
           <span id="cost-hint" className="mt-1 text-xs text-gray-500">

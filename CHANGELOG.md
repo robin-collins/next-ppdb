@@ -6,7 +6,103 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Daily Totals Report Page** (2025-12-01):
+  - New printable report page at `/reports/daily-totals` for end-of-day takings reconciliation
+  - Date selector defaults to today, allows selecting any past date
+  - Table displays: Animal name with owner name, Breed, and Cost
+  - Summary footer shows total animals count and total income
+  - Print button triggers browser print dialog with optimized print styles
+  - Clean, minimal design focused on printability
+  - Added to Sidebar navigation and Dashboard links
+  - Enhanced API at `/api/reports/daily-totals` to accept date parameter and return detailed animal list
+  - Files: `src/app/reports/daily-totals/page.tsx`, `src/app/api/reports/daily-totals/route.ts`, `src/app/globals.css` (print styles)
+
+### Changed
+
+- **Search Result Card Redesign** (2025-12-01):
+  - Prioritized essential information for staff efficiency based on user requirements
+  - **Animal name**: Increased from 18px to 24px (text-2xl), bold
+  - **Breed**: Now displayed in primary brand color below animal name
+  - **Customer name**: Increased to 18px, bold uppercase, with firstname in normal case
+  - **Phone number**: Large (18px), prominent with phone icon, click-to-call enabled
+  - **Email**: Now displayed on cards with envelope icon, click-to-email enabled
+  - **Location**: Suburb and postcode shown as clear inline text (not tiny badges)
+  - **Last visit**: Moved to subtle top-right corner position
+  - **Removed**: COLOR field entirely (not needed for staff workflow)
+  - **Removed**: "Unknown" placeholders - fields now hidden when empty
+  - Phone numbers formatted with spaces for readability (0412 345 678)
+  - See `SEARCH-RESULT-CARDS.md` for full design specification
+  - Files: `src/components/AnimalCard.tsx`
+
+- **Dashboard Card Colors** (2025-12-01):
+  - Changed card colors to checkerboard pattern (brown/teal alternating by row)
+  - Row 1: Brown, Teal, Brown, Teal
+  - Row 2: Teal, Brown, Teal, Brown
+
 ### Fixed
+
+- **Customer Form Validation** (2025-12-01):
+  - Improved email validation with robust regex pattern (requires domain with TLD, e.g., `name@example.com`)
+  - Added client-side validation with real-time feedback on blur for email, surname, firstname, and phone fields
+  - Phone validation now allows up to 11 digits (supporting international numbers) instead of 10
+  - Form fields highlight with red border when validation fails
+  - Error messages display below fields with clear instructions
+  - Server returns field-level errors for better UX when validation fails
+  - Added loading state to submit button during update
+  - Files changed: `CustomerInfoCard.tsx`, `customer.ts` (validation), `customers/[id]/route.ts`, `customersStore.ts`
+
+- **Customer History API** (2025-12-01):
+  - Fixed TypeScript error: Changed `customer.town` to `customer.suburb` in address building logic
+
+- **Breed avgcost validation** (2025-12-01):
+  - Changed input step from "5" to "1" to allow any integer value for average cost
+  - Fixed in both BreedForm (add) and BreedTable (edit) components
+
+- **Customer delete with animal deletion option** (2025-12-01):
+  - When deleting a customer with animals, users can now choose to delete animals instead of rehoming
+  - Added checkbox to acknowledge animal deletion when no migration target is selected
+  - Updated API to handle `deleteAnimals: true` flag for explicit animal deletion
+  - Button text updates to show "Delete Customer & X Animal(s)" when acknowledging deletion
+
+- **Delete note confirmation modal** (2025-12-01):
+  - Replaced browser `confirm()` dialog with styled modal following DELETE_MODAL.md spec
+  - Modal requires typing the note's date to confirm deletion
+  - Red warning styling with icon, type-to-confirm input, and Cancel/Delete buttons
+  - Delete button disabled until date is typed correctly
+
+- **Service history note cards redesign** (2025-12-01):
+  - Redesigned note display cards on animal details page
+  - Date now at top left in italic primary color
+  - Note text spans full width below date
+  - Price ($XX) extracted and displayed in green
+  - Technician code (2-3 uppercase letters at end) shown in pill badge with person icon
+  - Trash icon for delete on the right side
+
+- **Animal cost input and notes auto-cost** (2025-12-01):
+  - Cost input on add/edit animal pages now only accepts integers (step=1 instead of 0.01)
+  - When adding a note without a cost ($XX pattern), automatically adds the animal's cost
+  - If note ends with uppercase word (like "CC"), cost is inserted before it
+  - Otherwise cost is appended at the end
+  - Example: "full clip 7 CC" becomes "full clip 7 $62 CC" if animal cost is 62
+
+- **Customer form validation improvements** (2025-12-01):
+  - Phone: Now accepts only digits (max 11 for international numbers)
+  - Postcode: Must be exactly 4 digits (Australian format)
+  - Email: Now uses `sane-email-validation` package with `isAsciiEmail()` for robust ASCII email validation
+  - Applied to both Add Customer page and Customer Edit form
+  - Input filtering prevents non-digit entry for phone/postcode fields
+  - Real-time validation on blur
+
+### Changed
+
+- **Renamed Daily Totals to Analytics Dashboard** (2025-12-01):
+  - Renamed page from `/reports/daily-totals` to `/reports/analytics`
+  - Updated sidebar link text from "Daily Analytics" to "Analytics Dashboard"
+  - Updated dashboard link and description
+  - Updated route helpers in `src/lib/routes.ts`
+  - Note: `/api/reports/daily-totals` API route preserved for future daily totals page
 
 - **Daily Totals Page Layout** (2025-12-01):
   - Reverted chart grid layout from horizontal (side-by-side) to vertical (stacked) layout
@@ -17,6 +113,16 @@ All notable changes to this project will be documented in this file.
   - Removed unused `Period` type from `src/app/api/reports/analytics/route.ts`
   - Removed incomplete/unused path element with `x` variable from `src/app/reports/daily-totals/page.tsx`
   - Removed unused `idx` parameter from breed breakdown map in `src/app/reports/daily-totals/page.tsx`
+
+- **Customer History Page** (2025-12-01):
+  - Fixed: Page was using hardcoded mock data instead of fetching from API
+  - Fixed: Inactive period logic now correctly filters customers whose animals haven't visited in 12/24/36+ months
+  - Changed: One row per customer with multiple animals displayed horizontally (instead of one row per animal)
+  - Added: Pagination with First/Prev/Next/Last buttons
+  - Added: Records per page selection (10, 25, 50, 100)
+  - Added: Stats showing total customers, total animals, and oldest visit date
+  - Added: Click row to navigate to customer detail page, click animal to navigate to animal detail page
+  - API updated at `/api/customers/history` to return customer-grouped data with pagination support
 
 ### Changed
 

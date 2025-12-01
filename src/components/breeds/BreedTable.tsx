@@ -295,7 +295,7 @@ export default function BreedTable({
                           }))
                         }
                         min="0"
-                        step="5"
+                        step="1"
                         aria-label={`Average cost for ${r.name}`}
                       />
                     ) : r.avgcost !== null ? (

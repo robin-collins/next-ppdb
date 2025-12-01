@@ -48,10 +48,41 @@ export async function POST(
     )
   }
 
+  // Check if note contains a cost pattern ($XX to $XXXX)
+  const hasCostPattern = /\$\d{1,4}/.test(text)
+
+  let finalNoteText = text
+
+  // If no cost in note, auto-add the animal's cost
+  if (!hasCostPattern) {
+    const animal = await prisma.animal.findUnique({
+      where: { animalID },
+      select: { cost: true },
+    })
+
+    if (animal?.cost) {
+      const costStr = `$${animal.cost}`
+      // Check if note ends with uppercase word (2+ uppercase letters like "CC", "FF")
+      const endsWithUppercase = /\s[A-Z]{2,}$/.test(text.trim())
+
+      if (endsWithUppercase) {
+        // Insert cost before the uppercase ending
+        const trimmed = text.trim()
+        const lastSpaceIdx = trimmed.lastIndexOf(' ')
+        const beforeLast = trimmed.slice(0, lastSpaceIdx)
+        const lastWord = trimmed.slice(lastSpaceIdx + 1)
+        finalNoteText = `${beforeLast} ${costStr} ${lastWord}`
+      } else {
+        // Append cost at end
+        finalNoteText = `${text.trim()} ${costStr}`
+      }
+    }
+  }
+
   const created = await prisma.notes.create({
     data: {
       animalID,
-      notes: text,
+      notes: finalNoteText,
       date: serviceDate ? new Date(serviceDate) : new Date(),
     },
   })

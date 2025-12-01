@@ -258,7 +258,7 @@ export default function ServiceHistoryPage() {
                     const priceMatch = note.notes.match(/\$(\d+)/)
                     const price = priceMatch ? `$${priceMatch[1]}` : null
 
-                    // Extract technician code (2-3 letter code at end or standalone)
+                    // Extract technician code (2-3 letters at end, displayed uppercase)
                     const techMatch = note.notes.match(
                       /\b([A-Za-z]{2,3})\b\s*\.?\s*$/
                     )

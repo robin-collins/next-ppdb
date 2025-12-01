@@ -485,6 +485,7 @@ export default function NewAnimalPage() {
                       required
                       min="0"
                       max="999"
+                      step="1"
                       style={{
                         fontFamily: 'var(--font-body)',
                         borderRadius: 'var(--radius-lg)',

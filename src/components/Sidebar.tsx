@@ -147,8 +147,8 @@ export default function Sidebar({
       active: currentPath === '/breeds',
     },
     {
-      href: '/reports/daily-totals',
-      label: 'Daily Analytics',
+      href: '/reports/analytics',
+      label: 'Analytics Dashboard',
       icon: (
         <svg
           className="h-[18px] w-[18px]"
@@ -156,6 +156,20 @@ export default function Sidebar({
           fill="currentColor"
         >
           <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z" />
+        </svg>
+      ),
+      active: currentPath === '/reports/analytics',
+    },
+    {
+      href: '/reports/daily-totals',
+      label: 'Daily Totals',
+      icon: (
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
         </svg>
       ),
       active: currentPath === '/reports/daily-totals',

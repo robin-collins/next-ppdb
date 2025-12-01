@@ -58,6 +58,13 @@ export default function AnimalPage() {
   // Notes state
   const [newNoteText, setNewNoteText] = useState('')
 
+  // Delete note confirmation state
+  const [deleteNoteConfirm, setDeleteNoteConfirm] = useState<{
+    id: number
+    date: string
+    typedDate: string
+  } | null>(null)
+
   useEffect(() => {
     const idNum = Number(params.id)
     if (Number.isFinite(idNum)) {
@@ -150,11 +157,28 @@ export default function AnimalPage() {
     }
   }
 
-  const handleDeleteNote = async (noteId: number) => {
-    if (selectedAnimal && confirm('Delete this note?')) {
-      await deleteNote(noteId, selectedAnimal.id)
+  const initiateDeleteNote = (noteId: number, noteDate: Date | string) => {
+    const formattedDate = new Date(noteDate).toLocaleDateString('en-AU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    setDeleteNoteConfirm({
+      id: noteId,
+      date: formattedDate,
+      typedDate: '',
+    })
+  }
+
+  const handleDeleteNote = async () => {
+    if (selectedAnimal && deleteNoteConfirm) {
+      await deleteNote(deleteNoteConfirm.id, selectedAnimal.id)
+      setDeleteNoteConfirm(null)
     }
   }
+
+  const canDeleteNote =
+    deleteNoteConfirm && deleteNoteConfirm.typedDate === deleteNoteConfirm.date
 
   const handleChangeDates = async () => {
     const now = new Date()
@@ -482,10 +506,10 @@ export default function AnimalPage() {
                         onChange={e =>
                           setFormData({
                             ...formData,
-                            cost: parseFloat(e.target.value),
+                            cost: parseInt(e.target.value, 10) || 0,
                           })
                         }
-                        step="0.01"
+                        step="1"
                         min="0"
                       />
                       {pricingStatus && (
@@ -697,35 +721,100 @@ export default function AnimalPage() {
 
                   {/* Service History List */}
                   <div
-                    className="service-list"
+                    className="service-list flex flex-col gap-4"
                     style={{ marginTop: 'var(--space-6)' }}
                   >
                     {selectedAnimal.serviceNotes &&
                     selectedAnimal.serviceNotes.length > 0 ? (
-                      selectedAnimal.serviceNotes.map(note => (
-                        <div key={note.id} className="service-item">
-                          <div className="service-date">
-                            {new Date(note.serviceDate).toLocaleDateString(
-                              'en-AU',
-                              {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                              }
-                            )}
+                      selectedAnimal.serviceNotes.map(note => {
+                        // Extract price from note text
+                        const priceMatch = note.notes.match(/\$(\d+)/)
+                        const price = priceMatch ? `$${priceMatch[1]}` : null
+
+                        // Extract technician code (2-3 letters at end, or any 2-char word at end)
+                        const techMatch = note.notes.match(
+                          /\b([A-Za-z]{2,3})\b\s*\.?\s*$/
+                        )
+                        const tech = techMatch
+                          ? techMatch[1].toUpperCase()
+                          : null
+
+                        return (
+                          <div
+                            key={note.id}
+                            className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                            style={{ borderLeft: '4px solid var(--primary)' }}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                {/* Date at top */}
+                                <div
+                                  className="mb-2 text-lg font-semibold italic"
+                                  style={{ color: 'var(--primary)' }}
+                                >
+                                  {new Date(
+                                    note.serviceDate
+                                  ).toLocaleDateString('en-AU', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                  })}
+                                </div>
+                                {/* Note text */}
+                                <div className="mb-3 text-sm text-gray-700">
+                                  {note.notes}
+                                </div>
+                                {/* Price and Tech badges */}
+                                <div className="flex items-center gap-3">
+                                  {tech && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+                                      <svg
+                                        className="h-4 w-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        />
+                                      </svg>
+                                      {tech}
+                                    </span>
+                                  )}
+                                  {price && (
+                                    <span
+                                      className="text-lg font-bold"
+                                      style={{ color: 'var(--success)' }}
+                                    >
+                                      {price}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              {/* Delete button */}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  initiateDeleteNote(note.id, note.serviceDate)
+                                }
+                                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-red-200 text-red-500 transition-colors hover:bg-red-50"
+                                title="Delete note"
+                              >
+                                <svg
+                                  className="h-5 w-5"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
-                          <div className="service-details">{note.notes}</div>
-                          <div className="service-actions">
-                            <button
-                              type="button"
-                              className="delete-note-btn"
-                              onClick={() => handleDeleteNote(note.id)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      ))
+                        )
+                      })
                     ) : (
                       <p className="text-gray-500">No service notes yet.</p>
                     )}
@@ -761,6 +850,109 @@ export default function AnimalPage() {
           </div>
         </div>
       </main>
+
+      {/* Delete Note Confirmation Modal */}
+      {deleteNoteConfirm && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-[400] bg-black/40"
+            onClick={() => setDeleteNoteConfirm(null)}
+          />
+          {/* Modal */}
+          <div className="fixed inset-0 z-[401] flex items-center justify-center p-4">
+            <div
+              className="w-full max-w-lg animate-[slideInUp_0.2s_ease-out] rounded-xl border-2 border-red-500 bg-white shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start gap-4 border-b border-gray-200 p-6">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                  <svg
+                    className="h-6 w-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-red-600">
+                    Delete this note?
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setDeleteNoteConfirm(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg
+                    className="h-6 w-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                <p className="mb-4 text-sm text-gray-700">
+                  To confirm deletion, type the note date below:
+                </p>
+                <div className="mb-4 rounded-lg bg-red-50 px-4 py-2">
+                  <code className="font-mono text-lg font-bold text-red-600">
+                    {deleteNoteConfirm.date}
+                  </code>
+                </div>
+                <input
+                  type="text"
+                  value={deleteNoteConfirm.typedDate}
+                  onChange={e =>
+                    setDeleteNoteConfirm({
+                      ...deleteNoteConfirm,
+                      typedDate: e.target.value,
+                    })
+                  }
+                  placeholder={deleteNoteConfirm.date}
+                  className="w-full rounded-lg border-2 border-red-300 px-4 py-3 text-center font-mono text-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 focus:outline-none"
+                  autoFocus
+                />
+              </div>
+
+              {/* Footer */}
+              <div className="flex gap-3 border-t border-gray-200 p-6">
+                <button
+                  onClick={() => setDeleteNoteConfirm(null)}
+                  className="rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteNote}
+                  disabled={!canDeleteNote}
+                  className={`flex-1 rounded-lg px-6 py-3 font-semibold text-white transition-colors ${
+                    canDeleteNote
+                      ? 'bg-red-600 hover:bg-red-700'
+                      : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                  }`}
+                >
+                  Delete Note
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

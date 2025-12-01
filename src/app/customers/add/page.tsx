@@ -1,10 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import { getEmailValidationError } from '@/lib/validations/customer'
+
+// Validation helpers
+const isValidPostcode = (val: string): boolean => /^\d{4}$/.test(val)
+const isValidPhone = (val: string): boolean =>
+  val === '' || (/^\d+$/.test(val) && val.length <= 11)
 
 type ValidationDetail = {
   path?: string[]
@@ -38,11 +44,52 @@ export default function AddCustomerPage() {
     email: '',
   })
 
+  // Validate a single field
+  const validateField = useCallback(
+    (name: string, value: string): string | null => {
+      switch (name) {
+        case 'email':
+          return getEmailValidationError(value)
+        case 'postcode':
+          if (value && !isValidPostcode(value)) {
+            return 'Postcode must be exactly 4 digits'
+          }
+          return null
+        case 'phone1':
+        case 'phone2':
+        case 'phone3':
+          if (value && !isValidPhone(value)) {
+            return 'Phone must be digits only (max 11)'
+          }
+          return null
+        case 'surname':
+          if (!value.trim()) return 'Surname is required'
+          return null
+        default:
+          return null
+      }
+    },
+    []
+  )
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // For phone fields, only allow digits
+    if (['phone1', 'phone2', 'phone3'].includes(name)) {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 11)
+      setFormData(prev => ({ ...prev, [name]: digitsOnly }))
+    }
+    // For postcode, only allow digits up to 4
+    else if (name === 'postcode') {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 4)
+      setFormData(prev => ({ ...prev, [name]: digitsOnly }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
     // Clear error for this field when user types
     if (errors[name]) {
       setErrors(prev => {
@@ -53,11 +100,35 @@ export default function AddCustomerPage() {
     }
   }
 
+  // Validate on blur
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
+    const error = validateField(name, value)
+    if (error) {
+      setErrors(prev => ({ ...prev, [name]: error }))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setErrors({})
     setSuccessMessage('')
+
+    // Client-side validation
+    const newErrors: Record<string, string> = {}
+    Object.entries(formData).forEach(([name, value]) => {
+      const error = validateField(name, value)
+      if (error) newErrors[name] = error
+    })
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setIsSubmitting(false)
+      return
+    }
 
     try {
       const response = await fetch('/api/customers', {
@@ -473,9 +544,9 @@ export default function AddCustomerPage() {
                             ? 'border-red-500'
                             : 'border-gray-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] focus:outline-none'
                         }`}
-                        placeholder="Enter postcode (e.g., 3000)"
+                        placeholder="4 digits (e.g., 3000)"
                         maxLength={4}
-                        pattern="[0-9]*"
+                        onBlur={handleBlur}
                       />
                       {errors.postcode && (
                         <p className="mt-1 text-sm text-red-600">
@@ -509,8 +580,9 @@ export default function AddCustomerPage() {
                             ? 'border-red-500'
                             : 'border-gray-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] focus:outline-none'
                         }`}
-                        placeholder="Primary phone number"
-                        maxLength={10}
+                        placeholder="Digits only (max 11)"
+                        maxLength={11}
+                        onBlur={handleBlur}
                       />
                       {errors.phone1 && (
                         <p className="mt-1 text-sm text-red-600">
@@ -544,8 +616,9 @@ export default function AddCustomerPage() {
                             ? 'border-red-500'
                             : 'border-gray-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] focus:outline-none'
                         }`}
-                        placeholder="Secondary phone number"
-                        maxLength={10}
+                        placeholder="Digits only (max 11)"
+                        maxLength={11}
+                        onBlur={handleBlur}
                       />
                       {errors.phone2 && (
                         <p className="mt-1 text-sm text-red-600">
@@ -579,8 +652,9 @@ export default function AddCustomerPage() {
                             ? 'border-red-500'
                             : 'border-gray-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] focus:outline-none'
                         }`}
-                        placeholder="Tertiary phone number"
-                        maxLength={10}
+                        placeholder="Digits only (max 11)"
+                        maxLength={11}
+                        onBlur={handleBlur}
                       />
                       {errors.phone3 && (
                         <p className="mt-1 text-sm text-red-600">
@@ -614,8 +688,9 @@ export default function AddCustomerPage() {
                             ? 'border-red-500'
                             : 'border-gray-200 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)] focus:outline-none'
                         }`}
-                        placeholder="customer@example.com"
+                        placeholder="name@example.com"
                         maxLength={200}
+                        onBlur={handleBlur}
                       />
                       {errors.email && (
                         <p className="mt-1 text-sm text-red-600">
