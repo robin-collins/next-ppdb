@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCustomersStore } from '@/store/customersStore'
 import { useAnimalsStore } from '@/store/animalsStore'
+import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 
@@ -20,8 +21,14 @@ export default function NewAnimalPage() {
   const { selectedCustomer, fetchCustomer } = useCustomersStore()
   const { createAnimal } = useAnimalsStore()
 
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const {
+    sidebarOpen,
+    sidebarPinned,
+    skipTransition,
+    setSidebarOpen,
+    toggleSidebar,
+    togglePin,
+  } = useSidebarState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [breeds, setBreeds] = useState<Breed[]>([])
@@ -130,8 +137,9 @@ export default function NewAnimalPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
+        sidebarPinned={sidebarPinned}
         onSearch={() => {}}
         searchValue=""
       />
@@ -140,20 +148,20 @@ export default function NewAnimalPage() {
         isOpen={sidebarOpen}
         isPinned={sidebarPinned}
         onClose={() => setSidebarOpen(false)}
-        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        onTogglePin={togglePin}
         currentPath={`/customer/${customerId}/newAnimal`}
+        skipTransition={skipTransition}
       />
 
       <main
-        style={{
-          borderRadius: 'var(--radius-2xl)',
-          boxShadow: 'var(--shadow-xl)',
-          margin: 'var(--space-6)',
-          transition: 'margin-left 0.3s ease',
-        }}
-        className={`flex-1 overflow-hidden bg-white/95 backdrop-blur-[20px] ${
-          sidebarPinned ? 'ml-[calc(var(--sidebar-width)+var(--space-6))]' : ''
+        className={`mt-6 mr-6 mb-6 flex-1 overflow-hidden rounded-2xl bg-white/95 p-6 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-[margin-left] duration-[250ms]'
         }`}
+        style={{
+          marginLeft: sidebarPinned
+            ? 'calc(var(--sidebar-width) + 1.5rem)'
+            : '1.5rem',
+        }}
       >
         <div style={{ padding: 'var(--space-8)' }} className="relative z-10">
           {/* Page Header */}

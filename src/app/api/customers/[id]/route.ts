@@ -24,7 +24,13 @@ export async function GET(
       where: { customerID: customerId },
       include: {
         animal: {
-          include: { breed: true },
+          include: {
+            breed: true,
+            notes: {
+              select: { date: true },
+              orderBy: { date: 'asc' },
+            },
+          },
           orderBy: { animalname: 'asc' },
         },
       },
@@ -32,6 +38,29 @@ export async function GET(
 
     if (!customer) {
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 })
+    }
+
+    // Collect all note dates across all animals
+    const allNoteDates: Date[] = []
+    customer.animal.forEach(animal => {
+      animal.notes.forEach(note => {
+        // Filter out invalid dates (0000-00-00)
+        if (note.date && note.date.getFullYear() > 1900) {
+          allNoteDates.push(note.date)
+        }
+      })
+    })
+
+    // Calculate notes statistics
+    const totalNotesCount = allNoteDates.length
+    let earliestNoteDate: Date | null = null
+    let latestNoteDate: Date | null = null
+
+    if (allNoteDates.length > 0) {
+      earliestNoteDate = new Date(
+        Math.min(...allNoteDates.map(d => d.getTime()))
+      )
+      latestNoteDate = new Date(Math.max(...allNoteDates.map(d => d.getTime())))
     }
 
     // Transform to API format
@@ -60,7 +89,12 @@ export async function GET(
         lastVisit: animal.lastvisit,
         thisVisit: animal.thisvisit,
         comments: animal.comments,
+        notesCount: animal.notes.length,
       })),
+      // Statistics for CustomerStatsCard
+      totalNotesCount,
+      earliestNoteDate,
+      latestNoteDate,
     }
 
     return NextResponse.json(transformedCustomer)
@@ -178,7 +212,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/customers/[id] - Delete customer
+// DELETE /api/customers/[id] - Delete customer (with optional selective animal migration)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -194,25 +228,102 @@ export async function DELETE(
       )
     }
 
+    // Check for body with migrateToCustomerId and animalIds
+    let migrateToCustomerId: number | null = null
+    let animalIdsToMigrate: number[] = []
+    try {
+      const body = await request.json()
+      if (body?.migrateToCustomerId) {
+        migrateToCustomerId = parseInt(body.migrateToCustomerId)
+      }
+      if (Array.isArray(body?.animalIds)) {
+        animalIdsToMigrate = body.animalIds.map((id: number | string) =>
+          parseInt(String(id))
+        )
+      }
+    } catch {
+      // No body or invalid JSON - proceed without migration
+    }
+
     // Check if customer exists
     const existingCustomer = await prisma.customer.findUnique({
       where: { customerID: customerId },
-      include: { animal: true },
     })
 
     if (!existingCustomer) {
       return NextResponse.json({ error: 'Customer not found' }, { status: 404 })
     }
 
-    // Check if customer has animals (prevent deletion if they do)
-    if (existingCustomer.animal.length > 0) {
-      return NextResponse.json(
-        {
-          error: 'Cannot delete customer with associated animals',
-          details: `This customer has ${existingCustomer.animal.length} animal(s). Please remove or reassign animals first.`,
-        },
-        { status: 400 }
+    // Get all animals belonging to this customer
+    const customerAnimals = await prisma.animal.findMany({
+      where: { customerID: customerId },
+      select: { animalID: true },
+    })
+    const allAnimalIds = customerAnimals.map(a => a.animalID)
+
+    let migratedCount = 0
+    let deletedAnimalsCount = 0
+
+    if (allAnimalIds.length > 0) {
+      // Determine which animals to migrate vs delete
+      const animalsToMigrate =
+        animalIdsToMigrate.length > 0
+          ? allAnimalIds.filter(id => animalIdsToMigrate.includes(id))
+          : [] // If no specific IDs provided, don't migrate any
+
+      const animalsToDelete = allAnimalIds.filter(
+        id => !animalsToMigrate.includes(id)
       )
+
+      // If there are animals to migrate, verify target customer
+      if (animalsToMigrate.length > 0) {
+        if (!migrateToCustomerId) {
+          return NextResponse.json(
+            {
+              error: 'Migration target required for selected animals',
+              details: `Please select a customer to rehome the selected animals to.`,
+            },
+            { status: 400 }
+          )
+        }
+
+        const targetCustomer = await prisma.customer.findUnique({
+          where: { customerID: migrateToCustomerId },
+        })
+        if (!targetCustomer) {
+          return NextResponse.json(
+            { error: 'Migration target customer not found' },
+            { status: 400 }
+          )
+        }
+
+        // Migrate selected animals to the new customer
+        const migrationResult = await prisma.animal.updateMany({
+          where: {
+            animalID: { in: animalsToMigrate },
+            customerID: customerId,
+          },
+          data: { customerID: migrateToCustomerId },
+        })
+        migratedCount = migrationResult.count
+      }
+
+      // Delete animals that weren't selected for migration (cascade deletes their notes)
+      if (animalsToDelete.length > 0) {
+        // First delete notes for these animals
+        await prisma.notes.deleteMany({
+          where: { animalID: { in: animalsToDelete } },
+        })
+
+        // Then delete the animals
+        const deleteResult = await prisma.animal.deleteMany({
+          where: {
+            animalID: { in: animalsToDelete },
+            customerID: customerId,
+          },
+        })
+        deletedAnimalsCount = deleteResult.count
+      }
     }
 
     // Delete customer
@@ -220,10 +331,12 @@ export async function DELETE(
       where: { customerID: customerId },
     })
 
-    return NextResponse.json(
-      { message: 'Customer deleted successfully' },
-      { status: 200 }
-    )
+    return NextResponse.json({
+      success: true,
+      message: 'Customer deleted successfully',
+      migratedAnimals: migratedCount,
+      deletedAnimals: deletedAnimalsCount,
+    })
   } catch (error) {
     console.error('Error deleting customer:', error)
     return NextResponse.json(

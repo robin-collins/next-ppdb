@@ -3,33 +3,68 @@
 interface Animal {
   lastVisit?: Date | string | null
   cost?: number | null
+  notesCount?: number
 }
 
 interface CustomerStatsCardProps {
   customer: {
     animalCount: number
     animals: Animal[]
+    totalNotesCount?: number
+    earliestNoteDate?: Date | string | null
+    latestNoteDate?: Date | string | null
   }
 }
 
 export default function CustomerStatsCard({
   customer,
 }: CustomerStatsCardProps) {
-  // Calculate statistics
+  // Calculate statistics based on actual notes data
   const calculateStats = () => {
-    const yearsActive = 10 // Placeholder - would calculate from first visit
+    // Total visits = count of all notes across all animals
+    const totalVisits = customer.totalNotesCount || 0
 
-    const totalVisits = customer.animals.length * 5 // Placeholder
+    // Years active = difference between earliest and latest note dates
+    let yearsActiveDisplay = 'New'
 
+    if (
+      customer.earliestNoteDate &&
+      customer.latestNoteDate &&
+      totalVisits > 0
+    ) {
+      const earliest = new Date(customer.earliestNoteDate)
+      const latest = new Date(customer.latestNoteDate)
+
+      // Calculate years and months difference
+      const yearsDiff = latest.getFullYear() - earliest.getFullYear()
+      const monthsDiff = latest.getMonth() - earliest.getMonth()
+
+      // Total months
+      const totalMonths = yearsDiff * 12 + monthsDiff
+      const years = Math.floor(totalMonths / 12)
+      const months = totalMonths % 12
+
+      if (years > 0 && months > 0) {
+        yearsActiveDisplay = `${years}y ${months}m`
+      } else if (years > 0) {
+        yearsActiveDisplay = `${years} Year${years > 1 ? 's' : ''}`
+      } else if (months > 0) {
+        yearsActiveDisplay = `${months} Month${months > 1 ? 's' : ''}`
+      } else {
+        yearsActiveDisplay = '< 1m'
+      }
+    }
+
+    // Total spent = sum of all animal costs
     const totalSpent = customer.animals.reduce((sum, animal) => {
       return sum + (animal.cost || 0)
     }, 0)
 
     return {
-      yearsActive: yearsActive > 0 ? `${yearsActive}+` : '< 1',
+      yearsActive: yearsActiveDisplay,
       animals: customer.animalCount,
-      totalVisits: totalVisits > 0 ? `${totalVisits}+` : '0',
-      totalSpent: totalSpent > 0 ? `$${Math.round(totalSpent)}+` : '$0',
+      totalVisits: totalVisits.toString(),
+      totalSpent: totalSpent > 0 ? `$${Math.round(totalSpent)}` : '$0',
     }
   }
 

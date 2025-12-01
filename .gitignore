@@ -52,3 +52,8 @@ console_output*
 #.specstory 
 *.log
 *:Zone.Identifier
+scripts/generated*
+prompts/
+reference/archive
+# Database backups
+/backups

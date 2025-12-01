@@ -220,11 +220,14 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const { q: query, page } = validationResult.data
+  const { q: rawQuery, page } = validationResult.data
   const limit = 20
 
+  // Trim whitespace from query to handle accidental leading/trailing spaces
+  const query = rawQuery.trim()
+
   // If no query, return empty results
-  if (!query.trim()) {
+  if (!query) {
     return NextResponse.json({
       animals: [],
       pagination: {
@@ -237,7 +240,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Split query into terms for multi-word search
-  const searchTerms = query.trim().split(/\s+/)
+  const searchTerms = query.split(/\s+/)
 
   // Check if query looks like a phone number (mostly digits)
   const isPhoneQuery = /^\d[\d\s\-\(\)]*\d$/.test(query) && query.length >= 4

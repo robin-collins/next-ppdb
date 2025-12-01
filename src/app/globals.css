@@ -8,7 +8,8 @@
   --font-display: 'Lora', Georgia, serif;
   --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-accent: 'Rubik', -apple-system, sans-serif;
-  --font-family: var(--font-body); /* Legacy fallback */
+  --font-family: var(--font-body);
+  /* Legacy fallback */
 
   /* === PRIMARY COLORS (From Logo - Golden Brown) === */
   --primary: #d9944a;
@@ -238,6 +239,7 @@ header {
   100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -248,6 +250,7 @@ header {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -259,6 +262,7 @@ header {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -270,6 +274,7 @@ header {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -281,6 +286,7 @@ header {
   100% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
+
   50% {
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
@@ -297,6 +303,7 @@ header {
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -308,6 +315,7 @@ header {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.8;
     transform: scale(1.05);
@@ -319,6 +327,7 @@ header {
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -333,15 +342,19 @@ header {
 .card:nth-child(1) {
   animation-delay: 0s;
 }
+
 .card:nth-child(2) {
   animation-delay: 0.1s;
 }
+
 .card:nth-child(3) {
   animation-delay: 0.2s;
 }
+
 .card:nth-child(4) {
   animation-delay: 0.3s;
 }
+
 .card:nth-child(5) {
   animation-delay: 0.4s;
 }
@@ -355,18 +368,23 @@ header {
 .animal-card:nth-child(1) {
   animation-delay: 0s;
 }
+
 .animal-card:nth-child(2) {
   animation-delay: 0.1s;
 }
+
 .animal-card:nth-child(3) {
   animation-delay: 0.2s;
 }
+
 .animal-card:nth-child(4) {
   animation-delay: 0.3s;
 }
+
 .animal-card:nth-child(5) {
   animation-delay: 0.4s;
 }
+
 .animal-card:nth-child(6) {
   animation-delay: 0.5s;
 }
@@ -1273,6 +1291,7 @@ main.sidebar-pinned .main-content {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1284,6 +1303,7 @@ main.sidebar-pinned .main-content {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1602,5 +1622,313 @@ main.sidebar-pinned .main-content {
 
   .page-title-content h1 {
     font-size: 2rem;
+  }
+}
+
+/* ============================================
+   BREEDS PAGE SPECIFIC STYLES
+   ============================================ */
+
+/* Add New Breed Section */
+.add-breed-section {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  animation: slideInUp 0.4s var(--ease-out) forwards;
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.add-breed-section:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.section-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: var(--space-4);
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-family: var(--font-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.form-input {
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: white;
+  color: var(--gray-800);
+  transition: all var(--duration-fast) var(--ease-smooth);
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--gray-400);
+}
+
+/* Breed Management Section */
+.breed-management {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: slideInUp 0.4s var(--ease-out) 0.1s forwards;
+  opacity: 0;
+}
+
+.management-header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+/* Search and Filter Controls */
+.controls-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.breed-search-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  background: white;
+  color: var(--gray-800);
+  transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.breed-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217, 148, 74, 0.1);
+}
+
+.breed-search-input::placeholder {
+  color: var(--gray-400);
+}
+
+.breed-search-icon {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.filter-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--gray-300);
+  background: white;
+  border-radius: var(--radius-md);
+  font-family: var(--font-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-smooth);
+  color: var(--gray-700);
+}
+
+.filter-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Breed Table */
+.breed-table-container {
+  overflow-x: auto;
+}
+
+.breed-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+}
+
+.breed-table th {
+  background: var(--gray-50);
+  padding: var(--space-4);
+  text-align: left;
+  font-family: var(--font-accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  border-bottom: 2px solid var(--gray-200);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.breed-table td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+  color: var(--gray-800);
+}
+
+.breed-table tr:hover {
+  background: var(--primary-light);
+}
+
+.breed-table tr:last-child td {
+  border-bottom: none;
+}
+
+.breed-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.breed-category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.breed-category.dogs {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
+
+.breed-category.cats {
+  background: var(--secondary-light);
+  color: var(--secondary-dark);
+  border: 1px solid var(--secondary);
+}
+
+.breed-category.other {
+  background: var(--accent-light);
+  color: var(--secondary-dark);
+  border: 1px solid var(--accent);
+}
+
+.time-input,
+.cost-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  background: white;
+  color: var(--gray-800);
+  transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.time-input:focus,
+.cost-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(217, 148, 74, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .controls-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .breed-table-container {
+    overflow-x: scroll;
   }
 }

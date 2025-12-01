@@ -88,22 +88,60 @@ export async function DELETE(
   const { id } = await params
   const breedID = parseInt(id)
 
-  // Ensure no animals reference this breed before delete (legacy may not enforce FKs)
+  // Check for body with migrateToBreedId
+  let migrateToBreedId: number | null = null
+  try {
+    const body = await request.json()
+    if (body?.migrateToBreedId) {
+      migrateToBreedId = parseInt(body.migrateToBreedId)
+    }
+  } catch {
+    // No body or invalid JSON - proceed without migration
+  }
+
+  // Count animals using this breed
   const count = await prisma.animal.count({
     where: { breedID },
   })
+
   if (count > 0) {
-    return NextResponse.json(
-      {
-        error: 'Cannot delete breed with associated animals',
-        details: `There are ${count} animal(s) using this breed.`,
-      },
-      { status: 400 }
-    )
+    // If no migration target provided, return error with count
+    if (!migrateToBreedId) {
+      return NextResponse.json(
+        {
+          error: 'Cannot delete breed with associated animals',
+          details: `There are ${count} animal(s) using this breed.`,
+          animalCount: count,
+        },
+        { status: 400 }
+      )
+    }
+
+    // Verify the migration target breed exists
+    const targetBreed = await prisma.breed.findUnique({
+      where: { breedID: migrateToBreedId },
+    })
+    if (!targetBreed) {
+      return NextResponse.json(
+        { error: 'Migration target breed not found' },
+        { status: 400 }
+      )
+    }
+
+    // Migrate all animals to the new breed
+    await prisma.animal.updateMany({
+      where: { breedID },
+      data: { breedID: migrateToBreedId },
+    })
   }
 
+  // Now safe to delete the breed
   await prisma.breed.delete({
     where: { breedID },
   })
-  return NextResponse.json({ success: true })
+
+  return NextResponse.json({
+    success: true,
+    migratedAnimals: count > 0 && migrateToBreedId ? count : 0,
+  })
 }

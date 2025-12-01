@@ -173,6 +173,11 @@ export async function DELETE(
     return NextResponse.json({ error: 'Animal not found' }, { status: 404 })
   }
 
+  // Count notes before deleting for response
+  const notesCount = await prisma.notes.count({
+    where: { animalID },
+  })
+
   // Best-effort cleanup of related notes before deleting animal (legacy DB may lack FK cascades)
   await prisma.notes.deleteMany({
     where: { animalID },
@@ -182,5 +187,5 @@ export async function DELETE(
     where: { animalID },
   })
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true, deletedNotes: notesCount })
 }

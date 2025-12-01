@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Overlay Viewer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .base-image,
+      .overlay-image {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .base-image {
+        border-radius: 8px;
+        border: 2px solid blue;
+      }
+
+      .overlay-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        border: 2px solid red;
+      }
+
+      .controls {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .nav-button {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #667eea;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        border-color: #667eea;
+        background: #ffffff;
+      }
+
+      .nav-button:active {
+        transform: scale(1.05);
+      }
+
+      .nav-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: scale(1);
+      }
+
+      .image-info {
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .loading {
+        color: white;
+        font-size: 18px;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .error {
+        color: #ff6b6b;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="image-container">
+        <div class="image-wrapper" id="imageWrapper">
+          <img id="baseImage" class="base-image" alt="Base image" />
+          <img
+            id="overlayImage"
+            class="overlay-image"
+            src="public/images/logo-text.png"
+            alt="Logo overlay"
+          />
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="prevBtn" class="nav-button">← Previous</button>
+        <div class="image-info">
+          <span id="currentIndex">0</span> / <span id="totalImages">0</span>
+        </div>
+        <button id="nextBtn" class="nav-button">Next →</button>
+      </div>
+
+      <div class="controls">
+        <button id="moveUpBtn" class="nav-button">↑ Up</button>
+        <div class="image-info">
+          <span id="offsetDisplay">0px</span>
+        </div>
+        <button id="moveDownBtn" class="nav-button">↓ Down</button>
+      </div>
+
+      <div class="controls">
+        <button
+          id="refreshBtn"
+          class="nav-button"
+          style="background: #10b981; color: white"
+        >
+          ↻ Refresh List
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const imageFolder = 'scripts/generated-images-20251130-190231'
+      const baseImage = document.getElementById('baseImage')
+      const overlayImage = document.getElementById('overlayImage')
+      const prevBtn = document.getElementById('prevBtn')
+      const nextBtn = document.getElementById('nextBtn')
+      const currentIndexEl = document.getElementById('currentIndex')
+      const totalImagesEl = document.getElementById('totalImages')
+      const imageWrapper = document.getElementById('imageWrapper')
+      const moveUpBtn = document.getElementById('moveUpBtn')
+      const moveDownBtn = document.getElementById('moveDownBtn')
+      const offsetDisplay = document.getElementById('offsetDisplay')
+      const refreshBtn = document.getElementById('refreshBtn')
+
+      let offsetY = 0
+
+      // Populated list of images
+      let imageFiles = [
+        'afghan-hound-avatar.png',
+        'airedale-avatar.png',
+        'akita-avatar.png',
+        'american-cocker-spanial-avatar.png',
+        'aust-shepherd-avatar.png',
+        'aust-terrier-avatar.png',
+        'basset-fauve-de-bretagne-avatar.png',
+        'bassett-hound-avatar.png',
+        'beagle-avatar.png',
+        'bearded-collie-avatar.png',
+        'bedlington-terrier-avatar.png',
+        'belgian-shepherd-avatar.png',
+        'bernese-mountain-dog-avatar.png',
+        'bichon-frise-avatar.png',
+        'border-collie-avatar.png',
+        'border-terrier-avatar.png',
+        'borzoi-avatar.png',
+        'boston-terrier-avatar.png',
+        'bouvier-avatar.png',
+        'boxer-avatar.png',
+        'briard-avatar.png',
+        'brittany-spanial-avatar.png',
+        'bull-dog-avatar.png',
+        'bull-terrier-avatar.png',
+        'cairnterrier-avatar.png',
+        'cat-avatar.png',
+        'cattle-dog-avatar.png',
+        'cavalier-king-charles-avatar.png',
+        'cavalier-spanial-avatar.png',
+        'cavoodle-avatar.png',
+        'chihuahua-long-coat-avatar.png',
+        'chihuahua-smooth-coat-avatar.png',
+        'chinese-crested-avatar.png',
+        'chinese-crested-powder-puff-avatar.png',
+        'chow-chow-avatar.png',
+        'cocker-spanial-small-avatar.png',
+        'cocker-spaniel-avatar.png',
+        'collie-x-avatar.png',
+        'corgi-avatar.png',
+        'curly-coated-retreiver-avatar.png',
+        'curly-coated-retreiver-small-avatar.png',
+        'dachshund-avatar.png',
+        'dalmation-avatar.png',
+        'deerhound-avatar.png',
+        'dobermann-avatar.png',
+        'elkhound-avatar.png',
+        'english-setter-avatar.png',
+        'finnish-lapphund-avatar.png',
+        'flat-coated-retreiver-avatar.png',
+        'fox-hound-avatar.png',
+        'fox-terrier-avatar.png',
+        'fox-terrier-wire-hair-avatar.png',
+        'french-bulldog-avatar.png',
+        'german-shepherd-avatar.png',
+        'german-shepherd-long-coat-avatar.png',
+        'german-shorthaired-pointer-avatar.png',
+        'german-spitz-avatar.png',
+        'golden-retreiver-long-coat-avatar.png',
+        'golden-retriever-avatar.png',
+        'gordon-setter-avatar.png',
+        'great-dane-avatar.png',
+        'grey-hound-avatar.png',
+        'griffon-avatar.png',
+        'groodle-avatar.png',
+        'guinea-pig-avatar.png',
+        'havanese-avatar.png',
+        'hunterway-avatar.png',
+        'huskie-avatar.png',
+        'irish-setter-avatar.png',
+        'irish-terrier-avatar.png',
+        'italian-spinone-avatar.png',
+        'jack-russell-avatar.png',
+        'jack-russell-long-coat-avatar.png',
+        'japanese-chin-avatar.png',
+      ]
+
+      let images = imageFiles.map(file => `${imageFolder}/${file}`)
+      let currentIndex = 0
+
+      function loadImageList() {
+        totalImagesEl.textContent = images.length
+        loadImage(0)
+      }
+
+      function loadImage(index) {
+        if (index < 0 || index >= images.length) return
+
+        currentIndex = index
+        baseImage.src = images[index]
+        currentIndexEl.textContent = index + 1
+
+        prevBtn.disabled = index === 0
+        nextBtn.disabled = index === images.length - 1
+      }
+
+      function showPrevious() {
+        if (currentIndex > 0) {
+          loadImage(currentIndex - 1)
+        }
+      }
+
+      function showNext() {
+        if (currentIndex < images.length - 1) {
+          loadImage(currentIndex + 1)
+        }
+      }
+
+      function updateOverlayPosition() {
+        overlayImage.style.top = `${offsetY}px`
+        offsetDisplay.textContent = `${offsetY}px`
+      }
+
+      function moveUp() {
+        offsetY -= 1
+        updateOverlayPosition()
+      }
+
+      function moveDown() {
+        offsetY += 1
+        updateOverlayPosition()
+      }
+
+      async function refreshList() {
+        try {
+          // Check if File System Access API is supported
+          if (!window.showDirectoryPicker) {
+            alert(
+              'Your browser does not support the File System Access API. Please use Chrome, Edge, or Opera.'
+            )
+            return
+          }
+
+          alert('Please select the folder: ' + imageFolder)
+          const dirHandle = await window.showDirectoryPicker()
+
+          const newFiles = []
+          for await (const entry of dirHandle.values()) {
+            if (
+              entry.kind === 'file' &&
+              /\.(png|jpe?g|webp)$/i.test(entry.name)
+            ) {
+              newFiles.push(entry.name)
+            }
+          }
+
+          if (newFiles.length === 0) {
+            alert('No images found in the selected folder.')
+            return
+          }
+
+          newFiles.sort()
+          imageFiles = newFiles
+          // Reconstruct paths assuming relative location is still valid
+          // Note: If user picks a different folder, this path might be wrong relative to HTML file
+          // unless we use URL.createObjectURL(file) from the file handle.
+          // For now, we assume the user picks the correct folder to refresh the list.
+          images = imageFiles.map(file => `${imageFolder}/${file}`)
+
+          // Reset to first image
+          currentIndex = 0
+          loadImageList()
+          alert(`Refreshed! Found ${newFiles.length} images.`)
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error(err)
+            alert('Error refreshing list: ' + err.message)
+          }
+        }
+      }
+
+      // Event listeners
+      prevBtn.addEventListener('click', showPrevious)
+      nextBtn.addEventListener('click', showNext)
+      moveUpBtn.addEventListener('click', moveUp)
+      moveDownBtn.addEventListener('click', moveDown)
+      refreshBtn.addEventListener('click', refreshList)
+
+      // Keyboard navigation
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft') {
+          showPrevious()
+        } else if (e.key === 'ArrowRight') {
+          showNext()
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault()
+          moveUp()
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault()
+          moveDown()
+        }
+      })
+
+      // Initialize
+      loadImageList()
+      updateOverlayPosition()
+    </script>
+  </body>
+</html>

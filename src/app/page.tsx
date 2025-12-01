@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAnimalsStore } from '@/store/animalsStore'
+import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 import EmptyState from '@/components/EmptyState'
@@ -10,8 +11,14 @@ import ResultsView from '@/components/ResultsView'
 function HomePageInner() {
   const searchParams = useSearchParams()
   const { animals, loading, searchAnimals } = useAnimalsStore()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const {
+    sidebarOpen,
+    sidebarPinned,
+    skipTransition,
+    setSidebarOpen,
+    toggleSidebar,
+    togglePin,
+  } = useSidebarState()
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [hasSearched, setHasSearched] = useState(false)
@@ -49,8 +56,9 @@ function HomePageInner() {
     <div className="flex min-h-screen flex-col">
       {/* Header */}
       <Header
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
+        sidebarPinned={sidebarPinned}
         onSearch={handleSearch}
         searchValue={searchQuery}
       />
@@ -60,15 +68,21 @@ function HomePageInner() {
         isOpen={sidebarOpen}
         isPinned={sidebarPinned}
         onClose={() => setSidebarOpen(false)}
-        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        onTogglePin={togglePin}
         currentPath="/"
+        skipTransition={skipTransition}
       />
 
       {/* Main Content */}
       <main
-        className={`m-6 flex-1 overflow-hidden rounded-2xl bg-white/95 !p-6 shadow-xl backdrop-blur-[20px] transition-all duration-300 ${
-          sidebarPinned ? 'ml-[calc(var(--sidebar-width)+1.5rem)]' : ''
+        className={`mt-6 mr-6 mb-6 flex-1 overflow-hidden rounded-2xl bg-white/95 !p-6 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-[margin-left] duration-[250ms]'
         }`}
+        style={{
+          marginLeft: sidebarPinned
+            ? 'calc(var(--sidebar-width) + 1.5rem)'
+            : '1.5rem',
+        }}
       >
         {loading ? (
           <div className="flex min-h-[400px] items-center justify-center">

@@ -8,6 +8,7 @@ interface SidebarProps {
   onClose: () => void
   onTogglePin: () => void
   currentPath: string
+  skipTransition?: boolean // Skip animation on initial page load when pinned
 }
 
 export default function Sidebar({
@@ -16,6 +17,7 @@ export default function Sidebar({
   onClose,
   onTogglePin,
   currentPath,
+  skipTransition = false,
 }: SidebarProps) {
   const [sidebarWidth, setSidebarWidth] = useState(280)
   const [isResizing, setIsResizing] = useState(false)
@@ -144,7 +146,7 @@ export default function Sidebar({
       active: currentPath === '/breeds',
     },
     {
-      href: '/analytics',
+      href: '/reports/daily-totals',
       label: 'Daily Analytics',
       icon: (
         <svg
@@ -155,7 +157,7 @@ export default function Sidebar({
           <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z" />
         </svg>
       ),
-      active: currentPath === '/analytics',
+      active: currentPath === '/reports/daily-totals',
     },
     {
       href: '/customers/history',
@@ -170,6 +172,20 @@ export default function Sidebar({
         </svg>
       ),
       active: currentPath === '/customers/history',
+    },
+    {
+      href: '/admin/backup',
+      label: 'Database Backup',
+      icon: (
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
+        </svg>
+      ),
+      active: currentPath === '/admin/backup',
     },
   ]
 
@@ -191,9 +207,9 @@ export default function Sidebar({
             ? `min(${sidebarWidth}px, 80vw)`
             : `${sidebarWidth}px`,
         }}
-        className={`fixed top-0 left-0 z-[200] flex h-screen flex-col overflow-hidden border-r border-gray-200 bg-white/98 shadow-xl backdrop-blur-[20px] transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${isPinned ? 'relative' : ''}`}
+        className={`fixed top-0 left-0 z-[200] flex h-screen flex-col overflow-hidden border-r border-gray-200 bg-white/98 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-transform duration-300'
+        } ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Resize Handle */}
         <div
@@ -206,15 +222,30 @@ export default function Sidebar({
         {/* Sidebar Header (matches main header top band) */}
         <div className="sidebar_indent flex h-[92px] items-center border-b border-gray-200 bg-white pr-[24px] pl-[24px]">
           <div className="flex items-center gap-3 whitespace-nowrap">
-            {/* Hamburger, mirrors header */}
+            {/* Hamburger/Unpin button */}
             <button
-              onClick={onClose}
-              className={`flex flex-col gap-1 rounded-lg bg-gray-100 p-3 transition-all hover:bg-gray-200`}
-              aria-label="Toggle sidebar"
+              onClick={isPinned ? onTogglePin : onClose}
+              className={`flex h-11 w-11 items-center justify-center rounded-lg transition-all ${
+                isPinned ? 'hover:opacity-90' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              style={
+                isPinned ? { backgroundColor: 'var(--primary)' } : undefined
+              }
+              aria-label={isPinned ? 'Unpin sidebar' : 'Close sidebar'}
             >
-              <span className={`h-0.5 w-5 rounded-sm bg-gray-700`} />
-              <span className={`h-0.5 w-5 rounded-sm bg-gray-700`} />
-              <span className={`h-0.5 w-5 rounded-sm bg-gray-700`} />
+              {isPinned ? (
+                /* Filled pushpin icon when pinned */
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M16 9V4l1 0c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1l1 0v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z" />
+                </svg>
+              ) : (
+                /* Hamburger icon when not pinned */
+                <div className="flex flex-col gap-1">
+                  <span className="h-0.5 w-5 rounded-sm bg-gray-700" />
+                  <span className="h-0.5 w-5 rounded-sm bg-gray-700" />
+                  <span className="h-0.5 w-5 rounded-sm bg-gray-700" />
+                </div>
+              )}
             </button>
 
             {/* Brand */}
@@ -239,26 +270,40 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Sidebar Actions (moved below header to keep top band identical) */}
-        <div className="sidebar_indent flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-[24px] py-3">
+        {/* Sidebar Actions */}
+        <div className="sidebar_indent flex items-center justify-end gap-2 border-b border-gray-100 bg-gray-50 px-[24px] py-3">
+          {/* Pin button - only show when not pinned (when pinned, use header pin icon to unpin) */}
+          {!isPinned && (
+            <button
+              onClick={onTogglePin}
+              className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-800"
+              title="Pin sidebar"
+            >
+              {/* Unpinned icon - outline pushpin */}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M14 4v5c0 1.12.37 2.16 1 3H9c.65-.86 1-1.9 1-3V4h4m3-2H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3V4h1c.55 0 1-.45 1-1s-.45-1-1-1z" />
+              </svg>
+            </button>
+          )}
+          {/* Close button - also unpins if pinned */}
           <button
-            onClick={onTogglePin}
-            className={`flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-800 ${
-              isPinned ? 'bg-primary text-white' : ''
-            }`}
-            title="Pin sidebar"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16 4V2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4v2h1l1 10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2l1-10h1V4h-4zm-6-2h4v2h-4V2zm7 4l-1 10H8l-1-10h10z" />
-            </svg>
-          </button>
-          <button
-            onClick={onClose}
+            onClick={() => {
+              if (isPinned) {
+                onTogglePin() // Unpin first
+              }
+              onClose() // Then close
+            }}
             className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-600 transition-all hover:bg-gray-200 hover:text-gray-800"
             title="Close sidebar"
           >
+            {/* Sidebar collapse/close icon */}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
             </svg>
           </button>
         </div>

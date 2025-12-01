@@ -1,5 +1,6 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
+import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 import BreedForm from '@/components/breeds/BreedForm'
@@ -13,13 +14,24 @@ interface Breed {
   avgcost: number | null
 }
 
+interface ToastState {
+  message: string
+  type: 'success' | 'error' | 'info' | 'warning'
+}
+
 export default function BreedsPage() {
   const [rows, setRows] = useState<Breed[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const [toast, setToast] = useState<ToastState | null>(null)
+  const {
+    sidebarOpen,
+    sidebarPinned,
+    skipTransition,
+    setSidebarOpen,
+    toggleSidebar,
+    togglePin,
+  } = useSidebarState()
   const [searchQuery, setSearchQuery] = useState('')
 
   const load = useCallback(async () => {
@@ -59,9 +71,10 @@ export default function BreedsPage() {
         throw new Error(body.error || 'Failed to create breed')
       }
       await load()
-      setToast('Breed created')
+      setToast({ message: 'Breed created', type: 'success' })
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to create breed')
+      const errorMsg = e instanceof Error ? e.message : 'Failed to create breed'
+      setToast({ message: errorMsg, type: 'error' })
     } finally {
       setLoading(false)
     }
@@ -84,27 +97,47 @@ export default function BreedsPage() {
         throw new Error(body.error || 'Failed to update breed')
       }
       await load()
-      setToast('Breed updated')
+      setToast({ message: 'Breed updated', type: 'success' })
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to update breed')
+      setToast({
+        message: e instanceof Error ? e.message : 'Failed to update breed',
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }
   }
 
-  const onDelete = async (id: number) => {
+  const onDelete = async (id: number, migrateToBreedId?: number) => {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/breeds/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/breeds/${id}`, {
+        method: 'DELETE',
+        headers: migrateToBreedId ? { 'Content-Type': 'application/json' } : {},
+        body: migrateToBreedId
+          ? JSON.stringify({ migrateToBreedId })
+          : undefined,
+      })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.error || 'Failed to delete breed')
       }
+      const result = await res.json()
       await load()
-      setToast('Breed deleted')
+      if (result.migratedAnimals > 0) {
+        setToast({
+          message: `Breed deleted, ${result.migratedAnimals} animal(s) migrated`,
+          type: 'success',
+        })
+      } else {
+        setToast({ message: 'Breed deleted', type: 'success' })
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to delete breed')
+      setToast({
+        message: e instanceof Error ? e.message : 'Failed to delete breed',
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }
@@ -119,8 +152,9 @@ export default function BreedsPage() {
     <div className="flex min-h-screen flex-col">
       {/* MANDATORY: Header */}
       <Header
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
+        sidebarPinned={sidebarPinned}
         onSearch={handleSearch}
         searchValue={searchQuery}
         breadcrumbs={[
@@ -134,15 +168,23 @@ export default function BreedsPage() {
         isOpen={sidebarOpen}
         isPinned={sidebarPinned}
         onClose={() => setSidebarOpen(false)}
-        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        onTogglePin={togglePin}
         currentPath="/breeds"
+        skipTransition={skipTransition}
       />
 
       {/* Main content shifts when pinned */}
       <main
-        className={`main-content ${sidebarPinned ? 'ml-[calc(var(--sidebar-width)+1.5rem)]' : ''}`}
+        className={`mt-6 mr-6 mb-6 flex-1 overflow-hidden rounded-2xl bg-white/95 p-6 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-[margin-left] duration-[250ms]'
+        }`}
+        style={{
+          marginLeft: sidebarPinned
+            ? 'calc(var(--sidebar-width) + 1.5rem)'
+            : '1.5rem',
+        }}
       >
-        <div className="content-wrapper">
+        <div>
           {/* Page Header */}
           <div className="page-header">
             <div className="page-title-section">
@@ -180,8 +222,8 @@ export default function BreedsPage() {
           {/* Toast Notification */}
           {toast ? (
             <Toast
-              message={toast}
-              type="success"
+              message={toast.message}
+              type={toast.type}
               onClose={() => setToast(null)}
             />
           ) : null}

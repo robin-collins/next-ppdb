@@ -1,7 +1,9 @@
 'use client'
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import AnimalAvatar from '@/components/AnimalAvatar'
 
 interface CustomerData {
   name: string
@@ -21,8 +23,14 @@ interface ApiResponse {
 }
 
 export default function CustomersHistoryPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const {
+    sidebarOpen,
+    sidebarPinned,
+    skipTransition,
+    setSidebarOpen,
+    toggleSidebar,
+    togglePin,
+  } = useSidebarState()
   const [searchQuery, setSearchQuery] = useState('')
   const [historySearchQuery, setHistorySearchQuery] = useState('')
   const [timePeriod, setTimePeriod] = useState<'all' | '12' | '24' | '36'>('12')
@@ -167,10 +175,6 @@ export default function CustomersHistoryPage() {
     )
   }
 
-  const getInitials = (animalName: string): string => {
-    return animalName.charAt(0).toUpperCase()
-  }
-
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -252,8 +256,9 @@ export default function CustomersHistoryPage() {
     <div className="flex min-h-screen flex-col">
       {/* MANDATORY: Header */}
       <Header
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
+        sidebarPinned={sidebarPinned}
         onSearch={handleSearch}
         searchValue={searchQuery}
         breadcrumbs={[
@@ -268,15 +273,21 @@ export default function CustomersHistoryPage() {
         isOpen={sidebarOpen}
         isPinned={sidebarPinned}
         onClose={() => setSidebarOpen(false)}
-        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        onTogglePin={togglePin}
         currentPath="/customers/history"
+        skipTransition={skipTransition}
       />
 
       {/* Main Content */}
       <main
-        className={`relative z-0 flex-1 bg-white/95 backdrop-blur-[20px] ${
-          sidebarPinned ? 'ml-[calc(var(--sidebar-width))]' : ''
-        } m-6 mt-0 overflow-hidden rounded-[2rem] shadow-xl transition-[margin-left] duration-[250ms]`}
+        className={`relative z-0 mt-6 mr-6 mb-6 flex-1 overflow-hidden rounded-[2rem] bg-white/95 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-[margin-left] duration-[250ms]'
+        }`}
+        style={{
+          marginLeft: sidebarPinned
+            ? 'calc(var(--sidebar-width) + 1.5rem)'
+            : '1.5rem',
+        }}
       >
         <div className="content-wrapper">
           {/* Page Title */}
@@ -445,9 +456,11 @@ export default function CustomersHistoryPage() {
                           </td>
                           <td>
                             <div className="customer-animal">
-                              <div className="animal-avatar-small">
-                                {getInitials(customer.animal)}
-                              </div>
+                              <AnimalAvatar
+                                animalName={customer.animal}
+                                breedName={customer.breed}
+                                size="sm"
+                              />
                               <div className="animal-info">
                                 <div className="animal-name">
                                   {customer.animal}

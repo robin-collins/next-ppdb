@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 
@@ -12,8 +13,14 @@ type ValidationDetail = {
 
 export default function AddCustomerPage() {
   const router = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const {
+    sidebarOpen,
+    sidebarPinned,
+    skipTransition,
+    setSidebarOpen,
+    toggleSidebar,
+    togglePin,
+  } = useSidebarState()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState('')
@@ -130,8 +137,9 @@ export default function AddCustomerPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
+        sidebarPinned={sidebarPinned}
         onSearch={() => {}}
         searchValue=""
         breadcrumbs={[
@@ -144,16 +152,22 @@ export default function AddCustomerPage() {
         isOpen={sidebarOpen}
         isPinned={sidebarPinned}
         onClose={() => setSidebarOpen(false)}
-        onTogglePin={() => setSidebarPinned(!sidebarPinned)}
+        onTogglePin={togglePin}
         currentPath="/customers/add"
+        skipTransition={skipTransition}
       />
 
       <main
-        className={`flex-1 transition-all duration-300 ${
-          sidebarPinned ? 'ml-[calc(var(--sidebar-width))]' : ''
+        className={`mt-6 mr-6 mb-6 flex-1 overflow-hidden rounded-2xl bg-white/95 p-6 shadow-xl backdrop-blur-[20px] ${
+          skipTransition ? '' : 'transition-[margin-left] duration-[250ms]'
         }`}
+        style={{
+          marginLeft: sidebarPinned
+            ? 'calc(var(--sidebar-width) + 1.5rem)'
+            : '1.5rem',
+        }}
       >
-        <div className="main-content m-8 mt-0 overflow-hidden rounded-[1.5rem] bg-white shadow-xl">
+        <div className="content-wrapper">
           <div
             className="content-wrapper"
             style={{

@@ -74,12 +74,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { q: query, page, limit } = validationResult.data
+    const { q: rawQuery, page, limit } = validationResult.data
+
+    // Trim whitespace from query to handle accidental leading/trailing spaces
+    const query = rawQuery.trim()
 
     // If no query, return paginated list of all customers
     const orConditions: Prisma.customerWhereInput[] = []
 
-    if (query.trim()) {
+    if (query) {
       const isPhoneQuery =
         /^\d[\d\s\-\(\)]*\d$/.test(query) && query.length >= 4
       const normalizedQuery = normalizePhone(query)

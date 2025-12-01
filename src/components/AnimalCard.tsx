@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import AnimalAvatar from './AnimalAvatar'
 
 interface Animal {
   id: number
@@ -30,7 +31,6 @@ interface AnimalCardProps {
 
 export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
   const router = useRouter()
-  const initials = animal.name.charAt(0).toUpperCase()
   const formattedDate = new Date(animal.lastVisit).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -79,9 +79,12 @@ export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
         <div className="mb-3 flex items-start gap-4 rounded-lg border border-gray-200 bg-gradient-to-br from-gray-50 via-gray-50/80 to-white p-4 transition-all group-hover:border-[#6366f1]/20 group-hover:bg-gradient-to-br group-hover:from-[#6366f1]/5 group-hover:via-[#06b6d4]/5 group-hover:to-white group-hover:shadow-[0_2px_8px_rgba(99,102,241,0.1)]">
           {/* Animal Name & Breed - Left Side with Border */}
           <div className="flex shrink-0 items-center gap-3 border-r-2 border-gray-200 pr-4 transition-colors group-hover:border-[#6366f1]/30">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-[#6366f1] to-[#06b6d4] text-lg font-bold text-white shadow-[0_2px-8px_rgba(99,102,241,0.2)] transition-all group-hover:scale-110 group-hover:shadow-[0_4px_16px_rgba(99,102,241,0.3)]">
-              {initials}
-            </div>
+            <AnimalAvatar
+              animalName={animal.name}
+              breedName={animal.breed}
+              size="md"
+              className="transition-all group-hover:scale-110 group-hover:shadow-[0_4px_16px_rgba(99,102,241,0.3)]"
+            />
             <div>
               <h3 className="text-lg leading-tight font-bold text-gray-800">
                 {animal.name}

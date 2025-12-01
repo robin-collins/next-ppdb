@@ -12,6 +12,7 @@ interface BreadcrumbItem {
 interface HeaderProps {
   onToggleSidebar: () => void
   sidebarOpen: boolean
+  sidebarPinned?: boolean
   onSearch: (query: string) => void
   searchValue: string
   breadcrumbs?: BreadcrumbItem[]
@@ -20,6 +21,7 @@ interface HeaderProps {
 export default function Header({
   onToggleSidebar,
   sidebarOpen,
+  sidebarPinned = false,
   onSearch,
   searchValue,
   breadcrumbs,
@@ -93,22 +95,44 @@ export default function Header({
   return (
     <header className="sticky top-0 z-[100] border-b border-gray-200 bg-white pr-[24px] pl-[24px] shadow-md">
       <div className="flex h-[92px] flex-nowrap items-center gap-6">
-        {/* Hamburger Menu */}
+        {/* Hamburger Menu / Pin Indicator */}
         <div className="hamburger-menu">
           <button
             onClick={onToggleSidebar}
-            className={`flex flex-col gap-1 rounded-lg bg-gray-100 p-3 transition-all hover:bg-gray-200 ${sidebarOpen ? 'active' : ''}`}
-            aria-label="Toggle sidebar"
+            className={`flex h-11 w-11 items-center justify-center rounded-lg transition-all ${
+              sidebarPinned
+                ? 'hover:opacity-90'
+                : 'bg-gray-100 hover:bg-gray-200'
+            } ${sidebarOpen && !sidebarPinned ? 'active' : ''}`}
+            style={
+              sidebarPinned ? { backgroundColor: 'var(--primary)' } : undefined
+            }
+            aria-label={sidebarPinned ? 'Sidebar pinned' : 'Toggle sidebar'}
           >
-            <span
-              className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? 'translate-y-[6px] rotate-45' : ''}`}
-            />
-            <span
-              className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? 'opacity-0' : ''}`}
-            />
-            <span
-              className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? '-translate-y-[6px] -rotate-45' : ''}`}
-            />
+            {/* Pinned icon - filled pushpin (shown when pinned) */}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="white"
+              className={`flex-shrink-0 ${sidebarPinned ? 'block' : 'hidden'}`}
+            >
+              <path d="M16 9V4l1 0c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1l1 0v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z" />
+            </svg>
+            {/* Hamburger / X animation (shown when not pinned) */}
+            <div
+              className={`flex flex-col gap-1 ${sidebarPinned ? 'hidden' : 'block'}`}
+            >
+              <span
+                className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? 'translate-y-[6px] rotate-45' : ''}`}
+              />
+              <span
+                className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? 'opacity-0' : ''}`}
+              />
+              <span
+                className={`h-0.5 w-5 rounded-sm bg-gray-700 transition-all ${sidebarOpen ? '-translate-y-[6px] -rotate-45' : ''}`}
+              />
+            </div>
           </button>
         </div>
 

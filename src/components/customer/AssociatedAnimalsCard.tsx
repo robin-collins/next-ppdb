@@ -1,5 +1,7 @@
 'use client'
 
+import AnimalAvatar from '@/components/AnimalAvatar'
+
 interface Animal {
   id: number
   name: string
@@ -13,7 +15,7 @@ interface Animal {
 interface AssociatedAnimalsCardProps {
   animals: Animal[]
   onAddAnimal?: () => void
-  onDeleteAnimal?: (id: number) => void
+  onDeleteAnimal?: (id: number, name: string) => void
   onClickAnimal?: (id: number) => void
 }
 
@@ -80,9 +82,12 @@ export default function AssociatedAnimalsCard({
               <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100" />
 
               {/* Avatar */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] text-lg font-bold text-white shadow-[var(--shadow-primary)] transition-transform group-hover:scale-110 group-hover:-rotate-6">
-                {animal.name.charAt(0)}
-              </div>
+              <AnimalAvatar
+                animalName={animal.name}
+                breedName={animal.breed}
+                size="lg"
+                className="transition-transform group-hover:scale-110 group-hover:-rotate-6"
+              />
 
               {/* Info */}
               <div className="min-w-0 flex-1">
@@ -183,7 +188,7 @@ export default function AssociatedAnimalsCard({
                   onClick={e => {
                     e.preventDefault()
                     e.stopPropagation()
-                    onDeleteAnimal?.(animal.id)
+                    onDeleteAnimal?.(animal.id, animal.name)
                   }}
                 >
                   <svg

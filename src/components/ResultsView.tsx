@@ -1,4 +1,5 @@
 import AnimalCard from './AnimalCard'
+import AnimalAvatar from './AnimalAvatar'
 
 interface Animal {
   id: number
@@ -102,7 +103,6 @@ export default function ResultsView({
       {viewMode === 'list' && (
         <div className="overflow-hidden rounded-lg border border-gray-200">
           {animals.map((animal, index) => {
-            const initials = animal.name.charAt(0).toUpperCase()
             const formattedDate = new Date(animal.lastVisit).toLocaleDateString(
               'en-US',
               {
@@ -120,9 +120,12 @@ export default function ResultsView({
                   index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                 }`}
               >
-                <div className="from-primary-light to-secondary text-primary hover:from-primary hover:to-secondary flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold transition-all hover:scale-105 hover:text-white">
-                  {initials}
-                </div>
+                <AnimalAvatar
+                  animalName={animal.name}
+                  breedName={animal.breed}
+                  size="sm"
+                  className="transition-all hover:scale-105"
+                />
                 <div className="flex-1">
                   <h4 className="text-sm font-semibold text-gray-800">
                     {animal.name}
