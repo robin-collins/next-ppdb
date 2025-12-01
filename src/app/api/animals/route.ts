@@ -208,6 +208,9 @@ export async function GET(request: NextRequest) {
   const validationResult = searchAnimalsSchema.safeParse({
     q: searchParams.get('q') || '',
     page: parseInt(searchParams.get('page') || '1'),
+    limit: parseInt(searchParams.get('limit') || '20'),
+    sort: searchParams.get('sort') || undefined,
+    order: searchParams.get('order') || undefined,
   })
 
   if (!validationResult.success) {
@@ -220,8 +223,7 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const { q: rawQuery, page } = validationResult.data
-  const limit = 20
+  const { q: rawQuery, page, limit, sort, order } = validationResult.data
 
   // Trim whitespace from query to handle accidental leading/trailing spaces
   const query = rawQuery.trim()
@@ -348,13 +350,59 @@ export async function GET(request: NextRequest) {
       }
     )
     .sort((a: ScoredAnimal, b: ScoredAnimal) => {
-      // Sort by score (descending), then by customer surname (ascending)
-      if (b.score !== a.score) {
-        return b.score - a.score
+      let comparison = 0
+
+      switch (sort) {
+        case 'customer':
+          comparison = (a.animal.customer.surname || '').localeCompare(
+            b.animal.customer.surname || ''
+          )
+          // If surnames are equal, sort by firstname
+          if (comparison === 0) {
+            comparison = (a.animal.customer.firstname || '').localeCompare(
+              b.animal.customer.firstname || ''
+            )
+          }
+          break
+        case 'animal':
+          comparison = (a.animal.animalname || '').localeCompare(
+            b.animal.animalname || ''
+          )
+          break
+        case 'lastVisit':
+          const dateA = a.animal.lastvisit
+            ? new Date(a.animal.lastvisit).getTime()
+            : 0
+          const dateB = b.animal.lastvisit
+            ? new Date(b.animal.lastvisit).getTime()
+            : 0
+          comparison = dateA - dateB
+          break
+        case 'relevance':
+        default:
+          // Relevance is score based.
+          // Default sort order for relevance is DESC (highest score first)
+          // So we calculate comparison as (a - b), then if order is desc (default) it becomes -(a-b) = b-a
+          comparison = a.score - b.score
+          // If scores are equal, fallback to customer surname ascending
+          if (comparison === 0) {
+            // Force surname to be ascending regardless of overall order for relevance tie-breaker
+            // Or respect the order? Usually tie-breakers are fixed.
+            // Let's respect order for now, or just stick to the previous logic for relevance
+            if (order === 'desc') {
+              return (a.animal.customer.surname || '').localeCompare(
+                b.animal.customer.surname || ''
+              )
+            } else {
+              return (b.animal.customer.surname || '').localeCompare(
+                a.animal.customer.surname || ''
+              )
+            }
+          }
+          break
       }
-      return (a.animal.customer.surname || '').localeCompare(
-        b.animal.customer.surname || ''
-      )
+
+      return order === 'desc' ? -comparison : comparison
     })
 
   // Apply pagination after scoring

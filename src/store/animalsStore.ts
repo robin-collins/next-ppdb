@@ -61,6 +61,9 @@ interface UpdateAnimalData {
 interface SearchParams {
   q?: string
   page?: number
+  limit?: number
+  sort?: string
+  order?: 'asc' | 'desc'
 }
 
 interface PaginationData {
@@ -134,6 +137,9 @@ export const useAnimalsStore = create<AnimalsState>()(
             const query = new URLSearchParams({
               q: params.q || '',
               page: (params.page || 1).toString(),
+              limit: (params.limit || 20).toString(),
+              sort: params.sort || 'relevance',
+              order: params.order || 'desc',
             }).toString()
 
             const response = await fetch(`/api/animals?${query}`)

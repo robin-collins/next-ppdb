@@ -10,7 +10,13 @@ import ResultsView from '@/components/ResultsView'
 
 function HomePageInner() {
   const searchParams = useSearchParams()
-  const { animals, loading, searchAnimals } = useAnimalsStore()
+  const {
+    animals,
+    loading,
+    searchAnimals,
+    pagination,
+    searchParams: storeSearchParams,
+  } = useAnimalsStore()
   const {
     sidebarOpen,
     sidebarPinned,
@@ -33,6 +39,18 @@ function HomePageInner() {
       q: query,
       page: 1,
     })
+  }
+
+  const handlePageChange = (page: number) => {
+    searchAnimals({ ...storeSearchParams, page })
+  }
+
+  const handleLimitChange = (limit: number) => {
+    searchAnimals({ ...storeSearchParams, limit, page: 1 })
+  }
+
+  const handleSortChange = (sort: string, order: 'asc' | 'desc') => {
+    searchAnimals({ ...storeSearchParams, sort, order, page: 1 })
   }
 
   // Handle URL query parameter on mount
@@ -107,6 +125,12 @@ function HomePageInner() {
             viewMode={viewMode}
             onViewModeChange={setViewMode}
             onAnimalClick={handleAnimalClick}
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            sort={storeSearchParams.sort || 'relevance'}
+            order={storeSearchParams.order || 'desc'}
+            onSortChange={handleSortChange}
           />
         )}
       </main>

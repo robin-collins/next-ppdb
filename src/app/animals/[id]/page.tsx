@@ -9,6 +9,13 @@ import Sidebar from '@/components/Sidebar'
 import AnimalAvatar from '@/components/AnimalAvatar'
 import { routes } from '@/lib/routes'
 
+interface Breed {
+  id: number
+  name: string
+  avgtime: string | null
+  avgcost: number | null
+}
+
 export default function AnimalPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
@@ -32,9 +39,14 @@ export default function AnimalPage() {
   } = useSidebarState()
   const [searchQuery, _setSearchQuery] = useState('')
 
+  // Breeds state
+  const [breeds, setBreeds] = useState<Breed[]>([])
+  const [selectedBreed, setSelectedBreed] = useState<Breed | null>(null)
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',
+    breed: '',
     sex: '',
     colour: '',
     cost: 0,
@@ -51,12 +63,23 @@ export default function AnimalPage() {
     if (Number.isFinite(idNum)) {
       fetchAnimal(idNum)
     }
+    // Fetch breeds
+    fetch('/api/breeds')
+      .then(res => res.json())
+      .then(data => setBreeds(data))
+      .catch(err => console.error('Failed to fetch breeds', err))
   }, [params.id, fetchAnimal])
 
   useEffect(() => {
     if (selectedAnimal) {
+      const breedName =
+        typeof selectedAnimal.breed === 'string'
+          ? selectedAnimal.breed
+          : (selectedAnimal.breed as { name: string })?.name || ''
+
       setFormData({
         name: selectedAnimal.name || '',
+        breed: breedName,
         sex: selectedAnimal.sex || '',
         colour: selectedAnimal.colour || '',
         cost: selectedAnimal.cost || 0,
@@ -70,6 +93,37 @@ export default function AnimalPage() {
       })
     }
   }, [selectedAnimal])
+
+  // Update selected breed object when breeds load or form breed changes
+  useEffect(() => {
+    if (formData.breed && breeds.length > 0) {
+      const found = breeds.find(b => b.name === formData.breed)
+      setSelectedBreed(found || null)
+    }
+  }, [formData.breed, breeds])
+
+  const getPricingStatus = () => {
+    if (!selectedBreed || selectedBreed.avgcost === null) return null
+
+    const currentCost = formData.cost
+    const standardCost = selectedBreed.avgcost
+
+    if (currentCost === standardCost) {
+      return {
+        label: 'Breed-based pricing',
+        color: 'bg-blue-100 text-blue-800',
+      }
+    } else if (currentCost < standardCost) {
+      return {
+        label: 'Discounted pricing',
+        color: 'bg-green-100 text-green-800',
+      }
+    } else {
+      return { label: 'Custom Pricing', color: 'bg-purple-100 text-purple-800' }
+    }
+  }
+
+  const pricingStatus = getPricingStatus()
 
   const handleSearch = (query: string) => {
     router.push(query ? `/?q=${encodeURIComponent(query)}` : '/')
@@ -102,18 +156,27 @@ export default function AnimalPage() {
     }
   }
 
-  const handleChangeDates = () => {
+  const handleChangeDates = async () => {
     const now = new Date()
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
     const today = `${year}-${month}-${day}`
 
-    setFormData(prev => ({
-      ...prev,
-      lastVisit: prev.thisVisit,
+    const updatedFormData = {
+      ...formData,
+      lastVisit: formData.thisVisit,
       thisVisit: today,
-    }))
+    }
+
+    setFormData(updatedFormData)
+
+    if (selectedAnimal) {
+      await updateAnimal(selectedAnimal.id, {
+        ...updatedFormData,
+        sex: updatedFormData.sex as 'Male' | 'Female' | 'Unknown',
+      })
+    }
   }
 
   if (error) {
@@ -193,10 +256,7 @@ export default function AnimalPage() {
   }
 
   const customer = selectedAnimal.customer
-  const breedName =
-    typeof selectedAnimal.breed === 'string'
-      ? selectedAnimal.breed
-      : (selectedAnimal.breed as { name: string })?.name || 'Unknown Breed'
+  const breedName = formData.breed || 'Unknown Breed'
 
   return (
     <div className="app-layout">
@@ -357,13 +417,21 @@ export default function AnimalPage() {
                       <label className="form-label" htmlFor="breed">
                         Breed
                       </label>
-                      <input
-                        type="text"
+                      <select
                         id="breed"
-                        className="form-input"
-                        value={breedName}
-                        readOnly
-                      />
+                        className="form-select"
+                        value={formData.breed}
+                        onChange={e =>
+                          setFormData({ ...formData, breed: e.target.value })
+                        }
+                      >
+                        <option value="">Select Breed...</option>
+                        {breeds.map(breed => (
+                          <option key={breed.id} value={breed.name}>
+                            {breed.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     {/* Sex */}
@@ -420,6 +488,13 @@ export default function AnimalPage() {
                         step="0.01"
                         min="0"
                       />
+                      {pricingStatus && (
+                        <div
+                          className={`mt-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${pricingStatus.color}`}
+                        >
+                          {pricingStatus.label}
+                        </div>
+                      )}
                     </div>
 
                     {/* Last Visit */}

@@ -156,7 +156,12 @@ export default function BreedTable({
   const formatTime = (isoTime: string | null): string => {
     if (!isoTime) return '—'
     try {
+      // If it matches HH:MM:SS format, return as is
+      if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(isoTime)) return isoTime
+
       const date = new Date(isoTime)
+      if (isNaN(date.getTime())) return isoTime
+
       const hours = date.getUTCHours().toString().padStart(2, '0')
       const mins = date.getUTCMinutes().toString().padStart(2, '0')
       const secs = date.getUTCSeconds().toString().padStart(2, '0')
@@ -249,7 +254,11 @@ export default function BreedTable({
                     {edit ? (
                       <input
                         className="time-input"
-                        value={edit.avgtime || ''}
+                        value={
+                          formatTime(edit.avgtime) === '—'
+                            ? ''
+                            : formatTime(edit.avgtime)
+                        }
                         onChange={e =>
                           setEditing(prev => ({
                             ...prev,
@@ -328,23 +337,31 @@ export default function BreedTable({
                         <>
                           <button
                             aria-label={`Edit breed ${r.name}`}
-                            className="btn btn-secondary btn-small"
+                            className="btn btn-small border-transparent bg-transparent text-gray-400 transition-all duration-200 hover:text-amber-500 hover:[&>svg]:drop-shadow-[0_0_5px_rgba(245,158,11,0.9)]"
                             onClick={() => startEdit(r)}
                             title={`Edit ${r.name}`}
                           >
-                            Edit
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
                           </button>
                           <button
                             aria-label={`Delete breed ${r.name}`}
-                            className="btn btn-danger btn-small"
+                            className="btn btn-small border-transparent bg-transparent text-gray-400 transition-all duration-200 hover:text-red-500 hover:[&>svg]:drop-shadow-[0_0_5px_rgba(239,68,68,0.9)]"
                             onClick={e =>
                               initiateDelete(r, e.currentTarget as HTMLElement)
                             }
                             title={`Delete ${r.name}`}
                           >
                             <svg
-                              width="14"
-                              height="14"
+                              width="16"
+                              height="16"
                               viewBox="0 0 24 24"
                               fill="currentColor"
                               aria-hidden="true"

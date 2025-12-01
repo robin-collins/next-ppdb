@@ -9,34 +9,34 @@ const MIN_DATE = new Date('1900-01-01')
 // 2. Can be parsed to a valid Date object
 // 3. Not a zero date (0000-00-00)
 // 4. Not before minimum date (1900-01-01)
-const validDateString = z
-  .string()
-  .datetime()
-  .refine(
-    dateStr => {
-      const date = new Date(dateStr)
-      // Check if date is valid (not NaN)
-      if (isNaN(date.getTime())) {
-        return false
-      }
-      // Check if year is 0 (zero date)
-      if (date.getFullYear() === 0) {
-        return false
-      }
-      // Check if before minimum date
-      if (date < MIN_DATE) {
-        return false
-      }
-      return true
-    },
-    {
-      message: `Date must be a valid date on or after ${MIN_DATE.toISOString().split('T')[0]}`,
+const validDateString = z.string().refine(
+  dateStr => {
+    const date = new Date(dateStr)
+    // Check if date is valid (not NaN)
+    if (isNaN(date.getTime())) {
+      return false
     }
-  )
+    // Check if year is 0 (zero date)
+    if (date.getFullYear() === 0) {
+      return false
+    }
+    // Check if before minimum date
+    if (date < MIN_DATE) {
+      return false
+    }
+    return true
+  },
+  {
+    message: `Date must be a valid date on or after ${MIN_DATE.toISOString().split('T')[0]}`,
+  }
+)
 
 export const searchAnimalsSchema = z.object({
   q: z.string().optional().default(''), // Single unified query
   page: z.number().int().positive().default(1),
+  limit: z.number().int().positive().default(20),
+  sort: z.string().optional().default('relevance'),
+  order: z.enum(['asc', 'desc']).optional().default('desc'),
 })
 
 export const createAnimalSchema = z.object({
@@ -45,7 +45,7 @@ export const createAnimalSchema = z.object({
   breed: z.string().min(1, 'Breed is required').max(50),
   sex: z.enum(['Male', 'Female', 'Unknown']),
   colour: z.string().max(30).optional(),
-  cost: z.number().positive().optional(),
+  cost: z.number().nonnegative().optional(),
   lastVisit: validDateString.optional(),
   thisVisit: validDateString.optional(),
   comments: z.string().max(1000).optional(),
