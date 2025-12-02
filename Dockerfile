@@ -20,6 +20,7 @@ COPY src ./src
 COPY public ./public
 COPY prisma ./prisma
 COPY next.config.ts .
+COPY postcss.config.mjs .
 COPY tsconfig.json .
 
 # Generate Prisma Client
@@ -36,7 +37,7 @@ RUN pnpm exec prisma generate
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at build time
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build Next.js
 RUN pnpm build
@@ -48,17 +49,26 @@ FROM base AS runner
 
 WORKDIR /app
 
-# Install useful network tools
+# Install useful network tools and mysql client for raw SQL imports and backups
 RUN apt-get update && apt-get install -y \
     curl \
     net-tools \
     lsof \
     iproute2 \
+    default-mysql-client \
+    mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Create writable directories for uploads, logs, and backups before switching to non-root user
+RUN mkdir -p /app/uploads /app/logs /app/backups && chown -R nextjs:nodejs /app/uploads /app/logs /app/backups
+
+# Install Prisma CLI globally for migrations (pinned to match project version)
+RUN npm install -g prisma@6
+
 USER nextjs
 
 COPY --from=builder /app/public ./public
@@ -68,6 +78,13 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Copy Prisma schema and migrations for runtime migrations
+# Note: Generated client is in src/generated/prisma/ and already included in standalone build
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copy startup script that runs migrations before starting the server
+COPY --chown=nextjs:nodejs docker/docker-entrypoint.sh /app/docker-entrypoint.sh
+
 # Environment variables must be redefined at run time
 # Environment variables must be redefined at run time
 # ARG DATABASE_URL
@@ -76,8 +93,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # ENV DEBUG=${DEBUG}
 
 # Uncomment the following line to disable telemetry at run time
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Note: Don't expose ports here, Compose will handle that for us
 
-CMD ["node", "server.js"]
+# Run migrations and start server
+CMD ["/app/docker-entrypoint.sh"]

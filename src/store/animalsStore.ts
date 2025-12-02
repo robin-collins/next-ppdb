@@ -224,7 +224,9 @@ export const useAnimalsStore = create<AnimalsState>()(
         },
 
         updateAnimal: async (id, data) => {
-          set({ loading: true, error: null })
+          // Don't set loading: true for updates - it causes the page to flash
+          // the loading state which looks like a full page reload
+          set({ error: null })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'PUT',
@@ -245,10 +247,25 @@ export const useAnimalsStore = create<AnimalsState>()(
               set({ selectedAnimal: updatedAnimal })
             }
 
-            // Refresh the current search
+            // Refresh the current search (without loading state)
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
-              await get().searchAnimals(searchParams)
+              // Silently refresh search results
+              const query = new URLSearchParams({
+                q: searchParams.q || '',
+                page: (searchParams.page || 1).toString(),
+                limit: (searchParams.limit || 20).toString(),
+                sort: searchParams.sort || 'relevance',
+                order: searchParams.order || 'desc',
+              }).toString()
+              const searchResponse = await fetch(`/api/animals?${query}`)
+              if (searchResponse.ok) {
+                const searchData = await searchResponse.json()
+                set({
+                  animals: searchData.animals,
+                  pagination: searchData.pagination,
+                })
+              }
             }
           } catch (error) {
             set({
@@ -257,13 +274,12 @@ export const useAnimalsStore = create<AnimalsState>()(
                   ? error.message
                   : 'Failed to update animal',
             })
-          } finally {
-            set({ loading: false })
           }
         },
 
         deleteAnimal: async id => {
-          set({ loading: true, error: null })
+          // Don't set loading: true - it causes page flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'DELETE',
@@ -279,10 +295,24 @@ export const useAnimalsStore = create<AnimalsState>()(
               set({ selectedAnimal: null })
             }
 
-            // Refresh the current search
+            // Silently refresh the current search
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
-              await get().searchAnimals(searchParams)
+              const query = new URLSearchParams({
+                q: searchParams.q || '',
+                page: (searchParams.page || 1).toString(),
+                limit: (searchParams.limit || 20).toString(),
+                sort: searchParams.sort || 'relevance',
+                order: searchParams.order || 'desc',
+              }).toString()
+              const searchResponse = await fetch(`/api/animals?${query}`)
+              if (searchResponse.ok) {
+                const searchData = await searchResponse.json()
+                set({
+                  animals: searchData.animals,
+                  pagination: searchData.pagination,
+                })
+              }
             }
           } catch (error) {
             set({
@@ -291,13 +321,12 @@ export const useAnimalsStore = create<AnimalsState>()(
                   ? error.message
                   : 'Failed to delete animal',
             })
-          } finally {
-            set({ loading: false })
           }
         },
 
         addNote: async (animalId, payload) => {
-          set({ loading: true, error: null })
+          // Don't set loading: true - it causes page flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/animals/${animalId}/notes`, {
               method: 'POST',
@@ -308,20 +337,23 @@ export const useAnimalsStore = create<AnimalsState>()(
               const errorData = await response.json()
               throw new Error(errorData.error || 'Failed to add note')
             }
-            // Refresh selected animal to get updated notes
-            await get().fetchAnimal(animalId)
+            // Silently refresh selected animal to get updated notes
+            const animalResponse = await fetch(`/api/animals/${animalId}`)
+            if (animalResponse.ok) {
+              const animal = await animalResponse.json()
+              set({ selectedAnimal: animal })
+            }
           } catch (error) {
             set({
               error:
                 error instanceof Error ? error.message : 'Failed to add note',
             })
-          } finally {
-            set({ loading: false })
           }
         },
 
         deleteNote: async (noteId, animalId) => {
-          set({ loading: true, error: null })
+          // Don't set loading: true - it causes page flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/notes/${noteId}`, {
               method: 'DELETE',
@@ -330,9 +362,13 @@ export const useAnimalsStore = create<AnimalsState>()(
               const errorData = await response.json()
               throw new Error(errorData.error || 'Failed to delete note')
             }
-            // Refresh selected animal if provided
+            // Silently refresh selected animal if provided
             if (animalId) {
-              await get().fetchAnimal(animalId)
+              const animalResponse = await fetch(`/api/animals/${animalId}`)
+              if (animalResponse.ok) {
+                const animal = await animalResponse.json()
+                set({ selectedAnimal: animal })
+              }
             }
           } catch (error) {
             set({
@@ -341,8 +377,6 @@ export const useAnimalsStore = create<AnimalsState>()(
                   ? error.message
                   : 'Failed to delete note',
             })
-          } finally {
-            set({ loading: false })
           }
         },
       }),

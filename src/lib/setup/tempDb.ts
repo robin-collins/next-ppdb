@@ -34,7 +34,8 @@ export async function createTempDatabase(): Promise<TempDbConfig> {
   const tempDbName = `ppdb_import_${Date.now()}`
 
   // Create the temp database using mysql client
-  const createDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' -e "CREATE DATABASE IF NOT EXISTS \\\`${tempDbName}\\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"`
+  // --skip-ssl for internal Docker network (works with both MySQL and MariaDB clients)
+  const createDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl -e "CREATE DATABASE IF NOT EXISTS \\\`${tempDbName}\\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"`
 
   try {
     await execAsync(createDbCmd)
@@ -75,7 +76,7 @@ export async function importSqlFileToTempDb(
   onProgress?.(`Importing: ${sqlFilePath}`)
 
   // Import using mysql client
-  const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${tempDbName} < "${sqlFilePath}"`
+  const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl ${tempDbName} < "${sqlFilePath}"`
 
   try {
     await execAsync(importCmd, { maxBuffer: 50 * 1024 * 1024 }) // 50MB buffer
@@ -117,7 +118,7 @@ export async function importSqlFilesToTempDb(
       sqlFiles.length
     )
 
-    const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${tempDbName} < "${file.path}"`
+    const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl ${tempDbName} < "${file.path}"`
 
     try {
       await execAsync(importCmd, { maxBuffer: 50 * 1024 * 1024 })
@@ -194,7 +195,7 @@ export async function dropTempDatabase(tempDbName: string): Promise<void> {
     return
   }
 
-  const dropDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' -e "DROP DATABASE IF EXISTS \\\`${tempDbName}\\\`"`
+  const dropDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl -e "DROP DATABASE IF EXISTS \\\`${tempDbName}\\\`"`
 
   try {
     await execAsync(dropDbCmd)

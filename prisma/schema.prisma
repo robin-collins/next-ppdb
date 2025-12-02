@@ -16,8 +16,8 @@ model animal {
   SEX        animal_sex @default(Male) @map("SEX")
   colour     String?    @db.Text
   cost       Int        @default(0) @db.SmallInt
-  lastvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
-  thisvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
+  lastvisit  DateTime   @default(dbgenerated("'1900-01-01'")) @db.Date
+  thisvisit  DateTime   @default(dbgenerated("'1900-01-01'")) @db.Date
   comments   String?    @db.TinyText
   breed      breed      @relation(fields: [breedID], references: [breedID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_breed")
   customer   customer   @relation(fields: [customerID], references: [customerID], onUpdate: Restrict, onDelete: Restrict, map: "fk_animal_customer")
@@ -59,7 +59,7 @@ model notes {
   noteID   Int      @id @default(autoincrement()) @db.MediumInt
   animalID Int      @default(0) @db.MediumInt
   notes    String   @db.MediumText
-  date     DateTime @default(dbgenerated("'0000-00-00'")) @db.Date
+  date     DateTime @default(dbgenerated("'1900-01-01'")) @db.Date
   animal   animal   @relation(fields: [animalID], references: [animalID], onUpdate: NoAction, onDelete: NoAction)
 
   @@unique([noteID], map: "noteID")

@@ -192,4 +192,80 @@ Full details in: `DATABASE_FIXES.md`
 
 ---
 
+## Docker Deployment: Prisma db push Fails with Invalid Date Defaults
+
+**Date**: 2025-12-02
+**Issue**: `prisma db push` fails with "Invalid default value for 'lastvisit'"
+
+### Problem Description
+
+When running `prisma db push` in Docker container startup, the command fails:
+
+```
+Error: Invalid default value for 'lastvisit'
+   0: sql_schema_connector::apply_migration::migration_step
+           with step=CreateTable { table_id: TableId(0) }
+```
+
+### Root Cause
+
+The Prisma schema used `@default(dbgenerated("'0000-00-00'"))` for date fields:
+
+- `animal.lastvisit`
+- `animal.thisvisit`
+- `notes.date`
+
+MySQL 8.0 strict mode (the default) rejects `0000-00-00` as an invalid date value.
+
+### Previous Context
+
+We had just switched from `prisma migrate deploy` to `prisma db push` because the existing migration (`20251004154300_schema_normalization`) was designed to modify an existing PHP database, not create tables from scratch.
+
+### Attempted Solutions
+
+#### Attempt 1: Use `prisma migrate deploy`
+
+- **What**: Run migrations to create tables
+- **Result**: Failed with "P3018: Table 'next-ppdb.animal' doesn't exist"
+- **Why Failed**: Migration was designed to alter existing tables, not create them
+
+#### Attempt 2: Use `prisma db push`
+
+- **What**: Push schema directly to create tables
+- **Result**: Failed with "Invalid default value for 'lastvisit'"
+- **Why Failed**: MySQL 8.0 strict mode rejects `0000-00-00` dates
+
+### Solution
+
+Changed default date values from `0000-00-00` to `1900-01-01` in `prisma/schema.prisma`:
+
+```prisma
+// Before
+lastvisit  DateTime   @default(dbgenerated("'0000-00-00'")) @db.Date
+
+// After
+lastvisit  DateTime   @default(dbgenerated("'1900-01-01'")) @db.Date
+```
+
+This is safe because:
+
+1. `1900-01-01` is a valid MySQL date
+2. It's obviously not a real grooming date (sentinel value)
+3. The import process already handles dirty data from legacy database
+4. The legacy `0000-00-00` values get imported via raw SQL INSERT, not through schema defaults
+
+### Lessons Learned
+
+1. MySQL 8.0 strict mode rejects invalid dates like `0000-00-00`
+2. Legacy database compatibility doesn't require schema defaults to match - only import data handling
+3. Schema defaults are only used for NEW records, not imported data
+4. When creating fresh databases, use valid default values
+
+### Prevention
+
+- Test schema changes against MySQL 8.0 before deploying
+- Separate concerns: schema defaults for new records vs. import handling for legacy data
+
+---
+
 _End of Failure Log_

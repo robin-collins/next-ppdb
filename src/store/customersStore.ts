@@ -212,7 +212,8 @@ export const useCustomersStore = create<CustomersState>()(
         },
 
         updateCustomer: async (id, data) => {
-          set({ loading: true, error: null })
+          // Don't set loading: true for updates - it causes the page to flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/customers/${id}`, {
               method: 'PUT',
@@ -246,10 +247,22 @@ export const useCustomersStore = create<CustomersState>()(
               set({ selectedCustomer: updatedCustomer })
             }
 
-            // Refresh the current search
+            // Silently refresh the current search (without loading state)
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
-              await get().searchCustomers(searchParams)
+              const query = new URLSearchParams({
+                q: searchParams.q || '',
+                page: (searchParams.page || 1).toString(),
+                limit: (searchParams.limit || 20).toString(),
+              }).toString()
+              const searchResponse = await fetch(`/api/customers?${query}`)
+              if (searchResponse.ok) {
+                const searchData = await searchResponse.json()
+                set({
+                  customers: searchData.customers,
+                  pagination: searchData.pagination,
+                })
+              }
             }
           } catch (error) {
             set({
@@ -259,13 +272,12 @@ export const useCustomersStore = create<CustomersState>()(
                   : 'Failed to update customer',
             })
             throw error
-          } finally {
-            set({ loading: false })
           }
         },
 
         deleteCustomer: async id => {
-          set({ loading: true, error: null })
+          // Don't set loading: true - it causes page flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/customers/${id}`, {
               method: 'DELETE',
@@ -286,10 +298,22 @@ export const useCustomersStore = create<CustomersState>()(
               set({ selectedCustomer: null })
             }
 
-            // Refresh the current search
+            // Silently refresh the current search
             const { searchParams } = get()
             if (Object.keys(searchParams).length > 0) {
-              await get().searchCustomers(searchParams)
+              const query = new URLSearchParams({
+                q: searchParams.q || '',
+                page: (searchParams.page || 1).toString(),
+                limit: (searchParams.limit || 20).toString(),
+              }).toString()
+              const searchResponse = await fetch(`/api/customers?${query}`)
+              if (searchResponse.ok) {
+                const searchData = await searchResponse.json()
+                set({
+                  customers: searchData.customers,
+                  pagination: searchData.pagination,
+                })
+              }
             }
           } catch (error) {
             set({
@@ -299,13 +323,12 @@ export const useCustomersStore = create<CustomersState>()(
                   : 'Failed to delete customer',
             })
             throw error
-          } finally {
-            set({ loading: false })
           }
         },
 
         deleteAnimal: async id => {
-          set({ loading: true, error: null })
+          // Don't set loading: true - it causes page flash
+          set({ error: null })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'DELETE',
@@ -320,10 +343,16 @@ export const useCustomersStore = create<CustomersState>()(
               )
             }
 
-            // Refresh selected customer to update the animals list
+            // Silently refresh selected customer to update the animals list
             const { selectedCustomer } = get()
             if (selectedCustomer) {
-              await get().fetchCustomer(selectedCustomer.id)
+              const customerResponse = await fetch(
+                `/api/customers/${selectedCustomer.id}`
+              )
+              if (customerResponse.ok) {
+                const customer = await customerResponse.json()
+                set({ selectedCustomer: customer })
+              }
             }
           } catch (error) {
             set({
@@ -333,8 +362,6 @@ export const useCustomersStore = create<CustomersState>()(
                   : 'Failed to delete animal',
             })
             throw error
-          } finally {
-            set({ loading: false })
           }
         },
       }),

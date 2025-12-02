@@ -6,6 +6,80 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Database Updates Cause Page Reload Flash** (2025-12-02):
+  - Removed `loading: true` from all update/delete functions in both stores
+  - Setting loading state caused pages to show "Loading..." which looked like a full reload
+  - Updates are now seamless - API calls happen in the background
+  - Data is silently refreshed without triggering the loading screen
+  - Fixed functions in `src/store/animalsStore.ts`:
+    - `updateAnimal`, `deleteAnimal`, `addNote`, `deleteNote`
+  - Fixed functions in `src/store/customersStore.ts`:
+    - `updateCustomer`, `deleteCustomer`, `deleteAnimal`
+
+- **Prisma Schema Invalid Date Defaults** (2025-12-02):
+  - Changed `@default(dbgenerated("'0000-00-00'"))` to `@default(dbgenerated("'1900-01-01'"))`
+  - Affected fields: `animal.lastvisit`, `animal.thisvisit`, `notes.date`
+  - MySQL 8.0 strict mode rejects `0000-00-00` as an invalid date
+  - Using `1900-01-01` as sentinel value (obviously not a real grooming date)
+  - Import process already handles dirty data from legacy database
+
+- **Docker Missing Backups Directory** (2025-12-02):
+  - Added `/app/backups` to `mkdir -p` command in Dockerfile
+  - Same pattern as uploads/logs directories - must exist before app runs
+  - Fixes "Directory nonexistent" error when creating backup files
+
+- **Backup mysqldump SSL Error** (2025-12-02):
+  - Added `--skip-ssl` to mysqldump command in `/api/admin/backup`
+  - Same SSL issue as mysql CLI - internal Docker network doesn't need SSL
+  - Improved error message to show actual error instead of generic "Is mysqldump installed?"
+  - File: `src/app/api/admin/backup/route.ts`
+
+- **Docker Missing mysqldump for Backups** (2025-12-02):
+  - Added `mariadb-client` to Dockerfile apt-get install
+  - `default-mysql-client` only provides `mysql` CLI, not `mysqldump`
+  - `mariadb-client` includes full suite: mysql, mysqldump, mysqlcheck, etc.
+  - Fixes "Database dump failed. Is mysqldump installed?" error in backup feature
+
+- **Docker Build Missing PostCSS Config** (2025-12-02):
+  - Added `COPY postcss.config.mjs .` to Dockerfile builder stage
+  - Without this file, Tailwind CSS v4 utility classes were not generated during Docker build
+  - Symptom: Deployed app had broken styling (oversized icons, missing layout CSS)
+  - Root cause: `@tailwindcss/postcss` plugin requires `postcss.config.mjs` to process `@import 'tailwindcss'`
+
+- **Docker Upload Permission Denied** (2025-12-02):
+  - Added `mkdir -p /app/uploads /app/logs && chown -R nextjs:nodejs /app/uploads /app/logs` to Dockerfile
+  - Creates writable directories before switching to non-root `nextjs` user
+  - Fixes `EACCES: permission denied, mkdir '/app/uploads'` error during file upload
+
+- **Docker Missing MySQL Client** (2025-12-02):
+  - Added `default-mysql-client` to Dockerfile apt-get install
+  - Required for raw SQL import process which uses `mysql` CLI to create temp databases and execute queries
+  - Fixes `mysql: not found` error during database import
+
+- **MySQL SSL Certificate Error in Docker** (2025-12-02):
+  - Added `--skip-ssl` to all mysql CLI commands in:
+    - `src/lib/setup/tempDb.ts` (4 commands)
+    - `src/lib/import/rawImporter.ts` (2 commands)
+  - Note: `--skip-ssl` works with both MySQL and MariaDB clients (Debian's `default-mysql-client` installs MariaDB client which doesn't support `--ssl-mode=DISABLED`)
+  - Internal Docker network doesn't need SSL verification
+  - Fixes SSL/TLS errors during import
+
+- **MySQL User Missing CREATE DATABASE Privileges** (2025-12-02):
+  - Added `docker/mysql-init/01-grant-privileges.sql` init script
+  - Grants CREATE/DROP on `*.*` and ALL PRIVILEGES on `ppdb_import_%.*` to app user
+  - Mounted via docker-compose.yml to `/docker-entrypoint-initdb.d`
+  - Fixes `ERROR 1044 (42000): Access denied` when creating temp import databases
+
+- **Database Tables Missing - Prisma Migrations Not Running** (2025-12-02):
+  - Added Prisma CLI to production Docker image (`npm install -g prisma@6`)
+  - Version pinned to v6.x to match project (v7.0 has breaking schema changes)
+  - Copied prisma schema and migrations to runner stage
+  - Created `docker/docker-entrypoint.sh` that runs `prisma migrate deploy` on startup
+  - Tables are now automatically created when container starts
+  - Fixes import failures due to missing breed/customer/animal/notes tables
+
 ### Added
 
 - **Raw SQL Import with File-Based Audit Logging** (2025-12-02):

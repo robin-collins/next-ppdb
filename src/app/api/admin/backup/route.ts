@@ -120,7 +120,8 @@ export async function POST() {
     // --events includes scheduled events
     // Note: We don't use --databases flag to avoid CREATE DATABASE/USE statements
     // This allows restoring to any database name for testing
-    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
+    // --skip-ssl: Internal Docker network doesn't need SSL verification
+    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --skip-ssl --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
 
     try {
       await execAsync(mysqldumpCmd)
@@ -132,8 +133,10 @@ export async function POST() {
         /* ignore */
       }
       console.error('mysqldump error:', dumpErr)
+      const errMsg =
+        dumpErr instanceof Error ? dumpErr.message : 'Unknown error'
       return NextResponse.json(
-        { error: 'Database dump failed. Is mysqldump installed?' },
+        { error: `Database dump failed: ${errMsg}` },
         { status: 500 }
       )
     }
