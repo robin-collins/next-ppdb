@@ -62,3 +62,7 @@ scripts/note-words.txt
 
 logs/
 uploads/
+acme.json
+reference/*.png
+reference/*.txt
+reference/nextjs-docs/
