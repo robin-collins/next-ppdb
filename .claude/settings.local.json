@@ -29,7 +29,9 @@
       "Bash(pnpm lint-staged:*)",
       "mcp__chrome-devtools__select_page",
       "mcp__chrome-devtools__hover",
-      "mcp__chrome-devtools__wait_for"
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__press_key",
+      "mcp__chrome-devtools__resize_page"
     ],
     "deny": [],
     "ask": []

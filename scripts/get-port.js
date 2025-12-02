@@ -64,14 +64,53 @@ const findPort = port => {
   server.once('error', () => findPort(port + 1))
   server.once('listening', () => {
     server.close()
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs')
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir)
+    }
+
+    // Generate timestamp for log filename: YYYYMMDDHHmmss
+    const now = new Date()
+    const pad = n => n.toString().padStart(2, '0')
+    const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
+    const logFilePath = path.join(logsDir, `${timestamp}_ppdb_app.log`)
+    const logStream = fs.createWriteStream(logFilePath, { flags: 'a' })
+
+    console.info(`Logging output to: ${logFilePath}`)
+
     const child = require('child_process').spawn(
       'npx',
       ['next', 'dev', '--turbopack', '--port', port.toString()],
-      { stdio: 'inherit', shell: true }
+      { stdio: ['ignore', 'pipe', 'pipe'], shell: true }
     )
+
+    const { Transform } = require('stream')
+    const createStripAnsiStream = () => {
+      return new Transform({
+        transform(chunk, encoding, callback) {
+          const text = chunk.toString()
+          // Regex to strip ANSI escape codes
+          const cleanText = text.replace(
+            /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+            ''
+          )
+          this.push(cleanText)
+          callback()
+        },
+      })
+    }
+
+    // Pipe stdout and stderr to both process and log file (stripped)
+    child.stdout.pipe(process.stdout)
+    child.stdout.pipe(createStripAnsiStream()).pipe(logStream, { end: false })
+
+    child.stderr.pipe(process.stderr)
+    child.stderr.pipe(createStripAnsiStream()).pipe(logStream, { end: false })
 
     // Forward child process exit to parent cleanup
     child.on('exit', (code, signal) => {
+      logStream.end() // Close the log stream when child exits
       cleanup()
       if (signal) {
         process.exit(

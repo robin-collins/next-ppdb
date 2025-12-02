@@ -64,12 +64,19 @@ services:
       - 'traefik.http.services.phpmyadmin.loadbalancer.server.port=80'
 
   nextjs-app:
-    # Placeholder image until the actual Dockerfile is ready
-    image: node:18-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-username}/ppdb-app:latest
     container_name: nextjs-app
     restart: unless-stopped
-    # Keep the container running
-    command: sh -c "echo 'Next.js App Placeholder Running' && tail -f /dev/null"
+    environment:
+      # Construct DATABASE_URL from MySQL variables to avoid duplication
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      DEBUG: ${DEBUG:-false}
+      HOSTNAME: "0.0.0.0"
+    depends_on:
+      - mysql
     networks:
       - web
     labels:

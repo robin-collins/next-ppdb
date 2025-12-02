@@ -16,7 +16,26 @@
   --primary-hover: #c97d3d;
   --primary-light: #fef4e8;
   --primary-dark: #8b5a2b;
+}
 
+/* === PRIMARY COLOR UTILITY CLASSES === */
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-primary-hover:hover {
+  background-color: var(--primary-hover);
+}
+.hover\:bg-primary-hover:hover {
+  background-color: var(--primary-hover);
+}
+.text-primary {
+  color: var(--primary);
+}
+.border-primary {
+  border-color: var(--primary);
+}
+
+:root {
   /* === SECONDARY COLORS (From Logo - Teal Green) === */
   --secondary: #1b9e7e;
   --secondary-hover: #178a6c;

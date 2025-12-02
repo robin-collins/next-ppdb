@@ -1,5 +1,6 @@
 // src/app/api/setup/upload/route.ts
 // File upload handler for database backup import
+// Handles legacy PPDB backup archives with per-table SQL files
 
 import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
@@ -9,10 +10,23 @@ import {
   extractSqlFile,
   isValidFileType,
   getFileTypeDescription,
+  getSqlFilesInOrder,
+  SqlFileInfo,
 } from '@/lib/import/extractor'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'setup')
+
+export interface UploadResponse {
+  success: boolean
+  uploadId: string
+  filename: string
+  fileType: string
+  size: number
+  sqlFiles: SqlFileInfo[]
+  backupPath?: string
+  error?: string
+}
 
 export async function POST(request: Request) {
   try {
@@ -55,28 +69,46 @@ export async function POST(request: Request) {
     const uploadedFilePath = path.join(uploadDir, file.name)
     await writeFile(uploadedFilePath, buffer)
 
-    // Extract SQL file
+    // Extract SQL files
     const extractResult = await extractSqlFile(uploadedFilePath, tempDir)
 
-    if (!extractResult.success) {
+    if (!extractResult.success || !extractResult.sqlFiles) {
       return NextResponse.json(
-        { error: extractResult.error || 'Failed to extract SQL file' },
+        { error: extractResult.error || 'Failed to extract SQL files' },
         { status: 400 }
       )
     }
 
-    // Basic validation - check if it looks like a valid SQL file
-    // (We'll do more thorough validation during import)
+    // Get files in correct import order (breed → customer → animal → notes)
+    const orderedFiles = getSqlFilesInOrder(extractResult.sqlFiles)
 
-    return NextResponse.json({
+    // Log found files for debugging
+    console.log(
+      `[Upload] Found ${orderedFiles.length} SQL files:`,
+      orderedFiles.map(f => f.filename)
+    )
+
+    // Save metadata for import route
+    const metadata = {
+      sqlFiles: orderedFiles,
+      backupPath: extractResult.backupPath,
+    }
+    await writeFile(
+      path.join(uploadDir, 'metadata.json'),
+      JSON.stringify(metadata, null, 2)
+    )
+
+    const response: UploadResponse = {
       success: true,
       uploadId,
       filename: file.name,
       fileType: getFileTypeDescription(file.name),
       size: file.size,
-      sqlFile: extractResult.sqlFilePath,
-      originalSqlFilename: extractResult.originalFilename,
-    })
+      sqlFiles: orderedFiles,
+      backupPath: extractResult.backupPath,
+    }
+
+    return NextResponse.json(response)
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(

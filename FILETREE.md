@@ -53,8 +53,9 @@
     52|│   │   ├── BreedForm.tsx            # Add new breed form
     53|│   │   ├── BreedTable.tsx           # Breed listing table with edit/delete/pricing actions (updated 2025-12-02)
     54|│   │   └── PricingModifier.tsx      # Animated pricing adjustment panel for breeds (created 2025-12-02)
-    55|│   ├── components/setup/            # Setup/onboarding UI components (created 2025-12-02)
-    56|│   │   ├── DiagnosticResults.tsx    # Health check results display with pass/fail cards
+    55|│   ├── components/SetupGuard.tsx     # Server component: database health guard with verbose logging (created 2025-12-02)
+    56|│   ├── components/setup/            # Setup/onboarding UI components (created 2025-12-02)
+    57|│   │   ├── DiagnosticResults.tsx    # Health check results display with pass/fail cards
     57|│   │   ├── FileUploader.tsx         # Drag-drop file uploader for SQL/archives
     58|│   │   ├── ImportProgress.tsx       # Real-time import progress with SSE
     59|│   │   └── ImportLog.tsx            # Verbose color-coded import log viewer
@@ -66,7 +67,9 @@
     65|│   │   ├── extractor.ts             # Archive extraction (zip, tar.gz)
     66|│   │   ├── remediation.ts           # Data repair and normalization functions
     67|│   │   ├── validator.ts             # Per-table record validation with remediation
-    68|│   │   └── importer.ts              # Prisma batch import with progress tracking
+    68|│   │   ├── importer.ts              # Prisma batch import with progress tracking
+    69|│   │   ├── rawImporter.ts           # Raw SQL reader bypassing Prisma date parsing (created 2025-12-02)
+    70|│   │   └── importLogger.ts          # File-based audit logging per table (created 2025-12-02)
     69|│   ├── lib/setup/                   # Setup utilities (created 2025-12-02)
     70|│   │   └── tempDb.ts                # Temporary database management
     71|│   ├── app/setup/                   # Setup/onboarding page (created 2025-12-02)

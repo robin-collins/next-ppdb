@@ -5,20 +5,12 @@ import type { NextRequest } from 'next/server'
  * Next.js Middleware - Runs before every request
  *
  * This middleware:
- * 1. Checks if setup is needed and redirects to /setup
+ * 1. Sets x-pathname header for server components (SetupGuard)
  * 2. Logs all API requests automatically (in debug mode)
+ *
+ * Note: Database health checks are handled by SetupGuard component
+ * which runs as a server component wrapper in the root layout.
  */
-
-// Routes that should bypass health check redirect
-const SETUP_BYPASS_PATHS = [
-  '/setup',
-  '/api/setup',
-  '/api/health',
-  '/_next',
-  '/favicon',
-  '/images',
-  '/api/docs',
-]
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -52,42 +44,12 @@ function _getStatusColor(status: number): string {
   return COLORS.reset
 }
 
-/**
- * Check if the current path should bypass setup checks
- */
-function shouldBypassSetupCheck(pathname: string): boolean {
-  return SETUP_BYPASS_PATHS.some(path => pathname.startsWith(path))
-}
-
-/**
- * Quick check if DATABASE_URL is configured
- * This is a fast check that runs in Edge middleware
- */
-function isDatabaseConfigured(): boolean {
-  const dbUrl = process.env.DATABASE_URL
-  if (!dbUrl) return false
-
-  // Basic format validation
-  return dbUrl.startsWith('mysql://')
-}
-
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
-  // === SETUP CHECK ===
-  // Skip setup check for allowed paths
-  if (!shouldBypassSetupCheck(path)) {
-    // Check if setup is needed based on cookie or env
-    const setupComplete = request.cookies.get('ppdb_setup_complete')?.value
-
-    // If no setup cookie and database not configured, redirect to setup
-    if (!setupComplete && !isDatabaseConfigured()) {
-      return NextResponse.redirect(new URL('/setup', request.url))
-    }
-
-    // For paths that need full health check, client will verify via /api/health
-    // This allows us to avoid blocking requests while still enforcing setup
-  }
+  // Create response with pathname header for SetupGuard
+  const response = NextResponse.next()
+  response.headers.set('x-pathname', path)
 
   // === API LOGGING ===
   // Only log API routes
@@ -104,8 +66,7 @@ export async function middleware(request: NextRequest) {
     )
   }
 
-  // Continue with the request
-  return NextResponse.next()
+  return response
 }
 
 // Configure which routes use this middleware

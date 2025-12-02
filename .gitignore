@@ -59,3 +59,6 @@ reference/archive
 /backups
 scripts/.next/
 scripts/note-words.txt
+
+logs/
+uploads/

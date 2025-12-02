@@ -8,15 +8,58 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Raw SQL Import with File-Based Audit Logging** (2025-12-02):
+  - Replaced Prisma-based temp DB reading with raw SQL to handle dirty data (e.g., `0000-00-00` dates)
+  - **Raw SQL Reader** (`src/lib/import/rawImporter.ts`):
+    - Uses mysql CLI to read records from temp database as raw text
+    - Bypasses Prisma's strict date parsing that fails on invalid MySQL dates
+    - Validates and repairs data in memory before raw SQL writes to production
+    - **CRITICAL**: Preserves original primary key IDs (breedID, customerID, animalID, noteID)
+    - Uses raw SQL INSERT with explicit IDs instead of Prisma auto-increment
+  - **File-Based Import Logging** (`src/lib/import/importLogger.ts`):
+    - One log file per table (breed, customer, animal, notes)
+    - Logs saved to `logs/import/[timestamp]/[table]_import_*.log`
+    - Categories: IMPORTED (clean), REPAIRED (with changes), SKIPPED (reason), FAILED (error)
+    - Every REPAIRED/SKIPPED/FAILED record shows original data values
+    - Summary statistics at end of each log file
+    - Log shows `ID: X → X` (same ID preserved, not changed)
+  - **Real-time Progress Updates**:
+    - Batch progress callback every 100 records during large imports
+    - UI shows percentage and processed/total counts during import
+    - Valid/Repaired/Skipped numbers display correctly after each table
+  - **Improved Error Handling**:
+    - Skipped records are NOT errors - import continues successfully
+    - Only true failures (database errors) show as errors
+    - Completion summary shows all table stats even with skipped records
+    - Fixed SSE race condition: error banner no longer shows after successful import
+    - Uses local closure variables to track completion state (avoids stale React state)
+    - Error state cleared automatically on successful import completion
+  - **Completion Summary Page**:
+    - Displays import stats for all tables (imported, repaired, skipped)
+    - Tables with skipped/repaired records show amber warning indicator
+    - Clean imports show green checkmark
+    - Links to log files for detailed audit trail
+  - **Summary Report File** (`IMPORT_SUMMARY.txt`):
+    - Quick-reference text file saved in logs folder after each import
+    - Shows per-table stats: total, imported, repaired, orphaned
+    - Orphaned records explained: animals with missing customerID, notes with missing animalID
+    - Grand totals section for all tables
+    - Import duration and timestamps
+  - Import flow: Raw SQL → Temp DB → Raw SQL read → Validate → Raw SQL write → Production
+
 - **Intelligent Onboarding & Startup Diagnostics System** (2025-12-02):
   - Comprehensive "fail fast, fail clearly" startup system for application initialization
   - **Diagnostic System** (`/api/health`):
     - 5 automated checks: DATABASE_URL validation, MySQL connection test, table existence, schema validation, data presence
     - Cached results (30s TTL) for performance
     - Clear pass/fail status with actionable error messages
+  - **SetupGuard Server Component** (`src/components/SetupGuard.tsx`):
+    - Server component wrapper in root layout enforces database health
+    - Verbose console logging with emoji indicators (✅/❌) for each check
+    - Automatic redirect to `/setup` when any check fails
+    - Smart bypass for `/setup`, `/api/`, and static assets
   - **Middleware Enhancement** (`src/middleware.ts`):
-    - Automatic redirect to `/setup` when database needs initialization
-    - Bypasses setup routes and static assets
+    - Sets `x-pathname` header for SetupGuard route detection
     - Cookie-based setup completion tracking
   - **Setup Page** (`/setup`):
     - Multi-step wizard: Diagnostics → Upload → Import → Complete
@@ -28,7 +71,7 @@ All notable changes to this project will be documented in this file.
     - Automatic archive extraction and SQL file detection
   - **Two-Stage Import System** (`/api/setup/import`):
     - Stage 1: Raw mysql client imports to temporary database (fast)
-    - Stage 2: Prisma-based validation with per-record remediation (thorough)
+    - Stage 2: Raw SQL read → validation → Prisma write to production (thorough)
     - Server-Sent Events (SSE) for real-time progress streaming
   - **Comprehensive Data Remediation**:
     - Per-table, per-field documented repair strategies
@@ -41,12 +84,13 @@ All notable changes to this project will be documented in this file.
     - Statistics: valid/repaired/skipped counts
   - New files:
     - `src/lib/diagnostics/` - types.ts, checks.ts, index.ts
-    - `src/lib/import/` - extractor.ts, remediation.ts, validator.ts, importer.ts
+    - `src/lib/import/` - extractor.ts, remediation.ts, validator.ts, importer.ts, rawImporter.ts, importLogger.ts
     - `src/lib/setup/` - tempDb.ts
     - `src/app/api/health/route.ts`
     - `src/app/api/setup/upload/route.ts`
     - `src/app/api/setup/import/route.ts`
     - `src/app/setup/page.tsx`
+    - `src/components/SetupGuard.tsx`
     - `src/components/setup/` - DiagnosticResults.tsx, FileUploader.tsx, ImportProgress.tsx, ImportLog.tsx
   - Dependencies added: `adm-zip`, `tar`, `uuid`
 

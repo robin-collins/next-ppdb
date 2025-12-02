@@ -19,12 +19,23 @@ interface UploadResult {
   originalSqlFilename: string
 }
 
+interface ImportStats {
+  [table: string]: {
+    total: number
+    imported: number
+    repaired: number
+    skipped: number
+    failed: number
+  }
+}
+
 export default function SetupPage() {
   const router = useRouter()
   const [step, setStep] = useState<WizardStep>('diagnostics')
   const [health, setHealth] = useState<HealthCheckResult | null>(null)
   const [healthLoading, setHealthLoading] = useState(true)
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null)
+  const [importStats, setImportStats] = useState<ImportStats | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const fetchHealth = useCallback(async () => {
@@ -59,7 +70,9 @@ export default function SetupPage() {
     setError(errorMsg)
   }
 
-  const handleImportComplete = () => {
+  const handleImportComplete = (stats: ImportStats) => {
+    setImportStats(stats)
+    setError(null) // Clear any previous errors on successful completion
     setStep('complete')
     // Set cookie to indicate setup is complete
     document.cookie = 'ppdb_setup_complete=true; path=/; max-age=31536000' // 1 year
@@ -115,229 +128,309 @@ export default function SetupPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-4xl px-6 py-8">
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center gap-4">
-            {['Diagnostics', 'Upload', 'Import', 'Complete'].map(
-              (label, index) => {
-                const stepMap: WizardStep[] = [
-                  'diagnostics',
-                  'upload',
-                  'importing',
-                  'complete',
-                ]
-                const currentStepIndex = stepMap.indexOf(step)
-                const isActive = index === currentStepIndex
-                const isCompleted = index < currentStepIndex
+      <main>
+        <div className="mx-auto max-w-4xl px-6 py-6">
+          {/* Progress Steps */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-4">
+              {['Diagnostics', 'Upload', 'Import', 'Complete'].map(
+                (label, index) => {
+                  const stepMap: WizardStep[] = [
+                    'diagnostics',
+                    'upload',
+                    'importing',
+                    'complete',
+                  ]
+                  const currentStepIndex = stepMap.indexOf(step)
+                  const isActive = index === currentStepIndex
+                  const isCompleted = index < currentStepIndex
 
-                return (
-                  <div key={label} className="flex items-center gap-2">
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
-                        isCompleted
-                          ? 'bg-green-500 text-white'
-                          : isActive
-                            ? 'bg-primary text-white'
-                            : 'bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      ) : (
-                        index + 1
+                  return (
+                    <div key={label} className="flex items-center gap-2">
+                      <div
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                          isCompleted
+                            ? 'bg-green-500 text-white'
+                            : isActive
+                              ? 'bg-primary text-white'
+                              : 'bg-gray-200 text-gray-500'
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        ) : (
+                          index + 1
+                        )}
+                      </div>
+                      <span
+                        className={`hidden sm:inline ${
+                          isActive
+                            ? 'font-medium text-gray-900'
+                            : 'text-gray-500'
+                        }`}
+                      >
+                        {label}
+                      </span>
+                      {index < 3 && (
+                        <div
+                          className={`h-0.5 w-8 ${
+                            isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                          }`}
+                        />
                       )}
                     </div>
-                    <span
-                      className={`hidden sm:inline ${
-                        isActive ? 'font-medium text-gray-900' : 'text-gray-500'
-                      }`}
-                    >
-                      {label}
-                    </span>
-                    {index < 3 && (
-                      <div
-                        className={`h-0.5 w-8 ${
-                          isCompleted ? 'bg-green-500' : 'bg-gray-200'
-                        }`}
-                      />
-                    )}
-                  </div>
-                )
-              }
-            )}
-          </div>
-        </div>
-
-        {/* Error Banner */}
-        {error && step !== 'error' && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-            <div className="flex items-start gap-3">
-              <svg
-                className="h-5 w-5 text-red-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div>
-                <p className="font-medium text-red-800">Error</p>
-                <p className="mt-1 text-sm text-red-700">{error}</p>
-              </div>
+                  )
+                }
+              )}
             </div>
           </div>
-        )}
 
-        {/* Content Card */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          {/* Step: Diagnostics */}
-          {step === 'diagnostics' && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Welcome to Setup
-                </h2>
-                <p className="mt-2 text-gray-600">
-                  Let&apos;s check your system and get your database ready.
-                </p>
+          {/* Error Banner */}
+          {error && step !== 'error' && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+              <div className="flex items-start gap-3">
+                <svg
+                  className="h-5 w-5 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <p className="font-medium text-red-800">Error</p>
+                  <p className="mt-1 text-sm text-red-700">{error}</p>
+                </div>
               </div>
+            </div>
+          )}
 
-              <DiagnosticResults health={health} loading={healthLoading} />
+          {/* Content Card */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            {/* Step: Diagnostics */}
+            {step === 'diagnostics' && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Welcome to Setup
+                  </h2>
+                  <p className="mt-2 text-gray-600">
+                    Let&apos;s check your system and get your database ready.
+                  </p>
+                </div>
 
-              {!healthLoading && needsImport && (
-                <div className="flex justify-center pt-4">
+                <DiagnosticResults health={health} loading={healthLoading} />
+
+                {!healthLoading && needsImport && (
+                  <div className="flex justify-center pt-4">
+                    <button
+                      onClick={() => setStep('upload')}
+                      className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-3 font-semibold text-white transition-colors"
+                    >
+                      Continue to Upload
+                    </button>
+                  </div>
+                )}
+
+                {!healthLoading && allChecksPassed && (
+                  <div className="flex justify-center pt-4">
+                    <button
+                      onClick={handleGoToApp}
+                      className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700"
+                    >
+                      Go to Application
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step: Upload */}
+            {step === 'upload' && (
+              <div className="space-y-6">
+                <FileUploader
+                  onUploadComplete={handleUploadComplete}
+                  onError={handleUploadError}
+                />
+
+                <div className="flex justify-between pt-4">
                   <button
-                    onClick={() => setStep('upload')}
-                    className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-3 font-semibold text-white transition-colors"
+                    onClick={() => setStep('diagnostics')}
+                    className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
                   >
-                    Continue to Upload
+                    Back
                   </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {!healthLoading && allChecksPassed && (
-                <div className="flex justify-center pt-4">
+            {/* Step: Importing */}
+            {step === 'importing' && uploadResult && (
+              <ImportProgress
+                uploadId={uploadResult.uploadId}
+                onComplete={handleImportComplete}
+                onError={handleImportError}
+              />
+            )}
+
+            {/* Step: Complete */}
+            {step === 'complete' && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+                    <svg
+                      className="h-10 w-10 text-green-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="mt-4 text-2xl font-bold text-gray-900">
+                    Setup Complete!
+                  </h2>
+                  <p className="mt-2 text-gray-600">
+                    Your database has been successfully initialized.
+                  </p>
+                </div>
+
+                {/* Import Summary */}
+                {importStats && (
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <h3 className="mb-3 font-semibold text-gray-800">
+                      Import Summary
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {['breeds', 'customers', 'animals', 'notes'].map(
+                        table => {
+                          const stats = importStats[table]
+                          if (!stats) return null
+                          const hasWarnings =
+                            stats.skipped > 0 || stats.repaired > 0
+                          return (
+                            <div
+                              key={table}
+                              className={`rounded-lg border p-3 ${
+                                hasWarnings
+                                  ? 'border-amber-200 bg-amber-50'
+                                  : 'border-green-200 bg-green-50'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-gray-800 capitalize">
+                                  {table}
+                                </span>
+                                {hasWarnings ? (
+                                  <span className="text-xs text-amber-600">
+                                    ⚠️ Has warnings
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-green-600">
+                                    ✓ Clean
+                                  </span>
+                                )}
+                              </div>
+                              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                                <div className="flex justify-between">
+                                  <span>Imported:</span>
+                                  <span className="font-medium text-green-700">
+                                    {stats.imported}
+                                  </span>
+                                </div>
+                                {stats.repaired > 0 && (
+                                  <div className="flex justify-between">
+                                    <span>Repaired:</span>
+                                    <span className="font-medium text-amber-600">
+                                      {stats.repaired}
+                                    </span>
+                                  </div>
+                                )}
+                                {stats.skipped > 0 && (
+                                  <div className="flex justify-between">
+                                    <span>Skipped:</span>
+                                    <span className="font-medium text-amber-600">
+                                      {stats.skipped}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                      )}
+                    </div>
+                    <p className="mt-3 text-xs text-gray-500">
+                      Check the import logs in the logs/import/ directory for
+                      details on any repaired or skipped records.
+                    </p>
+                  </div>
+                )}
+
+                <div className="text-center">
                   <button
                     onClick={handleGoToApp}
-                    className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700"
+                    className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-3 font-semibold text-white transition-colors"
                   >
-                    Go to Application
+                    Launch Application
                   </button>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
 
-          {/* Step: Upload */}
-          {step === 'upload' && (
-            <div className="space-y-6">
-              <FileUploader
-                onUploadComplete={handleUploadComplete}
-                onError={handleUploadError}
-              />
-
-              <div className="flex justify-between pt-4">
+            {/* Step: Error */}
+            {step === 'error' && (
+              <div className="space-y-6 text-center">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
+                  <svg
+                    className="h-10 w-10 text-red-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Import Failed
+                </h2>
+                <p className="text-gray-600">{error}</p>
                 <button
-                  onClick={() => setStep('diagnostics')}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
+                  onClick={handleRetry}
+                  className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-3 font-semibold text-white transition-colors"
                 >
-                  Back
+                  Try Again
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* Step: Importing */}
-          {step === 'importing' && uploadResult && (
-            <ImportProgress
-              uploadId={uploadResult.uploadId}
-              onComplete={handleImportComplete}
-              onError={handleImportError}
-            />
-          )}
-
-          {/* Step: Complete */}
-          {step === 'complete' && (
-            <div className="space-y-6 text-center">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-                <svg
-                  className="h-10 w-10 text-green-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Setup Complete!
-              </h2>
-              <p className="text-gray-600">
-                Your database has been successfully initialized. You&apos;re
-                ready to start using the application.
-              </p>
-              <button
-                onClick={handleGoToApp}
-                className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-3 font-semibold text-white transition-colors"
-              >
-                Launch Application
-              </button>
-            </div>
-          )}
-
-          {/* Step: Error */}
-          {step === 'error' && (
-            <div className="space-y-6 text-center">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-                <svg
-                  className="h-10 w-10 text-red-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Import Failed
-              </h2>
-              <p className="text-gray-600">{error}</p>
-              <button
-                onClick={handleRetry}
-                className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-3 font-semibold text-white transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </main>
     </div>

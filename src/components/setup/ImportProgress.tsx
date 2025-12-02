@@ -20,9 +20,19 @@ interface LogEntry {
   details?: string
 }
 
+interface FinalStats {
+  [table: string]: {
+    total: number
+    imported: number
+    repaired: number
+    skipped: number
+    failed: number
+  }
+}
+
 interface ImportProgressProps {
   uploadId: string
-  onComplete: () => void
+  onComplete: (stats: FinalStats) => void
   onError: (error: string) => void
 }
 
@@ -76,9 +86,17 @@ export default function ImportProgress({
 
     eventSource.addEventListener('table_complete', e => {
       const data = JSON.parse(e.data)
+      // Map server stats format to UI format
+      const mappedStats = {
+        totalRecords: data.stats.total,
+        processedRecords: data.stats.total,
+        validRecords: data.stats.imported,
+        repairedRecords: data.stats.repaired,
+        skippedRecords: data.stats.skipped,
+      }
       setTableStats(prev => ({
         ...prev,
-        [data.table]: data.stats,
+        [data.table]: mappedStats,
       }))
       setLogs(prev => [
         ...prev,
@@ -86,44 +104,64 @@ export default function ImportProgress({
           timestamp: new Date().toISOString(),
           level: 'success',
           table: data.table,
-          message: `Completed ${data.table}: ${data.stats.validRecords} imported, ${data.stats.repairedRecords} repaired, ${data.stats.skippedRecords} skipped`,
+          message: `Completed ${data.table}: ${mappedStats.validRecords} imported, ${mappedStats.repairedRecords} repaired, ${mappedStats.skippedRecords} skipped`,
         },
       ])
     })
 
+    // Track completion state locally to avoid stale closure issues
+    let completed = false
+    let errored = false
+
     eventSource.addEventListener('complete', e => {
+      completed = true
       const data = JSON.parse(e.data)
       setIsComplete(true)
       setPhase('complete')
       setMessage(data.message)
       eventSource.close()
-      setTimeout(onComplete, 2000)
+      // Pass final stats to parent after short delay for user to see completion
+      setTimeout(() => onComplete(data.stats), 2000)
     })
 
     eventSource.addEventListener('error', (e: Event) => {
+      // Only handle if we haven't completed successfully
+      if (completed) return
+
       // SSE error events from our API include data via MessageEvent
       const messageEvent = e as MessageEvent
       try {
         if (messageEvent.data) {
           const data = JSON.parse(messageEvent.data)
+          errored = true
           setHasError(true)
           onError(data.message || 'Import failed')
-        } else {
+          eventSource.close()
+        }
+        // If no data, this might just be a connection close - don't treat as error yet
+      } catch {
+        // Parse error with data means actual error from server
+        if (messageEvent.data) {
+          errored = true
           setHasError(true)
           onError('Import failed unexpectedly')
+          eventSource.close()
         }
-      } catch {
-        setHasError(true)
-        onError('Import failed unexpectedly')
       }
-      eventSource.close()
     })
 
     eventSource.onerror = () => {
-      if (!isComplete && !hasError) {
-        setHasError(true)
-        onError('Connection to server lost')
-        eventSource.close()
+      // Only treat as error if we haven't completed and haven't already errored
+      if (!completed && !errored) {
+        // Give a small delay to check if complete event is coming
+        setTimeout(() => {
+          if (!completed && !errored) {
+            errored = true
+            setHasError(true)
+            onError('Connection to server lost')
+            eventSource.close()
+          }
+        }, 500)
       }
     }
 
