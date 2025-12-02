@@ -4,6 +4,7 @@ services:
   traefik:
     image: traefik:v3.6.2
     container_name: traefik
+    hostname: traefik
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -32,6 +33,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql
+    hostname: mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -42,18 +44,27 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - web
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
     labels:
       - 'traefik.enable=false'
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
+    hostname: phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: mysql
-      PMA_ARBITRARY: 1
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - web
     labels:
@@ -63,25 +74,37 @@ services:
       - 'traefik.http.routers.phpmyadmin.tls.certresolver=myresolver'
       - 'traefik.http.services.phpmyadmin.loadbalancer.server.port=80'
 
-  nextjs-app:
+  next-ppdb:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/${GITHUB_REPOSITORY:-your-username}/ppdb-app:latest
-    container_name: nextjs-app
+    image: ghcr.io/${GITHUB_REPOSITORY:-robin-collins}/next-ppdb:latest
+    container_name: next-ppdb
+    hostname: next-ppdb
     restart: unless-stopped
     environment:
       # Construct DATABASE_URL from MySQL variables to avoid duplication
-      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
       DEBUG: ${DEBUG:-false}
       HOSTNAME: "0.0.0.0"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      # Returns healthy if /api/health responds (any HTTP status)
+      # This allows Traefik to route traffic during setup phase
+      # The endpoint returns 200 (healthy), 503 (needs_setup), or 500 (unhealthy)
+      # Note: -s (silent), -o /dev/null (discard output), NO -f (don't fail on HTTP errors)
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     networks:
       - web
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.nextjs.rule=Host(`www.${DOMAIN_NAME}`) || Host(`${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.nextjs.rule=Host(`next-ppdb.${DOMAIN_NAME}`)'
       - 'traefik.http.routers.nextjs.entrypoints=websecure'
       - 'traefik.http.routers.nextjs.tls.certresolver=myresolver'
       - 'traefik.http.services.nextjs.loadbalancer.server.port=3000'
