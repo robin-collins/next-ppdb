@@ -1,10 +1,8 @@
-- Next.js Suspense requirement: Wrapped `src/app/page.tsx` content in `<Suspense fallback={null}>` to satisfy `useSearchParams()` prerendering requirement on the home page. (2025-11-16)
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.1] 2025-12-02
 
 ### Fixed
 
@@ -536,3 +534,4 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **Animal Detail Page Implementation** (2025-11-18):
+- Next.js Suspense requirement: Wrapped `src/app/page.tsx` content in `<Suspense fallback={null}>` to satisfy `useSearchParams()` prerendering requirement on the home page. (2025-11-16)
