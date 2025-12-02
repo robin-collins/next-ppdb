@@ -84,6 +84,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Copy startup script that runs migrations before starting the server
 COPY --chown=nextjs:nodejs docker/docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Environment variables must be redefined at run time
 # Environment variables must be redefined at run time

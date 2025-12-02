@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] 2025-12-02
+
+### Fixed
+
+- **docker-entrypoint.sh**
+  - Added `chmod +x` in the Dockerfile to make the script executable in the container.
+
 ## [0.1.1] 2025-12-02
 
 ### Fixed

@@ -59,7 +59,9 @@ Once the release is published, the **GitHub Actions** workflow (`.github/workflo
 2.  **Verify Artifact**:
     - Once the workflow completes successfully (green checkmark), go to the main repository page.
     - Look for the **Packages** section (usually in the right sidebar).
-    - You should see the `ppdb-app` (or repository name) package updated with the new tag (`v1.0.0`) and `latest`.
+    - You should see the `next-ppdb` (or repository name) package updated with the new tag (`v1.0.0`) and `latest`.
+    - to pull the image you will need to first authenticate to the ghcr with docker using `echo "${GITHUB_TOKEN}" | docker login ghcr.io -u robin-collins --password-stdin`
+    - then you can pull the image using `docker pull ghcr.io/robin-collins/next-ppdb:latest`
 
 ## Troubleshooting
 
