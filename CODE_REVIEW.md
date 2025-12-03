@@ -106,12 +106,114 @@ export const env = envSchema.parse(process.env)
 **Risk**:
 - DoS attacks via expensive search queries
 - Database exhaustion
-- Cost explosion in cloud environments
+- Resource exhaustion on self-hosted infrastructure
 
-**Recommendation**: Implement rate limiting middleware:
-- Use `@upstash/ratelimit` or similar
-- Apply to all API routes
-- Different limits for different endpoint categories
+**Recommendation**: Implement rate limiting middleware using self-hosted Redis:
+
+**Why Redis in Docker Compose (not Upstash)**:
+- ✅ Already self-hosting with Docker Compose
+- ✅ No external dependencies or cloud costs
+- ✅ Lower latency (local network)
+- ✅ Full control over data
+- ✅ Works offline/on private networks
+
+**Implementation**:
+1. Add Redis service to `docker-compose.yml`
+2. Use `ioredis` + `rate-limiter-flexible` packages
+3. Apply to all API routes via middleware
+4. Different limits for different endpoint categories
+
+**Example Docker Compose Addition**:
+```yaml
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  redis-data:
+```
+
+**Rate Limiting Middleware** (`src/middleware/rateLimit.ts`):
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { RateLimiterRedis } from 'rate-limiter-flexible'
+import Redis from 'ioredis'
+
+const redis = new Redis({
+  host: process.env.REDIS_HOST || 'redis',
+  port: parseInt(process.env.REDIS_PORT || '6379'),
+  enableOfflineQueue: false,
+})
+
+const rateLimiters = {
+  search: new RateLimiterRedis({
+    storeClient: redis,
+    keyPrefix: 'rl:search',
+    points: 20, // requests
+    duration: 60, // per 60 seconds
+  }),
+  mutation: new RateLimiterRedis({
+    storeClient: redis,
+    keyPrefix: 'rl:mutation',
+    points: 10,
+    duration: 60,
+  }),
+  default: new RateLimiterRedis({
+    storeClient: redis,
+    keyPrefix: 'rl:default',
+    points: 30,
+    duration: 60,
+  }),
+}
+
+export async function rateLimit(
+  request: NextRequest,
+  type: 'search' | 'mutation' | 'default' = 'default'
+) {
+  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+
+  try {
+    await rateLimiters[type].consume(ip)
+    return null // No rate limit hit
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: 'Rate limit exceeded',
+        message: 'Too many requests. Please try again later.',
+      },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': '60',
+          'X-RateLimit-Limit': `${rateLimiters[type].points}`,
+          'X-RateLimit-Remaining': '0',
+        }
+      }
+    )
+  }
+}
+```
+
+**Usage in API Routes**:
+```typescript
+export async function GET(request: NextRequest) {
+  const rateLimitResponse = await rateLimit(request, 'search')
+  if (rateLimitResponse) return rateLimitResponse
+
+  // ... rest of handler
+}
+```
 
 ---
 
@@ -1411,8 +1513,10 @@ Despite the issues identified, this codebase has many strengths:
    - Re-throw errors after setting state
    - Files: `animalsStore.ts`, `customersStore.ts`
 
-4. **Implement rate limiting** (4 hours)
-   - Use `@upstash/ratelimit` or similar
+4. **Implement rate limiting with self-hosted Redis** (4 hours)
+   - Add Redis service to docker-compose.yml
+   - Install `ioredis` and `rate-limiter-flexible` packages
+   - Create rate limiting middleware
    - Apply to all API routes
    - Document limits in OpenAPI spec
 
