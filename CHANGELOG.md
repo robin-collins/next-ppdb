@@ -48,6 +48,14 @@ All notable changes to this project will be documented in this file.
     - Re-throw errors after setting error state
     - Use `finally` block to clear mutating flag
   - Callers can now detect failures and handle appropriately
+  - Updated `animals/[id]/page.tsx` with:
+    - try/catch around all mutation calls
+    - Toast notifications for success/error feedback
+    - Buttons disabled during mutations with loading text
+  - Verified `customer/[id]/page.tsx` already has comprehensive error handling:
+    - try/catch around all mutation calls
+    - Toast notifications for success/error feedback
+    - Local loading states for button disabling
 
 ### Added
 

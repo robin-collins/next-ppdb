@@ -137,11 +137,14 @@
   - [x] Update mutations to set mutating flag
   - [x] Use `finally` block to clear mutating flag
 
-- [ ] Update component error handling
-  - [ ] Wrap store calls in try/catch
-  - [ ] Only navigate on success
-  - [ ] Show toast on error
-  - [ ] Use mutating flag to disable buttons
+- [x] Update component error handling (animals/[id]/page.tsx)
+  - [x] Wrap store calls in try/catch
+  - [x] Show toast on success/error
+  - [x] Use mutating flag to disable buttons during operations
+- [x] Verified customer/[id]/page.tsx error handling (already implemented)
+  - [x] try/catch around all mutation calls
+  - [x] Toast notifications for success/error
+  - [x] Local loading states for button disabling
 
 - [ ] Update tests
   - [ ] Test error re-throwing

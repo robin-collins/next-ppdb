@@ -7,6 +7,7 @@ import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 import AnimalAvatar from '@/components/AnimalAvatar'
+import Toast from '@/components/Toast'
 import { routes } from '@/lib/routes'
 
 interface Breed {
@@ -26,6 +27,7 @@ export default function AnimalPage() {
     addNote,
     deleteNote,
     loading,
+    mutating,
     error,
   } = useAnimalsStore()
 
@@ -63,6 +65,12 @@ export default function AnimalPage() {
     id: number
     date: string
     typedDate: string
+  } | null>(null)
+
+  // Toast state for error/success messages
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info' | 'warning'
   } | null>(null)
 
   useEffect(() => {
@@ -139,21 +147,31 @@ export default function AnimalPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedAnimal) {
-      await updateAnimal(selectedAnimal.id, {
-        ...formData,
-        sex: formData.sex as 'Male' | 'Female' | 'Unknown',
-      })
+      try {
+        await updateAnimal(selectedAnimal.id, {
+          ...formData,
+          sex: formData.sex as 'Male' | 'Female' | 'Unknown',
+        })
+        setToast({ message: 'Record updated successfully', type: 'success' })
+      } catch {
+        setToast({ message: 'Failed to update record', type: 'error' })
+      }
     }
   }
 
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedAnimal && newNoteText.trim()) {
-      await addNote(selectedAnimal.id, {
-        notes: newNoteText,
-        serviceDate: new Date().toISOString().split('T')[0],
-      })
-      setNewNoteText('')
+      try {
+        await addNote(selectedAnimal.id, {
+          notes: newNoteText,
+          serviceDate: new Date().toISOString().split('T')[0],
+        })
+        setNewNoteText('')
+        setToast({ message: 'Note added successfully', type: 'success' })
+      } catch {
+        setToast({ message: 'Failed to add note', type: 'error' })
+      }
     }
   }
 
@@ -172,8 +190,13 @@ export default function AnimalPage() {
 
   const handleDeleteNote = async () => {
     if (selectedAnimal && deleteNoteConfirm) {
-      await deleteNote(deleteNoteConfirm.id, selectedAnimal.id)
-      setDeleteNoteConfirm(null)
+      try {
+        await deleteNote(deleteNoteConfirm.id, selectedAnimal.id)
+        setDeleteNoteConfirm(null)
+        setToast({ message: 'Note deleted successfully', type: 'success' })
+      } catch {
+        setToast({ message: 'Failed to delete note', type: 'error' })
+      }
     }
   }
 
@@ -193,13 +216,17 @@ export default function AnimalPage() {
       thisVisit: today,
     }
 
-    setFormData(updatedFormData)
-
     if (selectedAnimal) {
-      await updateAnimal(selectedAnimal.id, {
-        ...updatedFormData,
-        sex: updatedFormData.sex as 'Male' | 'Female' | 'Unknown',
-      })
+      try {
+        await updateAnimal(selectedAnimal.id, {
+          ...updatedFormData,
+          sex: updatedFormData.sex as 'Male' | 'Female' | 'Unknown',
+        })
+        setFormData(updatedFormData)
+        setToast({ message: 'Dates updated successfully', type: 'success' })
+      } catch {
+        setToast({ message: 'Failed to update dates', type: 'error' })
+      }
     }
   }
 
@@ -623,7 +650,8 @@ export default function AnimalPage() {
                       <div className="form-actions">
                         <button
                           type="submit"
-                          className="btn btn-success btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#047857] hover:bg-[#059669] hover:shadow-md"
+                          disabled={mutating}
+                          className="btn btn-success btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#047857] hover:bg-[#059669] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <svg
                             fill="none"
@@ -637,12 +665,13 @@ export default function AnimalPage() {
                               d="M5 13l4 4L19 7"
                             />
                           </svg>
-                          Update Record
+                          {mutating ? 'Updating...' : 'Update Record'}
                         </button>
                         <button
                           type="button"
                           onClick={handleChangeDates}
-                          className="btn btn-warning btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#b45309] hover:bg-[#d97706] hover:shadow-md"
+                          disabled={mutating}
+                          className="btn btn-warning btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[#b45309] hover:bg-[#d97706] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <svg
                             fill="none"
@@ -701,7 +730,8 @@ export default function AnimalPage() {
                     />
                     <button
                       type="submit"
-                      className="btn btn-primary btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[var(--primary-dark)] hover:bg-[var(--primary-hover)] hover:shadow-md"
+                      disabled={mutating || !newNoteText.trim()}
+                      className="btn btn-primary btn-large border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-[var(--primary-dark)] hover:bg-[var(--primary-hover)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <svg
                         fill="none"
@@ -715,7 +745,7 @@ export default function AnimalPage() {
                           d="M12 4v16m8-8H4"
                         />
                       </svg>
-                      Insert NOTE
+                      {mutating ? 'Adding...' : 'Insert NOTE'}
                     </button>
                   </form>
 
@@ -952,6 +982,15 @@ export default function AnimalPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   )
