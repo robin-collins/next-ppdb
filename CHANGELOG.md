@@ -189,6 +189,21 @@ All notable changes to this project will be documented in this file.
   - Returns detailed summary of all breeds and animals updated
   - Files: `src/app/api/breeds/pricing/route.ts`, `src/components/breeds/PricingModifier.tsx`, `src/components/breeds/BreedTable.tsx` (updated)
 
+### Changed
+
+- **Typography Update (v2.1):** Changed from Cormorant/DM Sans/Outfit to Lora/Rubik pairing
+  - Display font: Cormorant → Lora (serif) for refined elegance
+  - Body font: DM Sans → Rubik (sans-serif) for warm, friendly readability
+  - UI/Accent font: Outfit → Rubik for consistency
+  - Updated STYLE_GUIDE.md to reflect new typography system
+  - Updated src/app/globals.css with new font imports and CSS variables
+  - Applied new brand color palette (golden brown, teal green, aqua) from logo
+  - Added paw print pattern overlay and updated background gradient
+  - Enhanced animation keyframes (fadeInUp, fadeInDown, shimmer, spin, bounce, pulse, float)
+- **Documentation Overhaul:** Completely rewrote README.md with comprehensive installation instructions for Bash and PowerShell, features list, and contributing guidelines.
+
+### Added
+
 - **Daily Totals Report Page** (2025-12-01):
   - New printable report page at `/reports/daily-totals` for end-of-day takings reconciliation
   - Date selector defaults to today, allows selecting any past date

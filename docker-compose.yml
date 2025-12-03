@@ -74,6 +74,9 @@ services:
       - 'traefik.http.routers.phpmyadmin.entrypoints=websecure'
       - 'traefik.http.routers.phpmyadmin.tls.certresolver=myresolver'
       - 'traefik.http.services.phpmyadmin.loadbalancer.server.port=80'
+      # IP allowlist for local networks only
+      - 'traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-ipallowlist'
+      - 'traefik.http.middlewares.phpmyadmin-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12'
 
   next-ppdb:
     # build:
@@ -110,6 +113,9 @@ services:
       - 'traefik.http.routers.nextjs.entrypoints=websecure'
       - 'traefik.http.routers.nextjs.tls.certresolver=myresolver'
       - 'traefik.http.services.nextjs.loadbalancer.server.port=3000'
+      # IP allowlist for local networks only
+      - 'traefik.http.routers.nextjs.middlewares=nextjs-ipallowlist'
+      - 'traefik.http.middlewares.nextjs-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12'
 
 networks:
   web:
