@@ -21,31 +21,36 @@
 
 ### Goals
 
-- **Week 1**: Fix all 5 critical issues (11 hours) → Safe for internal production
+- **Week 1**: Fix all 4 critical issues (9 hours) → Safe for internal production
 - **Week 2**: Address 13 important issues (25 hours) → Full production ready
+
+**Note**: Foreign key validation (originally C5) is **already implemented** ✅ - See CODE_REVIEW.md Section 1.2 for details.
 
 ### Success Metrics
 
 - ✅ Zero console.log in production code
-- ✅ Rate limiting on all API routes (max 100 req/min per IP)
+- ✅ Rate limiting on all API routes via self-hosted Redis
 - ✅ All errors properly handled and re-thrown
 - ✅ Environment validation on startup
-- ✅ User-friendly error messages for all operations
+- ✅ Foreign key validation with user-friendly feedback (already implemented ✅)
 - ✅ Database queries optimized (remove N+1 patterns)
 - ✅ 30% reduction in bundle size (Server Components)
 
 ### Team Allocation
 
-- **Backend Developer**: 20 hours (API routes, rate limiting, error handling)
+- **Backend Developer**: 18 hours (API routes, rate limiting, error handling)
 - **Frontend Developer**: 16 hours (Server Components migration, stores)
-- **DevOps**: 8 hours (env validation, Docker health checks)
-- **QA**: 12 hours (testing, E2E updates)
+- **DevOps**: 9 hours (env validation, Redis setup, Docker health checks)
+- **QA**: 11 hours (testing, E2E updates)
 
 ---
 
 ## Critical Issues (Week 1)
 
-Total Time: ~11 hours
+Total Time: ~9 hours
+
+**Note**: Foreign key validation was originally listed as C5 but is **already fully implemented** ✅
+See CODE_REVIEW.md Section 1.2 for detailed analysis.
 
 ---
 
@@ -247,143 +252,117 @@ curl "http://localhost:3000/api/admin/backup"
 
 #### Implementation Steps
 
-**Step 1**: Choose Rate Limiting Strategy (15 min)
+**Step 1**: Set Up Redis in Docker Compose (30 min)
 
-**Option A: Upstash Redis** (Recommended for production)
-- Pros: Distributed, works across containers, persistent
-- Cons: Requires Redis setup
+**Approach: Self-Hosted Redis** (Recommended for this architecture)
+- Pros: No cloud costs, lower latency, full control, works offline
+- Cons: None for self-hosted setup
+- Why not Upstash: Already self-hosting, no need for external service
 
-**Option B: In-Memory** (Good for single-instance deployments)
-- Pros: No external dependencies
-- Cons: Resets on restart, doesn't work with multiple containers
+**Add to docker-compose.yml**:
+```yaml
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
-**Decision**: Use **Upstash for production**, **in-memory for dev**.
+volumes:
+  redis-data:
+```
 
 **Step 2**: Install Dependencies (10 min)
 
 ```bash
-pnpm add @upstash/ratelimit @upstash/redis
+pnpm add ioredis rate-limiter-flexible
+pnpm add -D @types/ioredis
 ```
 
 **Step 3**: Create Rate Limiter Utility (1.5 hours)
 
 ```typescript
 // src/lib/ratelimit.ts
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
+import Redis from 'ioredis'
+import { RateLimiterRedis, RateLimiterMemory } from 'rate-limiter-flexible'
 
-// In-memory cache for development
-class InMemoryCache {
-  private cache = new Map<string, { count: number; reset: number }>()
-
-  async get(key: string): Promise<number | null> {
-    const entry = this.cache.get(key)
-    if (!entry) return null
-    if (Date.now() > entry.reset) {
-      this.cache.delete(key)
-      return null
-    }
-    return entry.count
-  }
-
-  async set(key: string, value: number, expiresIn: number): Promise<void> {
-    this.cache.set(key, {
-      count: value,
-      reset: Date.now() + expiresIn * 1000,
-    })
-  }
-
-  async incr(key: string): Promise<number> {
-    const current = await this.get(key)
-    const newValue = (current || 0) + 1
-    if (!this.cache.has(key)) {
-      await this.set(key, newValue, 60) // 60 second window
-    } else {
-      const entry = this.cache.get(key)!
-      entry.count = newValue
-    }
-    return newValue
-  }
-}
-
-// Redis client (production)
-const redis = process.env.UPSTASH_REDIS_URL
+// Redis client (uses Docker Compose service)
+const redis = process.env.REDIS_HOST
   ? new Redis({
-      url: process.env.UPSTASH_REDIS_URL,
-      token: process.env.UPSTASH_REDIS_TOKEN!,
+      host: process.env.REDIS_HOST || 'redis',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      enableOfflineQueue: false,
     })
   : null
 
-// Fallback to in-memory for development
-const memoryCache = new InMemoryCache()
-
 // Rate limiters by endpoint type
 export const rateLimiters = {
-  // Standard API routes: 100 requests per minute
+  // Standard API routes: 30 requests per minute
   api: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(100, '1 m'),
-        analytics: true,
-        prefix: 'ratelimit:api',
+    ? new RateLimiterRedis({
+        storeClient: redis,
+        keyPrefix: 'rl:api',
+        points: 30,
+        duration: 60,
       })
-    : null,
+    : new RateLimiterMemory({ points: 30, duration: 60 }),
 
-  // Search endpoints: 50 requests per minute (more expensive)
+  // Search endpoints: 20 requests per minute (more expensive)
   search: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(50, '1 m'),
-        analytics: true,
-        prefix: 'ratelimit:search',
+    ? new RateLimiterRedis({
+        storeClient: redis,
+        keyPrefix: 'rl:search',
+        points: 20,
+        duration: 60,
       })
-    : null,
+    : new RateLimiterMemory({ points: 20, duration: 60 }),
 
-  // Admin endpoints: 10 requests per minute
-  admin: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(10, '1 m'),
-        analytics: true,
-        prefix: 'ratelimit:admin',
+  // Mutation endpoints: 10 requests per minute
+  mutation: redis
+    ? new RateLimiterRedis({
+        storeClient: redis,
+        keyPrefix: 'rl:mutation',
+        points: 10,
+        duration: 60,
       })
-    : null,
+    : new RateLimiterMemory({ points: 10, duration: 60 }),
 }
 
-// In-memory fallback implementation
+// Check rate limit
 export async function checkRateLimit(
   identifier: string,
-  type: 'api' | 'search' | 'admin' = 'api'
+  type: 'api' | 'search' | 'mutation' = 'api'
 ): Promise<{ success: boolean; limit: number; remaining: number; reset: number }> {
-  // Use Upstash in production
-  if (rateLimiters[type]) {
-    const result = await rateLimiters[type]!.limit(identifier)
+  try {
+    const result = await rateLimiters[type].consume(identifier)
     return {
-      success: result.success,
-      limit: result.limit,
-      remaining: result.remaining,
-      reset: result.reset,
+      success: true,
+      limit: rateLimiters[type].points,
+      remaining: result.remainingPoints,
+      reset: Date.now() + result.msBeforeNext,
     }
-  }
-
-  // Fallback to in-memory for development
-  const limits = { api: 100, search: 50, admin: 10 }
-  const limit = limits[type]
-  const key = `${type}:${identifier}`
-  const count = await memoryCache.incr(key)
-  const success = count <= limit
-
-  return {
-    success,
-    limit,
-    remaining: Math.max(0, limit - count),
-    reset: Date.now() + 60000, // 1 minute from now
+  } catch (error: any) {
+    // Rate limit exceeded
+    return {
+      success: false,
+      limit: rateLimiters[type].points,
+      remaining: 0,
+      reset: Date.now() + (error.msBeforeNext || 60000),
+    }
   }
 }
 
 // Helper to get client identifier
 export function getClientIdentifier(request: Request): string {
-  // Try to get real IP from headers (Traefik, Cloudflare, etc.)
+  // Try to get real IP from headers (Traefik, etc.)
   const forwarded = request.headers.get('x-forwarded-for')
   const realIp = request.headers.get('x-real-ip')
 
@@ -490,9 +469,9 @@ export async function GET(request: NextRequest) {
 
 ```bash
 # .env.example (add these)
-# Rate Limiting (Production - Upstash Redis)
-UPSTASH_REDIS_URL=https://your-redis.upstash.io
-UPSTASH_REDIS_TOKEN=your-token-here
+# Rate Limiting (Self-Hosted Redis)
+REDIS_HOST=redis  # Docker Compose service name
+REDIS_PORT=6379
 
 # Development: Leave blank to use in-memory rate limiting
 ```
@@ -504,21 +483,10 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']),
   DEBUG: z.string().optional(),
 
-  // Optional for development, required for production
-  UPSTASH_REDIS_URL: z.string().url().optional(),
-  UPSTASH_REDIS_TOKEN: z.string().optional(),
-}).refine(
-  (data) => {
-    // In production, Redis is required
-    if (data.NODE_ENV === 'production') {
-      return !!data.UPSTASH_REDIS_URL && !!data.UPSTASH_REDIS_TOKEN
-    }
-    return true
-  },
-  {
-    message: 'UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN required in production',
-  }
-)
+  // Optional: Redis for rate limiting (falls back to in-memory if not set)
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().optional().transform(Number),
+})
 ```
 
 #### Testing
@@ -825,17 +793,19 @@ const envSchema = z.object({
     .transform(val => val === 'true')
     .describe('Enable debug logging'),
 
-  // Optional: Rate limiting (required in production)
-  UPSTASH_REDIS_URL: z
+  // Optional: Redis for rate limiting (falls back to in-memory if not set)
+  REDIS_HOST: z
     .string()
-    .url()
     .optional()
-    .describe('Upstash Redis URL for rate limiting'),
+    .default('redis')
+    .describe('Redis host for rate limiting'),
 
-  UPSTASH_REDIS_TOKEN: z
+  REDIS_PORT: z
     .string()
     .optional()
-    .describe('Upstash Redis token'),
+    .default('6379')
+    .transform(Number)
+    .describe('Redis port'),
 
   // Optional: Server config
   PORT: z
@@ -852,20 +822,6 @@ const envSchema = z.object({
     .default('0.0.0.0')
     .describe('Server hostname'),
 })
-  .refine(
-    data => {
-      // In production, Redis is required for rate limiting
-      if (data.NODE_ENV === 'production') {
-        return !!data.UPSTASH_REDIS_URL && !!data.UPSTASH_REDIS_TOKEN
-      }
-      return true
-    },
-    {
-      message:
-        'UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN are required in production for rate limiting',
-      path: ['UPSTASH_REDIS_URL'],
-    }
-  )
   .refine(
     data => {
       // Validate DATABASE_URL format
@@ -977,13 +933,13 @@ pnpm dev
 DATABASE_URL="postgres://localhost/db" pnpm dev
 # Expect: Error "must start with mysql://"
 
-# Test 3: Production without Redis
-NODE_ENV=production pnpm build
-# Expect: Error "UPSTASH_REDIS_URL required in production"
-
-# Test 4: Valid config
+# Test 3: Valid config
 pnpm dev
 # Expect: "Environment validation successful" in logs
+
+# Test 4: Redis connection (optional)
+REDIS_HOST=redis pnpm dev
+# Expect: Connects to Redis (check logs for "rate limiting: redis")
 ```
 
 #### Acceptance Criteria
@@ -996,339 +952,43 @@ pnpm dev
 
 ---
 
-### C5. No Foreign Key Validation Feedback 🔴
+### ~~C5. No Foreign Key Validation Feedback~~ ✅ ALREADY IMPLEMENTED
 
-**Severity**: MEDIUM - Poor UX, cryptic errors
-**Time**: 2 hours
-**Files**: Customer/Breed delete endpoints
-**Owner**: Backend Developer
+**Status**: **COMPLETE** - No action needed
 
-#### Current State
+**Analysis**: Code review (CODE_REVIEW.md Section 1.2) confirmed that foreign key validation is **excellently implemented** across all delete endpoints:
 
-**Problem**: Deleting customers/breeds with dependencies returns cryptic Prisma errors.
+- ✅ **Customer Delete** (`src/app/api/customers/[id]/route.ts:228-373`):
+  - Offers selective animal "rehoming" to another customer
+  - Allows users to choose which animals to migrate
+  - Explicitly deletes notes for animals being deleted
+  - Returns clear response: `{ success: true, migratedAnimals: 2, deletedAnimals: 3 }`
 
-**Current Behavior**:
-```bash
-DELETE /api/customers/123
-# Has 5 animals
+- ✅ **Breed Delete** (`src/app/api/breeds/[id]/route.ts:84-147`):
+  - Offers "re-breed" migration to different breed
+  - Clear error: "There are ${count} animal(s) using this breed."
+  - Validates migration target exists
 
-Response:
-{
-  "error": "Failed to delete customer",
-  "details": "Foreign key constraint failed on the field: `fk_animal_customer`"
-}
-```
+- ✅ **Animal Delete** (`src/app/api/animals/[id]/route.ts:160-191`):
+  - Explicitly deletes notes before animal (cascade)
+  - Returns count of deleted notes: `{ success: true, deletedNotes: 5 }`
 
-**Expected Behavior**:
-```json
-{
-  "error": "Cannot delete customer with existing animals",
-  "details": "Customer 'John Smith' has 5 animal(s). Please remove or reassign them first.",
-  "animals": [
-    { "id": 1, "name": "Max" },
-    { "id": 2, "name": "Bella" }
-  ]
-}
-```
-
-#### Implementation Steps
-
-**Step 1**: Add Pre-Delete Validation for Customers (45 min)
-
-```typescript
-// src/app/api/customers/[id]/route.ts
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  return withRateLimit(request, async () => {
-    try {
-      const customerId = parseInt(params.id)
-
-      if (isNaN(customerId)) {
-        return NextResponse.json(
-          { error: 'Invalid customer ID' },
-          { status: 400 }
-        )
-      }
-
-      // 1. Check if customer exists
-      const customer = await prisma.customer.findUnique({
-        where: { customerID: customerId },
-        select: {
-          customerID: true,
-          surname: true,
-          firstname: true,
-          animal: {
-            select: {
-              animalID: true,
-              animalname: true,
-            },
-          },
-        },
-      })
-
-      if (!customer) {
-        return NextResponse.json(
-          { error: 'Customer not found' },
-          { status: 404 }
-        )
-      }
-
-      // 2. Check for dependent animals
-      if (customer.animal.length > 0) {
-        const customerName = [customer.firstname, customer.surname]
-          .filter(Boolean)
-          .join(' ')
-
-        return NextResponse.json(
-          {
-            error: 'Cannot delete customer with existing animals',
-            message: `Customer "${customerName}" has ${customer.animal.length} animal(s). Please remove or reassign them first.`,
-            details: {
-              customerId: customer.customerID,
-              customerName,
-              animalCount: customer.animal.length,
-              animals: customer.animal.map(a => ({
-                id: a.animalID,
-                name: a.animalname,
-              })),
-            },
-          },
-          { status: 409 } // Conflict
-        )
-      }
-
-      // 3. Safe to delete - no dependencies
-      await prisma.customer.delete({
-        where: { customerID: customerId },
-      })
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Customer deleted successfully',
-        },
-        { status: 200 }
-      )
-    } catch (error) {
-      log.error('Customer deletion failed', error)
-
-      return NextResponse.json(
-        {
-          error: 'Failed to delete customer',
-          message:
-            error instanceof Error ? error.message : 'Unknown error occurred',
-        },
-        { status: 500 }
-      )
-    }
-  }, 'api')
-}
-```
-
-**Step 2**: Add Pre-Delete Validation for Breeds (45 min)
-
-```typescript
-// src/app/api/breeds/[id]/route.ts
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  return withRateLimit(request, async () => {
-    try {
-      const breedId = parseInt(params.id)
-
-      if (isNaN(breedId)) {
-        return NextResponse.json(
-          { error: 'Invalid breed ID' },
-          { status: 400 }
-        )
-      }
-
-      // 1. Check if breed exists and get animal count
-      const breed = await prisma.breed.findUnique({
-        where: { breedID: breedId },
-        select: {
-          breedID: true,
-          breedname: true,
-          _count: {
-            select: { animal: true },
-          },
-        },
-      })
-
-      if (!breed) {
-        return NextResponse.json(
-          { error: 'Breed not found' },
-          { status: 404 }
-        )
-      }
-
-      // 2. Check for dependent animals
-      if (breed._count.animal > 0) {
-        return NextResponse.json(
-          {
-            error: 'Cannot delete breed with existing animals',
-            message: `Breed "${breed.breedname}" is assigned to ${breed._count.animal} animal(s). Please reassign them first.`,
-            details: {
-              breedId: breed.breedID,
-              breedName: breed.breedname,
-              animalCount: breed._count.animal,
-            },
-          },
-          { status: 409 }
-        )
-      }
-
-      // 3. Safe to delete
-      await prisma.breed.delete({
-        where: { breedID: breedId },
-      })
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Breed deleted successfully',
-        },
-        { status: 200 }
-      )
-    } catch (error) {
-      log.error('Breed deletion failed', error)
-
-      return NextResponse.json(
-        {
-          error: 'Failed to delete breed',
-          message:
-            error instanceof Error ? error.message : 'Unknown error occurred',
-        },
-        { status: 500 }
-      )
-    }
-  }, 'api')
-}
-```
-
-**Step 3**: Update Client-Side Error Handling (30 min)
-
-```typescript
-// src/components/customer/CustomerHeader.tsx
-
-async function handleDelete() {
-  if (!confirm(`Delete customer ${customer.surname}?`)) {
-    return
-  }
-
-  try {
-    await deleteCustomer(customer.id)
-    showToast('success', 'Customer deleted successfully')
-    router.push('/customers')
-  } catch (error) {
-    // Check if it's a 409 Conflict (has dependencies)
-    if (error instanceof Error && error.message.includes('existing animals')) {
-      // Show detailed error modal with list of animals
-      setShowDependenciesModal(true)
-    } else {
-      showToast('error', error instanceof Error ? error.message : 'Failed to delete')
-    }
-  }
-}
-```
-
-```tsx
-// Add dependencies modal
-{showDependenciesModal && (
-  <Modal onClose={() => setShowDependenciesModal(false)}>
-    <h2>Cannot Delete Customer</h2>
-    <p>
-      This customer has {customer.animals.length} animal(s) that must be removed first:
-    </p>
-    <ul>
-      {customer.animals.map(animal => (
-        <li key={animal.id}>
-          <Link href={`/animals/${animal.id}`}>{animal.name}</Link>
-        </li>
-      ))}
-    </ul>
-    <button onClick={() => setShowDependenciesModal(false)}>Close</button>
-  </Modal>
-)}
-```
-
-#### Testing
-
-```typescript
-// src/__tests__/api/customers.test.ts
-
-describe('DELETE /api/customers/[id]', () => {
-  it('should prevent deletion of customer with animals', async () => {
-    // Mock customer with animals
-    mockPrisma.customer.findUnique.mockResolvedValue({
-      customerID: 1,
-      surname: 'Smith',
-      firstname: 'John',
-      animal: [
-        { animalID: 1, animalname: 'Max' },
-        { animalID: 2, animalname: 'Bella' },
-      ],
-    })
-
-    const request = createMockRequest('DELETE', '/api/customers/1')
-    const response = await deleteCustomer(request, { params: { id: '1' } })
-
-    expect(response.status).toBe(409)
-    const data = await response.json()
-    expect(data.error).toBe('Cannot delete customer with existing animals')
-    expect(data.details.animals).toHaveLength(2)
-  })
-
-  it('should allow deletion of customer without animals', async () => {
-    mockPrisma.customer.findUnique.mockResolvedValue({
-      customerID: 1,
-      surname: 'Smith',
-      firstname: 'John',
-      animal: [], // No animals
-    })
-
-    mockPrisma.customer.delete.mockResolvedValue({})
-
-    const request = createMockRequest('DELETE', '/api/customers/1')
-    const response = await deleteCustomer(request, { params: { id: '1' } })
-
-    expect(response.status).toBe(200)
-    expect(mockPrisma.customer.delete).toHaveBeenCalledWith({
-      where: { customerID: 1 },
-    })
-  })
-})
-```
-
-#### Acceptance Criteria
-
-- [ ] Pre-deletion validation for customers with animals
-- [ ] Pre-deletion validation for breeds with animals
-- [ ] 409 Conflict status for constraint violations
-- [ ] Detailed error messages with entity counts
-- [ ] List of dependent entities in response
-- [ ] Client-side modal showing dependencies
-- [ ] Tests for both success and failure cases
+**Recommendation**: Update Prisma schema to use `onDelete: Cascade` for `notes.animal` relation to add database-level enforcement (see CODE_REVIEW.md recommendation).
 
 ---
 
 ## Week 1 Summary
 
-**Total Time**: ~11 hours
+**Total Time**: ~9 hours (4 critical issues)
 **Risk Reduction**: HIGH → LOW
 **Production Ready**: ✅ Yes (for internal use)
 
 After completing Week 1 critical issues:
-- Zero information disclosure risk
-- DoS attacks mitigated
-- Error handling robust
-- Environment validation enforced
-- User-friendly error messages
+- Zero information disclosure risk (console.log removed)
+- DoS attacks mitigated (self-hosted Redis rate limiting)
+- Error handling robust (stores re-throw errors)
+- Environment validation enforced (startup validation)
+- Foreign key validation already implemented ✅
 
 **Proceed to Week 2** for performance optimizations and architectural improvements.
 
