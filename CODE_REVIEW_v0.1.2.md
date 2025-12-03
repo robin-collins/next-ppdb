@@ -22,15 +22,15 @@ This codebase represents a modernization effort of a legacy PHP pet grooming app
 
 ### Overall Assessment
 
-| Category | Rating | Notes |
-|----------|--------|-------|
-| **Architecture** | 🟡 Good | Solid patterns but over-reliance on client-side rendering |
-| **Security** | 🔴 Needs Work | Multiple critical vulnerabilities identified |
-| **Performance** | 🟡 Good | Some inefficiencies in API routes and state management |
-| **Type Safety** | 🟡 Good | Generally strong but some loose typing |
-| **Testing** | 🟢 Excellent | Comprehensive test suite across multiple layers |
-| **Documentation** | 🟢 Excellent | Outstanding CLAUDE.md and inline docs |
-| **Code Quality** | 🟡 Good | Clean code with some anti-patterns |
+| Category          | Rating        | Notes                                                     |
+| ----------------- | ------------- | --------------------------------------------------------- |
+| **Architecture**  | 🟡 Good       | Solid patterns but over-reliance on client-side rendering |
+| **Security**      | 🔴 Needs Work | Multiple critical vulnerabilities identified              |
+| **Performance**   | 🟡 Good       | Some inefficiencies in API routes and state management    |
+| **Type Safety**   | 🟡 Good       | Generally strong but some loose typing                    |
+| **Testing**       | 🟢 Excellent  | Comprehensive test suite across multiple layers           |
+| **Documentation** | 🟢 Excellent  | Outstanding CLAUDE.md and inline docs                     |
+| **Code Quality**  | 🟡 Good       | Clean code with some anti-patterns                        |
 
 ---
 
@@ -51,6 +51,7 @@ prisma db push --schema=/app/prisma/schema.prisma --skip-generate --accept-data-
 **Risk**: Data loss in production deployments during updates.
 
 **Recommendation**:
+
 ```bash
 # Production-safe approach
 if [ "$NODE_ENV" = "production" ]; then
@@ -86,17 +87,20 @@ export const env = envSchema.parse(process.env)
 #### 🔴 **HIGH: Console.log() Statements in Production**
 
 **Files**:
+
 - `src/app/api/animals/route.ts:277-326` (10+ console.log statements)
 - Multiple other API routes
 
 **Issue**: Sensitive debugging information (query parameters, database results, customer data) is logged to stdout in production.
 
 **Risk**:
+
 - Log injection attacks
 - Information disclosure
 - Performance degradation (logging phone numbers, full customer objects)
 
 **Example**:
+
 ```typescript
 // Line 319-325 in animals/route.ts
 console.log('First record customer phones:', {
@@ -107,6 +111,7 @@ console.log('First record customer phones:', {
 ```
 
 **Recommendation**:
+
 1. Remove all console.log statements from production code
 2. Use structured logging library (pino, winston)
 3. Gate debug logs behind `DEBUG` environment variable check
@@ -116,11 +121,13 @@ console.log('First record customer phones:', {
 **Issue**: All API routes are completely unprotected against abuse.
 
 **Risk**:
+
 - DoS attacks via expensive search queries
 - Database exhaustion
 - Cost explosion in cloud environments
 
 **Recommendation**: Implement rate limiting middleware:
+
 - Use `@upstash/ratelimit` or similar
 - Apply to all API routes
 - Different limits for different endpoint categories
@@ -154,6 +161,7 @@ async headers() {
 **Note**: This may be acceptable for a single-user internal tool, but should be explicitly documented as a security boundary.
 
 **Recommendation**:
+
 - If multi-user: Implement NextAuth.js or similar
 - If single-user: Add basic auth at Traefik reverse proxy level
 
@@ -179,14 +187,14 @@ customer   customer   @relation(fields: [customerID], references: [customerID], 
 ```typescript
 // Before delete
 const animalCount = await prisma.animal.count({
-  where: { customerID: id }
+  where: { customerID: id },
 })
 
 if (animalCount > 0) {
   return NextResponse.json(
     {
       error: 'Cannot delete customer with existing animals',
-      details: `Customer has ${animalCount} animal(s). Please remove them first.`
+      details: `Customer has ${animalCount} animal(s). Please remove them first.`,
     },
     { status: 409 }
   )
@@ -200,6 +208,7 @@ if (animalCount > 0) {
 **Issue**: `updateAnimal` and `deleteAnimal` functions perform **optimistic updates** followed by a full search refresh. If the search request fails or returns before the DB update completes, the UI shows stale data.
 
 **Example Flow**:
+
 ```typescript
 updateAnimal(id, data) {
   // 1. Update animal (no loading state)
@@ -213,6 +222,7 @@ updateAnimal(id, data) {
 ```
 
 **Recommendation**:
+
 - Option A: Return updated search results from update endpoint
 - Option B: Use optimistic UI updates with rollback on error
 - Option C: Add proper loading states and cache invalidation
@@ -222,14 +232,17 @@ updateAnimal(id, data) {
 **Issue**: Database allows `'1900-01-01'` as a sentinel value for "no date", but this is treated as a valid date throughout the application.
 
 **Files**:
+
 - `prisma/schema.prisma:19-20` (default dates)
 - `src/lib/validations/animal.ts:5` (MIN_DATE = 1900-01-01)
 
 **Problem**:
+
 - User sees "Last Visit: January 1, 1900" instead of "Never visited"
 - Search/sort by date includes these invalid dates
 
 **Recommendation**:
+
 - Use `NULL` for missing dates (requires migration)
 - Add display logic: `lastVisit < new Date('1910-01-01') ? 'Never' : formatDate(lastVisit)`
 
@@ -244,6 +257,7 @@ updateAnimal(id, data) {
 **Issue**: Update and delete operations swallow errors and only set `error` state. Calling code has **no way to detect failure**.
 
 **Example**:
+
 ```typescript
 // Component calls this
 await deleteAnimal(id)
@@ -273,6 +287,7 @@ catch (error) {
 **Issue**: Error responses are too vague for debugging or user action.
 
 **Examples**:
+
 ```typescript
 // src/app/api/animals/route.ts:148
 throw new Error('Failed to search animals')  // ← No details
@@ -305,6 +320,7 @@ catch (error) {
 **Impact**: Unhandled React errors cause full white screen crash.
 
 **Recommendation**:
+
 - Wrap layout with ErrorBoundary in `src/app/layout.tsx`
 - Add granular boundaries around complex components
 
@@ -333,7 +349,10 @@ const [allAnimals, total] = await Promise.all([
 **Recommendation**: Remove `count()` query and use array length:
 
 ```typescript
-const allAnimals = await prisma.animal.findMany({ where, include: { customer: true, breed: true } })
+const allAnimals = await prisma.animal.findMany({
+  where,
+  include: { customer: true, breed: true },
+})
 const total = allAnimals.length
 ```
 
@@ -344,17 +363,20 @@ const total = allAnimals.length
 **File**: `src/app/api/animals/route.ts:308-409`
 
 **Issue**: Search endpoint:
+
 1. Fetches **ALL matching animals** from database
 2. Calculates relevance scores in JavaScript
 3. Sorts in JavaScript
 4. **Then** applies pagination by slicing array
 
 **Impact**:
+
 - Database returns 10,000 animals → Application sorts them → Returns 20
 - Memory explosion with large datasets
 - Slow response times (O(n log n) sort)
 
 **Recommendation**:
+
 - Move relevance scoring to database using SQL `CASE WHEN`
 - Use Prisma `orderBy` and `skip`/`take` for pagination
 - Keep JavaScript scoring only for complex multi-field fuzzy matching
@@ -405,17 +427,20 @@ model customer {
 **Files**: Literally every component in `src/components/`
 
 **Impact**:
+
 - Larger JavaScript bundle (entire app shipped to client)
 - Slower initial page load
 - No SSR benefits (SEO, performance)
 - Lost Next.js 15 App Router benefits
 
 **Examples**:
+
 - `EmptyState.tsx` - Pure static content, should be Server Component
 - `AnimalCard.tsx` - Could be Server Component with client-only interactive parts
 - `Breadcrumbs.tsx` - Mostly static
 
 **Recommendation**:
+
 - Convert static components to Server Components
 - Use `'use client'` only for components with:
   - `useState`, `useEffect`, event handlers
@@ -423,20 +448,22 @@ model customer {
   - Zustand stores
 
 **Migration Path**:
+
 ```tsx
 // Before: src/components/AnimalCard.tsx
-'use client'  // ← Remove this
+'use client' // ← Remove this
 
 export default function AnimalCard({ animal }) {
   // No state, no effects - can be Server Component
 }
 
 // After: Extract interactive button to separate client component
-export default function AnimalCard({ animal }) {  // Server Component
+export default function AnimalCard({ animal }) {
+  // Server Component
   return (
     <div>
       {/* Static content */}
-      <AnimalCardActions animalId={animal.id} />  {/* Client Component */}
+      <AnimalCardActions animalId={animal.id} /> {/* Client Component */}
     </div>
   )
 }
@@ -451,6 +478,7 @@ export default function AnimalCard({ animal }) {  // Server Component
 **File**: `src/store/animalsStore.ts:383-389`
 
 **Issue**: Stores persist `selectedAnimal` to localStorage, which can cause:
+
 - Stale data on page reload (animal updated elsewhere)
 - Large localStorage size (full animal object with nested customer/breed)
 - Hydration mismatches
@@ -460,7 +488,7 @@ export default function AnimalCard({ animal }) {  // Server Component
 ```typescript
 partialize: state => ({
   searchParams: state.searchParams,
-  selectedAnimalId: state.selectedAnimal?.id,  // ← Only ID
+  selectedAnimalId: state.selectedAnimal?.id, // ← Only ID
 })
 ```
 
@@ -488,7 +516,7 @@ partialize: state => ({
 type ScoredAnimal = {
   animal: Prisma.animalGetPayload<{ include: { customer: true; breed: true } }>
   score: number
-  breakdown: Record<string, unknown>  // ⚠️ Loses type safety
+  breakdown: Record<string, unknown> // ⚠️ Loses type safety
 }
 ```
 
@@ -515,9 +543,11 @@ type RelevanceBreakdown = {
 **Issue**: Many functions lack explicit return type annotations.
 
 **Examples**:
+
 ```typescript
 // src/app/api/animals/route.ts:11
-function calculateRelevanceScore(animal, query) {  // ← No return type
+function calculateRelevanceScore(animal, query) {
+  // ← No return type
   // ...
   return { score: totalScore, breakdown }
 }
@@ -530,9 +560,12 @@ function calculateRelevanceScore(animal, query) {  // ← No return type
 **File**: `src/lib/prisma.ts:28`
 
 ```typescript
-prisma.$on('query' as never, (e: { query: string; params: string; duration: number }) => {
-  // ⚠️ 'as never' bypasses type checking
-})
+prisma.$on(
+  'query' as never,
+  (e: { query: string; params: string; duration: number }) => {
+    // ⚠️ 'as never' bypasses type checking
+  }
+)
 ```
 
 **Issue**: Workaround for Prisma type issue, but disables type safety.
@@ -571,6 +604,7 @@ export interface AnimalResponse {
 #### 🟡 **MEDIUM: Duplicated Transformation Logic**
 
 **Files**:
+
 - `src/app/api/animals/route.ts:412-438`
 - `src/app/api/animals/[id]/route.ts` (similar transform)
 
@@ -592,6 +626,7 @@ export function transformAnimal(dbAnimal: Prisma.animalGetPayload<...>) {
 #### 🟡 **MEDIUM: Duplicated Relevance Scoring**
 
 **Files**:
+
 - `src/app/api/animals/route.ts:11-196` (215 lines of relevance logic)
 - `src/app/api/customers/route.ts:12-53` (similar but different scoring)
 
@@ -617,6 +652,7 @@ export function calculateRelevance<T>(
 **Files**: Multiple locations
 
 **Examples**:
+
 ```typescript
 // src/app/api/animals/route.ts:57
 if (compareValue === compareTerm) return { score: 100, ... }  // ← Magic 100
@@ -650,6 +686,7 @@ export const RELEVANCE_SCORES = {
 **File**: `src/app/api/animals/route.ts:204-448` (245 lines in one function)
 
 **Issue**: `GET` handler is 245 lines long with multiple responsibilities:
+
 - Parameter validation
 - Query building
 - Database fetching
@@ -684,6 +721,7 @@ export async function GET(request: NextRequest) {
 **Issue**: API routes contain complex business logic (relevance scoring, transformation) instead of delegating to service layer.
 
 **Current Structure**:
+
 ```
 src/app/api/
   animals/
@@ -691,6 +729,7 @@ src/app/api/
 ```
 
 **Recommended Structure**:
+
 ```
 src/
   app/api/
@@ -707,6 +746,7 @@ src/
 #### 🟡 **MEDIUM: No Repository Pattern**
 
 **Issue**: Prisma queries are scattered throughout API routes. Difficult to:
+
 - Mock for testing
 - Change database implementation
 - Reuse queries
@@ -719,7 +759,7 @@ export class AnimalRepository {
   async findByQuery(where: Prisma.animalWhereInput) {
     return prisma.animal.findMany({
       where,
-      include: { customer: true, breed: true }
+      include: { customer: true, breed: true },
     })
   }
 }
@@ -732,6 +772,7 @@ export class AnimalRepository {
 #### 🟡 **MEDIUM: Environment Variables Scattered**
 
 **Issue**: Environment variables accessed directly throughout codebase:
+
 - `process.env.DEBUG` in `src/lib/prisma.ts`
 - `process.env.NODE_ENV` in multiple files
 - No central configuration
@@ -758,6 +799,7 @@ export const config = {
 #### 🟡 **MEDIUM: Tight Coupling to Prisma**
 
 **Issue**: Direct Prisma imports throughout code make it impossible to:
+
 - Swap databases
 - Use different ORM
 - Mock for testing (currently mocking `@/lib/prisma` in tests)
@@ -784,6 +826,7 @@ export class AnimalService {
 #### 🟢 **POSITIVE: Comprehensive Test Suite**
 
 **Strengths**:
+
 - Unit tests for API routes (`src/__tests__/api/`)
 - Component tests (`src/__tests__/components/`)
 - E2E tests (Playwright)
@@ -791,6 +834,7 @@ export class AnimalService {
 - Test fixtures and helpers
 
 **Coverage Areas**:
+
 - ✅ API endpoints (GET, POST, PUT, DELETE)
 - ✅ Validation schemas
 - ✅ Zustand stores
@@ -800,11 +844,13 @@ export class AnimalService {
 #### 🟡 **MEDIUM: Missing Store Tests**
 
 **Issue**: `animalsStore.ts` has basic tests, but missing:
+
 - Race condition scenarios
 - Error recovery paths
 - Persistence edge cases
 
 **Recommendation**: Add test cases:
+
 ```typescript
 describe('Race Conditions', () => {
   it('should handle rapid successive updates')
@@ -818,6 +864,7 @@ describe('Race Conditions', () => {
 **Files**: `e2e/*.spec.ts`
 
 **Issue**: E2E tests only cover happy paths. Missing:
+
 - Error scenarios (404, 500 responses)
 - Network failure handling
 - Concurrent user scenarios
@@ -835,10 +882,12 @@ describe('Race Conditions', () => {
 **File**: `Dockerfile`
 
 **Issue**:
+
 - Builder stage installs full `node_modules` (~500MB)
 - Runner stage includes `mysql-client` and `mariadb-client` (redundant)
 
 **Recommendation**:
+
 ```dockerfile
 # Use Alpine for smaller base image
 FROM node:20-alpine AS base
@@ -854,14 +903,16 @@ RUN apk add --no-cache mysql-client curl
 **File**: `docker-compose.yml:100`
 
 ```yaml
-test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost:3000/api/health"]
+test:
+  ['CMD', 'curl', '-s', '-o', '/dev/null', 'http://localhost:3000/api/health']
 ```
 
 **Issue**: Health check passes even if API returns 503 (database down) because it doesn't check status code.
 
 **Recommendation**:
+
 ```yaml
-test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]  # -f fails on 4xx/5xx
+test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health'] # -f fails on 4xx/5xx
 ```
 
 ---
@@ -879,6 +930,7 @@ test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]  # -f fails on 4
 **Impact**: **DATA LOSS** during schema changes.
 
 **Recommendation**: Use proper migrations:
+
 ```bash
 prisma migrate deploy --schema=/app/prisma/schema.prisma
 ```
@@ -890,6 +942,7 @@ prisma migrate deploy --schema=/app/prisma/schema.prisma
 #### 🟡 **MEDIUM: Secrets in Environment Files**
 
 **Issue**: Docker Compose expects `.env` file with plaintext secrets:
+
 - `MYSQL_ROOT_PASSWORD`
 - `MYSQL_PASSWORD`
 - `ACME_EMAIL`
@@ -897,6 +950,7 @@ prisma migrate deploy --schema=/app/prisma/schema.prisma
 **Risk**: Secrets in version control (if `.env` is committed).
 
 **Recommendation**: Use Docker Secrets or external secrets manager:
+
 ```yaml
 services:
   mysql:
@@ -917,6 +971,7 @@ services:
 **File**: `CLAUDE.md`
 
 **Strengths**:
+
 - Comprehensive project overview
 - Clear architecture explanations
 - Common pitfalls documented
@@ -931,6 +986,7 @@ services:
 **File**: `src/app/api/docs/openapi.json/route.ts`
 
 **Strengths**:
+
 - 23 endpoints fully documented
 - Request/response schemas
 - Examples and descriptions
@@ -943,6 +999,7 @@ services:
 #### 🟡 **MEDIUM: No Architecture Decision Records (ADRs)**
 
 **Issue**: Major decisions lack documentation:
+
 - Why client-side only architecture?
 - Why `db push` instead of migrations?
 - Why custom Prisma output directory?
@@ -972,6 +1029,7 @@ info:
 #### 🟢 **POSITIVE: Modern Dependencies**
 
 **Good Practices**:
+
 - Using latest stable Next.js (15.4.5)
 - React 19 (latest)
 - Prisma 6.19.0
@@ -983,6 +1041,7 @@ info:
 **File**: `package.json`
 
 **Potentially Unused**:
+
 - `rifraf` (v2.0.3) - Different from `rimraf`, what's it for?
 - `uuid` (v13.0.0) - Not imported anywhere in codebase
 - `adm-zip` - Used only in backup, consider lazy-loading
@@ -1001,6 +1060,7 @@ info:
 **Issue**: `@prisma/client` is in dependencies, but generated to `src/generated/prisma/` (not used from node_modules). **This is confusing.**
 
 **Explanation Needed**:
+
 - Why install `@prisma/client` if it's not used?
 - Generator output overrides it?
 
@@ -1017,13 +1077,14 @@ info:
 **Issue**: Using `mjs` extension but `require` syntax in some places.
 
 **Recommendation**: Full ESM migration:
+
 ```js
 export default {
   // Use native ESM
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true }]
-  }
+    '^.+\\.tsx?$': ['ts-jest', { useESM: true }],
+  },
 }
 ```
 
@@ -1036,12 +1097,14 @@ export default {
 #### 🟡 **MEDIUM: No Performance Monitoring**
 
 **Issue**: No instrumentation for:
+
 - API response times
 - Database query performance
 - Error rates
 - User session tracking
 
 **Recommendation**: Add lightweight monitoring:
+
 - `pino` for structured logging
 - `prom-client` for Prometheus metrics
 - Expose `/metrics` endpoint for Traefik scraping
@@ -1049,6 +1112,7 @@ export default {
 #### 🟡 **MEDIUM: No Database Query Monitoring**
 
 **Issue**: `logSql()` function logs to console, but:
+
 - No slow query alerts
 - No query aggregation
 - Development-only
@@ -1066,15 +1130,18 @@ export default {
 **Files**: Components
 
 **Good**:
+
 - Buttons have `aria-label` attributes
 - Semantic HTML used (`<header>`, `<nav>`)
 
 **Missing**:
+
 - No focus management (keyboard navigation)
 - No `role` attributes on custom controls
 - No screen reader announcements for dynamic content
 
 **Recommendation**:
+
 - Add `@axe-core/react` for automated testing
 - Implement focus trapping in modals
 - Add live regions for toasts
@@ -1286,6 +1353,7 @@ However, there are **critical production-readiness issues** that must be address
 ## 16. Metrics & Code Statistics
 
 **Codebase Health**:
+
 ```
 Total Lines: ~5,000 (excluding node_modules, generated)
 Test Coverage: ~65% (estimated from test file count)
@@ -1296,6 +1364,7 @@ Technical Debt: Moderate (25 hours to address)
 ```
 
 **Complexity Analysis**:
+
 - **Average Function Length**: 30 lines (good)
 - **Longest Function**: 245 lines (needs refactoring)
 - **Cyclomatic Complexity**: Moderate

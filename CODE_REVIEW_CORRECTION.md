@@ -17,6 +17,7 @@ After detailed investigation of the migration workflow and data import process, 
 **Original Classification**: 🔴 CRITICAL - Data Loss Risk
 
 **Original Issue Statement**:
+
 > The `--accept-data-loss` flag in `docker/docker-entrypoint.sh` is extremely dangerous in production. This flag allows Prisma to drop columns and data without confirmation during schema synchronization, risking data loss in production deployments.
 
 **Why This Was Wrong**:
@@ -61,11 +62,13 @@ The application uses a sophisticated **two-stage data import process** that is s
 ### Why `db push --accept-data-loss` is Safe
 
 **Context**: The flag is used ONLY when:
+
 1. Creating a **brand new, empty production database**
 2. The database has **no existing data to lose**
 3. Actual data import happens **separately** via validated two-stage process
 
 **Entrypoint Logic** (`docker/docker-entrypoint.sh`):
+
 ```bash
 #!/bin/sh
 set -e
@@ -81,6 +84,7 @@ exec node server.js
 ```
 
 **Key Points**:
+
 - Runs on container startup against **empty database**
 - Creates tables matching `schema.prisma` exactly
 - No data exists yet, so `--accept-data-loss` is harmless
@@ -94,17 +98,18 @@ exec node server.js
 
 The legacy PHP application has **severe data quality issues**:
 
-| Issue | Count | Example |
-|-------|-------|---------|
-| Orphaned notes | ~60,000 | Notes referencing deleted animals |
-| Invalid dates | Unknown | `0000-00-00` date values |
-| Missing validation | All fields | No constraints in original DB |
-| Inconsistent formats | High | Phone numbers, postcodes, etc. |
-| Truncated data | Moderate | 12-char animal names, 20-char surnames |
+| Issue                | Count      | Example                                |
+| -------------------- | ---------- | -------------------------------------- |
+| Orphaned notes       | ~60,000    | Notes referencing deleted animals      |
+| Invalid dates        | Unknown    | `0000-00-00` date values               |
+| Missing validation   | All fields | No constraints in original DB          |
+| Inconsistent formats | High       | Phone numbers, postcodes, etc.         |
+| Truncated data       | Moderate   | 12-char animal names, 20-char surnames |
 
 ### Why Not Use `prisma migrate deploy`?
 
 **The Problem**:
+
 ```sql
 -- prisma/migrations/20251004154300_schema_normalization/migration.sql
 -- This migration ASSUMES existing tables from PHP app
@@ -115,6 +120,7 @@ ALTER TABLE `animal` ADD CONSTRAINT `fk_animal_breed` FOREIGN KEY...
 ```
 
 **What Happens**:
+
 - On **empty database**: Migration FAILS (no tables to alter)
 - On **PHP database**: Migration works (tables exist)
 
@@ -126,11 +132,13 @@ Use `db push` for fresh deployments (creates tables from scratch), then import c
 ## Corrected Risk Assessment
 
 ### Original Classification: 🔴 CRITICAL
+
 ### Corrected Classification: 🟢 ACCEPTABLE (with documentation improvement)
 
 ### Remaining Recommendations
 
 1. **Add Comment to Entrypoint Script** (5 minutes):
+
 ```bash
 #!/bin/sh
 set -e
@@ -147,6 +155,7 @@ exec node server.js
 ```
 
 2. **Add Guard Against Accidental Production Re-run** (30 minutes):
+
 ```bash
 #!/bin/sh
 set -e
@@ -204,13 +213,13 @@ With the migration issue removed, the **actual critical issues** are:
 
 ### Current Versions (from package.json)
 
-| Package | Current | Latest | Status |
-|---------|---------|--------|--------|
-| Next.js | 15.4.5 | 15.4.5 | ✅ Up to date |
-| React | 19.1.0 | 19.1.0 | ✅ Up to date |
-| Zod | 4.1.12 | 4.1.13 | ⚠️ Patch available |
-| Zustand | 5.0.8 | 5.0.8 | ✅ Up to date |
-| Prisma | 6.19.0 | 6.19.0+ | ✅ Current |
+| Package | Current | Latest  | Status             |
+| ------- | ------- | ------- | ------------------ |
+| Next.js | 15.4.5  | 15.4.5  | ✅ Up to date      |
+| React   | 19.1.0  | 19.1.0  | ✅ Up to date      |
+| Zod     | 4.1.12  | 4.1.13  | ⚠️ Patch available |
+| Zustand | 5.0.8   | 5.0.8   | ✅ Up to date      |
+| Prisma  | 6.19.0  | 6.19.0+ | ✅ Current         |
 
 **Recommendation**: Update Zod to 4.1.13 (patch release, low risk).
 
@@ -219,11 +228,13 @@ With the migration issue removed, the **actual critical issues** are:
 #### Next.js 15 (Current: 15.4.5) ✅
 
 **Aligned**:
+
 - ✅ App Router usage
 - ✅ Standalone output for Docker
 - ✅ TypeScript strict mode
 
 **Not Aligned** (Medium Priority):
+
 - ❌ All components use `'use client'` (should use Server Components by default)
 - ❌ No React Server Components benefits (SSR, SEO, reduced bundle)
 - ❌ Missing `export const dynamic` route segment configs
@@ -233,11 +244,13 @@ With the migration issue removed, the **actual critical issues** are:
 #### Zod 4 (Current: 4.1.12) ✅
 
 **Aligned**:
+
 - ✅ Using Zod for API validation
 - ✅ Type inference with `z.infer<typeof schema>`
 - ✅ Custom refinements for date validation
 
 **Available Improvements**:
+
 - 🟡 Could use `z.toJSONSchema()` for OpenAPI generation (instead of manual)
 - 🟡 Could leverage Zod 4's 14x faster string parsing
 - 🟡 Template literal types available but not used
@@ -247,11 +260,13 @@ With the migration issue removed, the **actual critical issues** are:
 #### Zustand 5 (Current: 5.0.8) ✅
 
 **Aligned**:
+
 - ✅ Middleware usage (persist, devtools)
 - ✅ TypeScript types defined
 - ✅ Partial persistence (`partialize`)
 
 **Not Aligned** (Low Priority):
+
 - 🟡 Could split stores into smaller slices (currently 2 large stores)
 - 🟡 Could use `immer` middleware for complex state updates
 - 🟡 Over-persistence (storing full objects instead of IDs)
@@ -265,6 +280,7 @@ With the migration issue removed, the **actual critical issues** are:
 The original "data loss risk" finding was based on a misunderstanding of the deployment architecture. The actual migration strategy is **well-designed** for handling dirty legacy data through a two-stage validation process.
 
 The application demonstrates **sophisticated data engineering** with:
+
 - Temporary database isolation
 - Comprehensive validation rules
 - Data repair/remediation logic
@@ -277,6 +293,7 @@ The application demonstrates **sophisticated data engineering** with:
 **Revised Assessment**: **90% production-ready**
 
 With the migration issue removed from the critical list, the remaining work is:
+
 - **Critical**: 5 issues, ~11 hours
 - **Important**: 13 issues, ~25 hours
 - **Nice-to-have**: 20 issues, ~98 hours
@@ -286,6 +303,7 @@ With the migration issue removed from the critical list, the remaining work is:
 ## Acknowledgment
 
 This correction was prompted by the development team's clarification of the migration workflow. The original review process should have included:
+
 1. Reading `MIGRATION_STRATEGY.md` before assessment
 2. Understanding the setup wizard workflow
 3. Tracing the complete data import path

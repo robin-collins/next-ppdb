@@ -23,6 +23,7 @@
 **Backend Developer**
 
 - [ ] Install structured logging dependencies
+
   ```bash
   pnpm add pino pino-pretty
   pnpm add -D @types/pino
@@ -35,6 +36,7 @@
   - [ ] Test redaction of phone numbers and emails
 
 - [ ] Find all console.log statements
+
   ```bash
   grep -rn "console\.log" src/app/api/
   ```
@@ -63,6 +65,7 @@
 **Backend Developer**
 
 - [ ] Install rate limiting dependencies
+
   ```bash
   pnpm add @upstash/ratelimit @upstash/redis
   ```
@@ -275,6 +278,7 @@
 **Frontend Developer**
 
 - [ ] Audit all components
+
   ```bash
   rg "use client" src/components/ -l | while read file; do
     if ! rg "useState|useEffect|onClick|onChange" "$file" > /dev/null; then
@@ -600,6 +604,7 @@
 ### Version Bump
 
 - [ ] Update version in package.json
+
   ```bash
   npm version patch  # 0.1.2 → 0.1.3
   ```
@@ -611,11 +616,13 @@
 ### Build & Push
 
 - [ ] Build Docker image
+
   ```bash
   docker build -t ghcr.io/robin-collins/next-ppdb:v0.1.3 .
   ```
 
 - [ ] Test image locally
+
   ```bash
   docker run -p 3000:3000 ghcr.io/robin-collins/next-ppdb:v0.1.3
   ```
@@ -635,6 +642,7 @@
   - [ ] Add new Upstash Redis vars
 
 - [ ] Deploy
+
   ```bash
   docker-compose pull next-ppdb
   docker-compose up -d next-ppdb
@@ -673,23 +681,23 @@
 
 ### Week 1 Targets
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Console.log in production | 0 | ___ |
-| Rate limit violations | <5/day | ___ |
-| Silent failures | 0 | ___ |
-| Environment validation failures | 0 | ___ |
-| User-friendly errors | 100% | ___ |
+| Metric                          | Target | Actual |
+| ------------------------------- | ------ | ------ |
+| Console.log in production       | 0      | \_\_\_ |
+| Rate limit violations           | <5/day | \_\_\_ |
+| Silent failures                 | 0      | \_\_\_ |
+| Environment validation failures | 0      | \_\_\_ |
+| User-friendly errors            | 100%   | \_\_\_ |
 
 ### Week 2 Targets
 
-| Metric | Before | Target | Actual |
-|--------|--------|--------|--------|
-| API response time (avg) | 450ms | <300ms | ___ |
-| Bundle size | 512KB | <350KB | ___ |
-| Initial page load | 2.8s | <1.5s | ___ |
-| Search query time | 200ms | <100ms | ___ |
-| Docker image size | ~1.2GB | <800MB | ___ |
+| Metric                  | Before | Target | Actual |
+| ----------------------- | ------ | ------ | ------ |
+| API response time (avg) | 450ms  | <300ms | \_\_\_ |
+| Bundle size             | 512KB  | <350KB | \_\_\_ |
+| Initial page load       | 2.8s   | <1.5s  | \_\_\_ |
+| Search query time       | 200ms  | <100ms | \_\_\_ |
+| Docker image size       | ~1.2GB | <800MB | \_\_\_ |
 
 ---
 
@@ -698,6 +706,7 @@
 If deployment fails:
 
 1. **Quick Rollback**
+
    ```bash
    docker-compose down
    # Edit docker-compose.yml: image: ghcr.io/robin-collins/next-ppdb:v0.1.2
@@ -705,6 +714,7 @@ If deployment fails:
    ```
 
 2. **Verify Rollback**
+
    ```bash
    curl http://localhost:3000/api/health
    docker logs next-ppdb

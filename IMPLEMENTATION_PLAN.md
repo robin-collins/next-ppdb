@@ -1,4 +1,5 @@
 # Implementation Plan: Critical & Important Issues
+
 **Project**: Next.js PPDB v0.1.2 → v0.1.3
 **Date**: December 3, 2025
 **Sprint Duration**: 2 weeks (80 hours)
@@ -59,6 +60,7 @@ Total Time: ~11 hours
 #### Current State
 
 **Problem Files**:
+
 ```
 src/app/api/animals/route.ts (Lines 277-326)
 src/app/api/customers/route.ts
@@ -66,6 +68,7 @@ src/app/api/breeds/route.ts
 ```
 
 **Example Violations**:
+
 ```typescript
 // src/app/api/animals/route.ts:277-326
 console.log('=== SEARCH DEBUG ===')
@@ -233,6 +236,7 @@ rg "console\.(log|debug|info|warn|error)" src/app/api/
 **Vulnerability**: All 23 API endpoints are completely unprotected.
 
 **Attack Scenarios**:
+
 ```bash
 # Scenario 1: Search spam (expensive queries)
 for i in {1..1000}; do
@@ -250,10 +254,12 @@ curl "http://localhost:3000/api/admin/backup"
 **Step 1**: Choose Rate Limiting Strategy (15 min)
 
 **Option A: Upstash Redis** (Recommended for production)
+
 - Pros: Distributed, works across containers, persistent
 - Cons: Requires Redis setup
 
 **Option B: In-Memory** (Good for single-instance deployments)
+
 - Pros: No external dependencies
 - Cons: Resets on restart, doesn't work with multiple containers
 
@@ -354,7 +360,12 @@ export const rateLimiters = {
 export async function checkRateLimit(
   identifier: string,
   type: 'api' | 'search' | 'admin' = 'api'
-): Promise<{ success: boolean; limit: number; remaining: number; reset: number }> {
+): Promise<{
+  success: boolean
+  limit: number
+  remaining: number
+  reset: number
+}> {
   // Use Upstash in production
   if (rateLimiters[type]) {
     const result = await rateLimiters[type]!.limit(identifier)
@@ -405,7 +416,10 @@ export async function withRateLimit(
   type: 'api' | 'search' | 'admin' = 'api'
 ): Promise<Response> {
   const identifier = getClientIdentifier(request)
-  const { success, limit, remaining, reset } = await checkRateLimit(identifier, type)
+  const { success, limit, remaining, reset } = await checkRateLimit(
+    identifier,
+    type
+  )
 
   // Add rate limit headers to response
   const headers = {
@@ -478,11 +492,15 @@ export async function POST(request: NextRequest) {
 import { withRateLimit } from '@/lib/middleware/ratelimit'
 
 export async function GET(request: NextRequest) {
-  return withRateLimit(request, async () => {
-    // ... existing backup logic ...
+  return withRateLimit(
+    request,
+    async () => {
+      // ... existing backup logic ...
 
-    return NextResponse.json(backup)
-  }, 'admin') // Strict rate limit for admin endpoints
+      return NextResponse.json(backup)
+    },
+    'admin'
+  ) // Strict rate limit for admin endpoints
 }
 ```
 
@@ -499,26 +517,29 @@ UPSTASH_REDIS_TOKEN=your-token-here
 
 ```typescript
 // src/lib/env.ts (add to validation)
-const envSchema = z.object({
-  DATABASE_URL: z.string().url().startsWith('mysql://'),
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-  DEBUG: z.string().optional(),
+const envSchema = z
+  .object({
+    DATABASE_URL: z.string().url().startsWith('mysql://'),
+    NODE_ENV: z.enum(['development', 'production', 'test']),
+    DEBUG: z.string().optional(),
 
-  // Optional for development, required for production
-  UPSTASH_REDIS_URL: z.string().url().optional(),
-  UPSTASH_REDIS_TOKEN: z.string().optional(),
-}).refine(
-  (data) => {
-    // In production, Redis is required
-    if (data.NODE_ENV === 'production') {
-      return !!data.UPSTASH_REDIS_URL && !!data.UPSTASH_REDIS_TOKEN
+    // Optional for development, required for production
+    UPSTASH_REDIS_URL: z.string().url().optional(),
+    UPSTASH_REDIS_TOKEN: z.string().optional(),
+  })
+  .refine(
+    data => {
+      // In production, Redis is required
+      if (data.NODE_ENV === 'production') {
+        return !!data.UPSTASH_REDIS_URL && !!data.UPSTASH_REDIS_TOKEN
+      }
+      return true
+    },
+    {
+      message:
+        'UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN required in production',
     }
-    return true
-  },
-  {
-    message: 'UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN required in production',
-  }
-)
+  )
 ```
 
 #### Testing
@@ -562,17 +583,19 @@ curl -i "http://localhost:3000/api/admin/backup" | grep "X-RateLimit-Limit"
 **Problem**: Store mutations swallow errors, causing silent failures.
 
 **Example Bug**:
+
 ```typescript
 // Component code
 async function handleDelete() {
-  await deleteAnimal(123)  // Fails silently if error occurs
-  router.push('/animals')  // Navigates even if delete failed!
+  await deleteAnimal(123) // Fails silently if error occurs
+  router.push('/animals') // Navigates even if delete failed!
 }
 ```
 
 **Root Cause** (`src/store/animalsStore.ts:280-324`):
+
 ```typescript
-deleteAnimal: async (id) => {
+deleteAnimal: async id => {
   set({ error: null })
   try {
     const response = await fetch(`/api/animals/${id}`, { method: 'DELETE' })
@@ -584,7 +607,7 @@ deleteAnimal: async (id) => {
     // ... update state ...
   } catch (error) {
     set({
-      error: error instanceof Error ? error.message : 'Failed to delete animal'
+      error: error instanceof Error ? error.message : 'Failed to delete animal',
     })
     // ⚠️ ERROR SWALLOWED - no re-throw!
   }
@@ -599,7 +622,7 @@ deleteAnimal: async (id) => {
 // src/store/animalsStore.ts
 
 // BEFORE:
-deleteAnimal: async (id) => {
+deleteAnimal: async id => {
   set({ error: null })
   try {
     // ... logic ...
@@ -610,7 +633,7 @@ deleteAnimal: async (id) => {
 }
 
 // AFTER:
-deleteAnimal: async (id) => {
+deleteAnimal: async id => {
   set({ error: null })
   try {
     const response = await fetch(`/api/animals/${id}`, { method: 'DELETE' })
@@ -647,17 +670,17 @@ deleteAnimal: async (id) => {
       }
     }
   } catch (error) {
-    const errorMessage = error instanceof Error
-      ? error.message
-      : 'Failed to delete animal'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to delete animal'
 
     set({ error: errorMessage })
-    throw error  // ✅ RE-THROW so caller can handle
+    throw error // ✅ RE-THROW so caller can handle
   }
 }
 ```
 
 **Apply same pattern to**:
+
 - `animalsStore.ts`: `updateAnimal`, `deleteAnimal`, `addNote`, `deleteNote`
 - `customersStore.ts`: `updateCustomer`, `deleteCustomer`, `deleteAnimal`
 
@@ -669,7 +692,7 @@ deleteAnimal: async (id) => {
 // BEFORE:
 async function handleDelete() {
   await deleteAnimal(animal.id)
-  router.push('/animals')  // Always navigates
+  router.push('/animals') // Always navigates
 }
 
 // AFTER:
@@ -681,7 +704,10 @@ async function handleDelete() {
     showToast('success', `${animal.name} deleted successfully`)
   } catch (error) {
     // Error is already in store state, but also show toast
-    showToast('error', error instanceof Error ? error.message : 'Failed to delete')
+    showToast(
+      'error',
+      error instanceof Error ? error.message : 'Failed to delete'
+    )
     // Stay on current page
   }
 }
@@ -696,22 +722,22 @@ Currently, updates don't set `loading: true` to avoid page flash. Add a separate
 
 interface AnimalsState {
   // ... existing state ...
-  loading: boolean        // For major operations (search, create)
-  mutating: boolean       // NEW: For updates/deletes
+  loading: boolean // For major operations (search, create)
+  mutating: boolean // NEW: For updates/deletes
   // ... existing actions ...
-  setMutating: (mutating: boolean) => void  // NEW
+  setMutating: (mutating: boolean) => void // NEW
 }
 
 // Update delete to use mutating flag:
-deleteAnimal: async (id) => {
-  set({ error: null, mutating: true })  // ✅ Set mutating flag
+deleteAnimal: async id => {
+  set({ error: null, mutating: true }) // ✅ Set mutating flag
   try {
     // ... deletion logic ...
   } catch (error) {
     set({ error: error.message, mutating: false })
     throw error
   } finally {
-    set({ mutating: false })  // ✅ Always clear mutating
+    set({ mutating: false }) // ✅ Always clear mutating
   }
 }
 ```
@@ -740,7 +766,7 @@ describe('Error Handling', () => {
     // Mock failed API response
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      json: async () => ({ error: 'Animal not found' })
+      json: async () => ({ error: 'Animal not found' }),
     })
 
     const { deleteAnimal, error } = useAnimalsStore.getState()
@@ -789,6 +815,7 @@ describe('Error Handling', () => {
 **Problem**: App crashes at runtime if env vars are missing/invalid.
 
 **Example**:
+
 ```bash
 # Missing DATABASE_URL
 pnpm dev
@@ -804,54 +831,52 @@ pnpm dev
 // src/lib/env.ts
 import { z } from 'zod'
 
-const envSchema = z.object({
-  // Database
-  DATABASE_URL: z
-    .string()
-    .url()
-    .startsWith('mysql://')
-    .describe('MySQL database connection URL'),
+const envSchema = z
+  .object({
+    // Database
+    DATABASE_URL: z
+      .string()
+      .url()
+      .startsWith('mysql://')
+      .describe('MySQL database connection URL'),
 
-  // Node Environment
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development')
-    .describe('Node environment'),
+    // Node Environment
+    NODE_ENV: z
+      .enum(['development', 'production', 'test'])
+      .default('development')
+      .describe('Node environment'),
 
-  // Optional: Debug mode
-  DEBUG: z
-    .string()
-    .optional()
-    .transform(val => val === 'true')
-    .describe('Enable debug logging'),
+    // Optional: Debug mode
+    DEBUG: z
+      .string()
+      .optional()
+      .transform(val => val === 'true')
+      .describe('Enable debug logging'),
 
-  // Optional: Rate limiting (required in production)
-  UPSTASH_REDIS_URL: z
-    .string()
-    .url()
-    .optional()
-    .describe('Upstash Redis URL for rate limiting'),
+    // Optional: Rate limiting (required in production)
+    UPSTASH_REDIS_URL: z
+      .string()
+      .url()
+      .optional()
+      .describe('Upstash Redis URL for rate limiting'),
 
-  UPSTASH_REDIS_TOKEN: z
-    .string()
-    .optional()
-    .describe('Upstash Redis token'),
+    UPSTASH_REDIS_TOKEN: z.string().optional().describe('Upstash Redis token'),
 
-  // Optional: Server config
-  PORT: z
-    .string()
-    .optional()
-    .default('3000')
-    .transform(Number)
-    .pipe(z.number().int().positive())
-    .describe('Server port'),
+    // Optional: Server config
+    PORT: z
+      .string()
+      .optional()
+      .default('3000')
+      .transform(Number)
+      .pipe(z.number().int().positive())
+      .describe('Server port'),
 
-  HOSTNAME: z
-    .string()
-    .optional()
-    .default('0.0.0.0')
-    .describe('Server hostname'),
-})
+    HOSTNAME: z
+      .string()
+      .optional()
+      .default('0.0.0.0')
+      .describe('Server hostname'),
+  })
   .refine(
     data => {
       // In production, Redis is required for rate limiting
@@ -938,7 +963,11 @@ if (typeof window === 'undefined') {
   validateEnvironment()
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   // ... rest of layout
 }
 ```
@@ -956,11 +985,12 @@ export async function register() {
 ```
 
 Update `next.config.ts`:
+
 ```typescript
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
-    instrumentationHook: true,  // Enable instrumentation
+    instrumentationHook: true, // Enable instrumentation
   },
 }
 ```
@@ -1008,6 +1038,7 @@ pnpm dev
 **Problem**: Deleting customers/breeds with dependencies returns cryptic Prisma errors.
 
 **Current Behavior**:
+
 ```bash
 DELETE /api/customers/123
 # Has 5 animals
@@ -1020,6 +1051,7 @@ Response:
 ```
 
 **Expected Behavior**:
+
 ```json
 {
   "error": "Cannot delete customer with existing animals",
@@ -1042,89 +1074,93 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withRateLimit(request, async () => {
-    try {
-      const customerId = parseInt(params.id)
+  return withRateLimit(
+    request,
+    async () => {
+      try {
+        const customerId = parseInt(params.id)
 
-      if (isNaN(customerId)) {
-        return NextResponse.json(
-          { error: 'Invalid customer ID' },
-          { status: 400 }
-        )
-      }
+        if (isNaN(customerId)) {
+          return NextResponse.json(
+            { error: 'Invalid customer ID' },
+            { status: 400 }
+          )
+        }
 
-      // 1. Check if customer exists
-      const customer = await prisma.customer.findUnique({
-        where: { customerID: customerId },
-        select: {
-          customerID: true,
-          surname: true,
-          firstname: true,
-          animal: {
-            select: {
-              animalID: true,
-              animalname: true,
+        // 1. Check if customer exists
+        const customer = await prisma.customer.findUnique({
+          where: { customerID: customerId },
+          select: {
+            customerID: true,
+            surname: true,
+            firstname: true,
+            animal: {
+              select: {
+                animalID: true,
+                animalname: true,
+              },
             },
           },
-        },
-      })
+        })
 
-      if (!customer) {
-        return NextResponse.json(
-          { error: 'Customer not found' },
-          { status: 404 }
-        )
-      }
+        if (!customer) {
+          return NextResponse.json(
+            { error: 'Customer not found' },
+            { status: 404 }
+          )
+        }
 
-      // 2. Check for dependent animals
-      if (customer.animal.length > 0) {
-        const customerName = [customer.firstname, customer.surname]
-          .filter(Boolean)
-          .join(' ')
+        // 2. Check for dependent animals
+        if (customer.animal.length > 0) {
+          const customerName = [customer.firstname, customer.surname]
+            .filter(Boolean)
+            .join(' ')
+
+          return NextResponse.json(
+            {
+              error: 'Cannot delete customer with existing animals',
+              message: `Customer "${customerName}" has ${customer.animal.length} animal(s). Please remove or reassign them first.`,
+              details: {
+                customerId: customer.customerID,
+                customerName,
+                animalCount: customer.animal.length,
+                animals: customer.animal.map(a => ({
+                  id: a.animalID,
+                  name: a.animalname,
+                })),
+              },
+            },
+            { status: 409 } // Conflict
+          )
+        }
+
+        // 3. Safe to delete - no dependencies
+        await prisma.customer.delete({
+          where: { customerID: customerId },
+        })
 
         return NextResponse.json(
           {
-            error: 'Cannot delete customer with existing animals',
-            message: `Customer "${customerName}" has ${customer.animal.length} animal(s). Please remove or reassign them first.`,
-            details: {
-              customerId: customer.customerID,
-              customerName,
-              animalCount: customer.animal.length,
-              animals: customer.animal.map(a => ({
-                id: a.animalID,
-                name: a.animalname,
-              })),
-            },
+            success: true,
+            message: 'Customer deleted successfully',
           },
-          { status: 409 } // Conflict
+          { status: 200 }
+        )
+      } catch (error) {
+        log.error('Customer deletion failed', error)
+
+        return NextResponse.json(
+          {
+            error: 'Failed to delete customer',
+            message:
+              error instanceof Error ? error.message : 'Unknown error occurred',
+          },
+          { status: 500 }
         )
       }
-
-      // 3. Safe to delete - no dependencies
-      await prisma.customer.delete({
-        where: { customerID: customerId },
-      })
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Customer deleted successfully',
-        },
-        { status: 200 }
-      )
-    } catch (error) {
-      log.error('Customer deletion failed', error)
-
-      return NextResponse.json(
-        {
-          error: 'Failed to delete customer',
-          message:
-            error instanceof Error ? error.message : 'Unknown error occurred',
-        },
-        { status: 500 }
-      )
-    }
-  }, 'api')
+    },
+    'api'
+  )
 }
 ```
 
@@ -1137,77 +1173,81 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withRateLimit(request, async () => {
-    try {
-      const breedId = parseInt(params.id)
+  return withRateLimit(
+    request,
+    async () => {
+      try {
+        const breedId = parseInt(params.id)
 
-      if (isNaN(breedId)) {
-        return NextResponse.json(
-          { error: 'Invalid breed ID' },
-          { status: 400 }
-        )
-      }
+        if (isNaN(breedId)) {
+          return NextResponse.json(
+            { error: 'Invalid breed ID' },
+            { status: 400 }
+          )
+        }
 
-      // 1. Check if breed exists and get animal count
-      const breed = await prisma.breed.findUnique({
-        where: { breedID: breedId },
-        select: {
-          breedID: true,
-          breedname: true,
-          _count: {
-            select: { animal: true },
-          },
-        },
-      })
-
-      if (!breed) {
-        return NextResponse.json(
-          { error: 'Breed not found' },
-          { status: 404 }
-        )
-      }
-
-      // 2. Check for dependent animals
-      if (breed._count.animal > 0) {
-        return NextResponse.json(
-          {
-            error: 'Cannot delete breed with existing animals',
-            message: `Breed "${breed.breedname}" is assigned to ${breed._count.animal} animal(s). Please reassign them first.`,
-            details: {
-              breedId: breed.breedID,
-              breedName: breed.breedname,
-              animalCount: breed._count.animal,
+        // 1. Check if breed exists and get animal count
+        const breed = await prisma.breed.findUnique({
+          where: { breedID: breedId },
+          select: {
+            breedID: true,
+            breedname: true,
+            _count: {
+              select: { animal: true },
             },
           },
-          { status: 409 }
+        })
+
+        if (!breed) {
+          return NextResponse.json(
+            { error: 'Breed not found' },
+            { status: 404 }
+          )
+        }
+
+        // 2. Check for dependent animals
+        if (breed._count.animal > 0) {
+          return NextResponse.json(
+            {
+              error: 'Cannot delete breed with existing animals',
+              message: `Breed "${breed.breedname}" is assigned to ${breed._count.animal} animal(s). Please reassign them first.`,
+              details: {
+                breedId: breed.breedID,
+                breedName: breed.breedname,
+                animalCount: breed._count.animal,
+              },
+            },
+            { status: 409 }
+          )
+        }
+
+        // 3. Safe to delete
+        await prisma.breed.delete({
+          where: { breedID: breedId },
+        })
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: 'Breed deleted successfully',
+          },
+          { status: 200 }
+        )
+      } catch (error) {
+        log.error('Breed deletion failed', error)
+
+        return NextResponse.json(
+          {
+            error: 'Failed to delete breed',
+            message:
+              error instanceof Error ? error.message : 'Unknown error occurred',
+          },
+          { status: 500 }
         )
       }
-
-      // 3. Safe to delete
-      await prisma.breed.delete({
-        where: { breedID: breedId },
-      })
-
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Breed deleted successfully',
-        },
-        { status: 200 }
-      )
-    } catch (error) {
-      log.error('Breed deletion failed', error)
-
-      return NextResponse.json(
-        {
-          error: 'Failed to delete breed',
-          message:
-            error instanceof Error ? error.message : 'Unknown error occurred',
-        },
-        { status: 500 }
-      )
-    }
-  }, 'api')
+    },
+    'api'
+  )
 }
 ```
 
@@ -1231,7 +1271,10 @@ async function handleDelete() {
       // Show detailed error modal with list of animals
       setShowDependenciesModal(true)
     } else {
-      showToast('error', error instanceof Error ? error.message : 'Failed to delete')
+      showToast(
+        'error',
+        error instanceof Error ? error.message : 'Failed to delete'
+      )
     }
   }
 }
@@ -1239,22 +1282,25 @@ async function handleDelete() {
 
 ```tsx
 // Add dependencies modal
-{showDependenciesModal && (
-  <Modal onClose={() => setShowDependenciesModal(false)}>
-    <h2>Cannot Delete Customer</h2>
-    <p>
-      This customer has {customer.animals.length} animal(s) that must be removed first:
-    </p>
-    <ul>
-      {customer.animals.map(animal => (
-        <li key={animal.id}>
-          <Link href={`/animals/${animal.id}`}>{animal.name}</Link>
-        </li>
-      ))}
-    </ul>
-    <button onClick={() => setShowDependenciesModal(false)}>Close</button>
-  </Modal>
-)}
+{
+  showDependenciesModal && (
+    <Modal onClose={() => setShowDependenciesModal(false)}>
+      <h2>Cannot Delete Customer</h2>
+      <p>
+        This customer has {customer.animals.length} animal(s) that must be
+        removed first:
+      </p>
+      <ul>
+        {customer.animals.map(animal => (
+          <li key={animal.id}>
+            <Link href={`/animals/${animal.id}`}>{animal.name}</Link>
+          </li>
+        ))}
+      </ul>
+      <button onClick={() => setShowDependenciesModal(false)}>Close</button>
+    </Modal>
+  )
+}
 ```
 
 #### Testing
@@ -1324,6 +1370,7 @@ describe('DELETE /api/customers/[id]', () => {
 **Production Ready**: ✅ Yes (for internal use)
 
 After completing Week 1 critical issues:
+
 - Zero information disclosure risk
 - DoS attacks mitigated
 - Error handling robust
@@ -1350,6 +1397,7 @@ Total Time: ~25 hours
 #### Current State
 
 **Problem** (Line 309-315):
+
 ```typescript
 const [allAnimals, total] = await Promise.all([
   prisma.animal.findMany({ where, include: { customer: true, breed: true } }),
@@ -1358,6 +1406,7 @@ const [allAnimals, total] = await Promise.all([
 ```
 
 **Issues**:
+
 1. Redundant `count()` query (just use `allAnimals.length`)
 2. Fetches ALL results before pagination (scales poorly)
 
@@ -1395,10 +1444,7 @@ if (total <= 1000) {
     // ... existing sort logic ...
   })
 
-  const paginatedAnimals = scoredAnimals.slice(
-    (page - 1) * limit,
-    page * limit
-  )
+  const paginatedAnimals = scoredAnimals.slice((page - 1) * limit, page * limit)
 
   // ... transform and return ...
 }
@@ -1410,11 +1456,12 @@ else {
     skip: (page - 1) * limit,
     take: limit,
     // Simple database-level sort (can't do complex relevance scoring in DB)
-    orderBy: sort === 'customer'
-      ? [{ customer: { surname: order } }]
-      : sort === 'animal'
-      ? [{ animalname: order }]
-      : [{ lastvisit: order }],
+    orderBy:
+      sort === 'customer'
+        ? [{ customer: { surname: order } }]
+        : sort === 'animal'
+          ? [{ animalname: order }]
+          : [{ lastvisit: order }],
   })
 
   // ... transform and return ...
@@ -1438,6 +1485,7 @@ else {
 **Problem**: ALL components use `'use client'`, even static ones.
 
 **Impact**:
+
 - Bundle size: ~500KB (could be ~350KB)
 - Initial load: ~2.5s (could be ~1.5s)
 - No SEO benefits
@@ -1456,6 +1504,7 @@ done
 ```
 
 **Candidates**:
+
 - `EmptyState.tsx` (pure static content)
 - `Breadcrumbs.tsx` (mostly static, just navigation)
 - `AnimalAvatar.tsx` (pure presentation)
@@ -1465,15 +1514,17 @@ done
 
 ```tsx
 // BEFORE: src/components/EmptyState.tsx
-'use client'  // ← Remove this
-import { useState } from 'react'  // ← Not needed
+'use client' // ← Remove this
+import { useState } from 'react' // ← Not needed
 
 export default function EmptyState({ suggestions }: Props) {
   // No state, no effects, no events - should be Server Component!
   return (
     <div>
       <h2>No Results Found</h2>
-      {suggestions.map(s => <span key={s}>{s}</span>)}
+      {suggestions.map(s => (
+        <span key={s}>{s}</span>
+      ))}
     </div>
   )
 }
@@ -1484,7 +1535,9 @@ export default function EmptyState({ suggestions }: Props) {
   return (
     <div>
       <h2>No Results Found</h2>
-      {suggestions.map(s => <span key={s}>{s}</span>)}
+      {suggestions.map(s => (
+        <span key={s}>{s}</span>
+      ))}
     </div>
   )
 }
@@ -1506,9 +1559,7 @@ export default function AnimalCard({ animal }: Props) {
       <p>{animal.breed}</p>
 
       {/* Interactive button */}
-      <button onClick={() => setShowDetails(!showDetails)}>
-        Details
-      </button>
+      <button onClick={() => setShowDetails(!showDetails)}>Details</button>
 
       {showDetails && <div>...</div>}
     </div>
@@ -1535,7 +1586,7 @@ export default function AnimalCard({ animal }: Props) {
 }
 
 // src/components/AnimalCardActions.tsx (Client Component)
-'use client'
+;('use client')
 import { useState } from 'react'
 
 export default function AnimalCardActions({ animalId }: { animalId: number }) {
@@ -1543,9 +1594,7 @@ export default function AnimalCardActions({ animalId }: { animalId: number }) {
 
   return (
     <>
-      <button onClick={() => setShowDetails(!showDetails)}>
-        Details
-      </button>
+      <button onClick={() => setShowDetails(!showDetails)}>Details</button>
       {showDetails && <div>Load details for {animalId}</div>}
     </>
   )
@@ -1561,19 +1610,19 @@ export default function AnimalCardActions({ animalId }: { animalId: number }) {
 
 Due to length constraints, I'll summarize the remaining important issues:
 
-| ID | Issue | Time | Benefit |
-|----|-------|------|---------|
-| I3 | Database indexes on search fields | 1h | 50% faster searches |
-| I4 | Extract business logic to services | 8h | Testability, maintainability |
-| I5 | Repository pattern for Prisma | 4h | Decoupling, easier mocking |
-| I6 | Centralize configuration | 2h | Easier environment management |
-| I7 | Fix Docker health check (-f flag) | 0.5h | Accurate container health |
-| I8 | Request deduplication | 4h | Reduced API calls |
-| I9 | Add proper type exports | 2h | Type safety across layers |
-| I10 | Optimize Docker image (Alpine) | 2h | 40% smaller image |
-| I11 | Add missing store tests | 3h | Better coverage |
-| I12 | Improve E2E test coverage | 4h | Catch more bugs |
-| I13 | Update Zod to 4.1.13 | 0.5h | Latest patches |
+| ID  | Issue                              | Time | Benefit                       |
+| --- | ---------------------------------- | ---- | ----------------------------- |
+| I3  | Database indexes on search fields  | 1h   | 50% faster searches           |
+| I4  | Extract business logic to services | 8h   | Testability, maintainability  |
+| I5  | Repository pattern for Prisma      | 4h   | Decoupling, easier mocking    |
+| I6  | Centralize configuration           | 2h   | Easier environment management |
+| I7  | Fix Docker health check (-f flag)  | 0.5h | Accurate container health     |
+| I8  | Request deduplication              | 4h   | Reduced API calls             |
+| I9  | Add proper type exports            | 2h   | Type safety across layers     |
+| I10 | Optimize Docker image (Alpine)     | 2h   | 40% smaller image             |
+| I11 | Add missing store tests            | 3h   | Better coverage               |
+| I12 | Improve E2E test coverage          | 4h   | Catch more bugs               |
+| I13 | Update Zod to 4.1.13               | 0.5h | Latest patches                |
 
 **Total Week 2**: ~37 hours (can prioritize top items to fit 25-hour budget)
 
@@ -1582,6 +1631,7 @@ Due to length constraints, I'll summarize the remaining important issues:
 ## Testing Strategy
 
 ### Unit Tests
+
 ```bash
 # After each fix, run related tests
 pnpm test src/__tests__/api/animals.test.ts
@@ -1589,6 +1639,7 @@ pnpm test src/__tests__/store/animalsStore.test.ts
 ```
 
 ### Integration Tests
+
 ```bash
 # Test rate limiting
 pnpm test:hurl
@@ -1598,6 +1649,7 @@ pnpm test:e2e
 ```
 
 ### Manual Testing Checklist
+
 - [ ] Search with rate limiting (verify 429 after limit)
 - [ ] Delete customer with animals (verify 409 error)
 - [ ] Invalid environment (verify clear error message)
@@ -1689,14 +1741,14 @@ curl http://localhost:3000/api/health
 
 After implementation, measure:
 
-| Metric | Before | Target | Measured |
-|--------|--------|--------|----------|
-| API response time (avg) | 450ms | <300ms | ___ |
-| Bundle size | 512KB | <350KB | ___ |
-| Initial page load | 2.8s | <1.5s | ___ |
-| Rate limit violations | N/A | <10/day | ___ |
-| Silent failures | Unknown | 0 | ___ |
-| Deploy failures (env) | ~20% | 0% | ___ |
+| Metric                  | Before  | Target  | Measured |
+| ----------------------- | ------- | ------- | -------- |
+| API response time (avg) | 450ms   | <300ms  | \_\_\_   |
+| Bundle size             | 512KB   | <350KB  | \_\_\_   |
+| Initial page load       | 2.8s    | <1.5s   | \_\_\_   |
+| Rate limit violations   | N/A     | <10/day | \_\_\_   |
+| Silent failures         | Unknown | 0       | \_\_\_   |
+| Deploy failures (env)   | ~20%    | 0%      | \_\_\_   |
 
 ---
 
