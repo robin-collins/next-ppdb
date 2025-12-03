@@ -60,7 +60,7 @@ model notes {
   animalID Int      @default(0) @db.MediumInt
   notes    String   @db.MediumText
   date     DateTime @default(dbgenerated("'1900-01-01'")) @db.Date
-  animal   animal   @relation(fields: [animalID], references: [animalID], onUpdate: NoAction, onDelete: NoAction)
+  animal   animal   @relation(fields: [animalID], references: [animalID], onUpdate: NoAction, onDelete: Cascade)
 
   @@unique([noteID], map: "noteID")
   @@index([animalID], map: "animalID")
