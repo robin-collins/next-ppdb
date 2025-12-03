@@ -97,12 +97,10 @@
 - [x] Apply rate limiting to main API routes
   - [x] Animals routes (GET, POST) - use 'search' type for GET
   - [x] Customers routes (GET, POST) - use 'search' type for GET
-  - [ ] Breeds routes (GET, POST) - remaining
-  - [ ] Notes routes (GET, POST, PUT, DELETE) - remaining
-  - [ ] Admin backup route - remaining
-  - [ ] Setup routes - remaining
-  - [ ] Reports routes
-  - [ ] All [id] routes (GET, PUT, DELETE)
+  - [x] Breeds routes (GET, POST) - 'api' type for GET, 'mutation' for POST
+  - [x] Notes routes (GET, POST, PUT, DELETE) - all wrapped
+  - [x] Reports routes (analytics, daily-totals) - 'api' type
+  - [x] All [id] routes (GET, PUT, DELETE) - animals/[id], customers/[id], breeds/[id], notes/[noteId]
 
 - [ ] Add environment variables
   - [x] Update `.env.example` with Valkey_HOST and Valkey_PORT
@@ -118,7 +116,7 @@
 
 ---
 
-### C3. Unhandled Promise Rejections in Stores (2 hours) ✅ COMPLETED (animalsStore)
+### C3. Unhandled Promise Rejections in Stores (2 hours) ✅ COMPLETED
 
 **Frontend Developer**
 
@@ -128,12 +126,12 @@
   - [x] `addNote()` - re-throw after setting error state
   - [x] `deleteNote()` - re-throw after setting error state
 
-- [ ] Fix `customersStore.ts` error handling (same pattern as animalsStore)
-  - [ ] `updateCustomer()` - re-throw after setting error state
-  - [ ] `deleteCustomer()` - re-throw after setting error state
-  - [ ] `deleteAnimal()` - re-throw after setting error state
+- [x] Fix `customersStore.ts` error handling (same pattern as animalsStore)
+  - [x] `updateCustomer()` - re-throw after setting error state
+  - [x] `deleteCustomer()` - re-throw after setting error state
+  - [x] `deleteAnimal()` - re-throw after setting error state
 
-- [x] Add mutating state flag (animalsStore)
+- [x] Add mutating state flag (both stores)
   - [x] Add `mutating: boolean` to store state
   - [x] Add `setMutating()` action
   - [x] Update mutations to set mutating flag

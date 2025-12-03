@@ -17,7 +17,14 @@ All notable changes to this project will be documented in this file.
   - Added rate limiting middleware using Valkey (Redis fork)
   - Created `src/lib/ratelimit.ts` with ioredis + rate-limiter-flexible
   - Created `src/lib/middleware/rateLimit.ts` with `withRateLimit()` wrapper
-  - Applied to animals and customers routes (search: 20/min, mutation: 10/min)
+  - Rate limits: api=30/min, search=20/min, mutation=10/min
+  - Applied to all API routes:
+    - Animals routes (GET=search, POST=mutation)
+    - Customers routes (GET=search, POST=mutation)
+    - Breeds routes (GET=api, POST=mutation)
+    - Notes routes (GET=api, POST/PUT/DELETE=mutation)
+    - Reports routes (GET=api)
+    - All [id] routes (animals, customers, breeds, notes)
   - Returns 429 with proper headers when limit exceeded
   - Falls back to in-memory limiting when Valkey unavailable
   - Dependencies added: `ioredis`, `rate-limiter-flexible`
@@ -30,9 +37,13 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **C3: Store Error Handling (animalsStore)**
-  - Added `mutating` state flag to `animalsStore.ts`
-  - All mutation functions (updateAnimal, deleteAnimal, addNote, deleteNote) now:
+- **C3: Store Error Handling (both stores)**
+  - Added `mutating` state flag to both `animalsStore.ts` and `customersStore.ts`
+  - animalsStore mutations (updateAnimal, deleteAnimal, addNote, deleteNote) now:
+    - Set `mutating: true` at start
+    - Re-throw errors after setting error state
+    - Use `finally` block to clear mutating flag
+  - customersStore mutations (updateCustomer, deleteCustomer, deleteAnimal) now:
     - Set `mutating: true` at start
     - Re-throw errors after setting error state
     - Use `finally` block to clear mutating flag

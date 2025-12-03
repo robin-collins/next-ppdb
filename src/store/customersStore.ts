@@ -74,6 +74,7 @@ interface CustomersState {
   pagination: PaginationData
   searchParams: SearchParams
   loading: boolean
+  mutating: boolean // For update/delete operations (separate from loading to avoid page flash)
   error: string | null
 
   // Actions
@@ -82,6 +83,7 @@ interface CustomersState {
   setPagination: (pagination: PaginationData) => void
   setSearchParams: (params: SearchParams) => void
   setLoading: (loading: boolean) => void
+  setMutating: (mutating: boolean) => void
   setError: (error: string | null) => void
   clearSearch: () => void
 
@@ -104,6 +106,7 @@ export const useCustomersStore = create<CustomersState>()(
         pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
         searchParams: {},
         loading: false,
+        mutating: false,
         error: null,
 
         // Basic setters
@@ -112,6 +115,7 @@ export const useCustomersStore = create<CustomersState>()(
         setPagination: pagination => set({ pagination }),
         setSearchParams: params => set({ searchParams: params }),
         setLoading: loading => set({ loading }),
+        setMutating: mutating => set({ mutating }),
         setError: error => set({ error }),
         clearSearch: () =>
           set({
@@ -212,8 +216,8 @@ export const useCustomersStore = create<CustomersState>()(
         },
 
         updateCustomer: async (id, data) => {
-          // Don't set loading: true for updates - it causes the page to flash
-          set({ error: null })
+          // Set mutating flag for UI feedback (separate from loading to avoid page flash)
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/customers/${id}`, {
               method: 'PUT',
@@ -265,19 +269,20 @@ export const useCustomersStore = create<CustomersState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to update customer',
-            })
-            throw error
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : 'Failed to update customer'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
 
         deleteCustomer: async id => {
-          // Don't set loading: true - it causes page flash
-          set({ error: null })
+          // Set mutating flag for UI feedback (separate from loading to avoid page flash)
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/customers/${id}`, {
               method: 'DELETE',
@@ -316,19 +321,20 @@ export const useCustomersStore = create<CustomersState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to delete customer',
-            })
-            throw error
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : 'Failed to delete customer'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
 
         deleteAnimal: async id => {
-          // Don't set loading: true - it causes page flash
-          set({ error: null })
+          // Set mutating flag for UI feedback (separate from loading to avoid page flash)
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'DELETE',
@@ -355,13 +361,12 @@ export const useCustomersStore = create<CustomersState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to delete animal',
-            })
-            throw error
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to delete animal'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
       }),
