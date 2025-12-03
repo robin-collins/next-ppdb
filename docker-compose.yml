@@ -16,7 +16,9 @@ services:
       - ./acme.json:/acme.json
     command:
       - '--api.dashboard=true'
+      - '--ping=true'
       - '--providers.docker=true'
+      - '--providers.docker.network=web'
       - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
@@ -26,6 +28,12 @@ services:
       # Global redirect to HTTPS
       - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"] # Command to run the health check
+      interval: 10s                                    # How often to run the check
+      timeout: 5s                                      # Timeout for each check
+      retries: 15                                       # Number of retries before marking as unhealthy
+      start_period: 10s   
     labels:
       - 'traefik.enable=true'
       # Router for the dashboard/API
@@ -77,6 +85,12 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - web
     labels:
@@ -88,6 +102,27 @@ services:
       # IP allowlist for local networks only
       - 'traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-ipallowlist'
       - 'traefik.http.middlewares.phpmyadmin-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
+
+  valkey:
+    image: valkey/valkey:9.0-trixie
+    container_name: valkey
+    hostname: valkey
+    restart: unless-stopped
+    volumes:
+      # Mount a named volume to the container's data directory for persistence
+      - valkey-data:/data 
+    # Override the default container command with custom arguments
+    command: valkey-server --save 60 1 --loglevel warning --appendonly yes      
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"] # Basic health check
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - web
+    labels:
+      - 'traefik.enable=false'
 
   next-ppdb:
     # build:
@@ -106,6 +141,10 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      traefik:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy      
     healthcheck:
       # Returns healthy if /api/health responds (any HTTP status)
       # This allows Traefik to route traffic during setup phase
@@ -114,7 +153,7 @@ services:
       test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost:3000/api/health"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 15
       start_period: 30s
     networks:
       - web
@@ -133,4 +172,6 @@ networks:
     external: true
 
 volumes:
+  valkey-data:
+    driver: local
   db_data:

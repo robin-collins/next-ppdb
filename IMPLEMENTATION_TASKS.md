@@ -8,15 +8,19 @@
 
 ## Pre-Sprint Setup
 
-- [ ] Review `IMPLEMENTATION_PLAN.md` completely
-- [ ] Set up Upstash Redis account (https://upstash.com) - Free tier
-- [ ] Add Upstash credentials to `.env`
+- [ ] Review `IMPLEMENTATION_PLAN.md` and `CODE_REVIEW.md` completely
+- [ ] Add Redis service to `docker-compose.yml` (see IMPLEMENTATION_PLAN.md C2 for config)
+- [ ] Update `.env` with Redis connection details (REDIS_HOST=redis, REDIS_PORT=6379)
 - [ ] Create feature branch: `git checkout -b feature/production-hardening`
 - [ ] Update Zod: `pnpm update zod` (4.1.12 → 4.1.13)
 
+**Note**: No Upstash account needed - using self-hosted Redis in Docker Compose
+
 ---
 
-## Week 1: Critical Issues (11 hours)
+## Week 1: Critical Issues (9 hours)
+
+**Note**: Foreign key validation (C5) is **already implemented** ✅ - See CODE_REVIEW.md Section 1.2
 
 ### C1. Console.log Information Disclosure (2 hours)
 
@@ -62,18 +66,26 @@
 
 ### C2. No Rate Limiting (4 hours)
 
-**Backend Developer**
+**Backend Developer + DevOps**
+
+- [ ] Add Redis service to `docker-compose.yml`
+  - [ ] Use `redis:7-alpine` image
+  - [ ] Configure memory limit (256MB) and LRU policy
+  - [ ] Add health check
+  - [ ] Add to app network
+  - [ ] Create redis-data volume
 
 - [ ] Install rate limiting dependencies
 
   ```bash
-  pnpm add @upstash/ratelimit @upstash/redis
+  pnpm add ioredis rate-limiter-flexible
+  pnpm add -D @types/ioredis
   ```
 
 - [ ] Create rate limiter utility (`src/lib/ratelimit.ts`)
-  - [ ] Set up Upstash Redis client
-  - [ ] Create in-memory fallback for development
-  - [ ] Define rate limiters by type (api: 100/min, search: 50/min, admin: 10/min)
+  - [ ] Set up ioredis client (connects to Docker Compose redis service)
+  - [ ] Create RateLimiterMemory fallback for development
+  - [ ] Define rate limiters by type (api: 30/min, search: 20/min, mutation: 10/min)
   - [ ] Implement `checkRateLimit()` function
   - [ ] Implement `getClientIdentifier()` helper
 
@@ -88,22 +100,22 @@
   - [ ] Customers routes (GET, POST) - use 'search' type for GET
   - [ ] Breeds routes (GET, POST)
   - [ ] Notes routes (GET, POST, PUT, DELETE)
-  - [ ] Admin backup route - use 'admin' type
+  - [ ] Admin backup route - use 'mutation' type
   - [ ] Setup routes
   - [ ] Reports routes
   - [ ] All [id] routes (GET, PUT, DELETE)
 
 - [ ] Add environment variables
-  - [ ] Update `.env.example` with Upstash vars
-  - [ ] Add to environment validation schema
+  - [ ] Update `.env.example` with REDIS_HOST and REDIS_PORT
+  - [ ] Add to environment validation schema (optional vars)
   - [ ] Document in README
 
 - [ ] Testing
-  - [ ] Test rate limit enforcement (51 requests should get 429)
+  - [ ] Test rate limit enforcement (21 search requests should get 429)
   - [ ] Test rate limit headers present
   - [ ] Test different limits for different types
   - [ ] Test in-memory fallback works without Redis
-  - [ ] Verify production requires Upstash config
+  - [ ] Verify Redis connection in Docker Compose
 
 ---
 
@@ -176,40 +188,22 @@
 
 ---
 
-### C5. No Foreign Key Validation Feedback (2 hours)
+### ~~C5. No Foreign Key Validation Feedback~~ ✅ ALREADY COMPLETE
 
-**Backend Developer**
+**Status**: No action needed - Foreign key validation is **excellently implemented**
 
-- [ ] Update customer delete endpoint (`src/app/api/customers/[id]/route.ts`)
-  - [ ] Add pre-deletion validation
-  - [ ] Check if customer exists
-  - [ ] Count associated animals
-  - [ ] Return 409 Conflict if animals exist
-  - [ ] Include animal list in error response
-  - [ ] Delete only if no dependencies
+**Verification** (optional):
 
-- [ ] Update breed delete endpoint (`src/app/api/breeds/[id]/route.ts`)
-  - [ ] Add pre-deletion validation
-  - [ ] Check if breed exists
-  - [ ] Count associated animals using `_count`
-  - [ ] Return 409 Conflict if animals exist
-  - [ ] Include count in error response
-  - [ ] Delete only if no dependencies
+- [x] Customer delete endpoint has pre-deletion validation with rehoming option
+- [x] Breed delete endpoint has pre-deletion validation with re-breed option
+- [x] Animal delete endpoint cascades to notes
+- [x] All endpoints return detailed 409 Conflict errors with counts
+- [x] Tests exist for all scenarios
 
-- [ ] Update client-side error handling
-  - [ ] Handle 409 errors in customer delete
-  - [ ] Show dependencies modal with animal list
-  - [ ] Handle 409 errors in breed delete
-  - [ ] Show informative error message
+**Optional Enhancement** (see CODE_REVIEW.md):
 
-- [ ] Update tests
-  - [ ] Test customer delete with animals (expect 409)
-  - [ ] Test customer delete without animals (expect 200)
-  - [ ] Test breed delete with animals (expect 409)
-  - [ ] Test breed delete without animals (expect 200)
-  - [ ] Verify error response structure
-  - [ ] Run: `pnpm test src/__tests__/api/customers.test.ts`
-  - [ ] Run: `pnpm test src/__tests__/api/breeds.test.ts`
+- [ ] Update Prisma schema: change `notes.animal` relation to `onDelete: Cascade`
+- [ ] Run migration to add database-level cascade enforcement
 
 ---
 
@@ -232,13 +226,14 @@
 
 ## Week 1 Completion Checklist
 
-- [ ] All 5 critical issues implemented
+- [ ] All 4 critical issues implemented (C5 was already done)
 - [ ] All tests passing
 - [ ] Production build successful
 - [ ] Zero console.log in production
-- [ ] Rate limiting functional
+- [ ] Rate limiting functional (self-hosted Redis)
 - [ ] Environment validation working
 - [ ] Error messages user-friendly
+- [ ] Foreign key validation verified (already implemented ✅)
 - [ ] Code reviewed by team
 - [ ] Documentation updated
 
