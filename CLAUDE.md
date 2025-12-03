@@ -60,8 +60,11 @@ Currently documents 17 core endpoints across Animals, Customers, Breeds, and Not
 
 ### Database Operations
 
+**Note**: Prisma commands use a wrapper script (`scripts/prisma-env.js`) that expands `.env` variable interpolation (e.g., `${MYSQL_HOST}`). Use `pnpm prisma` instead of `npx prisma` directly.
+
 - `pnpm prisma generate` - Regenerate Prisma Client from schema (outputs to `src/generated/prisma/`)
-- `pnpm prisma migrate deploy` - Apply pending migrations
+- `pnpm prisma:migrate` - Run migrations in dev mode
+- `pnpm prisma migrate deploy` - Apply pending migrations (production)
 - `pnpm prisma migrate dev` - Create and apply new migration
 - `pnpm prisma studio` - Open Prisma Studio GUI
 

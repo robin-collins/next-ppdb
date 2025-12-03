@@ -146,11 +146,11 @@
   - [x] Toast notifications for success/error
   - [x] Local loading states for button disabling
 
-- [ ] Update tests
-  - [ ] Test error re-throwing
-  - [ ] Test mutating flag lifecycle
+- [x] Update tests
+  - [x] Test error re-throwing
+  - [x] Test mutating flag lifecycle
   - [ ] Test component navigation stops on error
-  - [ ] Run: `pnpm test src/__tests__/store/`
+  - [x] Run: `pnpm test src/__tests__/store/`
 
 ---
 
@@ -271,20 +271,15 @@
 
 **Frontend Developer**
 
-- [ ] Audit all components
+- [x] Audit all components (found 31 with 'use client')
 
-  ```bash
-  rg "use client" src/components/ -l | while read file; do
-    if ! rg "useState|useEffect|onClick|onChange" "$file" > /dev/null; then
-      echo "Server Component candidate: $file"
-    fi
-  done
-  ```
-
-- [ ] Convert static components to Server Components
-  - [ ] `EmptyState.tsx` - remove 'use client'
-  - [ ] `AnimalAvatar.tsx` - remove 'use client'
-  - [ ] Parts of `Breadcrumbs.tsx`
+- [x] Convert static components to Server Components
+  - [x] `Breadcrumbs.tsx` - removed 'use client' (no hooks/handlers)
+  - [x] `CustomerStatsCard.tsx` - removed 'use client' (no hooks/handlers)
+  - [x] `StatsBar.tsx` - removed 'use client' (no hooks/handlers)
+  - [x] `DailyTotalsCard.tsx` - removed 'use client' (no hooks/handlers)
+  - [x] `EmptyState.tsx` - already server component (no directive)
+  - [ ] `AnimalAvatar.tsx` - NEEDS client (useState for image error)
 
 - [ ] Split interactive components
   - [ ] Create `AnimalCardActions.tsx` (client component)
@@ -309,14 +304,14 @@
 
 ---
 
-### I3. Database Indexes on Search Fields (1 hour)
+### I3. Database Indexes on Search Fields (1 hour) ✅ COMPLETED
 
 **Backend Developer / DevOps**
 
-- [ ] Update Prisma schema (`prisma/schema.prisma`)
-  - [ ] Add index on `customer.firstname`
-  - [ ] Add index on `customer.phone1`
-  - [ ] Add index on `customer.email`
+- [x] Update Prisma schema (`prisma/schema.prisma`)
+  - [x] Add index on `customer.firstname` (ix_firstname)
+  - [x] Add index on `customer.phone1` (ix_phone1)
+  - [x] Add index on `customer.email` (ix_email)
   - [ ] Consider composite index on frequently searched columns
 
 - [ ] Create and test migration

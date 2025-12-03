@@ -1,5 +1,3 @@
-'use client'
-
 interface DailyTotalsCardProps {
   dateTime: string
   totalAnimals: number

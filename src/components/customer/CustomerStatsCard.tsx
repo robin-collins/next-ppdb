@@ -1,5 +1,3 @@
-'use client'
-
 interface Animal {
   lastVisit?: Date | string | null
   cost?: number | null

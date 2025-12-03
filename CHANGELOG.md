@@ -69,6 +69,23 @@ All notable changes to this project will be documented in this file.
 - All API routes now use structured logging with automatic redaction
 - Animals/Customers routes now have rate limiting protection
 
+### Improved
+
+- **I2: Reduced Client-Side Rendering**
+  - Converted 4 components from client to server components (smaller JS bundle):
+    - `Breadcrumbs.tsx` - no hooks/handlers needed
+    - `CustomerStatsCard.tsx` - pure data display
+    - `StatsBar.tsx` - pure data display
+    - `DailyTotalsCard.tsx` - pure data display
+  - Reduces JavaScript sent to browser for faster page loads
+
+- **I3: Database Search Indexes**
+  - Added indexes to customer table for faster search queries:
+    - `ix_firstname` on firstname
+    - `ix_phone1` on phone1
+    - `ix_email` on email
+  - Migration applied at deployment via `prisma migrate deploy`
+
 ## [0.1.2] 2025-12-02
 
 ### Fixed

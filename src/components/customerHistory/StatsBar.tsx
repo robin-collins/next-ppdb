@@ -1,5 +1,3 @@
-'use client'
-
 interface StatsBarProps {
   total: number
   oldestVisit: string | null

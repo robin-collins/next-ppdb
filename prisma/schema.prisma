@@ -53,6 +53,9 @@ model customer {
 
   @@unique([customerID], map: "customerID")
   @@index([surname], map: "surname")
+  @@index([firstname], map: "ix_firstname")
+  @@index([phone1], map: "ix_phone1")
+  @@index([email], map: "ix_email")
 }
 
 model notes {

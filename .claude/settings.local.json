@@ -40,7 +40,16 @@
       "Bash(grep:*)",
       "Bash(pnpm fmt:check:*)",
       "Bash(pnpm fmt:*)",
-      "Bash(pnpm check:*)"
+      "Bash(pnpm check:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(pnpm prisma migrate dev:*)",
+      "Bash(pnpm prisma:migrate:*)",
+      "Bash(node -e:*)",
+      "Bash(echo:*)",
+      "Bash(pnpm prisma db push:*)",
+      "Bash(pnpm prisma db pull:*)"
     ],
     "deny": [],
     "ask": []

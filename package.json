@@ -27,7 +27,10 @@
     "clean:logs": "rimraf logs/",
     "clean:uploads": "rimraf uploads/",
     "check": "pnpm run type-check && pnpm run lint && pnpm run fmt:check && pnpm run test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prisma": "node scripts/prisma-env.js",
+    "prisma:migrate": "node scripts/prisma-env.js migrate dev",
+    "prisma:generate": "node scripts/prisma-env.js generate"
   },
   "dependencies": {
     "@omer-x/next-openapi-json-generator": "^2.0.2",
@@ -67,6 +70,8 @@
     "@types/swagger-ui-react": "^5.18.0",
     "@types/tar": "^6.1.13",
     "@types/uuid": "^11.0.0",
+    "dotenv": "^17.2.3",
+    "dotenv-expand": "^12.0.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "15.4.5",
     "eslint-config-prettier": "^10.1.8",
