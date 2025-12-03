@@ -104,7 +104,7 @@ services:
       - 'traefik.http.middlewares.phpmyadmin-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
 
   valkey:
-    image: valkey/valkey:9.0-trixie
+    image: valkey/valkey-bundle:9.0-trixie
     container_name: valkey
     hostname: valkey
     restart: unless-stopped
@@ -112,7 +112,7 @@ services:
       # Mount a named volume to the container's data directory for persistence
       - valkey-data:/data 
     # Override the default container command with custom arguments
-    command: valkey-server --save 60 1 --loglevel warning --appendonly yes      
+    command: valkey-server --save 60 1 --loglevel warning --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD-SHELL", "valkey-cli ping | grep PONG"] # Basic health check
       interval: 10s

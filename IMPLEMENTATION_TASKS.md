@@ -9,12 +9,12 @@
 ## Pre-Sprint Setup
 
 - [ ] Review `IMPLEMENTATION_PLAN.md` and `CODE_REVIEW.md` completely
-- [ ] Add Redis service to `docker-compose.yml` (see IMPLEMENTATION_PLAN.md C2 for config)
-- [ ] Update `.env` with Redis connection details (REDIS_HOST=redis, REDIS_PORT=6379)
+- [ ] Add Redis fork "Valkey" service to `docker-compose.yml` (see IMPLEMENTATION_PLAN.md C2 for config)
+- [ ] Update `.env` with Redis fork "Valkey" connection details (VALKEY_HOST=valkey, VALKEY_PORT=6379)
 - [ ] Create feature branch: `git checkout -b feature/production-hardening`
 - [ ] Update Zod: `pnpm update zod` (4.1.12 → 4.1.13)
 
-**Note**: No Upstash account needed - using self-hosted Redis in Docker Compose
+**Note**: No Upstash account needed - using self-hosted Redis fork "Valkey" in Docker Compose
 
 ---
 
@@ -68,22 +68,22 @@
 
 **Backend Developer + DevOps**
 
-- [ ] Add Redis service to `docker-compose.yml`
-  - [ ] Use `redis:7-alpine` image
-  - [ ] Configure memory limit (256MB) and LRU policy
-  - [ ] Add health check
-  - [ ] Add to app network
-  - [ ] Create redis-data volume
+- [x] Add Redis fork "Valkey" service to `docker-compose.yml`
+  - [x] Use `valkey/valkey:9.0-trixie` image
+  - [x] Configure memory limit (256MB) and LRU policy
+  - [x] Add health check
+  - [x] Add to app network
+  - [x] Create Valkey-data volume
 
 - [ ] Install rate limiting dependencies
 
   ```bash
-  pnpm add ioredis rate-limiter-flexible
-  pnpm add -D @types/ioredis
+  pnpm add ioRedis rate-limiter-flexible
+  pnpm add -D @types/ioRedis
   ```
 
 - [ ] Create rate limiter utility (`src/lib/ratelimit.ts`)
-  - [ ] Set up ioredis client (connects to Docker Compose redis service)
+  - [ ] Set up ioRedis client (connects to Docker Compose Valkey service)
   - [ ] Create RateLimiterMemory fallback for development
   - [ ] Define rate limiters by type (api: 30/min, search: 20/min, mutation: 10/min)
   - [ ] Implement `checkRateLimit()` function
@@ -106,7 +106,7 @@
   - [ ] All [id] routes (GET, PUT, DELETE)
 
 - [ ] Add environment variables
-  - [ ] Update `.env.example` with REDIS_HOST and REDIS_PORT
+  - [x] Update `.env.example` with Valkey_HOST and Valkey_PORT
   - [ ] Add to environment validation schema (optional vars)
   - [ ] Document in README
 
@@ -114,8 +114,8 @@
   - [ ] Test rate limit enforcement (21 search requests should get 429)
   - [ ] Test rate limit headers present
   - [ ] Test different limits for different types
-  - [ ] Test in-memory fallback works without Redis
-  - [ ] Verify Redis connection in Docker Compose
+  - [ ] Test in-memory fallback works without Redis fork "Valkey"
+  - [ ] Verify Redis fork "Valkey" connection in Docker Compose
 
 ---
 
@@ -163,9 +163,8 @@
   - [ ] Add DATABASE_URL validation (must start with mysql://)
   - [ ] Add NODE_ENV validation (enum: development, production, test)
   - [ ] Add optional DEBUG flag
-  - [ ] Add optional Upstash Redis vars (required in production)
   - [ ] Add PORT and HOSTNAME with defaults
-  - [ ] Add refinement for production Redis requirement
+  - [ ] Add refinement for production Redis fork "Valkey" requirement
   - [ ] Export validated `env` object
 
 - [ ] Create validation helper (`src/lib/validateEnv.ts`)
@@ -182,7 +181,7 @@
 - [ ] Testing
   - [ ] Test with missing DATABASE_URL
   - [ ] Test with invalid DATABASE_URL format (postgres://)
-  - [ ] Test production without Redis
+  - [ ] Test production without Redis fork "Valkey"
   - [ ] Test with valid configuration
   - [ ] Verify clear error messages
 
@@ -230,7 +229,7 @@
 - [ ] All tests passing
 - [ ] Production build successful
 - [ ] Zero console.log in production
-- [ ] Rate limiting functional (self-hosted Redis)
+- [ ] Rate limiting functional (self-hosted Redis fork "Valkey")
 - [ ] Environment validation working
 - [ ] Error messages user-friendly
 - [ ] Foreign key validation verified (already implemented ✅)
@@ -396,7 +395,7 @@
 - [ ] Create config module (`src/lib/config.ts`)
   - [ ] Import validated env
   - [ ] Export typed config object
-  - [ ] Group by domain (database, server, redis, etc.)
+  - [ ] Group by domain (database, server, Redis fork "Valkey", etc.)
 
 - [ ] Update all env access points
   - [ ] Replace `process.env.DATABASE_URL` with `config.database.url`
@@ -634,7 +633,7 @@
 - [ ] Update `docker-compose.yml`
   - [ ] Change image tag to v0.1.3
   - [ ] Review environment variables
-  - [ ] Add new Upstash Redis vars
+  - [ ] Add new Upstash Redis fork "Valkey" vars
 
 - [ ] Deploy
 
