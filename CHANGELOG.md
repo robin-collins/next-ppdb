@@ -86,6 +86,31 @@ All notable changes to this project will be documented in this file.
     - `ix_email` on email
   - Migration applied at deployment via `prisma migrate deploy`
 
+- **I4: Service Layer (Started)**
+  - Created `src/services/animals.service.ts`
+  - Extracted `calculateRelevanceScore()` and `normalizePhone()` to service
+  - Functions are now pure and testable independently
+  - API routes import from service layer
+
+- **I6: Centralized Configuration**
+  - Created `src/lib/config.ts` with typed, domain-grouped configuration
+  - Exports: `database`, `server`, `valkey`, `logging`, `rateLimits`, `pagination`
+  - Uses lazy-loaded getters for validated environment access
+  - Updated `ratelimit.ts` to use centralized config
+
+- **I9: Shared API Types**
+  - Created `src/types/api.ts` with shared type definitions
+  - Exports: `AnimalResponse`, `CustomerResponse`, `BreedResponse`, `NoteResponse`
+  - Exports: `PaginationMeta`, `ApiError`, `ValidationError`
+  - Exports: Request types (`CreateAnimalData`, `UpdateAnimalData`, etc.)
+  - `animalsStore.ts` now imports types from shared module
+  - Updated components to handle `Date | string` for JSON-serialized dates
+
+- **I13: Dependency Updates**
+  - Updated: zod 4.1.13, zustand 5.0.9, rimraf 6.1.2
+  - Updated: @eslint/eslintrc 3.3.3, @types/react 19.2.7, lint-staged 16.2.7
+  - Removed deprecated: @types/pino, @types/uuid (packages provide own types)
+
 ## [0.1.2] 2025-12-02
 
 ### Fixed

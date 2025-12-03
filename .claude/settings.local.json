@@ -49,7 +49,10 @@
       "Bash(node -e:*)",
       "Bash(echo:*)",
       "Bash(pnpm prisma db push:*)",
-      "Bash(pnpm prisma db pull:*)"
+      "Bash(pnpm prisma db pull:*)",
+      "Bash(pnpm outdated:*)",
+      "Bash(pnpm update:*)",
+      "Bash(pnpm remove:*)"
     ],
     "deny": [],
     "ask": []

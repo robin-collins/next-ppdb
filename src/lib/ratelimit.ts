@@ -12,16 +12,17 @@
 import Redis from 'ioredis'
 import { RateLimiterRedis, RateLimiterMemory } from 'rate-limiter-flexible'
 import { log } from '@/lib/logger'
+import { valkey as valkeyConfig, rateLimits } from '@/lib/config'
 
 // Valkey client (uses Docker Compose service or environment variables)
 let redis: Redis | null = null
 
 // Initialize Redis connection if configured
-if (process.env.VALKEY_HOST) {
+if (valkeyConfig.host) {
   try {
     redis = new Redis({
-      host: process.env.VALKEY_HOST || 'valkey',
-      port: parseInt(process.env.VALKEY_PORT || '6379'),
+      host: valkeyConfig.host,
+      port: valkeyConfig.port,
       enableOfflineQueue: false,
       maxRetriesPerRequest: 1,
       retryStrategy: (times: number) => {
@@ -52,14 +53,14 @@ if (process.env.VALKEY_HOST) {
   }
 }
 
-// Rate limit configurations by endpoint type
+// Rate limit configurations by endpoint type (from centralized config)
 const RATE_LIMITS = {
   // Standard API routes: 30 requests per minute
-  api: { points: 30, duration: 60 },
+  api: { points: rateLimits.api, duration: 60 },
   // Search endpoints: 20 requests per minute (more expensive)
-  search: { points: 20, duration: 60 },
+  search: { points: rateLimits.search, duration: 60 },
   // Mutation endpoints: 10 requests per minute (POST/PUT/DELETE)
-  mutation: { points: 10, duration: 60 },
+  mutation: { points: rateLimits.mutation, duration: 60 },
 } as const
 
 export type RateLimitType = keyof typeof RATE_LIMITS

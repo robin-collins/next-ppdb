@@ -20,7 +20,7 @@ interface Animal {
     phone3?: string | null
     email?: string | null
   }
-  lastVisit: Date
+  lastVisit: Date | string
   cost: number
   relevanceScore?: number
 }

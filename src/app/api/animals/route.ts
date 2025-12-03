@@ -8,9 +8,13 @@ import {
 import type { Prisma } from '@/generated/prisma'
 import { log } from '@/lib/logger'
 import { withRateLimit } from '@/lib/middleware/rateLimit'
+import {
+  calculateRelevanceScore,
+  normalizePhone,
+} from '@/services/animals.service'
 
 // Helper function to calculate relevance score with detailed breakdown
-function calculateRelevanceScore(
+function _calculateRelevanceScore(
   animal: Prisma.animalGetPayload<{
     include: { customer: true; breed: true }
   }>,
@@ -197,10 +201,7 @@ function calculateRelevanceScore(
   return { score: totalScore, breakdown }
 }
 
-// Helper function to normalize phone numbers for searching
-function normalizePhone(phone: string): string {
-  return phone.replace(/[\s\-\(\)]/g, '')
-}
+// normalizePhone imported from animals.service
 
 // GET /api/animals?q=john+smith&page=1
 export async function GET(request: NextRequest) {

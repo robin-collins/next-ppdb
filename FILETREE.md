@@ -34,7 +34,8 @@ ppdb-ts/
 ├── scripts/                        # Build and utility scripts
 │   ├── ai_image_generation.py      # AI image generation script with resume capability (updated 2025-11-30)
 │   ├── test-hurl.sh                # ✅ Hurl test runner script (created 2025-11-16)
-│   └── build-on-main.sh            # ✅ Conditional build script for main branch commits (created 2025-11-17)
+│   ├── build-on-main.sh            # ✅ Conditional build script for main branch commits (created 2025-11-17)
+│   └── prisma-env.js               # Prisma CLI wrapper with dotenv-expand (created 2025-12-03)
 ├── FIX_ALL_AUTOINCREMENT.sh        # Comprehensive AUTO_INCREMENT fix script (created 2025-11-16)
 ├── FIX_DATABASE_NOW.sh             # Automated database fix script for notes (created 2025-11-16)
 ├── FINISH_DATABASE_FIX.md          # Manual fix guide for remaining tables (created 2025-11-16)
@@ -82,13 +83,18 @@ ppdb-ts/
 │   ├── app/api/breeds/pricing/      # Bulk pricing update API
 │   │   └── route.ts                 # POST handler for breed/animal pricing updates (created 2025-12-02)
 │   ├── lib/env.ts                   # Zod-based environment variable validation (created 2025-12-03)
+│   ├── lib/config.ts                # Centralized typed configuration (created 2025-12-03)
 │   ├── lib/logger.ts                # Pino-based structured logging with redaction (updated 2025-12-03)
 │   ├── lib/ratelimit.ts             # Rate limiting utility using Valkey/Redis with memory fallback (created 2025-12-03)
 │   ├── lib/middleware/              # API middleware utilities (created 2025-12-03)
 │   │   └── rateLimit.ts             # withRateLimit() wrapper for API routes
+│   ├── services/                    # Business logic services (created 2025-12-03)
+│   │   └── animals.service.ts       # Animal search scoring and helpers
+│   ├── types/                       # Shared TypeScript types (created 2025-12-03)
+│   │   └── api.ts                   # API response/request type definitions
 │   ├── instrumentation.ts           # Next.js startup hook for environment validation (created 2025-12-03)
 │   └── store/                       # Zustand state management stores
-│       ├── animalsStore.ts          # Animals store with mutating flag (updated 2025-12-03)
+│       ├── animalsStore.ts          # Animals store with shared types (updated 2025-12-03)
 │       └── customersStore.ts        # Customers store with mutating flag (updated 2025-12-03)
 ```
 

@@ -1,62 +1,15 @@
 // src/store/animalsStore.ts
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
+import type {
+  AnimalResponse,
+  CreateAnimalData,
+  UpdateAnimalData,
+  PaginationMeta,
+} from '@/types/api'
 
-// Define API response types that match the transformed data
-interface Animal {
-  id: number
-  name: string
-  breed: string
-  colour: string | null
-  sex: 'Male' | 'Female'
-  cost: number
-  lastVisit: Date
-  thisVisit: Date
-  comments: string | null
-  relevanceScore?: number // Optional relevance score from search
-  customer: {
-    id: number
-    surname: string
-    firstname?: string | null
-    address?: string | null
-    suburb?: string | null
-    postcode?: number | null
-    phone1?: string | null
-    phone2?: string | null
-    phone3?: string | null
-    email?: string | null
-  }
-  serviceNotes?: {
-    id: number
-    animalId: number
-    notes: string
-    serviceDate: Date
-  }[]
-}
-
-// Define proper types for API data that match the validation schemas
-interface CreateAnimalData {
-  customerId: number
-  name: string
-  breed: string
-  sex: 'Male' | 'Female' | 'Unknown'
-  colour?: string
-  cost?: number
-  lastVisit?: string
-  thisVisit?: string
-  comments?: string
-}
-
-interface UpdateAnimalData {
-  name?: string
-  breed?: string
-  sex?: 'Male' | 'Female' | 'Unknown'
-  colour?: string
-  cost?: number
-  lastVisit?: string
-  thisVisit?: string
-  comments?: string
-}
+// Re-export for backward compatibility
+type Animal = AnimalResponse
 
 interface SearchParams {
   q?: string
@@ -66,18 +19,11 @@ interface SearchParams {
   order?: 'asc' | 'desc'
 }
 
-interface PaginationData {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
-
 interface AnimalsState {
   // Data
   animals: Animal[]
   selectedAnimal: Animal | null
-  pagination: PaginationData
+  pagination: PaginationMeta
   searchParams: SearchParams
   loading: boolean
   mutating: boolean // For update/delete operations (separate from loading to avoid page flash)
@@ -86,7 +32,7 @@ interface AnimalsState {
   // Actions
   setAnimals: (animals: Animal[]) => void
   setSelectedAnimal: (animal: Animal | null) => void
-  setPagination: (pagination: PaginationData) => void
+  setPagination: (pagination: PaginationMeta) => void
   setSearchParams: (params: SearchParams) => void
   setLoading: (loading: boolean) => void
   setMutating: (mutating: boolean) => void

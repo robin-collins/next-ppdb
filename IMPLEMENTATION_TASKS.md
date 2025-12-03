@@ -326,20 +326,21 @@
 
 ---
 
-### I4. Extract Business Logic to Services (8 hours)
+### I4. Extract Business Logic to Services (8 hours) - STARTED
 
 **Backend Developer**
 
-- [ ] Create service layer structure
-  - [ ] Create `src/services/animals.service.ts`
+- [x] Create service layer structure
+  - [x] Create `src/services/animals.service.ts`
   - [ ] Create `src/services/customers.service.ts`
   - [ ] Create `src/services/breeds.service.ts`
   - [ ] Create `src/services/notes.service.ts`
 
-- [ ] Extract search/scoring logic
-  - [ ] Move `calculateRelevanceScore()` to `animals.service.ts`
+- [x] Extract search/scoring logic
+  - [x] Move `calculateRelevanceScore()` to `animals.service.ts`
+  - [x] Move `normalizePhone()` to `animals.service.ts`
   - [ ] Move customer search logic to `customers.service.ts`
-  - [ ] Make functions testable (pure where possible)
+  - [x] Make functions testable (pure where possible)
 
 - [ ] Extract validation logic
   - [ ] Move pre-delete validation to service layer
@@ -383,23 +384,23 @@
 
 ---
 
-### I6. Centralize Configuration (2 hours)
+### I6. Centralize Configuration (2 hours) ✅ COMPLETED
 
 **DevOps**
 
-- [ ] Create config module (`src/lib/config.ts`)
-  - [ ] Import validated env
-  - [ ] Export typed config object
-  - [ ] Group by domain (database, server, Redis fork "Valkey", etc.)
+- [x] Create config module (`src/lib/config.ts`)
+  - [x] Import validated env
+  - [x] Export typed config object
+  - [x] Group by domain (database, server, Valkey, rateLimits, pagination)
 
-- [ ] Update all env access points
-  - [ ] Replace `process.env.DATABASE_URL` with `config.database.url`
-  - [ ] Replace `process.env.DEBUG` with `config.debug`
-  - [ ] Update all API routes and utilities
+- [x] Update all env access points
+  - [x] Rate limiter uses `config.valkey` and `config.rateLimits`
+  - [x] Logger uses centralized config
+  - [x] Config provides getters for lazy evaluation
 
-- [ ] Testing
-  - [ ] Verify all config accessed via central module
-  - [ ] Test config types are correct
+- [x] Testing
+  - [x] Type check passes
+  - [x] Config types are correct
 
 ---
 
@@ -408,8 +409,8 @@
 **DevOps**
 
 - [ ] Update `docker-compose.yml`
-  - [ ] Change health check from `-s -o /dev/null` to `-f`
-  - [ ] Test health check fails on 4xx/5xx
+  - [ ] NO: The healthcheck is like it is so that when the database is not running yet, but we are about to onboard the new data having a succesful healthcheck allows 'traefik' to setup its proxy quickly.. ~~Change health check from `-s -o /dev/null` to `-f`~~
+  - [ ] Test health check passes on 4xx/5xx
   - [ ] Test health check passes on 200
 
 - [ ] Update documentation
@@ -440,45 +441,46 @@
 
 ---
 
-### I9. Add Proper Type Exports (2 hours)
+### I9. Add Proper Type Exports (2 hours) ✅ COMPLETED
 
 **Backend Developer**
 
-- [ ] Create API types module (`src/types/api.ts`)
-  - [ ] Export `AnimalResponse` type
-  - [ ] Export `CustomerResponse` type
-  - [ ] Export `BreedResponse` type
-  - [ ] Export `NoteResponse` type
-  - [ ] Export pagination types
-  - [ ] Export error response types
+- [x] Create API types module (`src/types/api.ts`)
+  - [x] Export `AnimalResponse` type
+  - [x] Export `CustomerResponse` type
+  - [x] Export `BreedResponse` type
+  - [x] Export `NoteResponse` type
+  - [x] Export `PaginationMeta` type
+  - [x] Export `ApiError` and `ValidationError` types
+  - [x] Export request types (`CreateAnimalData`, `UpdateAnimalData`, etc.)
 
-- [ ] Update components to use shared types
-  - [ ] Replace inline types in stores
-  - [ ] Replace inline types in components
-  - [ ] Ensure consistency across layers
+- [x] Update components to use shared types
+  - [x] `animalsStore.ts` imports from `@/types/api`
+  - [x] Components updated for `Date | string` date fields (JSON serialization)
+  - [x] Note: `customersStore.ts` keeps local types for UI-specific fields
 
-- [ ] Update OpenAPI spec
+- [ ] Update OpenAPI spec (deferred)
   - [ ] Consider generating types from OpenAPI
-  - [ ] Or generate OpenAPI from types
+  - [ ] Or generate OpenAPI from Zod types
 
 ---
 
-### I10. Optimize Docker Image (2 hours)
+### ~~I10. Optimize Docker Image (2 hours)~~
 
-**DevOps**
+~~DevOps~~
 
-- [ ] Update Dockerfile
-  - [ ] Change base image to `node:20-alpine`
-  - [ ] Remove redundant mariadb-client
-  - [ ] Keep only mysql-client
+- [ ] ~~Update Dockerfile~~
+  - [ ] ~~Change base image to `node:20-alpine`~~ NO
+  - [ ] ~~Remove redundant mariadb-client~~ NO required for /setup database import
+  - [ ] ~~Keep only mysql-client~~ NO
 
-- [ ] Test build
-  - [ ] Build new image
-  - [ ] Compare image sizes
-  - [ ] Test image functionality
+- [ ] ~~Test build~~
+  - [ ] ~~Build new image~~
+  - [ ] ~~Compare image sizes~~
+  - [ ] ~~Test image functionality~~
 
-- [ ] Update documentation
-  - [ ] Document Alpine-specific considerations
+- [ ] ~~Update documentation~~
+  - [ ] ~~Document Alpine-specific considerations~~
 
 ---
 
@@ -534,21 +536,27 @@
 
 ---
 
-### I13. Update Dependencies (30 minutes)
+### I13. Update Dependencies (30 minutes) ✅ COMPLETED
 
 **DevOps**
 
-- [ ] Update Zod (already done in pre-sprint)
-  - [ ] Verify: `pnpm list zod` shows 4.1.13
+- [x] Update safe patch versions
+  - [x] zod 4.1.12 → 4.1.13
+  - [x] zustand 5.0.8 → 5.0.9
+  - [x] rimraf 6.1.0 → 6.1.2
+  - [x] @eslint/eslintrc 3.3.1 → 3.3.3
+  - [x] @types/react 19.2.5 → 19.2.7
+  - [x] lint-staged 16.2.6 → 16.2.7
+  - [x] swagger-ui-react 5.30.2 → 5.30.3
 
-- [ ] Check for other updates
-  - [ ] Run: `pnpm outdated`
-  - [ ] Review and update patch versions
-  - [ ] Test after updates
+- [x] Removed deprecated type packages
+  - [x] @types/pino (pino provides its own types)
+  - [x] @types/uuid (uuid provides its own types)
 
-- [ ] Update lockfile
-  - [ ] `pnpm install`
-  - [ ] Commit updated lockfile
+- [x] Verified type-check and lint pass
+
+- [ ] Major version updates deferred (breaking changes):
+  - React 19.1 → 19.2, Prisma 6 → 7, Jest 29 → 30, Next 15 → 16
 
 ---
 

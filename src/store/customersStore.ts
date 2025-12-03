@@ -2,7 +2,8 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-// Define API response types that match the transformed data
+// Customer store uses its own types as they include additional fields
+// for the UI that may differ from API response types
 interface Customer {
   id: number
   surname: string
@@ -29,7 +30,6 @@ interface Customer {
   }[]
 }
 
-// Define proper types for API data
 interface CreateCustomerData {
   surname: string
   firstname?: string
