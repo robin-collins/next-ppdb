@@ -80,6 +80,7 @@ interface AnimalsState {
   pagination: PaginationData
   searchParams: SearchParams
   loading: boolean
+  mutating: boolean // For update/delete operations (separate from loading to avoid page flash)
   error: string | null
 
   // Actions
@@ -88,6 +89,7 @@ interface AnimalsState {
   setPagination: (pagination: PaginationData) => void
   setSearchParams: (params: SearchParams) => void
   setLoading: (loading: boolean) => void
+  setMutating: (mutating: boolean) => void
   setError: (error: string | null) => void
   clearSearch: () => void
 
@@ -114,6 +116,7 @@ export const useAnimalsStore = create<AnimalsState>()(
         pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
         searchParams: {},
         loading: false,
+        mutating: false,
         error: null,
 
         // Basic setters
@@ -122,6 +125,7 @@ export const useAnimalsStore = create<AnimalsState>()(
         setPagination: pagination => set({ pagination }),
         setSearchParams: params => set({ searchParams: params }),
         setLoading: loading => set({ loading }),
+        setMutating: mutating => set({ mutating }),
         setError: error => set({ error }),
         clearSearch: () =>
           set({
@@ -224,9 +228,8 @@ export const useAnimalsStore = create<AnimalsState>()(
         },
 
         updateAnimal: async (id, data) => {
-          // Don't set loading: true for updates - it causes the page to flash
-          // the loading state which looks like a full page reload
-          set({ error: null })
+          // Set mutating flag for UI feedback (separate from loading to avoid page flash)
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'PUT',
@@ -235,7 +238,7 @@ export const useAnimalsStore = create<AnimalsState>()(
             })
 
             if (!response.ok) {
-              const errorData = await response.json()
+              const errorData = await response.json().catch(() => ({}))
               throw new Error(errorData.error || 'Failed to update animal')
             }
 
@@ -268,25 +271,26 @@ export const useAnimalsStore = create<AnimalsState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to update animal',
-            })
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to update animal'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
 
         deleteAnimal: async id => {
-          // Don't set loading: true - it causes page flash
-          set({ error: null })
+          // Set mutating flag for UI feedback (separate from loading to avoid page flash)
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/animals/${id}`, {
               method: 'DELETE',
             })
 
             if (!response.ok) {
-              throw new Error('Failed to delete animal')
+              const errorData = await response.json().catch(() => ({}))
+              throw new Error(errorData.error || 'Failed to delete animal')
             }
 
             // Clear selected animal if it's the one being deleted
@@ -315,18 +319,18 @@ export const useAnimalsStore = create<AnimalsState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to delete animal',
-            })
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to delete animal'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
 
         addNote: async (animalId, payload) => {
-          // Don't set loading: true - it causes page flash
-          set({ error: null })
+          // Set mutating flag for UI feedback
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/animals/${animalId}/notes`, {
               method: 'POST',
@@ -334,7 +338,7 @@ export const useAnimalsStore = create<AnimalsState>()(
               body: JSON.stringify(payload),
             })
             if (!response.ok) {
-              const errorData = await response.json()
+              const errorData = await response.json().catch(() => ({}))
               throw new Error(errorData.error || 'Failed to add note')
             }
             // Silently refresh selected animal to get updated notes
@@ -344,22 +348,24 @@ export const useAnimalsStore = create<AnimalsState>()(
               set({ selectedAnimal: animal })
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error ? error.message : 'Failed to add note',
-            })
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to add note'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
 
         deleteNote: async (noteId, animalId) => {
-          // Don't set loading: true - it causes page flash
-          set({ error: null })
+          // Set mutating flag for UI feedback
+          set({ error: null, mutating: true })
           try {
             const response = await fetch(`/api/notes/${noteId}`, {
               method: 'DELETE',
             })
             if (!response.ok) {
-              const errorData = await response.json()
+              const errorData = await response.json().catch(() => ({}))
               throw new Error(errorData.error || 'Failed to delete note')
             }
             // Silently refresh selected animal if provided
@@ -371,12 +377,12 @@ export const useAnimalsStore = create<AnimalsState>()(
               }
             }
           } catch (error) {
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to delete note',
-            })
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to delete note'
+            set({ error: errorMessage })
+            throw error // Re-throw so caller can handle
+          } finally {
+            set({ mutating: false })
           }
         },
       }),

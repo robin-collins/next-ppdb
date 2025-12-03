@@ -1,6 +1,7 @@
 // src/app/api/breeds/pricing/route.ts - Bulk pricing update for breeds and associated animals
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { logError } from '@/lib/logger'
 
 interface PricingUpdateRequest {
   breedId?: number // If provided, only update this breed; otherwise update all breeds
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
       summary,
     })
   } catch (error) {
-    console.error('Pricing update error:', error)
+    logError('Pricing update error', error)
     return NextResponse.json(
       { error: 'Failed to update pricing' },
       { status: 500 }

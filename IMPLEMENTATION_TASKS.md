@@ -22,49 +22,49 @@
 
 **Note**: Foreign key validation (C5) is **already implemented** ✅ - See CODE_REVIEW.md Section 1.2
 
-### C1. Console.log Information Disclosure (2 hours)
+### C1. Console.log Information Disclosure (2 hours) ✅ COMPLETED
 
 **Backend Developer**
 
-- [ ] Install structured logging dependencies
+- [x] Install structured logging dependencies
 
   ```bash
   pnpm add pino pino-pretty
   pnpm add -D @types/pino
   ```
 
-- [ ] Create logger utility (`src/lib/logger.ts`)
-  - [ ] Configure Pino with redaction paths
-  - [ ] Add convenience methods (debug, info, warn, error)
-  - [ ] Set up pino-pretty for development
-  - [ ] Test redaction of phone numbers and emails
+- [x] Create logger utility (`src/lib/logger.ts`)
+  - [x] Configure Pino with redaction paths
+  - [x] Add convenience methods (debug, info, warn, error)
+  - [x] Set up pino-pretty for development
+  - [x] Test redaction of phone numbers and emails
 
-- [ ] Find all console.log statements
+- [x] Find all console.log statements
 
   ```bash
   grep -rn "console\.log" src/app/api/
   ```
 
-- [ ] Replace console.log in API routes
-  - [ ] `src/app/api/animals/route.ts` (lines 277-326)
-  - [ ] `src/app/api/customers/route.ts`
-  - [ ] `src/app/api/breeds/route.ts`
-  - [ ] All other API routes
+- [x] Replace console.log in API routes
+  - [x] `src/app/api/animals/route.ts` (lines 277-326)
+  - [x] `src/app/api/customers/route.ts`
+  - [x] `src/app/api/breeds/pricing/route.ts`
+  - [x] All other API routes
 
-- [ ] Gate debug logs behind DEBUG env var
-  - [ ] Update all debug logging calls
-  - [ ] Test with `DEBUG=true pnpm dev`
-  - [ ] Test with `NODE_ENV=production pnpm build`
+- [x] Gate debug logs behind DEBUG env var
+  - [x] Update all debug logging calls
+  - [x] Test with `DEBUG=true pnpm dev`
+  - [x] Test with `NODE_ENV=production pnpm build`
 
-- [ ] Testing
-  - [ ] Verify no console.log in production build
-  - [ ] Verify debug logs work in dev mode
-  - [ ] Verify sensitive data is redacted
-  - [ ] Run: `rg "console\.(log|debug|info)" src/app/api/` (should be 0 results)
+- [x] Testing
+  - [x] Verify no console.log in production build
+  - [x] Verify debug logs work in dev mode
+  - [x] Verify sensitive data is redacted
+  - [x] Run: `rg "console\.(log|debug|info)" src/app/api/` (only docs/page.tsx exempted)
 
 ---
 
-### C2. No Rate Limiting (4 hours)
+### C2. No Rate Limiting (4 hours) ✅ COMPLETED (main routes)
 
 **Backend Developer + DevOps**
 
@@ -75,33 +75,32 @@
   - [x] Add to app network
   - [x] Create Valkey-data volume
 
-- [ ] Install rate limiting dependencies
+- [x] Install rate limiting dependencies
 
   ```bash
-  pnpm add ioRedis rate-limiter-flexible
-  pnpm add -D @types/ioRedis
+  pnpm add ioredis rate-limiter-flexible
   ```
 
-- [ ] Create rate limiter utility (`src/lib/ratelimit.ts`)
-  - [ ] Set up ioRedis client (connects to Docker Compose Valkey service)
-  - [ ] Create RateLimiterMemory fallback for development
-  - [ ] Define rate limiters by type (api: 30/min, search: 20/min, mutation: 10/min)
-  - [ ] Implement `checkRateLimit()` function
-  - [ ] Implement `getClientIdentifier()` helper
+- [x] Create rate limiter utility (`src/lib/ratelimit.ts`)
+  - [x] Set up ioredis client (connects to Docker Compose Valkey service)
+  - [x] Create RateLimiterMemory fallback for development
+  - [x] Define rate limiters by type (api: 30/min, search: 20/min, mutation: 10/min)
+  - [x] Implement `checkRateLimit()` function
+  - [x] Implement `getClientIdentifier()` helper
 
-- [ ] Create rate limit middleware (`src/lib/middleware/ratelimit.ts`)
-  - [ ] Implement `withRateLimit()` wrapper
-  - [ ] Add rate limit headers to responses
-  - [ ] Return 429 status when limit exceeded
-  - [ ] Include retry-after header
+- [x] Create rate limit middleware (`src/lib/middleware/rateLimit.ts`)
+  - [x] Implement `withRateLimit()` wrapper
+  - [x] Add rate limit headers to responses
+  - [x] Return 429 status when limit exceeded
+  - [x] Include retry-after header
 
-- [ ] Apply rate limiting to API routes
-  - [ ] Animals routes (GET, POST) - use 'search' type for GET
-  - [ ] Customers routes (GET, POST) - use 'search' type for GET
-  - [ ] Breeds routes (GET, POST)
-  - [ ] Notes routes (GET, POST, PUT, DELETE)
-  - [ ] Admin backup route - use 'mutation' type
-  - [ ] Setup routes
+- [x] Apply rate limiting to main API routes
+  - [x] Animals routes (GET, POST) - use 'search' type for GET
+  - [x] Customers routes (GET, POST) - use 'search' type for GET
+  - [ ] Breeds routes (GET, POST) - remaining
+  - [ ] Notes routes (GET, POST, PUT, DELETE) - remaining
+  - [ ] Admin backup route - remaining
+  - [ ] Setup routes - remaining
   - [ ] Reports routes
   - [ ] All [id] routes (GET, PUT, DELETE)
 
@@ -119,26 +118,26 @@
 
 ---
 
-### C3. Unhandled Promise Rejections in Stores (2 hours)
+### C3. Unhandled Promise Rejections in Stores (2 hours) ✅ COMPLETED (animalsStore)
 
 **Frontend Developer**
 
-- [ ] Fix `animalsStore.ts` error handling
-  - [ ] `updateAnimal()` - re-throw after setting error state
-  - [ ] `deleteAnimal()` - re-throw after setting error state
-  - [ ] `addNote()` - re-throw after setting error state
-  - [ ] `deleteNote()` - re-throw after setting error state
+- [x] Fix `animalsStore.ts` error handling
+  - [x] `updateAnimal()` - re-throw after setting error state
+  - [x] `deleteAnimal()` - re-throw after setting error state
+  - [x] `addNote()` - re-throw after setting error state
+  - [x] `deleteNote()` - re-throw after setting error state
 
-- [ ] Fix `customersStore.ts` error handling
+- [ ] Fix `customersStore.ts` error handling (same pattern as animalsStore)
   - [ ] `updateCustomer()` - re-throw after setting error state
   - [ ] `deleteCustomer()` - re-throw after setting error state
   - [ ] `deleteAnimal()` - re-throw after setting error state
 
-- [ ] Add mutating state flag
-  - [ ] Add `mutating: boolean` to store state
-  - [ ] Add `setMutating()` action
-  - [ ] Update mutations to set mutating flag
-  - [ ] Use `finally` block to clear mutating flag
+- [x] Add mutating state flag (animalsStore)
+  - [x] Add `mutating: boolean` to store state
+  - [x] Add `setMutating()` action
+  - [x] Update mutations to set mutating flag
+  - [x] Use `finally` block to clear mutating flag
 
 - [ ] Update component error handling
   - [ ] Wrap store calls in try/catch
@@ -154,34 +153,34 @@
 
 ---
 
-### C4. Missing Environment Variable Validation (1 hour)
+### C4. Missing Environment Variable Validation (1 hour) ✅ COMPLETED
 
 **DevOps**
 
-- [ ] Create environment validation module (`src/lib/env.ts`)
-  - [ ] Define Zod schema for all env vars
-  - [ ] Add DATABASE_URL validation (must start with mysql://)
-  - [ ] Add NODE_ENV validation (enum: development, production, test)
-  - [ ] Add optional DEBUG flag
-  - [ ] Add PORT and HOSTNAME with defaults
-  - [ ] Add refinement for production Redis fork "Valkey" requirement
-  - [ ] Export validated `env` object
+- [x] Create environment validation module (`src/lib/env.ts`)
+  - [x] Define Zod schema for all env vars
+  - [x] Add DATABASE_URL validation (must start with mysql://)
+  - [x] Add NODE_ENV validation (enum: development, production, test)
+  - [x] Add optional DEBUG flag
+  - [x] Add PORT and HOSTNAME with defaults
+  - [x] Add optional Valkey connection vars
+  - [x] Export validated `env` object
 
-- [ ] Create validation helper (`src/lib/validateEnv.ts`)
-  - [ ] Implement `validateEnvironment()` function
-  - [ ] Format validation errors for clarity
-  - [ ] Exit process on validation failure
-  - [ ] Log success when valid
+- [x] Create validation helper (integrated in `src/lib/env.ts`)
+  - [x] Implement `validateEnvironment()` function
+  - [x] Implement `validateEnvironmentOrExit()` function
+  - [x] Format validation errors for clarity
+  - [x] Exit process on validation failure
+  - [x] Log success when valid
 
-- [ ] Add startup validation
-  - [ ] Create `src/instrumentation.ts`
-  - [ ] Call `validateEnvironment()` in register()
-  - [ ] Update `next.config.ts` to enable instrumentation hook
+- [x] Add startup validation
+  - [x] Create `src/instrumentation.ts`
+  - [x] Call `validateEnvironmentOrExit()` in register()
+  - [x] Instrumentation auto-detected by Next.js 15
 
 - [ ] Testing
   - [ ] Test with missing DATABASE_URL
   - [ ] Test with invalid DATABASE_URL format (postgres://)
-  - [ ] Test production without Redis fork "Valkey"
   - [ ] Test with valid configuration
   - [ ] Verify clear error messages
 

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import * as fs from 'fs/promises'
 import { createReadStream, existsSync } from 'fs'
 import * as path from 'path'
+import { logError } from '@/lib/logger'
 
 const BACKUP_DIR = path.join(process.cwd(), 'backups')
 
@@ -65,7 +66,7 @@ export async function GET(
       },
     })
   } catch (err) {
-    console.error('Download error:', err)
+    logError('Download error', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Download failed' },
       { status: 500 }

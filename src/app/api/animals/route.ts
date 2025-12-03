@@ -6,6 +6,8 @@ import {
   createAnimalSchema,
 } from '@/lib/validations/animal'
 import type { Prisma } from '@/generated/prisma'
+import { log } from '@/lib/logger'
+import { withRateLimit } from '@/lib/middleware/rateLimit'
 
 // Helper function to calculate relevance score with detailed breakdown
 function calculateRelevanceScore(
@@ -202,331 +204,344 @@ function normalizePhone(phone: string): string {
 
 // GET /api/animals?q=john+smith&page=1
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+  return withRateLimit(
+    request,
+    async () => {
+      const { searchParams } = new URL(request.url)
 
-  // Validate query parameters with Zod
-  const validationResult = searchAnimalsSchema.safeParse({
-    q: searchParams.get('q') || '',
-    page: parseInt(searchParams.get('page') || '1'),
-    limit: parseInt(searchParams.get('limit') || '20'),
-    sort: searchParams.get('sort') || undefined,
-    order: searchParams.get('order') || undefined,
-  })
+      // Validate query parameters with Zod
+      const validationResult = searchAnimalsSchema.safeParse({
+        q: searchParams.get('q') || '',
+        page: parseInt(searchParams.get('page') || '1'),
+        limit: parseInt(searchParams.get('limit') || '20'),
+        sort: searchParams.get('sort') || undefined,
+        order: searchParams.get('order') || undefined,
+      })
 
-  if (!validationResult.success) {
-    return NextResponse.json(
-      {
-        error: 'Invalid query parameters',
-        details: validationResult.error.issues,
-      },
-      { status: 400 }
-    )
-  }
+      if (!validationResult.success) {
+        return NextResponse.json(
+          {
+            error: 'Invalid query parameters',
+            details: validationResult.error.issues,
+          },
+          { status: 400 }
+        )
+      }
 
-  const { q: rawQuery, page, limit, sort, order } = validationResult.data
+      const { q: rawQuery, page, limit, sort, order } = validationResult.data
 
-  // Trim whitespace from query to handle accidental leading/trailing spaces
-  const query = rawQuery.trim()
+      // Trim whitespace from query to handle accidental leading/trailing spaces
+      const query = rawQuery.trim()
 
-  // If no query, return empty results
-  if (!query) {
-    return NextResponse.json({
-      animals: [],
-      pagination: {
-        page,
-        limit,
-        total: 0,
-        totalPages: 0,
-      },
-    })
-  }
+      // If no query, return empty results
+      if (!query) {
+        return NextResponse.json({
+          animals: [],
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+          },
+        })
+      }
 
-  // Split query into terms for multi-word search
-  const searchTerms = query.split(/\s+/)
+      // Split query into terms for multi-word search
+      const searchTerms = query.split(/\s+/)
 
-  // Check if query looks like a phone number (mostly digits)
-  const isPhoneQuery = /^\d[\d\s\-\(\)]*\d$/.test(query) && query.length >= 4
-  const normalizedQuery = normalizePhone(query)
+      // Check if query looks like a phone number (mostly digits)
+      const isPhoneQuery =
+        /^\d[\d\s\-\(\)]*\d$/.test(query) && query.length >= 4
+      const normalizedQuery = normalizePhone(query)
 
-  // Build comprehensive OR conditions for unified search
-  // Note: MySQL is case-insensitive by default, no need for mode option
-  const orConditions: Prisma.animalWhereInput[] = []
+      // Build comprehensive OR conditions for unified search
+      // Note: MySQL is case-insensitive by default, no need for mode option
+      const orConditions: Prisma.animalWhereInput[] = []
 
-  // Always search text fields (unless it's purely a phone number)
-  if (!isPhoneQuery) {
-    orConditions.push(
-      { customer: { surname: { contains: query } } },
-      { customer: { firstname: { contains: query } } },
-      { customer: { email: { contains: query } } },
-      { animalname: { contains: query } },
-      { breed: { breedname: { contains: query } } }
-    )
-  }
+      // Always search text fields (unless it's purely a phone number)
+      if (!isPhoneQuery) {
+        orConditions.push(
+          { customer: { surname: { contains: query } } },
+          { customer: { firstname: { contains: query } } },
+          { customer: { email: { contains: query } } },
+          { animalname: { contains: query } },
+          { breed: { breedname: { contains: query } } }
+        )
+      }
 
-  // For phone number searches: DB has no formatting, just digits
-  // So normalize the query and search directly
-  if (isPhoneQuery) {
-    // Search phone fields with normalized query
-    // Note: Using raw SQL pattern with % wildcards to ensure proper LIKE matching
-    orConditions.push(
-      { customer: { phone1: { contains: normalizedQuery } } },
-      { customer: { phone2: { contains: normalizedQuery } } },
-      { customer: { phone3: { contains: normalizedQuery } } }
-    )
+      // For phone number searches: DB has no formatting, just digits
+      // So normalize the query and search directly
+      if (isPhoneQuery) {
+        // Search phone fields with normalized query
+        // Note: Using raw SQL pattern with % wildcards to ensure proper LIKE matching
+        orConditions.push(
+          { customer: { phone1: { contains: normalizedQuery } } },
+          { customer: { phone2: { contains: normalizedQuery } } },
+          { customer: { phone3: { contains: normalizedQuery } } }
+        )
 
-    console.log(
-      'Phone search normalized query:',
-      JSON.stringify(normalizedQuery)
-    )
-    console.log('Expected LIKE pattern:', `%${normalizedQuery}%`)
-  }
+        log.debug('Phone search', {
+          normalizedQuery,
+          pattern: `%${normalizedQuery}%`,
+        })
+      }
 
-  // DEBUG: Log search details (will appear in terminal running dev server)
-  console.log('=== SEARCH DEBUG ===')
-  console.log('Original query:', query)
-  console.log('Is phone query?:', isPhoneQuery)
-  console.log('Normalized query:', normalizedQuery)
-  console.log('Number of OR conditions:', orConditions.length)
-  console.log('First condition:', JSON.stringify(orConditions[0], null, 2))
+      // Debug logging (only in development with DEBUG=true)
+      log.debug('Animal search initiated', {
+        query,
+        isPhoneQuery,
+        normalizedQuery,
+        orConditionCount: orConditions.length,
+      })
 
-  // For multi-term queries, also search individual terms
-  if (searchTerms.length > 1) {
-    searchTerms.forEach(term => {
-      orConditions.push(
-        { animalname: { contains: term } },
-        { breed: { breedname: { contains: term } } },
-        { customer: { surname: { contains: term } } },
-        { customer: { firstname: { contains: term } } }
-      )
-    })
-  }
+      // For multi-term queries, also search individual terms
+      if (searchTerms.length > 1) {
+        searchTerms.forEach(term => {
+          orConditions.push(
+            { animalname: { contains: term } },
+            { breed: { breedname: { contains: term } } },
+            { customer: { surname: { contains: term } } },
+            { customer: { firstname: { contains: term } } }
+          )
+        })
+      }
 
-  const where: Prisma.animalWhereInput = {
-    OR: orConditions,
-  }
+      const where: Prisma.animalWhereInput = {
+        OR: orConditions,
+      }
 
-  // Fetch all matching records (without pagination initially, for scoring)
-  const [allAnimals, total] = await Promise.all([
-    prisma.animal.findMany({
-      where,
-      include: { customer: true, breed: true },
-    }),
-    prisma.animal.count({ where }),
-  ])
+      // Fetch all matching records (without pagination initially, for scoring)
+      const [allAnimals, total] = await Promise.all([
+        prisma.animal.findMany({
+          where,
+          include: { customer: true, breed: true },
+        }),
+        prisma.animal.count({ where }),
+      ])
 
-  // DEBUG: Log results
-  console.log('Records found:', total)
-  if (total > 0 && allAnimals[0]) {
-    console.log('First record customer phones:', {
-      phone1: allAnimals[0].customer.phone1,
-      phone2: allAnimals[0].customer.phone2,
-      phone3: allAnimals[0].customer.phone3,
-    })
-  }
-  console.log('===================\n')
+      // Debug logging (data is automatically redacted by pino)
+      log.debug('Animal search results', {
+        recordsFound: total,
+        hasResults: total > 0,
+      })
 
-  // Calculate relevance scores and sort by score
-  type ScoredAnimal = {
-    animal: Prisma.animalGetPayload<{
-      include: { customer: true; breed: true }
-    }>
-    score: number
-    breakdown: Record<string, unknown>
-  }
-
-  const scoredAnimals = allAnimals
-    .map(
-      (
+      // Calculate relevance scores and sort by score
+      type ScoredAnimal = {
         animal: Prisma.animalGetPayload<{
           include: { customer: true; breed: true }
         }>
-      ): ScoredAnimal => {
-        const result = calculateRelevanceScore(animal, query)
-        return {
-          animal,
-          score: result.score,
-          breakdown: result.breakdown,
-        }
+        score: number
+        breakdown: Record<string, unknown>
       }
-    )
-    .sort((a: ScoredAnimal, b: ScoredAnimal) => {
-      let comparison = 0
 
-      switch (sort) {
-        case 'customer':
-          comparison = (a.animal.customer.surname || '').localeCompare(
-            b.animal.customer.surname || ''
-          )
-          // If surnames are equal, sort by firstname
-          if (comparison === 0) {
-            comparison = (a.animal.customer.firstname || '').localeCompare(
-              b.animal.customer.firstname || ''
-            )
-          }
-          break
-        case 'animal':
-          comparison = (a.animal.animalname || '').localeCompare(
-            b.animal.animalname || ''
-          )
-          break
-        case 'lastVisit':
-          const dateA = a.animal.lastvisit
-            ? new Date(a.animal.lastvisit).getTime()
-            : 0
-          const dateB = b.animal.lastvisit
-            ? new Date(b.animal.lastvisit).getTime()
-            : 0
-          comparison = dateA - dateB
-          break
-        case 'relevance':
-        default:
-          // Relevance is score based.
-          // Default sort order for relevance is DESC (highest score first)
-          // So we calculate comparison as (a - b), then if order is desc (default) it becomes -(a-b) = b-a
-          comparison = a.score - b.score
-          // If scores are equal, fallback to customer surname ascending
-          if (comparison === 0) {
-            // Force surname to be ascending regardless of overall order for relevance tie-breaker
-            // Or respect the order? Usually tie-breakers are fixed.
-            // Let's respect order for now, or just stick to the previous logic for relevance
-            if (order === 'desc') {
-              return (a.animal.customer.surname || '').localeCompare(
-                b.animal.customer.surname || ''
-              )
-            } else {
-              return (b.animal.customer.surname || '').localeCompare(
-                a.animal.customer.surname || ''
-              )
+      const scoredAnimals = allAnimals
+        .map(
+          (
+            animal: Prisma.animalGetPayload<{
+              include: { customer: true; breed: true }
+            }>
+          ): ScoredAnimal => {
+            const result = calculateRelevanceScore(animal, query)
+            return {
+              animal,
+              score: result.score,
+              breakdown: result.breakdown,
             }
           }
-          break
-      }
+        )
+        .sort((a: ScoredAnimal, b: ScoredAnimal) => {
+          let comparison = 0
 
-      return order === 'desc' ? -comparison : comparison
-    })
+          switch (sort) {
+            case 'customer':
+              comparison = (a.animal.customer.surname || '').localeCompare(
+                b.animal.customer.surname || ''
+              )
+              // If surnames are equal, sort by firstname
+              if (comparison === 0) {
+                comparison = (a.animal.customer.firstname || '').localeCompare(
+                  b.animal.customer.firstname || ''
+                )
+              }
+              break
+            case 'animal':
+              comparison = (a.animal.animalname || '').localeCompare(
+                b.animal.animalname || ''
+              )
+              break
+            case 'lastVisit':
+              const dateA = a.animal.lastvisit
+                ? new Date(a.animal.lastvisit).getTime()
+                : 0
+              const dateB = b.animal.lastvisit
+                ? new Date(b.animal.lastvisit).getTime()
+                : 0
+              comparison = dateA - dateB
+              break
+            case 'relevance':
+            default:
+              // Relevance is score based.
+              // Default sort order for relevance is DESC (highest score first)
+              // So we calculate comparison as (a - b), then if order is desc (default) it becomes -(a-b) = b-a
+              comparison = a.score - b.score
+              // If scores are equal, fallback to customer surname ascending
+              if (comparison === 0) {
+                // Force surname to be ascending regardless of overall order for relevance tie-breaker
+                // Or respect the order? Usually tie-breakers are fixed.
+                // Let's respect order for now, or just stick to the previous logic for relevance
+                if (order === 'desc') {
+                  return (a.animal.customer.surname || '').localeCompare(
+                    b.animal.customer.surname || ''
+                  )
+                } else {
+                  return (b.animal.customer.surname || '').localeCompare(
+                    a.animal.customer.surname || ''
+                  )
+                }
+              }
+              break
+          }
 
-  // Apply pagination after scoring
-  const paginatedAnimals = scoredAnimals.slice((page - 1) * limit, page * limit)
+          return order === 'desc' ? -comparison : comparison
+        })
 
-  // Transform database fields to API interface
-  const transformedAnimals = paginatedAnimals.map(
-    ({ animal, score, breakdown }: ScoredAnimal) => ({
-      id: animal.animalID,
-      name: animal.animalname,
-      breed: animal.breed.breedname,
-      colour: animal.colour,
-      sex: animal.SEX,
-      cost: animal.cost,
-      lastVisit: animal.lastvisit,
-      thisVisit: animal.thisvisit,
-      comments: animal.comments,
-      relevanceScore: score, // Include the relevance score
-      scoreBreakdown: breakdown, // Include detailed scoring breakdown
-      customer: {
-        id: animal.customer.customerID,
-        surname: animal.customer.surname,
-        firstname: animal.customer.firstname,
-        address: animal.customer.address,
-        suburb: animal.customer.suburb,
-        postcode: animal.customer.postcode,
-        phone1: animal.customer.phone1,
-        phone2: animal.customer.phone2,
-        phone3: animal.customer.phone3,
-        email: animal.customer.email,
-      },
-    })
-  )
+      // Apply pagination after scoring
+      const paginatedAnimals = scoredAnimals.slice(
+        (page - 1) * limit,
+        page * limit
+      )
 
-  return NextResponse.json({
-    animals: transformedAnimals,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+      // Transform database fields to API interface
+      const transformedAnimals = paginatedAnimals.map(
+        ({ animal, score, breakdown }: ScoredAnimal) => ({
+          id: animal.animalID,
+          name: animal.animalname,
+          breed: animal.breed.breedname,
+          colour: animal.colour,
+          sex: animal.SEX,
+          cost: animal.cost,
+          lastVisit: animal.lastvisit,
+          thisVisit: animal.thisvisit,
+          comments: animal.comments,
+          relevanceScore: score, // Include the relevance score
+          scoreBreakdown: breakdown, // Include detailed scoring breakdown
+          customer: {
+            id: animal.customer.customerID,
+            surname: animal.customer.surname,
+            firstname: animal.customer.firstname,
+            address: animal.customer.address,
+            suburb: animal.customer.suburb,
+            postcode: animal.customer.postcode,
+            phone1: animal.customer.phone1,
+            phone2: animal.customer.phone2,
+            phone3: animal.customer.phone3,
+            email: animal.customer.email,
+          },
+        })
+      )
+
+      return NextResponse.json({
+        animals: transformedAnimals,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      })
     },
-  })
+    { type: 'search' }
+  )
 }
 
 // POST /api/animals - Create new animal
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  return withRateLimit(
+    request,
+    async () => {
+      const body = await request.json()
 
-  // Validate request body with Zod
-  const validationResult = createAnimalSchema.safeParse(body)
+      // Validate request body with Zod
+      const validationResult = createAnimalSchema.safeParse(body)
 
-  if (!validationResult.success) {
-    return NextResponse.json(
-      { error: 'Invalid request data', details: validationResult.error.issues },
-      { status: 400 }
-    )
-  }
-
-  const data = validationResult.data
-
-  // Look up the breed by name to get breedID
-  const breed = await prisma.breed.findFirst({
-    where: { breedname: data.breed },
-  })
-
-  if (!breed) {
-    return NextResponse.json(
-      {
-        error: 'Invalid breed',
-        details: [
+      if (!validationResult.success) {
+        return NextResponse.json(
           {
-            path: ['breed'],
-            message: `Breed "${data.breed}" not found. Please select a valid breed.`,
+            error: 'Invalid request data',
+            details: validationResult.error.issues,
           },
-        ],
-      },
-      { status: 400 }
-    )
-  }
+          { status: 400 }
+        )
+      }
 
-  const animal = await prisma.animal.create({
-    data: {
-      customerID: data.customerId,
-      animalname: data.name,
-      breedID: breed.breedID,
-      SEX: data.sex === 'Male' ? 'Male' : 'Female',
-      colour: data.colour || null,
-      cost: data.cost || 0,
-      lastvisit: data.lastVisit
-        ? new Date(data.lastVisit)
-        : new Date('1900-01-01'),
-      thisvisit: data.thisVisit
-        ? new Date(data.thisVisit)
-        : new Date('1900-01-01'),
-      comments: data.comments || null,
+      const data = validationResult.data
+
+      // Look up the breed by name to get breedID
+      const breed = await prisma.breed.findFirst({
+        where: { breedname: data.breed },
+      })
+
+      if (!breed) {
+        return NextResponse.json(
+          {
+            error: 'Invalid breed',
+            details: [
+              {
+                path: ['breed'],
+                message: `Breed "${data.breed}" not found. Please select a valid breed.`,
+              },
+            ],
+          },
+          { status: 400 }
+        )
+      }
+
+      const animal = await prisma.animal.create({
+        data: {
+          customerID: data.customerId,
+          animalname: data.name,
+          breedID: breed.breedID,
+          SEX: data.sex === 'Male' ? 'Male' : 'Female',
+          colour: data.colour || null,
+          cost: data.cost || 0,
+          lastvisit: data.lastVisit
+            ? new Date(data.lastVisit)
+            : new Date('1900-01-01'),
+          thisvisit: data.thisVisit
+            ? new Date(data.thisVisit)
+            : new Date('1900-01-01'),
+          comments: data.comments || null,
+        },
+        include: { customer: true, breed: true },
+      })
+
+      // Transform the response to match API interface
+      const transformedAnimal = {
+        id: animal.animalID,
+        name: animal.animalname,
+        breed: animal.breed.breedname,
+        colour: animal.colour,
+        sex: animal.SEX,
+        cost: animal.cost,
+        lastVisit: animal.lastvisit,
+        thisVisit: animal.thisvisit,
+        comments: animal.comments,
+        customer: {
+          id: animal.customer.customerID,
+          surname: animal.customer.surname,
+          firstname: animal.customer.firstname,
+          address: animal.customer.address,
+          suburb: animal.customer.suburb,
+          postcode: animal.customer.postcode,
+          phone1: animal.customer.phone1,
+          phone2: animal.customer.phone2,
+          phone3: animal.customer.phone3,
+          email: animal.customer.email,
+        },
+      }
+
+      return NextResponse.json(transformedAnimal, { status: 201 })
     },
-    include: { customer: true, breed: true },
-  })
-
-  // Transform the response to match API interface
-  const transformedAnimal = {
-    id: animal.animalID,
-    name: animal.animalname,
-    breed: animal.breed.breedname,
-    colour: animal.colour,
-    sex: animal.SEX,
-    cost: animal.cost,
-    lastVisit: animal.lastvisit,
-    thisVisit: animal.thisvisit,
-    comments: animal.comments,
-    customer: {
-      id: animal.customer.customerID,
-      surname: animal.customer.surname,
-      firstname: animal.customer.firstname,
-      address: animal.customer.address,
-      suburb: animal.customer.suburb,
-      postcode: animal.customer.postcode,
-      phone1: animal.customer.phone1,
-      phone2: animal.customer.phone2,
-      phone3: animal.customer.phone3,
-      email: animal.customer.email,
-    },
-  }
-
-  return NextResponse.json(transformedAnimal, { status: 201 })
+    { type: 'mutation' }
+  )
 }

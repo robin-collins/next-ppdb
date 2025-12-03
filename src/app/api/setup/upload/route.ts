@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { log, logError } from '@/lib/logger'
 import {
   extractSqlFile,
   isValidFileType,
@@ -83,10 +84,10 @@ export async function POST(request: Request) {
     const orderedFiles = getSqlFilesInOrder(extractResult.sqlFiles)
 
     // Log found files for debugging
-    console.log(
-      `[Upload] Found ${orderedFiles.length} SQL files:`,
-      orderedFiles.map(f => f.filename)
-    )
+    log.debug('[Upload] Found SQL files', {
+      fileCount: orderedFiles.length,
+      files: orderedFiles.map(f => f.filename),
+    })
 
     // Save metadata for import route
     const metadata = {
@@ -110,7 +111,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(response)
   } catch (error) {
-    console.error('Upload error:', error)
+    logError('Upload error', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Upload failed' },
       { status: 500 }

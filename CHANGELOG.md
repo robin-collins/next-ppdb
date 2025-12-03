@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] 2025-12-03 - Production Hardening
+
+### Security
+
+- **C1: Console.log Information Disclosure Fixed**
+  - Replaced all `console.log` statements in API routes with structured pino logging
+  - Added automatic sensitive data redaction (phone numbers, emails)
+  - Debug logs now gated behind `DEBUG` environment variable
+  - New files: `src/lib/logger.ts` (updated to use pino)
+  - Files updated: All API routes in `src/app/api/`
+
+- **C2: Rate Limiting Implemented**
+  - Added rate limiting middleware using Valkey (Redis fork)
+  - Created `src/lib/ratelimit.ts` with ioredis + rate-limiter-flexible
+  - Created `src/lib/middleware/rateLimit.ts` with `withRateLimit()` wrapper
+  - Applied to animals and customers routes (search: 20/min, mutation: 10/min)
+  - Returns 429 with proper headers when limit exceeded
+  - Falls back to in-memory limiting when Valkey unavailable
+  - Dependencies added: `ioredis`, `rate-limiter-flexible`
+
+- **C4: Environment Variable Validation**
+  - Added Zod-based environment validation at startup
+  - Created `src/lib/env.ts` with strict schema validation
+  - Created `src/instrumentation.ts` for Next.js startup hook
+  - Application now fails fast with clear error messages if config invalid
+
+### Fixed
+
+- **C3: Store Error Handling (animalsStore)**
+  - Added `mutating` state flag to `animalsStore.ts`
+  - All mutation functions (updateAnimal, deleteAnimal, addNote, deleteNote) now:
+    - Set `mutating: true` at start
+    - Re-throw errors after setting error state
+    - Use `finally` block to clear mutating flag
+  - Callers can now detect failures and handle appropriately
+
+### Added
+
+- New pino/pino-pretty logging dependencies for structured logging
+- New ioredis and rate-limiter-flexible dependencies for rate limiting
+- Valkey service added to docker-compose.yml (see v0.1.2-pre)
+
+### Changed
+
+- `src/lib/logger.ts` - Migrated from custom console-based to pino-based logging
+- All API routes now use structured logging with automatic redaction
+- Animals/Customers routes now have rate limiting protection
+
 ## [0.1.2] 2025-12-02
 
 ### Fixed

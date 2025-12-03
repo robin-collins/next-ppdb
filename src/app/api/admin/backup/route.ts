@@ -6,6 +6,7 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import archiver from 'archiver'
 import { createWriteStream } from 'fs'
+import { log, logError } from '@/lib/logger'
 
 const execAsync = promisify(exec)
 
@@ -69,9 +70,9 @@ async function cleanupOldBackups() {
     for (const file of toDelete) {
       try {
         await fs.unlink(path.join(BACKUP_DIR, file))
-        console.log(`Deleted old backup: ${file}`)
+        log.debug(`Deleted old backup: ${file}`)
       } catch (err) {
-        console.error(`Failed to delete backup ${file}:`, err)
+        logError(`Failed to delete backup ${file}`, err)
       }
     }
   }
@@ -132,7 +133,7 @@ export async function POST() {
       } catch {
         /* ignore */
       }
-      console.error('mysqldump error:', dumpErr)
+      logError('mysqldump error', dumpErr)
       const errMsg =
         dumpErr instanceof Error ? dumpErr.message : 'Unknown error'
       return NextResponse.json(
@@ -165,7 +166,7 @@ export async function POST() {
       downloadUrl: `/api/admin/backup/download/${zipFilename}`,
     })
   } catch (err) {
-    console.error('Backup error:', err)
+    logError('Backup error', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Backup failed' },
       { status: 500 }
@@ -201,7 +202,7 @@ export async function GET() {
       backupDir: BACKUP_DIR,
     })
   } catch (err) {
-    console.error('List backups error:', err)
+    logError('List backups error', err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to list backups' },
       { status: 500 }

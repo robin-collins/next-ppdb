@@ -7,6 +7,7 @@ import * as path from 'path'
 import * as fs from 'fs/promises'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { log, logError } from '@/lib/logger'
 import {
   createTempDatabase,
   importSqlFilesToTempDb,
@@ -91,10 +92,10 @@ export async function GET(request: NextRequest) {
   // Sort files in correct import order
   const orderedFiles = getSqlFilesInOrder(sqlFiles)
 
-  console.log(
-    `[Import] Starting import with ${orderedFiles.length} SQL files:`,
-    orderedFiles.map(f => f.filename)
-  )
+  log.info('[Import] Starting import', {
+    fileCount: orderedFiles.length,
+    files: orderedFiles.map(f => f.filename),
+  })
 
   // Create SSE stream
   const encoder = new TextEncoder()
@@ -441,7 +442,7 @@ export async function GET(request: NextRequest) {
           message: 'Database import completed successfully!',
         })
       } catch (error) {
-        console.error('[Import] Error:', error)
+        logError('[Import] Error', error)
         send('error', {
           message: error instanceof Error ? error.message : 'Import failed',
         })

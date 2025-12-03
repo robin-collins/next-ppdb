@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateCustomerSchema } from '@/lib/validations/customer'
 import type { Prisma } from '@/generated/prisma'
+import { logError } from '@/lib/logger'
 
 // GET /api/customers/[id] - Get single customer with all animals
 export async function GET(
@@ -99,7 +100,7 @@ export async function GET(
 
     return NextResponse.json(transformedCustomer)
   } catch (error) {
-    console.error('Error fetching customer:', error)
+    logError('Error fetching customer', error)
     return NextResponse.json(
       { error: 'Failed to fetch customer' },
       { status: 500 }
@@ -217,7 +218,7 @@ export async function PUT(
 
     return NextResponse.json(transformedCustomer)
   } catch (error) {
-    console.error('Error updating customer:', error)
+    logError('Error updating customer', error)
     return NextResponse.json(
       { error: 'Failed to update customer' },
       { status: 500 }
@@ -364,7 +365,7 @@ export async function DELETE(
       deletedAnimals: deletedAnimalsCount,
     })
   } catch (error) {
-    console.error('Error deleting customer:', error)
+    logError('Error deleting customer', error)
     return NextResponse.json(
       { error: 'Failed to delete customer' },
       { status: 500 }

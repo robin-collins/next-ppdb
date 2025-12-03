@@ -29,11 +29,11 @@ services:
       - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
     healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"] # Command to run the health check
-      interval: 10s                                    # How often to run the check
-      timeout: 5s                                      # Timeout for each check
-      retries: 15                                       # Number of retries before marking as unhealthy
-      start_period: 10s   
+      test: ['CMD', 'traefik', 'healthcheck', '--ping'] # Command to run the health check
+      interval: 10s # How often to run the check
+      timeout: 5s # Timeout for each check
+      retries: 15 # Number of retries before marking as unhealthy
+      start_period: 10s
     labels:
       - 'traefik.enable=true'
       # Router for the dashboard/API
@@ -45,7 +45,7 @@ services:
       # IP allowlist for dashboard
       - 'traefik.http.routers.traefik.middlewares=traefik-ipallowlist'
       - 'traefik.http.middlewares.traefik-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
-    
+
     networks:
       - web
 
@@ -65,7 +65,7 @@ services:
     networks:
       - web
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 20
@@ -86,7 +86,7 @@ services:
       mysql:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost/"]
+      test: ['CMD', 'curl', '--fail', 'http://localhost/']
       interval: 10s
       timeout: 5s
       retries: 3
@@ -110,11 +110,11 @@ services:
     restart: unless-stopped
     volumes:
       # Mount a named volume to the container's data directory for persistence
-      - valkey-data:/data 
+      - valkey-data:/data
     # Override the default container command with custom arguments
     command: valkey-server --save 60 1 --loglevel warning --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
-      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"] # Basic health check
+      test: ['CMD-SHELL', 'valkey-cli ping | grep PONG'] # Basic health check
       interval: 10s
       timeout: 5s
       retries: 10
@@ -137,20 +137,28 @@ services:
       # Construct DATABASE_URL from MySQL variables to avoid duplication
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
       DEBUG: ${DEBUG:-false}
-      HOSTNAME: "0.0.0.0"
+      HOSTNAME: '0.0.0.0'
     depends_on:
       mysql:
         condition: service_healthy
       traefik:
         condition: service_healthy
       valkey:
-        condition: service_healthy      
+        condition: service_healthy
     healthcheck:
       # Returns healthy if /api/health responds (any HTTP status)
       # This allows Traefik to route traffic during setup phase
       # The endpoint returns 200 (healthy), 503 (needs_setup), or 500 (unhealthy)
       # Note: -s (silent), -o /dev/null (discard output), NO -f (don't fail on HTTP errors)
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://localhost:3000/api/health"]
+      test:
+        [
+          'CMD',
+          'curl',
+          '-s',
+          '-o',
+          '/dev/null',
+          'http://localhost:3000/api/health',
+        ]
       interval: 10s
       timeout: 5s
       retries: 15
