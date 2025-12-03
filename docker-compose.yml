@@ -11,7 +11,6 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      - '10.10.10.10:8080:8080'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./acme.json:/acme.json
@@ -27,6 +26,18 @@ services:
       # Global redirect to HTTPS
       - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
+    labels:
+      - 'traefik.enable=true'
+      # Router for the dashboard/API
+      - 'traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.traefik.entrypoints=websecure'
+      - 'traefik.http.routers.traefik.tls.certresolver=myresolver'
+      - 'traefik.http.routers.traefik.service=api@internal'
+
+      # IP allowlist for dashboard
+      - 'traefik.http.routers.traefik.middlewares=traefik-ipallowlist'
+      - 'traefik.http.middlewares.traefik-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
+    
     networks:
       - web
 
@@ -76,7 +87,7 @@ services:
       - 'traefik.http.services.phpmyadmin.loadbalancer.server.port=80'
       # IP allowlist for local networks only
       - 'traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-ipallowlist'
-      - 'traefik.http.middlewares.phpmyadmin-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12'
+      - 'traefik.http.middlewares.phpmyadmin-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
 
   next-ppdb:
     # build:
@@ -115,7 +126,7 @@ services:
       - 'traefik.http.services.nextjs.loadbalancer.server.port=3000'
       # IP allowlist for local networks only
       - 'traefik.http.routers.nextjs.middlewares=nextjs-ipallowlist'
-      - 'traefik.http.middlewares.nextjs-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12'
+      - 'traefik.http.middlewares.nextjs-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
 
 networks:
   web:
