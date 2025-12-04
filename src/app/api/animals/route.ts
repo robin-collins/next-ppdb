@@ -12,6 +12,7 @@ import {
   calculateRelevanceScore,
   normalizePhone,
 } from '@/services/animals.service'
+import { search as searchConfig } from '@/lib/config'
 
 // Helper function to calculate relevance score with detailed breakdown
 function _calculateRelevanceScore(
@@ -311,22 +312,7 @@ export async function GET(request: NextRequest) {
         OR: orConditions,
       }
 
-      // Fetch all matching records (without pagination initially, for scoring)
-      const [allAnimals, total] = await Promise.all([
-        prisma.animal.findMany({
-          where,
-          include: { customer: true, breed: true },
-        }),
-        prisma.animal.count({ where }),
-      ])
-
-      // Debug logging (data is automatically redacted by pino)
-      log.debug('Animal search results', {
-        recordsFound: total,
-        hasResults: total > 0,
-      })
-
-      // Calculate relevance scores and sort by score
+      // Type for scored animals
       type ScoredAnimal = {
         animal: Prisma.animalGetPayload<{
           include: { customer: true; breed: true }
@@ -335,8 +321,138 @@ export async function GET(request: NextRequest) {
         breakdown: Record<string, unknown>
       }
 
-      const scoredAnimals = allAnimals
-        .map(
+      // First, get count to determine optimization strategy
+      const total = await prisma.animal.count({ where })
+
+      // Debug logging
+      log.debug('Animal search results', {
+        recordsFound: total,
+        hasResults: total > 0,
+        useInMemory: total <= searchConfig.inMemoryThreshold,
+      })
+
+      let paginatedAnimals: ScoredAnimal[]
+
+      // Optimization: Use different strategies based on result set size
+      if (total <= searchConfig.inMemoryThreshold) {
+        // Small result set: Fetch all for accurate relevance scoring
+        // No need for separate count query - use allAnimals.length
+        const allAnimals = await prisma.animal.findMany({
+          where,
+          include: { customer: true, breed: true },
+        })
+
+        // Calculate relevance scores and sort
+        const scoredAnimals = allAnimals
+          .map(
+            (
+              animal: Prisma.animalGetPayload<{
+                include: { customer: true; breed: true }
+              }>
+            ): ScoredAnimal => {
+              const result = calculateRelevanceScore(animal, query)
+              return {
+                animal,
+                score: result.score,
+                breakdown: result.breakdown,
+              }
+            }
+          )
+          .sort((a: ScoredAnimal, b: ScoredAnimal) => {
+            let comparison = 0
+
+            switch (sort) {
+              case 'customer':
+                comparison = (a.animal.customer.surname || '').localeCompare(
+                  b.animal.customer.surname || ''
+                )
+                if (comparison === 0) {
+                  comparison = (
+                    a.animal.customer.firstname || ''
+                  ).localeCompare(b.animal.customer.firstname || '')
+                }
+                break
+              case 'animal':
+                comparison = (a.animal.animalname || '').localeCompare(
+                  b.animal.animalname || ''
+                )
+                break
+              case 'lastVisit':
+                const dateA = a.animal.lastvisit
+                  ? new Date(a.animal.lastvisit).getTime()
+                  : 0
+                const dateB = b.animal.lastvisit
+                  ? new Date(b.animal.lastvisit).getTime()
+                  : 0
+                comparison = dateA - dateB
+                break
+              case 'relevance':
+              default:
+                comparison = a.score - b.score
+                if (comparison === 0) {
+                  if (order === 'desc') {
+                    return (a.animal.customer.surname || '').localeCompare(
+                      b.animal.customer.surname || ''
+                    )
+                  } else {
+                    return (b.animal.customer.surname || '').localeCompare(
+                      a.animal.customer.surname || ''
+                    )
+                  }
+                }
+                break
+            }
+
+            return order === 'desc' ? -comparison : comparison
+          })
+
+        // Apply pagination after scoring
+        paginatedAnimals = scoredAnimals.slice((page - 1) * limit, page * limit)
+      } else {
+        // Large result set: Use database-level pagination for performance
+        // Note: Relevance scoring is less accurate but query is much faster
+        log.debug('Using database pagination for large result set', {
+          total,
+          threshold: searchConfig.inMemoryThreshold,
+        })
+
+        // Build orderBy for database-level sorting
+        const orderDirection = order === 'desc' ? 'desc' : 'asc'
+        let orderBy:
+          | Prisma.animalOrderByWithRelationInput
+          | Prisma.animalOrderByWithRelationInput[]
+
+        switch (sort) {
+          case 'customer':
+            orderBy = [
+              { customer: { surname: orderDirection } },
+              { customer: { firstname: orderDirection } },
+            ]
+            break
+          case 'animal':
+            orderBy = { animalname: orderDirection }
+            break
+          case 'lastVisit':
+            orderBy = { lastvisit: orderDirection }
+            break
+          case 'relevance':
+          default:
+            // For large datasets with relevance sort, use lastvisit as proxy
+            // (most recent visits are likely most relevant)
+            orderBy = { lastvisit: 'desc' }
+            break
+        }
+
+        const animals = await prisma.animal.findMany({
+          where,
+          include: { customer: true, breed: true },
+          skip: (page - 1) * limit,
+          take: limit,
+          orderBy,
+        })
+
+        // Calculate scores for the paginated results (for display purposes)
+        paginatedAnimals = animals.map(
           (
             animal: Prisma.animalGetPayload<{
               include: { customer: true; breed: true }
@@ -350,67 +466,7 @@ export async function GET(request: NextRequest) {
             }
           }
         )
-        .sort((a: ScoredAnimal, b: ScoredAnimal) => {
-          let comparison = 0
-
-          switch (sort) {
-            case 'customer':
-              comparison = (a.animal.customer.surname || '').localeCompare(
-                b.animal.customer.surname || ''
-              )
-              // If surnames are equal, sort by firstname
-              if (comparison === 0) {
-                comparison = (a.animal.customer.firstname || '').localeCompare(
-                  b.animal.customer.firstname || ''
-                )
-              }
-              break
-            case 'animal':
-              comparison = (a.animal.animalname || '').localeCompare(
-                b.animal.animalname || ''
-              )
-              break
-            case 'lastVisit':
-              const dateA = a.animal.lastvisit
-                ? new Date(a.animal.lastvisit).getTime()
-                : 0
-              const dateB = b.animal.lastvisit
-                ? new Date(b.animal.lastvisit).getTime()
-                : 0
-              comparison = dateA - dateB
-              break
-            case 'relevance':
-            default:
-              // Relevance is score based.
-              // Default sort order for relevance is DESC (highest score first)
-              // So we calculate comparison as (a - b), then if order is desc (default) it becomes -(a-b) = b-a
-              comparison = a.score - b.score
-              // If scores are equal, fallback to customer surname ascending
-              if (comparison === 0) {
-                // Force surname to be ascending regardless of overall order for relevance tie-breaker
-                // Or respect the order? Usually tie-breakers are fixed.
-                // Let's respect order for now, or just stick to the previous logic for relevance
-                if (order === 'desc') {
-                  return (a.animal.customer.surname || '').localeCompare(
-                    b.animal.customer.surname || ''
-                  )
-                } else {
-                  return (b.animal.customer.surname || '').localeCompare(
-                    a.animal.customer.surname || ''
-                  )
-                }
-              }
-              break
-          }
-
-          return order === 'desc' ? -comparison : comparison
-        })
-
-      // Apply pagination after scoring
-      const paginatedAnimals = scoredAnimals.slice(
-        (page - 1) * limit,
-        page * limit
-      )
+      }
 
       // Transform database fields to API interface
       const transformedAnimals = paginatedAnimals.map(

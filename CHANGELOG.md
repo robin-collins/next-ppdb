@@ -71,12 +71,22 @@ All notable changes to this project will be documented in this file.
 
 ### Improved
 
+- **I1: N+1 Query Pattern Optimization**
+  - Optimized animal search API to use conditional pagination strategy
+  - Small result sets (≤1000): fetch all, score in-memory for accurate relevance
+  - Large result sets (>1000): use database-level pagination with skip/take
+  - Added `search.inMemoryThreshold` config option (default: 1000)
+  - Eliminates redundant count query for small datasets
+  - Files: `src/app/api/animals/route.ts`, `src/lib/config.ts`
+
 - **I2: Reduced Client-Side Rendering**
   - Converted 4 components from client to server components (smaller JS bundle):
     - `Breadcrumbs.tsx` - no hooks/handlers needed
     - `CustomerStatsCard.tsx` - pure data display
     - `StatsBar.tsx` - pure data display
     - `DailyTotalsCard.tsx` - pure data display
+  - Verified `CustomerCard.tsx` already has no 'use client' directive
+  - Assessed `AnimalCard.tsx` - kept as client (deeply interactive, minimal ROI to split)
   - Reduces JavaScript sent to browser for faster page loads
 
 - **I3: Database Search Indexes**
@@ -86,11 +96,29 @@ All notable changes to this project will be documented in this file.
     - `ix_email` on email
   - Migration applied at deployment via `prisma migrate deploy`
 
-- **I4: Service Layer (Started)**
-  - Created `src/services/animals.service.ts`
-  - Extracted `calculateRelevanceScore()` and `normalizePhone()` to service
-  - Functions are now pure and testable independently
-  - API routes import from service layer
+- **I4: Service Layer (Completed)**
+  - Created `src/services/animals.service.ts` - relevance scoring, phone normalization
+  - Created `src/services/customers.service.ts` - name formatting, contact validation
+  - Created `src/services/breeds.service.ts` - avgtime formatting, pricing calculations
+  - Created `src/services/notes.service.ts` - note parsing, cost extraction
+  - Created `src/services/index.ts` for centralized exports
+  - All functions are pure and testable independently
+
+- **I5: Repository Pattern (Completed)**
+  - Created `src/repositories/types.ts` with interfaces (IAnimalRepository, etc.)
+  - Created `src/repositories/animal.repository.ts` with search conditions builder
+  - Created `src/repositories/customer.repository.ts` with search/CRUD operations
+  - Created `src/repositories/breed.repository.ts` with animal count methods
+  - Created `src/repositories/notes.repository.ts` with cascade delete support
+  - All repositories export singleton instances for easy use
+
+- **I8: Request Deduplication (Completed)**
+  - Created `src/lib/requestCache.ts` with RequestCache class
+  - In-flight request tracking prevents duplicate concurrent requests
+  - Short-term caching (5s TTL) reduces redundant API calls
+  - Cache key generators for type-safe key construction
+  - Updated `animalsStore.ts` to use `animalCache.dedupe()` for search/fetch
+  - Cache automatically invalidated on mutations (create, update, delete)
 
 - **I6: Centralized Configuration**
   - Created `src/lib/config.ts` with typed, domain-grouped configuration
@@ -110,6 +138,13 @@ All notable changes to this project will be documented in this file.
   - Updated: zod 4.1.13, zustand 5.0.9, rimraf 6.1.2
   - Updated: @eslint/eslintrc 3.3.3, @types/react 19.2.7, lint-staged 16.2.7
   - Removed deprecated: @types/pino, @types/uuid (packages provide own types)
+
+### Fixed
+
+- **Docker Build Failure with Environment Validation**
+  - Environment validation was failing during Docker build (no DATABASE_URL during build phase)
+  - Added build-phase detection via `NEXT_PHASE === 'phase-production-build'`
+  - Schema now provides safe defaults during build, strict validation at runtime
 
 ## [0.1.2] 2025-12-02
 

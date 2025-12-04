@@ -7,6 +7,7 @@ import type {
   UpdateAnimalData,
   PaginationMeta,
 } from '@/types/api'
+import { animalCache, cacheKeys } from '@/lib/requestCache'
 
 // Re-export for backward compatibility
 type Animal = AnimalResponse
@@ -84,21 +85,31 @@ export const useAnimalsStore = create<AnimalsState>()(
         searchAnimals: async params => {
           set({ loading: true, error: null })
           try {
-            const query = new URLSearchParams({
+            const searchParams = {
               q: params.q || '',
-              page: (params.page || 1).toString(),
-              limit: (params.limit || 20).toString(),
+              page: params.page || 1,
+              limit: params.limit || 20,
               sort: params.sort || 'relevance',
               order: params.order || 'desc',
-            }).toString()
-
-            const response = await fetch(`/api/animals?${query}`)
-
-            if (!response.ok) {
-              throw new Error('Failed to search animals')
             }
 
-            const data = await response.json()
+            // Use request cache for deduplication
+            const cacheKey = cacheKeys.animalSearch(searchParams)
+            const data = await animalCache.dedupe(cacheKey, async () => {
+              const query = new URLSearchParams({
+                q: searchParams.q,
+                page: searchParams.page.toString(),
+                limit: searchParams.limit.toString(),
+                sort: searchParams.sort,
+                order: searchParams.order,
+              }).toString()
+
+              const response = await fetch(`/api/animals?${query}`)
+              if (!response.ok) {
+                throw new Error('Failed to search animals')
+              }
+              return response.json()
+            })
 
             set({
               animals: data.animals,
@@ -117,13 +128,16 @@ export const useAnimalsStore = create<AnimalsState>()(
         fetchAnimal: async id => {
           set({ loading: true, error: null })
           try {
-            const response = await fetch(`/api/animals/${id}`)
+            // Use request cache for deduplication
+            const cacheKey = cacheKeys.animalDetail(id)
+            const animal = await animalCache.dedupe(cacheKey, async () => {
+              const response = await fetch(`/api/animals/${id}`)
+              if (!response.ok) {
+                throw new Error('Failed to fetch animal')
+              }
+              return response.json()
+            })
 
-            if (!response.ok) {
-              throw new Error('Failed to fetch animal')
-            }
-
-            const animal = await response.json()
             set({ selectedAnimal: animal })
           } catch (error) {
             set({
@@ -152,6 +166,9 @@ export const useAnimalsStore = create<AnimalsState>()(
             }
 
             const createdAnimal = await response.json()
+
+            // Invalidate search cache since data changed
+            animalCache.invalidate('animal:search:')
 
             // Refresh the current search
             const { searchParams } = get()
@@ -189,6 +206,10 @@ export const useAnimalsStore = create<AnimalsState>()(
             }
 
             const updatedAnimal = await response.json()
+
+            // Invalidate caches for this animal and search results
+            animalCache.invalidate(cacheKeys.animalDetail(id))
+            animalCache.invalidate('animal:search:')
 
             // Update selected animal if it's the one being updated
             const { selectedAnimal } = get()
@@ -239,6 +260,10 @@ export const useAnimalsStore = create<AnimalsState>()(
               throw new Error(errorData.error || 'Failed to delete animal')
             }
 
+            // Invalidate caches
+            animalCache.invalidate(cacheKeys.animalDetail(id))
+            animalCache.invalidate('animal:search:')
+
             // Clear selected animal if it's the one being deleted
             const { selectedAnimal } = get()
             if (selectedAnimal && selectedAnimal.id === id) {
@@ -287,6 +312,10 @@ export const useAnimalsStore = create<AnimalsState>()(
               const errorData = await response.json().catch(() => ({}))
               throw new Error(errorData.error || 'Failed to add note')
             }
+
+            // Invalidate cache for this animal
+            animalCache.invalidate(cacheKeys.animalDetail(animalId))
+
             // Silently refresh selected animal to get updated notes
             const animalResponse = await fetch(`/api/animals/${animalId}`)
             if (animalResponse.ok) {
@@ -314,8 +343,12 @@ export const useAnimalsStore = create<AnimalsState>()(
               const errorData = await response.json().catch(() => ({}))
               throw new Error(errorData.error || 'Failed to delete note')
             }
-            // Silently refresh selected animal if provided
+
+            // Invalidate cache for the animal if provided
             if (animalId) {
+              animalCache.invalidate(cacheKeys.animalDetail(animalId))
+
+              // Silently refresh selected animal
               const animalResponse = await fetch(`/api/animals/${animalId}`)
               if (animalResponse.ok) {
                 const animal = await animalResponse.json()

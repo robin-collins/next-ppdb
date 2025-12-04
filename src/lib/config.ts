@@ -89,6 +89,14 @@ export const pagination = {
 } as const
 
 /**
+ * Search optimization configuration
+ */
+export const search = {
+  /** Threshold for switching from in-memory to database pagination */
+  inMemoryThreshold: 1000,
+} as const
+
+/**
  * Full config object for convenience
  */
 export const config = {
@@ -98,6 +106,7 @@ export const config = {
   logging,
   rateLimits,
   pagination,
+  search,
 } as const
 
 export default config

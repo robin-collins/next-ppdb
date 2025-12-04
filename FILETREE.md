@@ -88,14 +88,26 @@ ppdb-ts/
 │   ├── lib/ratelimit.ts             # Rate limiting utility using Valkey/Redis with memory fallback (created 2025-12-03)
 │   ├── lib/middleware/              # API middleware utilities (created 2025-12-03)
 │   │   └── rateLimit.ts             # withRateLimit() wrapper for API routes
-│   ├── services/                    # Business logic services (created 2025-12-03)
-│   │   └── animals.service.ts       # Animal search scoring and helpers
+│   ├── services/                    # Business logic services (created 2025-12-03, expanded 2025-12-04)
+│   │   ├── index.ts                 # Service exports
+│   │   ├── animals.service.ts       # Animal search scoring and helpers
+│   │   ├── customers.service.ts     # Customer formatting, validation helpers
+│   │   ├── breeds.service.ts        # Breed avgtime, pricing calculations
+│   │   └── notes.service.ts         # Note parsing, cost extraction
+│   ├── repositories/                # Repository pattern for data access (created 2025-12-04)
+│   │   ├── index.ts                 # Repository exports
+│   │   ├── types.ts                 # Repository interfaces (IAnimalRepository, etc.)
+│   │   ├── animal.repository.ts     # Prisma animal repository
+│   │   ├── customer.repository.ts   # Prisma customer repository
+│   │   ├── breed.repository.ts      # Prisma breed repository
+│   │   └── notes.repository.ts      # Prisma notes repository
+│   ├── lib/requestCache.ts          # Request deduplication with TTL caching (created 2025-12-04)
 │   ├── types/                       # Shared TypeScript types (created 2025-12-03)
 │   │   └── api.ts                   # API response/request type definitions
 │   ├── instrumentation.ts           # Next.js startup hook for environment validation (created 2025-12-03)
 │   └── store/                       # Zustand state management stores
-│       ├── animalsStore.ts          # Animals store with shared types (updated 2025-12-03)
+│       ├── animalsStore.ts          # Animals store with request caching (updated 2025-12-04)
 │       └── customersStore.ts        # Customers store with mutating flag (updated 2025-12-03)
 ```
 
-**Last Updated**: 2025-12-03
+**Last Updated**: 2025-12-04

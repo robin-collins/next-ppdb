@@ -168,7 +168,7 @@ export default function ImportProgress({
     return () => {
       eventSource.close()
     }
-  }, [uploadId, onComplete, onError, isComplete, hasError])
+  }, [uploadId, onComplete, onError])
 
   useEffect(() => {
     const cleanup = startImport()

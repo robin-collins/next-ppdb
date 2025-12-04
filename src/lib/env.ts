@@ -8,17 +8,22 @@
 
 import { z } from 'zod'
 
+// Check if we're in build phase (no DATABASE_URL needed during build)
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build'
+
 // Environment schema with validation rules
 const envSchema = z
   .object({
-    // Database - Required
-    DATABASE_URL: z
-      .string()
-      .url()
-      .refine(url => url.startsWith('mysql://'), {
-        message: 'DATABASE_URL must start with mysql://',
-      })
-      .describe('MySQL database connection URL'),
+    // Database - Required at runtime, optional during build
+    DATABASE_URL: isBuildPhase
+      ? z.string().optional().default('mysql://build:build@localhost/build')
+      : z
+          .string()
+          .url()
+          .refine(url => url.startsWith('mysql://'), {
+            message: 'DATABASE_URL must start with mysql://',
+          })
+          .describe('MySQL database connection URL'),
 
     // Node Environment
     NODE_ENV: z
@@ -66,7 +71,10 @@ const envSchema = z
   })
   .refine(
     data => {
-      // Validate DATABASE_URL format more strictly
+      // Skip strict validation during build phase
+      if (isBuildPhase) return true
+
+      // Validate DATABASE_URL format more strictly at runtime
       try {
         const url = new URL(data.DATABASE_URL)
         if (!url.hostname || !url.pathname.slice(1)) {
