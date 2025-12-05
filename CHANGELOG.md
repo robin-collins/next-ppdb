@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.3] 2025-12-03 - Production Hardening
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [UNRELEASED] Production Hardening
 
 ### Security
+
+- **Next.js Security Update (15.4.5 → 15.4.8)**
+  - Updated Next.js to version 15.4.8 to address critical security vulnerability
+  - Build verified successfully with no breaking changes
 
 - **C1: Console.log Information Disclosure Fixed**
   - Replaced all `console.log` statements in API routes with structured pino logging
@@ -145,6 +152,19 @@ All notable changes to this project will be documented in this file.
   - Environment validation was failing during Docker build (no DATABASE_URL during build phase)
   - Added build-phase detection via `NEXT_PHASE === 'phase-production-build'`
   - Schema now provides safe defaults during build, strict validation at runtime
+
+## [Unreleased] - 2025-12-04
+
+### Added
+
+- Comprehensive ARCHITECTURE.md document with full system design documentation
+  - 18 sections covering all template requirements
+  - Mermaid diagrams: System Architecture, ERD, Deployment, API Contract, Request Lifecycle, Caching, Auth Flow, Security Layers, CI/CD Pipeline
+  - Technology stack, data architecture, and design decisions
+  - Based on DECISIONS.md source of truth
+- Comprehensive DECISIONS.md document consolidating 47 documentation files into 8 categories
+- Conflict resolution log tracking evolving decisions with codebase verification
+- Date field default conflict verified: `1900-01-01` is the confirmed standard (MySQL 8.0 compatibility)
 
 ## [0.1.2] 2025-12-02
 

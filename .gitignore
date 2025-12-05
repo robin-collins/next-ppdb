@@ -67,3 +67,4 @@ reference/*.png
 reference/*.txt
 reference/nextjs-docs/
 local_test/
+decisions/

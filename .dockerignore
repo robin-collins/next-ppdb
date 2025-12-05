@@ -1,3 +1,4 @@
+# Existing content
 Dockerfile
 .dockerignore
 node_modules
@@ -5,3 +6,43 @@ npm-debug.log
 README.md
 .next
 .git
+
+# Add these
+# Development
+.vscode
+.cursor
+.claude
+.agent
+.specstory
+
+# Testing
+coverage
+test-results
+e2e
+__tests__
+
+# Documentation
+docs
+reference
+*.md
+!CHANGELOG.md
+
+# Temporary files
+temp
+*.log
+*.txt
+*.html
+
+# Git
+.gitignore
+.github
+
+# IDE
+.idea
+*.swp
+*.swo
+
+# Build artifacts
+.husky
+scripts
+prompts

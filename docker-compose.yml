@@ -1,6 +1,13 @@
 name: ppdb-app
 
 services:
+  traefik-acme-init:
+    image: alpine:3.20
+    container_name: traefik-acme-init
+    command: sh -c "mkdir -p /acme && touch /acme/acme.json && chmod 600 /acme/acme.json"
+    volumes:
+      - traefik_acme:/acme
+    restart: "no"
   traefik:
     image: traefik:v3.6.2
     container_name: traefik
@@ -13,7 +20,11 @@ services:
       - '443:443'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./acme.json:/acme.json
+      #- ./acme.json:/acme.json
+      - traefik_acme:/acme
+    depends_on:
+      traefik-acme-init:
+        condition: service_completed_successfully
     command:
       - '--api.dashboard=true'
       - '--ping=true'
@@ -24,7 +35,7 @@ services:
       - '--entrypoints.websecure.address=:443'
       - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
       - '--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}'
-      - '--certificatesresolvers.myresolver.acme.storage=/acme.json'
+      - '--certificatesresolvers.myresolver.acme.storage=/acme/acme.json'
       # Global redirect to HTTPS
       - '--entrypoints.web.http.redirections.entryPoint.to=websecure'
       - '--entrypoints.web.http.redirections.entryPoint.scheme=https'
@@ -183,3 +194,6 @@ volumes:
   valkey-data:
     driver: local
   db_data:
+  traefik_acme:
+    name: traefik_acme
+ 
