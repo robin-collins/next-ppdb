@@ -9,6 +9,7 @@ export interface DailyTotalAnimal {
   ownerName: string
   breedName: string
   cost: number
+  hasNotes: boolean
 }
 
 export interface DailyTotalsResponse {
@@ -81,6 +82,17 @@ export async function GET(request: NextRequest) {
               breedname: true,
             },
           },
+          notes: {
+            where: {
+              date: {
+                gte: start,
+                lte: end,
+              },
+            },
+            select: {
+              noteID: true,
+            },
+          },
         },
         orderBy: [{ customer: { surname: 'asc' } }, { animalname: 'asc' }],
       })
@@ -100,6 +112,7 @@ export async function GET(request: NextRequest) {
             typeof animal.cost === 'number'
               ? animal.cost
               : Number(animal.cost) || 0,
+          hasNotes: animal.notes.length > 0,
         }
       })
 

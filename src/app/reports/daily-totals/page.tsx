@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
@@ -30,10 +31,24 @@ function formatTime(date: Date): string {
 }
 
 function getDateInputValue(date: Date): string {
-  return date.toISOString().split('T')[0]
+  // Use local time components to avoid timezone shifts
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function isToday(date: Date): boolean {
+  const today = new Date()
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  )
 }
 
 export default function DailyTotalsPage() {
+  const router = useRouter()
   const {
     sidebarOpen,
     sidebarPinned,
@@ -83,10 +98,21 @@ export default function DailyTotalsPage() {
   }, [selectedDate, fetchData])
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value + 'T00:00:00')
+    // Create date from value string, ensuring it's treated as local date
+    const [year, month, day] = e.target.value.split('-').map(Number)
+    const newDate = new Date(year, month - 1, day)
+
     if (!isNaN(newDate.getTime())) {
       setSelectedDate(newDate)
     }
+  }
+
+  const handleShowToday = () => {
+    setSelectedDate(new Date())
+  }
+
+  const handleRowClick = (animalID: number) => {
+    router.push(routes.animals.detail(animalID))
   }
 
   const handlePrint = () => {
@@ -138,6 +164,16 @@ export default function DailyTotalsPage() {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Show Today Button */}
+            {!isToday(selectedDate) && (
+              <button
+                onClick={handleShowToday}
+                className="flex items-center gap-2 rounded-lg border border-[var(--gray-300)] bg-white px-3 py-2 text-sm font-medium text-[var(--gray-700)] shadow-sm transition-all hover:bg-[var(--gray-50)] hover:text-[var(--primary)]"
+              >
+                Show Today&apos;s Report
+              </button>
+            )}
+
             {/* Date Selector */}
             <div className="flex items-center gap-2">
               <label
@@ -236,31 +272,61 @@ export default function DailyTotalsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.animals.map((animal: DailyTotalAnimal, index) => (
-                      <tr
-                        key={animal.animalID}
-                        className={
+                    {data.animals.map((animal: DailyTotalAnimal, index) => {
+                      // Determine row styling based on notes and index
+                      let rowClass =
+                        'cursor-pointer transition-colors duration-150 '
+                      if (animal.hasNotes) {
+                        rowClass +=
                           index % 2 === 0
-                            ? 'bg-white'
-                            : 'bg-[var(--gray-50)]/50'
-                        }
-                      >
-                        <td className="border-b border-[var(--gray-100)] px-4 py-3">
-                          <div className="font-medium text-[var(--gray-900)]">
-                            {animal.animalName}
-                          </div>
-                          <div className="text-sm text-[var(--gray-600)]">
-                            {animal.ownerName}
-                          </div>
-                        </td>
-                        <td className="border-b border-[var(--gray-100)] px-4 py-3 text-[var(--gray-700)]">
-                          {animal.breedName}
-                        </td>
-                        <td className="border-b border-[var(--gray-100)] px-4 py-3 text-right font-medium text-[var(--gray-900)]">
-                          {formatCurrency(animal.cost)}
-                        </td>
-                      </tr>
-                    ))}
+                            ? 'bg-green-50 hover:bg-green-100'
+                            : 'bg-green-100 hover:bg-green-200'
+                      } else {
+                        rowClass +=
+                          index % 2 === 0
+                            ? 'bg-white hover:bg-blue-50'
+                            : 'bg-[var(--gray-50)]/50 hover:bg-blue-50'
+                      }
+
+                      return (
+                        <tr
+                          key={animal.animalID}
+                          className={rowClass}
+                          onClick={() => handleRowClick(animal.animalID)}
+                        >
+                          <td className="border-b border-[var(--gray-100)] px-4 py-3">
+                            <div className="flex items-center gap-2 font-medium text-[var(--gray-900)]">
+                              {animal.animalName}
+                              {animal.hasNotes && (
+                                <svg
+                                  className="h-4 w-4 text-green-600"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <title>Has notes for this date</title>
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="text-sm text-[var(--gray-600)]">
+                              {animal.ownerName}
+                            </div>
+                          </td>
+                          <td className="border-b border-[var(--gray-100)] px-4 py-3 text-[var(--gray-700)]">
+                            {animal.breedName}
+                          </td>
+                          <td className="border-b border-[var(--gray-100)] px-4 py-3 text-right font-medium text-[var(--gray-900)]">
+                            {formatCurrency(animal.cost)}
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                   <tfoot>
                     <tr className="bg-[var(--primary-light)]">
