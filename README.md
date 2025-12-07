@@ -19,41 +19,26 @@ A modern, containerized Pedigree Database application built with Next.js, MySQL,
 
 For detailed production deployment and migration instructions, please see **[docs/PRODUCTION_DEPLOYMENT.md](docs/PRODUCTION_DEPLOYMENT.md)**.
 
-### Quick Start (Dev/Test)
+### Quick Install (Windows)
 
-You can quickly set up the project by pulling the configuration files directly from the repository.
-
-### Bash (Linux / macOS)
-
-```bash
-# Download configuration files
-curl -O https://raw.githubusercontent.com/robin-collins/next-ppdb/main/docker-compose.yml
-curl -O https://raw.githubusercontent.com/robin-collins/next-ppdb/main/.env.example
-
-# Create environment file
-cp .env.example .env
-
-# Note: Open .env and update the variables with your specific configuration before proceeding.
-
-# Pull images and start services
-docker compose pull && docker compose up -d
-```
-
-### PowerShell (Windows)
+Run the following command in PowerShell to automatically download configuration files, set up the environment, and start the application:
 
 ```powershell
-# Download configuration files
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/robin-collins/next-ppdb/main/docker-compose.yml" -OutFile "docker-compose.yml"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/robin-collins/next-ppdb/main/.env.example" -OutFile ".env.example"
-
-# Create environment file
-Copy-Item .env.example .env
-
-# Note: Open .env and update the variables with your specific configuration before proceeding.
-
-# Pull images and start services
-docker compose pull; docker compose up -d
+powershell -c "irm https://raw.githubusercontent.com/robin-collins/next-ppdb/main/quick-install.ps1 | iex"
 ```
+
+### Manual Installation (Linux / macOS / Windows)
+
+If you prefer to setup manually or are on a non-Windows system:
+
+1.  **Download Files**:
+    - `docker-compose.yml`
+    - `.env.example` -> `.env`
+    - `docker/mysql-init/01-grant-privileges.sh` (preserve directory structure)
+
+2.  **Configure**: Update `.env` with your settings.
+
+3.  **Run**: `docker compose up -d`
 
 ## Usage
 

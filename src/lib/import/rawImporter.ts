@@ -48,8 +48,8 @@ async function getRawRecords(
   if (!config) throw new Error('Invalid DATABASE_URL')
 
   // Query with explicit column output to handle bad dates
-  // --skip-ssl for internal Docker network (works with both MySQL and MariaDB clients)
-  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl ${tempDbName} -e "SELECT * FROM ${table}" --batch`
+  // --ssl-mode=DISABLED for internal Docker network (works with both MySQL and MariaDB clients)
+  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${tempDbName} -e "SELECT * FROM ${table}" --batch`
 
   const { stdout } = await execAsync(cmd, { maxBuffer: 100 * 1024 * 1024 })
 
@@ -106,7 +106,7 @@ async function rawInsert(
   })
 
   const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${escapedValues.join(', ')})`
-  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --skip-ssl ${config.database} -e "${sql.replace(/"/g, '\\"')}"`
+  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${config.database} -e "${sql.replace(/"/g, '\\"')}"`
 
   await execAsync(cmd)
 }

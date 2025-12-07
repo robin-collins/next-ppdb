@@ -121,8 +121,8 @@ export async function POST() {
     // --events includes scheduled events
     // Note: We don't use --databases flag to avoid CREATE DATABASE/USE statements
     // This allows restoring to any database name for testing
-    // --skip-ssl: Internal Docker network doesn't need SSL verification
-    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --skip-ssl --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
+    // --ssl-mode=DISABLED: Internal Docker network doesn't need SSL verification
+    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --ssl-mode=DISABLED --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
 
     try {
       await execAsync(mysqldumpCmd)

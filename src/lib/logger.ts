@@ -20,45 +20,53 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 const isDebugEnabled = process.env.DEBUG === 'true' || isDevelopment
 
 // Configure pino logger
-export const logger = pino({
-  level: isDebugEnabled ? 'debug' : 'info',
-  transport: isDevelopment
-    ? {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          translateTime: 'SYS:standard',
-          ignore: 'pid,hostname',
-        },
-      }
-    : undefined,
-  redact: {
-    paths: [
-      // Direct fields
-      'phone1',
-      'phone2',
-      'phone3',
-      'email',
-      'password',
-      // Nested customer fields
-      'customer.phone1',
-      'customer.phone2',
-      'customer.phone3',
-      'customer.email',
-      // Wildcard patterns for arrays
-      '*.phone1',
-      '*.phone2',
-      '*.phone3',
-      '*.email',
-      // Body content
-      'body.phone1',
-      'body.phone2',
-      'body.phone3',
-      'body.email',
-    ],
-    censor: '[REDACTED]',
-  },
-})
+// Redaction configuration
+const redactOptions = {
+  paths: [
+    // Direct fields
+    'phone1',
+    'phone2',
+    'phone3',
+    'email',
+    'password',
+    // Nested customer fields
+    'customer.phone1',
+    'customer.phone2',
+    'customer.phone3',
+    'customer.email',
+    // Wildcard patterns for arrays
+    '*.phone1',
+    '*.phone2',
+    '*.phone3',
+    '*.email',
+    // Body content
+    'body.phone1',
+    'body.phone2',
+    'body.phone3',
+    'body.email',
+  ],
+  censor: '[REDACTED]',
+}
+
+// Configure pino logger
+// In development, we use pino-pretty directly as a stream to avoid worker thread issues
+// that can occur with the transport option in Next.js/pnpm environments
+export const logger = isDevelopment
+  ? pino(
+      {
+        level: isDebugEnabled ? 'debug' : 'info',
+        redact: redactOptions,
+      },
+      require('pino-pretty')({
+        colorize: true,
+        translateTime: 'SYS:standard',
+        ignore: 'pid,hostname',
+      })
+    )
+  : pino({
+      level: isDebugEnabled ? 'debug' : 'info',
+      redact: redactOptions,
+    })
 
 // Convenience methods with proper typing
 export const log = {

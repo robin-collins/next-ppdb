@@ -146,6 +146,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated: @eslint/eslintrc 3.3.3, @types/react 19.2.7, lint-staged 16.2.7
   - Removed deprecated: @types/pino, @types/uuid (packages provide own types)
 
+- **I14: Docker Configuration Refactor**
+  - Replaced hardcoded credentials in `01-grant-privileges.sql` with dynamic `01-grant-privileges.sh` using environment variables
+  - Created `quick-install.ps1` for one-line installation on Windows
+  - Updated README.md with quick install instructions
+
 ### Fixed
 
 - **Docker Build Failure with Environment Validation**
