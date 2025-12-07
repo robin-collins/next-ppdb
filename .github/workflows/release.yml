@@ -1,0 +1,27 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to create releases
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required by github-action-npm-release
+      - name: Create release on version bump
+        id: release
+        uses: justincy/github-action-npm-release@v2
+      - name: Show release details
+        if: steps.release.outputs.released == 'true'
+        run: |
+          echo "Created release ID: ${{ steps.release.outputs.release_id }}"
+          echo "Release tag: ${{ steps.release.outputs.release_tag }}"
+          echo "Release URL: ${{ steps.release.outputs.html_url }}"

@@ -346,6 +346,12 @@ export default function Sidebar({
         {/* Sidebar Footer */}
         <div className="border-t border-gray-200 bg-gray-50 p-4">
           <div className="bg-primary-light text-primary rounded-full px-4 py-2 text-center text-sm font-semibold">
+            Next-PPDB{' '}
+            {process.env.NEXT_PUBLIC_APP_VERSION && (
+              <div className="mb-2 text-center text-xs text-gray-500">
+                v{process.env.NEXT_PUBLIC_APP_VERSION}
+              </div>
+            )}
             {sidebarDate}
           </div>
         </div>

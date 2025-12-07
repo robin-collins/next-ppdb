@@ -1,6 +1,6 @@
-# Next PPDB (Pedigree Database)
+# Next PPDB (Pampered Pooch Database)
 
-A modern, containerized Pedigree Database application built with Next.js, MySQL, and Traefik.
+A modern, containerized Pampered Pooch Database application built with Next.js, MySQL, and Traefik.
 
 ## Features
 
@@ -47,16 +47,6 @@ Once the containers are up and running:
 - **Application**: Access the main application at `https://next-ppdb.yourdomain.com` (or configured domain).
 - **Traefik Dashboard**: Monitor routes and services at `https://traefik.yourdomain.com` (if enabled).
 - **phpMyAdmin**: Manage the database at `https://db.yourdomain.com`.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
