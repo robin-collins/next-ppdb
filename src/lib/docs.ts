@@ -53,9 +53,25 @@ async function scanDirectory(
       // Try to find an index/page file to get the section title?
       // Or just capitalize the directory name
       if (children.length > 0) {
-        // Check for index/page locally for metadata?
-        // simple: Use Title Case of directory
-        const title = toTitleCase(entry.name)
+        // Try to find an index/page file to get the section title
+        let title = toTitleCase(entry.name)
+        
+        // Check for page.mdx or page.md
+        const pageMdxPath = path.join(fullPath, 'page.mdx')
+        const pageMdPath = path.join(fullPath, 'page.md')
+        
+        try {
+          if (fs.existsSync(pageMdxPath)) {
+            const { data } = matter(fs.readFileSync(pageMdxPath, 'utf-8'))
+            if (data.title) title = data.title
+          } else if (fs.existsSync(pageMdPath)) {
+            const { data } = matter(fs.readFileSync(pageMdPath, 'utf-8'))
+            if (data.title) title = data.title
+          }
+        } catch {
+          // ignore error reading frontmatter
+        }
+
         nodes.push({
           title,
           href: childUrlPrefix, // Clicking the header usually goes to the index of that folder

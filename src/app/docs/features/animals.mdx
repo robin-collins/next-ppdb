@@ -1,0 +1,132 @@
+---
+title: Animal Details
+description: View and manage animal records in Next PPDB.
+order: 2
+---
+
+# Animal Details
+
+The animal details page displays comprehensive information about a pet, including grooming history and service notes.
+
+## Page Header
+
+The header shows the animal's identity at a glance.
+
+![Animal Header](/docs/screenshots/animal-header.png)
+
+| Element | Description |
+|---------|-------------|
+| Breed Avatar | Visual breed identifier with initial overlay |
+| Animal Name | Large heading with the pet's name |
+| Breed & Sex | Quick reference line |
+| Back Button | Return to search results |
+
+## Owner Quick View
+
+The owner card provides instant access to customer information.
+
+![Owner Card](/docs/screenshots/owner-card.png)
+
+| Element | Description |
+|---------|-------------|
+| Initial Avatar | Customer's initial in a colored circle |
+| Customer Name | Full name of the pet owner |
+| Phone Icon | Primary phone number (clickable to dial) |
+| View Customer | Navigate to full customer profile |
+
+## Animal Details Form
+
+Edit all animal information in this form.
+
+![Animal Details Form](/docs/screenshots/animal-details-form.png)
+
+### Form Fields
+
+| Field | Description |
+|-------|-------------|
+| Animal Name | The pet's name |
+| Breed | Dropdown selection from breed database |
+| Sex | Male or Female |
+| Colour | Coat colour/markings |
+| Cost ($) | Custom pricing (if different from breed default) |
+| Last Visit | Previous grooming date |
+| This Visit | Current/most recent grooming date |
+| Comments | Special instructions or notes |
+
+### Discounted Pricing
+
+When Cost is set to $0, the "Discounted pricing" badge appears, indicating the breed's default price applies.
+
+### Action Buttons
+
+- **Update Record** - Save changes to the animal
+- **Change Dates** - Quick date management
+
+## Service History
+
+The service history panel shows all grooming visits.
+
+![Service History](/docs/screenshots/service-history.png)
+
+### Add Service Note
+
+Record new services using the input field.
+
+![Add Note Field](/docs/screenshots/add-note-field.png)
+
+Enter service details following this format:
+```
+full clip 3 legs 7 short ears & face leave top knot CC $60
+```
+
+The placeholder shows an example of the expected format.
+
+### Service Note Entry
+
+Each historical visit displays as a card.
+
+![Service Note Entry](/docs/screenshots/service-note-entry.png)
+
+| Element | Description |
+|---------|-------------|
+| Date | Visit date (DD/MM/YYYY format) |
+| Service Description | What was done during the visit |
+| Staff Initials | Who performed the service |
+| Delete Button | Remove this note (with confirmation) |
+
+### Staff Initials
+
+The initials badge identifies which groomer performed the service. Common initials include:
+- BH, BB, EJ, CC, SP, TM, KM, HM, etc.
+
+### All Animal Notes
+
+Click "All Animal Notes" at the bottom to view the complete history on a dedicated page.
+
+## Workflow
+
+### Viewing an Animal
+
+1. Search for the animal by name, owner, or phone
+2. Click the animal card in search results
+3. View all details on the animal page
+
+### Recording a Visit
+
+1. Navigate to the animal's page
+2. Enter service details in the "Add Service Note" field
+3. Click "Insert NOTE"
+4. The note appears in the service history
+
+### Updating Information
+
+1. Modify any field in the Animal Details form
+2. Click "Update Record" to save
+3. Changes apply immediately
+
+## Tips
+
+- **Quick owner access** - Click "View Customer" to see all pets for this owner
+- **Phone dialing** - Phone numbers in the owner card are clickable
+- **Date tracking** - "Last Visit" and "This Visit" help track grooming intervals
+- **Service format** - Include clip style, areas, groomer initials, and price in notes

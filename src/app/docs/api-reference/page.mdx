@@ -1,0 +1,165 @@
+---
+title: API Reference
+description: REST API documentation for Next PPDB.
+order: 6
+---
+
+# API Reference
+
+Next PPDB provides a RESTful API for programmatic access to all data. Interactive documentation is available via Swagger UI.
+
+## Interactive Documentation
+
+- **Swagger UI**: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+- **OpenAPI JSON**: [http://localhost:3000/api/docs/openapi.json](http://localhost:3000/api/docs/openapi.json)
+
+## API Endpoints
+
+### Animals
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/animals` | List/search animals |
+| POST | `/api/animals` | Create new animal |
+| GET | `/api/animals/[id]` | Get animal by ID |
+| PUT | `/api/animals/[id]` | Update animal |
+| DELETE | `/api/animals/[id]` | Delete animal |
+| GET | `/api/animals/[id]/notes` | List animal's notes |
+| POST | `/api/animals/[id]/notes` | Create note for animal |
+
+### Customers
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/customers` | List/search customers |
+| POST | `/api/customers` | Create new customer |
+| GET | `/api/customers/[id]` | Get customer by ID |
+| PUT | `/api/customers/[id]` | Update customer |
+| DELETE | `/api/customers/[id]` | Delete customer |
+| GET | `/api/customers/history` | Get customer history data |
+
+### Breeds
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/breeds` | List all breeds |
+| POST | `/api/breeds` | Create new breed |
+| GET | `/api/breeds/[id]` | Get breed by ID |
+| PUT | `/api/breeds/[id]` | Update breed |
+| DELETE | `/api/breeds/[id]` | Delete breed |
+
+### Notes
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/notes/[id]` | Get note by ID |
+| PUT | `/api/notes/[id]` | Update note |
+| DELETE | `/api/notes/[id]` | Delete note |
+
+### Reports
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/reports/daily-totals` | Get daily totals data |
+
+### Admin
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/admin/backup` | Create and download backup |
+
+## Search Parameters
+
+The animals endpoint supports search via query parameter:
+
+```
+GET /api/animals?q=searchterm
+```
+
+The search supports:
+- Animal names
+- Breed names
+- Customer names
+- Phone numbers
+- Email addresses
+
+Results are ranked by relevance score.
+
+## Response Format
+
+All endpoints return JSON responses:
+
+### Success Response
+
+```json
+{
+  "data": { ... },
+  "success": true
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Error message",
+  "success": false
+}
+```
+
+### List Response
+
+```json
+{
+  "data": [...],
+  "total": 100,
+  "page": 1,
+  "pageSize": 20
+}
+```
+
+## Authentication
+
+Currently, the API does not require authentication. All endpoints are publicly accessible within the local network.
+
+## Rate Limiting
+
+No rate limiting is currently implemented. For production deployments, consider adding rate limiting via middleware or a reverse proxy.
+
+## CORS
+
+CORS is configured to allow requests from the same origin. For external API access, update the CORS configuration in `next.config.ts`.
+
+## Example Usage
+
+### Searching Animals
+
+```bash
+curl "http://localhost:3000/api/animals?q=German%20Shepherd"
+```
+
+### Creating a Customer
+
+```bash
+curl -X POST "http://localhost:3000/api/customers" \
+  -H "Content-Type: application/json" \
+  -d '{"surname": "Smith", "firstname": "John", "phone1": "0412345678"}'
+```
+
+### Updating an Animal
+
+```bash
+curl -X PUT "http://localhost:3000/api/animals/123" \
+  -H "Content-Type: application/json" \
+  -d '{"animalname": "Buddy", "colour": "Golden"}'
+```
+
+## Type Definitions
+
+For TypeScript integration, types are available in the generated Prisma client:
+
+```typescript
+import type { animal, customer, breed, notes } from '@/generated/prisma'
+```
+
+See the Prisma schema (`prisma/schema.prisma`) for complete type definitions.

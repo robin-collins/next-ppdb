@@ -1,0 +1,90 @@
+---
+title: Breeds Management
+description: Learn how to manage the breed database in Next PPDB.
+order: 3
+---
+
+# Breeds Management
+
+The breed database stores all available breeds with their associated grooming times and pricing.
+
+## Page Header
+
+![Breeds Header](/docs/screenshots/breeds-header.png)
+
+Navigate to **Manage Breeds** from the sidebar to access this page.
+
+## Adding a New Breed
+
+Use the "Add New Breed" form at the top of the page:
+
+![Add New Breed Form](/docs/screenshots/breeds-add-form.png)
+
+| Field | Description |
+|-------|-------------|
+| Breed Name | Required - Enter the breed name (e.g., "Golden Retriever") |
+| Average Time | Grooming duration in HH:MM:SS format (default: 01:00:00) |
+| Average Cost | Base price in dollars (default: lowest existing breed cost) |
+
+### Time Format Examples
+
+- `01:00:00` = 1 hour
+- `01:30:00` = 1 hour 30 minutes
+- `00:45:00` = 45 minutes
+
+## Existing Breeds Database
+
+The table displays all breeds with sortable columns:
+
+![Breeds Table](/docs/screenshots/breeds-table.png)
+
+| Column | Description |
+|--------|-------------|
+| Breed Name | Name of the breed |
+| Average Time | Estimated grooming duration |
+| Average Cost | Base grooming price |
+| Actions | Edit, Delete, and Pricing buttons |
+
+### Searching Breeds
+
+Use the search box above the table to filter breeds by name. Filtering is applied in real-time as you type.
+
+### Modify All Pricing
+
+Click the **Modify All Pricing** button to apply percentage-based changes to all breeds simultaneously.
+
+## Editing a Breed
+
+Click the **Edit** button (pencil icon) next to any breed:
+
+1. Modify the breed name, time, or cost
+2. Click **Save** to apply changes
+3. Click **Cancel** to discard changes
+
+## Deleting a Breed
+
+Click the **Delete** button (trash icon):
+
+1. A confirmation dialog appears
+2. Click **Confirm** to delete
+3. Click **Cancel** to keep the breed
+
+**Warning**: Deleting a breed may affect animals that use this breed.
+
+## Individual Pricing
+
+Click the **$** button next to any breed to:
+
+- Apply a percentage increase/decrease
+- Set a fixed price override
+- Reset to the base price
+
+## Breed Avatars
+
+Each breed has an associated avatar image displayed in:
+
+- Search result cards
+- Animal detail pages
+- Customer history tables
+
+Avatars are stored in `/public/images/animal-avatars/`.

@@ -10,10 +10,11 @@ import {
 } from './checks'
 import { DiagnosticChecks, HealthCheckResult, HealthStatus } from './types'
 
-// Cache for health check results (30 second TTL)
+// Cache for health check results
+// If healthy: Cache indefinitely (effectively startup check only)
+// If unhealthy: Cache for 10 seconds (retry frequently)
 let cachedResult: HealthCheckResult | null = null
 let cacheTimestamp = 0
-const CACHE_TTL_MS = 30000
 
 /**
  * Run all diagnostic checks and determine application health status
@@ -21,8 +22,15 @@ const CACHE_TTL_MS = 30000
 export async function runDiagnostics(): Promise<HealthCheckResult> {
   // Check cache first
   const now = Date.now()
-  if (cachedResult && now - cacheTimestamp < CACHE_TTL_MS) {
-    return cachedResult
+  if (cachedResult) {
+    if (cachedResult.status === 'healthy') {
+        // If healthy, cache is valid forever (until manual invalidation)
+        return cachedResult
+    }
+    // If unhealthy, cache for 10s to prevent spamming but allow retries
+    if (now - cacheTimestamp < 10000) {
+        return cachedResult
+    }
   }
 
   const checks: DiagnosticChecks = {

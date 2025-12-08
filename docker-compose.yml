@@ -8,6 +8,8 @@ services:
     volumes:
       - traefik_acme:/acme
     restart: "no"
+    networks:
+      - web    
   traefik:
     image: traefik:v3.6.2
     container_name: traefik
@@ -139,8 +141,8 @@ services:
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    #image: next-ppdb:latest
-    image: ghcr.io/robin-collins/next-ppdb:latest
+    image: next-ppdb:latest
+    #image: ghcr.io/robin-collins/next-ppdb:latest
     container_name: next-ppdb
     hostname: next-ppdb
     restart: unless-stopped

@@ -1,0 +1,98 @@
+---
+title: Administration
+description: Learn about administrative features in Next PPDB.
+order: 6
+---
+
+# Administration
+
+Next PPDB includes administrative tools for database management and system maintenance.
+
+## Database Backup
+
+The backup feature creates complete copies of your database.
+
+Navigate to **Database Backup** from the sidebar.
+
+### Create New Backup
+
+Click the button to create an instant backup:
+
+![Create Backup](/docs/screenshots/admin-create-backup.png)
+
+Each backup contains:
+- Complete SQL dump of all tables
+- Table structure definitions
+- All data records
+- Compressed as a ZIP file
+
+### Available Backups
+
+The system stores up to 5 recent backups:
+
+![Available Backups](/docs/screenshots/admin-backups-list.png)
+
+| Column | Description |
+|--------|-------------|
+| Filename | Timestamped filename (e.g., `20251202-000317-backup.zip`) |
+| Date/Time | When the backup was created |
+| Size | File size in KB |
+| Download | Link to download the backup |
+
+### Downloading Backups
+
+Click **Download** to save a backup. Store backups:
+- On external drives
+- In cloud storage
+- Off-site for disaster recovery
+
+### Automatic Cleanup
+
+When more than 5 backups exist, the oldest are automatically removed. Download important backups before cleanup.
+
+## Restoring from Backup
+
+To restore a backup:
+
+1. Download the backup ZIP file
+2. Extract the SQL file
+3. Import using your database tool:
+
+```bash
+mysql -u user -p database_name < backup.sql
+```
+
+**Warning**: Restoring overwrites all current data. Create a fresh backup first.
+
+## Best Practices
+
+### Regular Backups
+
+- Create backups daily or before major changes
+- Download backups to external storage
+- Test restore procedures periodically
+
+### Before Major Changes
+
+Create a backup before:
+- Bulk updates to records
+- Database migrations
+- System upgrades
+
+### Disaster Recovery
+
+Maintain:
+- Multiple backup copies in different locations
+- Documentation of restore procedures
+- Contact information for technical support
+
+## API Documentation
+
+Interactive API documentation is available at:
+
+| Resource | URL |
+|----------|-----|
+| Swagger UI | [/api/docs](/api/docs) |
+| OpenAPI JSON | [/api/docs/openapi.json](/api/docs/openapi.json) |
+
+See the [API Reference](/docs/api-reference) for endpoint details.

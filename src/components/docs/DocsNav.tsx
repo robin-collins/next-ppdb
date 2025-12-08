@@ -30,9 +30,18 @@ export function DocsNav({ items }: DocsNavProps) {
             if (node.items && node.items.length > 0) {
               return (
                 <li key={node.href} className="mb-6">
-                  <h6 className="font-display mb-2 font-semibold text-gray-900">
-                    {node.title}
-                  </h6>
+                  {node.href ? (
+                    <Link
+                      href={node.href}
+                      className="font-display mb-2 block font-semibold text-gray-900 hover:text-primary transition-colors"
+                    >
+                      {node.title}
+                    </Link>
+                  ) : (
+                    <h6 className="font-display mb-2 font-semibold text-gray-900">
+                      {node.title}
+                    </h6>
+                  )}
                   <ul className="space-y-1 border-l border-gray-100">
                     {node.items.map(child => {
                       const isChildActive = pathname === child.href
