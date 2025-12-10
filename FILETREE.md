@@ -10,6 +10,7 @@ ppdb-ts/
 ├── .prettierignore
 ├── .prettierrc
 ├── .specstory/
+├── ARCHITECTURE.md                 # Comprehensive system architecture documentation (created 2025-12-04)
 ├── CHANGELOG.md                    # Project changelog (created)
 ├── OPENAPI_IMPLEMENTATION.md       # ✅ Enhanced OpenAPI implementation guide with Context7 references (updated 2025-11-17)
 ├── CHECK_DATABASE.sh               # Helper script to check notes table schema (created 2025-11-16)
