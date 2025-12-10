@@ -22,6 +22,7 @@ COPY prisma ./prisma
 COPY next.config.ts .
 COPY postcss.config.mjs .
 COPY tsconfig.json .
+COPY scripts ./scripts
 
 # Generate Prisma Client
 RUN pnpm exec prisma generate
@@ -48,6 +49,9 @@ RUN pnpm build
 FROM base AS runner
 
 WORKDIR /app
+
+# Set non‑interactive mode for all subsequent apt commands
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install useful network tools and mysql client for raw SQL imports and backups
 RUN apt-get update && apt-get install -y \
