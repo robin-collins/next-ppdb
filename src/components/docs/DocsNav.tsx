@@ -33,7 +33,7 @@ export function DocsNav({ items }: DocsNavProps) {
                   {node.href ? (
                     <Link
                       href={node.href}
-                      className="font-display mb-2 block font-semibold text-gray-900 hover:text-primary transition-colors"
+                      className="font-display hover:text-primary mb-2 block font-semibold text-gray-900 transition-colors"
                     >
                       {node.title}
                     </Link>

@@ -10,12 +10,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # needed to create releases
+      contents: write # needed to create releases
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # required by github-action-npm-release
+          fetch-depth: 0 # required by github-action-npm-release
       - name: Create release on version bump
         id: release
         uses: justincy/github-action-npm-release@v2

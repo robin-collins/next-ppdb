@@ -24,13 +24,16 @@ function scanDirectory(dir, baseUrl = '/docs') {
       // Recursively scan subdirectories
       const subUrl = `${baseUrl}/${entry.name}`
       results.push(...scanDirectory(fullPath, subUrl))
-    } else if (entry.isFile() && (entry.name.endsWith('.mdx') || entry.name.endsWith('.md'))) {
+    } else if (
+      entry.isFile() &&
+      (entry.name.endsWith('.mdx') || entry.name.endsWith('.md'))
+    ) {
       // Skip layout.tsx and other non-content files
       if (entry.name === 'layout.tsx' || entry.name === 'layout.ts') continue
 
       // Determine URL based on file name
       let url = baseUrl
-      
+
       if (entry.name === 'page.mdx' || entry.name === 'page.md') {
         // Index file for this directory
         url = baseUrl
@@ -52,7 +55,7 @@ function scanDirectory(dir, baseUrl = '/docs') {
 
 async function generateIndex() {
   console.log('🔍 Building search index...')
-  
+
   const files = scanDirectory(CONTENT_DIR)
   const index = []
 

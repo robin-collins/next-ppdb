@@ -5,22 +5,24 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // Headings with proper spacing
     h1: ({ children }) => (
-      <h1 className="mb-8 mt-4 border-b-2 border-indigo-200 pb-4 text-3xl font-bold text-gray-900">
+      <h1 className="mt-4 mb-8 border-b-2 border-indigo-200 pb-4 text-3xl font-bold text-gray-900">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="mb-6 mt-10 border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800">
+      <h2 className="mt-10 mb-6 border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mb-4 mt-8 text-xl font-semibold text-gray-700">
+      <h3 className="mt-8 mb-4 text-xl font-semibold text-gray-700">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="mb-3 mt-6 text-lg font-medium text-gray-700">{children}</h4>
+      <h4 className="mt-6 mb-3 text-lg font-medium text-gray-700">
+        {children}
+      </h4>
     ),
 
     // Paragraphs with good spacing - using div to allow block children
@@ -37,9 +39,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         return <>{children}</>
       }
 
-      return (
-        <p className="mb-5 leading-7 text-gray-700">{children}</p>
-      )
+      return <p className="mb-5 leading-7 text-gray-700">{children}</p>
     },
 
     // Lists - proper indentation and bullet placement
@@ -53,9 +53,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </ol>
     ),
-    li: ({ children }) => (
-      <li className="leading-7 pl-2">{children}</li>
-    ),
+    li: ({ children }) => <li className="pl-2 leading-7">{children}</li>,
 
     // Tables - properly styled with good contrast
     table: ({ children }) => (
@@ -65,9 +63,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         </table>
       </div>
     ),
-    thead: ({ children }) => (
-      <thead className="bg-indigo-50">{children}</thead>
-    ),
+    thead: ({ children }) => <thead className="bg-indigo-50">{children}</thead>,
     tbody: ({ children }) => (
       <tbody className="divide-y divide-gray-100 bg-white">{children}</tbody>
     ),
@@ -105,7 +101,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
             width={800}
             height={500}
             className="h-auto w-full"
-            style={{ maxHeight: '600px', objectFit: 'contain', backgroundColor: '#f9fafb' }}
+            style={{
+              maxHeight: '600px',
+              objectFit: 'contain',
+              backgroundColor: '#f9fafb',
+            }}
           />
         </span>
         {alt && (
@@ -132,13 +132,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
 
     // Emphasis
-    em: ({ children }) => (
-      <em className="italic text-gray-700">{children}</em>
-    ),
+    em: ({ children }) => <em className="text-gray-700 italic">{children}</em>,
 
     // Blockquotes
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-indigo-400 bg-indigo-50 py-4 pl-6 pr-4 italic text-gray-700">
+      <blockquote className="my-6 border-l-4 border-indigo-400 bg-indigo-50 py-4 pr-4 pl-6 text-gray-700 italic">
         {children}
       </blockquote>
     ),

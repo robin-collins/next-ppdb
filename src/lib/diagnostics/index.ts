@@ -24,12 +24,12 @@ export async function runDiagnostics(): Promise<HealthCheckResult> {
   const now = Date.now()
   if (cachedResult) {
     if (cachedResult.status === 'healthy') {
-        // If healthy, cache is valid forever (until manual invalidation)
-        return cachedResult
+      // If healthy, cache is valid forever (until manual invalidation)
+      return cachedResult
     }
     // If unhealthy, cache for 10s to prevent spamming but allow retries
     if (now - cacheTimestamp < 10000) {
-        return cachedResult
+      return cachedResult
     }
   }
 

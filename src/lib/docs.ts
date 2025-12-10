@@ -55,11 +55,11 @@ async function scanDirectory(
       if (children.length > 0) {
         // Try to find an index/page file to get the section title
         let title = toTitleCase(entry.name)
-        
+
         // Check for page.mdx or page.md
         const pageMdxPath = path.join(fullPath, 'page.mdx')
         const pageMdPath = path.join(fullPath, 'page.md')
-        
+
         try {
           if (fs.existsSync(pageMdxPath)) {
             const { data } = matter(fs.readFileSync(pageMdxPath, 'utf-8'))

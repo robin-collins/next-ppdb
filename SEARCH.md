@@ -24,48 +24,48 @@ Create a file at `scripts/build-search.mjs`. This script will generate the index
 
 ```javascript
 // scripts/build-search.mjs
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import { remark } from 'remark';
-import strip from 'strip-markdown';
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { remark } from 'remark'
+import strip from 'strip-markdown'
 
-const CONTENT_DIR = path.join(process.cwd(), 'content/posts'); // Change to your directory
-const OUTPUT_FILE = path.join(process.cwd(), 'public/search-index.json');
+const CONTENT_DIR = path.join(process.cwd(), 'content/posts') // Change to your directory
+const OUTPUT_FILE = path.join(process.cwd(), 'public/search-index.json')
 
 async function generateIndex() {
-  const files = fs.readdirSync(CONTENT_DIR);
-  const index = [];
+  const files = fs.readdirSync(CONTENT_DIR)
+  const index = []
 
   for (const file of files) {
-    if (!file.endsWith('.mdx')) continue;
+    if (!file.endsWith('.mdx')) continue
 
-    const fullPath = path.join(CONTENT_DIR, file);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = matter(fileContents);
+    const fullPath = path.join(CONTENT_DIR, file)
+    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const { data, content } = matter(fileContents)
 
     // Strip Markdown to get plain text for better search indexing
-    const processedContent = await remark().use(strip).process(content);
-    const plainText = processedContent.toString();
+    const processedContent = await remark().use(strip).process(content)
+    const plainText = processedContent.toString()
 
     index.push({
       slug: file.replace('.mdx', ''),
       title: data.title || file.replace('.mdx', ''),
       description: data.description || '',
       content: plainText, // Full text content
-    });
+    })
   }
 
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(index));
-  console.log(`Search index generated with ${index.length} documents.`);
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(index))
+  console.log(`Search index generated with ${index.length} documents.`)
 }
 
-generateIndex();
+generateIndex()
 ```
 
 #### Step C: Update `package.json`
 
-Update your build command to ensure the index is generated *before* Next.js builds the app.
+Update your build command to ensure the index is generated _before_ Next.js builds the app.
 
 ```json
 "scripts": {
@@ -80,23 +80,23 @@ Now, create a Client Component that loads the index and runs the search.
 
 ```tsx
 // app/components/search.tsx
-'use client';
+'use client'
 
-import { useState, useEffect, useMemo } from 'react';
-import Fuse from 'fuse.js';
-import Link from 'next/link';
+import { useState, useEffect, useMemo } from 'react'
+import Fuse from 'fuse.js'
+import Link from 'next/link'
 
 export default function Search() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
-  const [index, setIndex] = useState<any[]>([]);
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<any[]>([])
+  const [index, setIndex] = useState<any[]>([])
 
   // Load the index once on mount
   useEffect(() => {
     fetch('/search-index.json')
-      .then((res) => res.json())
-      .then((data) => setIndex(data));
-  }, []);
+      .then(res => res.json())
+      .then(data => setIndex(data))
+  }, [])
 
   // Configure Fuse.js
   const fuse = useMemo(() => {
@@ -105,41 +105,41 @@ export default function Search() {
       threshold: 0.3, // 0.0 = perfect match, 1.0 = match anything
       includeScore: true,
       ignoreLocation: true, // Search full text regardless of where the term is
-    });
-  }, [index]);
+    })
+  }, [index])
 
   // Run search when query changes
   useEffect(() => {
     if (!query) {
-      setResults([]);
-      return;
+      setResults([])
+      return
     }
-    const searchResults = fuse.search(query);
-    setResults(searchResults.map((result) => result.item));
-  }, [query, fuse]);
+    const searchResults = fuse.search(query)
+    setResults(searchResults.map(result => result.item))
+  }, [query, fuse])
 
   return (
     <div className="relative w-full max-w-md">
       <input
         type="text"
         placeholder="Search documentation..."
-        className="w-full p-2 border rounded-md text-black"
+        className="w-full rounded-md border p-2 text-black"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={e => setQuery(e.target.value)}
       />
-      
+
       {results.length > 0 && (
-        <ul className="absolute z-10 w-full bg-white border rounded-md shadow-lg mt-1 max-h-60 overflow-auto text-black">
-          {results.map((post) => (
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white text-black shadow-lg">
+          {results.map(post => (
             <li key={post.slug} className="border-b last:border-0">
-              <Link 
-                href={`/blog/${post.slug}`} 
+              <Link
+                href={`/blog/${post.slug}`}
                 className="block p-3 hover:bg-gray-100"
                 onClick={() => setQuery('')} // Close on click
               >
                 <div className="font-bold">{post.title}</div>
-                <div className="text-xs text-gray-500 truncate">
-                    {post.description}
+                <div className="truncate text-xs text-gray-500">
+                  {post.description}
                 </div>
               </Link>
             </li>
@@ -147,7 +147,7 @@ export default function Search() {
         </ul>
       )}
     </div>
-  );
+  )
 }
 ```
 
@@ -156,4 +156,3 @@ export default function Search() {
 1.  **Performance:** The heavy lifting (text processing) happens at build time, not in the user's browser.
 2.  **Zero Server Load:** The search happens entirely in the client's browser using the static JSON file.
 3.  **Flexibility:** You can easily switch `fuse.js` for `orama` (which is slightly faster for larger datasets) without changing the build script logic.
-

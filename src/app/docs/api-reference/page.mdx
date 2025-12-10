@@ -17,56 +17,56 @@ Next PPDB provides a RESTful API for programmatic access to all data. Interactiv
 
 ### Animals
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/animals` | List/search animals |
-| POST | `/api/animals` | Create new animal |
-| GET | `/api/animals/[id]` | Get animal by ID |
-| PUT | `/api/animals/[id]` | Update animal |
-| DELETE | `/api/animals/[id]` | Delete animal |
-| GET | `/api/animals/[id]/notes` | List animal's notes |
-| POST | `/api/animals/[id]/notes` | Create note for animal |
+| Method | Endpoint                  | Description            |
+| ------ | ------------------------- | ---------------------- |
+| GET    | `/api/animals`            | List/search animals    |
+| POST   | `/api/animals`            | Create new animal      |
+| GET    | `/api/animals/[id]`       | Get animal by ID       |
+| PUT    | `/api/animals/[id]`       | Update animal          |
+| DELETE | `/api/animals/[id]`       | Delete animal          |
+| GET    | `/api/animals/[id]/notes` | List animal's notes    |
+| POST   | `/api/animals/[id]/notes` | Create note for animal |
 
 ### Customers
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/customers` | List/search customers |
-| POST | `/api/customers` | Create new customer |
-| GET | `/api/customers/[id]` | Get customer by ID |
-| PUT | `/api/customers/[id]` | Update customer |
-| DELETE | `/api/customers/[id]` | Delete customer |
-| GET | `/api/customers/history` | Get customer history data |
+| Method | Endpoint                 | Description               |
+| ------ | ------------------------ | ------------------------- |
+| GET    | `/api/customers`         | List/search customers     |
+| POST   | `/api/customers`         | Create new customer       |
+| GET    | `/api/customers/[id]`    | Get customer by ID        |
+| PUT    | `/api/customers/[id]`    | Update customer           |
+| DELETE | `/api/customers/[id]`    | Delete customer           |
+| GET    | `/api/customers/history` | Get customer history data |
 
 ### Breeds
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/breeds` | List all breeds |
-| POST | `/api/breeds` | Create new breed |
-| GET | `/api/breeds/[id]` | Get breed by ID |
-| PUT | `/api/breeds/[id]` | Update breed |
-| DELETE | `/api/breeds/[id]` | Delete breed |
+| Method | Endpoint           | Description      |
+| ------ | ------------------ | ---------------- |
+| GET    | `/api/breeds`      | List all breeds  |
+| POST   | `/api/breeds`      | Create new breed |
+| GET    | `/api/breeds/[id]` | Get breed by ID  |
+| PUT    | `/api/breeds/[id]` | Update breed     |
+| DELETE | `/api/breeds/[id]` | Delete breed     |
 
 ### Notes
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/notes/[id]` | Get note by ID |
-| PUT | `/api/notes/[id]` | Update note |
-| DELETE | `/api/notes/[id]` | Delete note |
+| Method | Endpoint          | Description    |
+| ------ | ----------------- | -------------- |
+| GET    | `/api/notes/[id]` | Get note by ID |
+| PUT    | `/api/notes/[id]` | Update note    |
+| DELETE | `/api/notes/[id]` | Delete note    |
 
 ### Reports
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/reports/daily-totals` | Get daily totals data |
+| Method | Endpoint                    | Description           |
+| ------ | --------------------------- | --------------------- |
+| GET    | `/api/reports/daily-totals` | Get daily totals data |
 
 ### Admin
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/admin/backup` | Create and download backup |
+| Method | Endpoint            | Description                |
+| ------ | ------------------- | -------------------------- |
+| GET    | `/api/admin/backup` | Create and download backup |
 
 ## Search Parameters
 
@@ -77,6 +77,7 @@ GET /api/animals?q=searchterm
 ```
 
 The search supports:
+
 - Animal names
 - Breed names
 - Customer names

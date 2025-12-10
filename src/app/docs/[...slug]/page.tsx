@@ -1,4 +1,3 @@
-
 import fs from 'fs'
 import path from 'path'
 import { notFound } from 'next/navigation'
@@ -13,22 +12,22 @@ export const dynamicParams = true
 async function getDocContent(slug: string[]) {
   const slugPath = slug.join('/')
   const docsDir = path.join(process.cwd(), 'src/app/docs')
-  
+
   // Try .mdx then .md
   let filePath = path.join(docsDir, `${slugPath}.mdx`)
   if (!fs.existsSync(filePath)) {
     filePath = path.join(docsDir, `${slugPath}.md`)
   }
-  
+
   // If still not found, check if it's a directory -> page.mdx (e.g. /docs/auth -> /docs/auth/page.mdx)
   if (!fs.existsSync(filePath)) {
-     const dirPath = path.join(docsDir, slugPath)
-     if (fs.existsSync(dirPath) && fs.lstatSync(dirPath).isDirectory()) {
-       filePath = path.join(dirPath, 'page.mdx')
-       if (!fs.existsSync(filePath)) {
-         filePath = path.join(dirPath, 'page.md')
-       }
-     }
+    const dirPath = path.join(docsDir, slugPath)
+    if (fs.existsSync(dirPath) && fs.lstatSync(dirPath).isDirectory()) {
+      filePath = path.join(dirPath, 'page.mdx')
+      if (!fs.existsSync(filePath)) {
+        filePath = path.join(dirPath, 'page.md')
+      }
+    }
   }
 
   if (!fs.existsSync(filePath)) {
@@ -36,22 +35,29 @@ async function getDocContent(slug: string[]) {
   }
 
   const source = fs.readFileSync(filePath, 'utf8')
-  
+
   return { source, filePath }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>
+}) {
   const resolvedParams = await params
   const content = await getDocContent(resolvedParams.slug)
   if (!content) return {}
 
-  const { frontmatter } = await compileMDX<{ title?: string; description?: string }>({
+  const { frontmatter } = await compileMDX<{
+    title?: string
+    description?: string
+  }>({
     source: content.source,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-         remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
-      }
+        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+      },
     },
   })
 
@@ -61,7 +67,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function DocPage({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function DocPage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>
+}) {
   const resolvedParams = await params
   const content = await getDocContent(resolvedParams.slug)
 
@@ -74,20 +84,20 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-         remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
-      }
+        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+      },
     },
-     components: {
-        // Map common HTML elements if needed, or rely on Tailwind Typography
-     }
+    components: {
+      // Map common HTML elements if needed, or rely on Tailwind Typography
+    },
   })
 
   return (
-    <div className="prose prose-slate max-w-none dark:prose-invert">
-       {mdxContent}
+    <div className="prose prose-slate dark:prose-invert max-w-none">
+      {mdxContent}
     </div>
   )
 }
 
 // Optional: caching/revalidation
-export const revalidate = 3600 
+export const revalidate = 3600

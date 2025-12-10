@@ -59,17 +59,32 @@ export async function SetupGuard({ children }: SetupGuardProps) {
     console.log('🐕 PPDB DIAGNOSTICS WARNING')
     console.log(`   Path: ${pathname}`)
     console.log('========================================')
-    
+
     // Log failures
     const checks = result.checks
     const checkIcon = (passed: boolean) => (passed ? '✅' : '❌')
 
-    if (!checks.envConfig.passed) console.log(`[1/5] Environment: ${checkIcon(false)} - ${checks.envConfig.message}`)
-    if (!checks.dbConnection.passed) console.log(`[2/5] Database: ${checkIcon(false)} - ${checks.dbConnection.message}`)
-    if (!checks.tablesExist.passed) console.log(`[3/5] Tables: ${checkIcon(false)} - ${checks.tablesExist.message}`)
-    if (!checks.schemaValid.passed) console.log(`[4/5] Schema: ${checkIcon(false)} - ${checks.schemaValid.message}`)
-    if (!checks.dataPresent.passed) console.log(`[5/5] Data: ${checkIcon(false)} - ${checks.dataPresent.message}`)
-    
+    if (!checks.envConfig.passed)
+      console.log(
+        `[1/5] Environment: ${checkIcon(false)} - ${checks.envConfig.message}`
+      )
+    if (!checks.dbConnection.passed)
+      console.log(
+        `[2/5] Database: ${checkIcon(false)} - ${checks.dbConnection.message}`
+      )
+    if (!checks.tablesExist.passed)
+      console.log(
+        `[3/5] Tables: ${checkIcon(false)} - ${checks.tablesExist.message}`
+      )
+    if (!checks.schemaValid.passed)
+      console.log(
+        `[4/5] Schema: ${checkIcon(false)} - ${checks.schemaValid.message}`
+      )
+    if (!checks.dataPresent.passed)
+      console.log(
+        `[5/5] Data: ${checkIcon(false)} - ${checks.dataPresent.message}`
+      )
+
     console.log(`Status: ${result.status.toUpperCase()}`)
     console.log('========================================\n')
   }
