@@ -5,6 +5,135 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **GitHub Actions Docker Workflow - Enhanced Version Tagging**
+  - Added explicit semantic version tagging for container builds
+  - Release `v1.2.3` now produces tags: `1.2.3`, `1.2`, `1`, and `latest`
+  - Manual workflow dispatch produces SHA-based tags for traceability
+  - Configured in `.github/workflows/docker-publish.yml`
+
+- **Animal Details Page - Clickable Customer Card**
+  - Made entire customer info card clickable to navigate to customer details page
+  - Added hover effects (scale and shadow) for visual feedback
+  - Added keyboard accessibility (Enter/Space to activate)
+  - Button now visual-only; card handles navigation
+
+- **Dashboard Page - Documentation Card Update**
+  - Renamed "API Docs" card to "Application Docs"
+  - Changed link from `/api/docs` to `/docs` (user documentation)
+  - Updated icon to book icon for documentation
+  - Updated description to "User guides and documentation"
+
+- **SCHEDULED_TASKS.md Proposal - Major Revision (Round 2)**
+  - **NO DATABASE SCHEMA CHANGES** - Critical MVP requirement enforced
+  - Replaced Prisma `PendingUpdate` model with Valkey-based state storage (`src/lib/update-store.ts`)
+  - All update state (pending, approved, executed, failed) stored in Valkey with TTLs
+  - **Docker execution moved to scheduler container** - Next.js app no longer needs Docker socket access
+  - Scheduler container has Docker socket for image pull, container restart, and rollback operations
+  - **Automatic rollback strategy implemented**:
+    - Pre-update database backup created before any changes
+    - Previous image tag recorded for container rollback
+    - On failure: container reverted to previous image, database restored if needed
+    - Full rollback details documented in Section 13.8
+  - **Email retry queue implemented** - Valkey-based queue with exponential backoff (Section 3.4)
+  - Updated architecture diagram showing scheduler with Docker access
+  - Removed `dockerode` dependency - scheduler uses Docker CLI directly
+  - Added deployment steps (no database migration required)
+
+- **SCHEDULED_TASKS.md Proposal - Enhancements (Round 3)**
+  - **Valkey redundancy** - Added file-based fallback for critical state when Valkey unavailable (Section 2.3.1)
+  - **GitHub release notes** - Added fetching from GitHub Releases API (Section 4.2)
+  - **Sidebar update notification** - "Update Available" button placed above footer with version transition display
+  - **Update approval modal** - Warning-colored modal showing release notes with markdown rendering, approve/cancel actions
+  - **Testing methodology** - Comprehensive Section 14 added
+  - New files: `UpdateApprovalModal.tsx`, `github-releases.ts`, `update-store-fallback.ts`, `e2e/scheduler.spec.ts`
+
+- **SCHEDULED_TASKS.md Proposal - Notifications System (Round 4)**
+  - **Notification storage in Valkey** - Status tracking (unread/read/archived) with 90-day archive TTL (Section 2.5.1)
+  - **Header bell icon** - Dynamic colors based on notification type priority (error > warning > success > info)
+  - **Notifications page** - Two collapsible sections: Current (expanded) and Archived (collapsed by default)
+  - **Notification actions** - Mark as read, archive, delete
+  - Updated Files Summary: 27 files to create, 6 files to modify
+  - New files: `notification-store.ts`, `notifications/page.tsx`, notifications API routes
+
+### Fixed
+
+- **GitHub Actions Release Workflow - Replaced Broken Action**
+  - Replaced unavailable `justincy/github-action-npm-release@v2` with custom solution
+  - Uses `softprops/action-gh-release@v2` (well-maintained action)
+  - Detects version changes by comparing `package.json` version against latest git tag
+  - Extracts changelog content for the release (from `[Unreleased]` or version section)
+  - Collects commit messages since previous release
+  - Added `force` input option for manual workflow dispatch
+  - **Now chains Docker build** - release.yml calls docker-publish.yml via `workflow_call`
+  - **Docker image reference in release notes** - Shows pull command and link to container registry
+  - Configured in `.github/workflows/release.yml`
+
+- **GitHub Actions Docker Workflow - Fixed Chained Trigger**
+  - Added `workflow_call` trigger to allow release.yml to invoke it directly
+  - This bypasses GitHub's limitation where GITHUB_TOKEN releases don't trigger other workflows
+  - Added version input parameter for explicit tagging
+  - Simplified tag generation using bash instead of complex expressions
+  - Configured in `.github/workflows/docker-publish.yml`
+
+## [0.9.0] - 2025-12-11
+
+### Added
+
+- **Documentation Page Styling Fixes**
+  - Added comprehensive prose CSS customizations for documentation pages
+  - Fixed vertical spacing between headings and paragraphs
+  - Fixed list bullet/number indentation (now properly inside text body)
+  - Fixed white text on white background for links and bold text
+  - Added table styling with proper headers, borders, and hover effects
+  - Added remark-gfm plugin to both docs page components for GFM table rendering
+  - Styled blockquotes, code blocks, images, and horizontal rules
+
+- **Sidebar Navigation Updates**
+  - Added "Documentation" link to sidebar navigation with document icon
+
+- **OpenAPI Documentation Updates**
+  - OpenAPI spec version now dynamically reads from package.json (synchronized with app version)
+  - Now includes 35 documented operations (up from 23)
+  - Added missing endpoints: `/api/breeds/pricing`, `/api/reports/analytics`, `/api/reports/staff-summary`
+  - Added admin endpoints: `/api/admin/backup` (GET list, POST create), `/api/admin/backup/download/{filename}`
+  - Added health check endpoints: `/api/health` (GET, POST)
+  - Added setup/import endpoints: `/api/setup/upload`, `/api/setup/import`
+  - Added new tags: Health, Setup
+  - Added HealthStatus schema for health check responses
+
+- **Staff Workload Summary on Daily Totals Page**
+  - New `extractStaffInitials()` function in `notes.service.ts` for extracting staff initials from notes
+  - Supports price-before-initials pattern (e.g., `"short cut 7 $65 cc"` → `"CC"`)
+  - Validates 2-3 alphabetic characters, returns uppercase, handles edge cases
+  - New API endpoint `GET /api/reports/staff-summary?date=YYYY-MM-DD` returns daily staff work breakdown
+  - Groups animals by staff initials with breed-level counts
+  - Each animal counted once per staff member even with multiple notes
+  - New `StaffWorkloadCard` component with color-coded staff cards
+  - Integrated into daily-totals page with parallel data fetching
+  - Staff summary included in printed report output
+
+- **Improved Print Styles for Daily Totals Report**
+  - Monochrome output (all text black, no colored backgrounds)
+  - Compact layout with smaller fonts (7-10pt) and reduced padding
+  - Tables without background colors for cleaner printing
+  - Staff workload summary card styled for print
+  - SVG icons hidden in print for cleaner output
+  - Smaller page margins (10mm) for more content per page
+
+### Changed
+
+- **Animal Details Page Notes Display**
+  - Staff initials extraction now uses centralized `extractStaffInitials()` function
+  - Consistent behavior with daily totals staff summary
+
+### Fixed
+
+- Added `reference/**/*` to TypeScript and ESLint exclude lists to prevent checking non-codebase files
+
 ## [UNRELEASED] Production Hardening
 
 ### Security

@@ -11,6 +11,7 @@
     "src/__tests__/**/*",
     "e2e/**/*",
     "src/generated/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "reference/**/*"
   ]
 }

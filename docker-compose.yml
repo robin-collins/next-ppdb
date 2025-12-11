@@ -7,7 +7,9 @@ services:
     command: sh -c "mkdir -p /acme && touch /acme/acme.json && chmod 600 /acme/acme.json"
     volumes:
       - traefik_acme:/acme
-    restart: "no"
+    restart: 'no'
+    networks:
+      - web
   traefik:
     image: traefik:v3.6.2
     container_name: traefik
@@ -139,8 +141,8 @@ services:
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    #image: next-ppdb:latest
-    image: ghcr.io/robin-collins/next-ppdb:latest
+    image: next-ppdb:latest
+    #image: ghcr.io/robin-collins/next-ppdb:latest
     container_name: next-ppdb
     hostname: next-ppdb
     restart: unless-stopped
@@ -196,4 +198,3 @@ volumes:
   db_data:
   traefik_acme:
     name: traefik_acme
- 

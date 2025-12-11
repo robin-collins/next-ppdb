@@ -40,14 +40,58 @@ Download-File -RemotePath "docker-compose.yml" -LocalPath "docker-compose.yml"
 Download-File -RemotePath ".env.example" -LocalPath ".env.example"
 Download-File -RemotePath "docker/mysql-init/01-grant-privileges.sh" -LocalPath "docker/mysql-init/01-grant-privileges.sh"
 
-# 2. Setup .env
+function Load-DotEnvFile ($Path = ".env") {
+    if (-not (Test-Path $Path)) {
+        Write-Error "Error: .env file not found at $Path"
+        return
+    }
+    
+    Write-Host "Loading environment variables from $Path..."
+
+    $envContent = Get-Content -Path $Path
+
+    foreach ($line in $envContent) {
+        $trimmedLine = $line.Trim()
+        
+        # Skip empty lines or lines starting with a comment character (#)
+        if (-not ([string]::IsNullOrEmpty($trimmedLine)) -and -not ($trimmedLine.StartsWith("#"))) {
+            $parts = $trimmedLine.Split("=", 2)
+            
+            if ($parts.Length -eq 2) {
+                $key = $parts[0].Trim()
+                $rawValue = $parts[1].Trim()
+
+                # Robustly remove leading/trailing single or double quotes
+                $value = $rawValue.Trim("""'""") 
+
+                # Set the environment variable in the current session scope
+                # Using the Env: provider is standard practice
+                Set-Item -Path Env:$key -Value $value
+                Write-Host "Set $key" -ForegroundColor Green
+            }
+        }
+    }
+}
+
+# --- Usage Example ---
+
+# 2. Setup .env Logic (from your original snippet)
 if (-not (Test-Path ".env")) {
     Write-Host "Creating .env from .env.example..."
     Copy-Item ".env.example" ".env"
     Write-Host "WARNING: Using default credentials from .env.example. Please review .env before production use." -ForegroundColor Yellow
+    $startApp  = $False
 } else {
     Write-Host ".env already exists, skipping creation."
+    $startApp = $True
 }
+
+# Load the .env values to use in the pwsh script
+if ($startApp) {
+    # Call the function defined above to perform the loading logic
+    Load-DotEnvFile -Path ".env"
+}
+
 
 # 3. Check for Docker
 if (-not (Get-Command "docker" -ErrorAction SilentlyContinue)) {
@@ -55,9 +99,31 @@ if (-not (Get-Command "docker" -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# 4. Start Docker Compose
-Write-Host "Starting application with Docker Compose..."
-docker compose up -d
+# 4. Check for and create Docker network 'web' if it doesn't exist
+Write-Host "Checking for Docker network 'web'..."
+$networkExists = (docker network ls --format "{{.Name}}" | Select-String -Pattern "^web$" -Quiet)
+
+if (-not $networkExists) {
+    Write-Host "Docker network 'web' not found. Creating it..."
+    try {
+        docker network create web | Out-Null
+        Write-Host "Docker network 'web' created successfully."
+    }
+    catch {
+        Write-Error "Failed to create Docker network 'web'. Error: $_"
+        exit 1
+    }
+} else {
+    Write-Host "Docker network 'web' already exists. Skipping creation."
+}
+
+# 4.1 Start Docker Compose
+if (-not $startApp) {
+    Write-Host "Skipping application start. Update the values of the .env file."
+} else {
+    Write-Host "Starting application with Docker Compose..."
+    docker compose up -d
+}
 
 Write-Host "`nInstallation Complete!" -ForegroundColor Green
-Write-Host "App should be available at https://next-ppdb.thepamperedpooch.com.au (wait a moment for startup)"
+Write-Host "App should be available at $env:NEXT_PUBLIC_API_URL (wait a moment for startup)"

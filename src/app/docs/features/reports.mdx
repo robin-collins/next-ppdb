@@ -1,0 +1,111 @@
+---
+title: Reports
+description: Learn about reporting features in Next PPDB.
+order: 5
+---
+
+# Reports
+
+Next PPDB provides reporting features to help you track business performance and customer activity.
+
+## Daily Totals Report
+
+The Daily Totals report provides an end-of-day summary of grooming services.
+
+### Report Controls
+
+Select a date and print the report:
+
+![Report Controls](/docs/screenshots/reports-controls.png)
+
+| Control      | Function                            |
+| ------------ | ----------------------------------- |
+| Date Picker  | Select the date to view             |
+| Print Report | Open print dialog for physical copy |
+
+### Report Output
+
+The report displays the daily summary:
+
+![Report Output](/docs/screenshots/reports-output.png)
+
+| Section      | Content                                  |
+| ------------ | ---------------------------------------- |
+| Header       | Date and generation timestamp            |
+| Service List | All animals groomed on the selected date |
+| Empty State  | Message when no services recorded        |
+| Footer       | Report identification                    |
+
+### Report Contents
+
+For each animal serviced:
+
+- Animal name and breed
+- Service performed
+- Groomer initials
+- Cost
+
+### Printing
+
+Click **Print Report** to open the print dialog. The report formats cleanly for standard paper sizes.
+
+## Analytics Dashboard
+
+The Analytics Dashboard provides broader business insights.
+
+Navigate to **Analytics Dashboard** from the sidebar.
+
+### Available Metrics
+
+- Revenue trends over time
+- Customer visit frequency
+- Popular breeds
+- Busiest days/times
+
+## Customer History Report
+
+Track customers who haven't visited recently.
+
+Navigate to **Customer History** from the sidebar.
+
+### Report Features
+
+| Feature           | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| Inactivity Filter | 12+, 24+, or 36+ months since last visit         |
+| Search            | Filter by name, address, phone, animal, or breed |
+| Results per Page  | 10, 25, 50, or 100 entries                       |
+
+### Use Cases
+
+- Identify customers needing follow-up
+- Clean up inactive accounts
+- Spot seasonal visit patterns
+
+## Using Reports Effectively
+
+### Daily Operations
+
+- Run Daily Totals at end of each business day
+- Print for records or reconciliation
+- Verify all services were recorded
+
+### Business Planning
+
+- Review Analytics Dashboard weekly or monthly
+- Identify service demand trends
+- Track customer retention
+
+### Customer Outreach
+
+- Use Customer History to find inactive customers
+- Plan outreach campaigns for 12+ month inactive customers
+- Consider cleanup of very old records
+
+## Exporting Data
+
+| Method | Description                                                      |
+| ------ | ---------------------------------------------------------------- |
+| Print  | Use the Print button for physical copies                         |
+| PDF    | Use browser's "Print to PDF" feature                             |
+| API    | See [API Reference](/docs/api-reference) for programmatic access |

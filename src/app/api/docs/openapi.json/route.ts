@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import packageJson from '../../../../../package.json'
 
 /**
  * OpenAPI JSON Specification Endpoint
@@ -11,9 +12,9 @@ export async function GET() {
     openapi: '3.0.3',
     info: {
       title: 'Pampered Pooch Pet Grooming API',
-      version: '1.0.0',
+      version: packageJson.version,
       description:
-        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 23 fully documented endpoints with comprehensive CRUD operations, count utilities, and business intelligence features.',
+        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 35 fully documented operations across CRUD endpoints, count utilities, business intelligence features, health monitoring, and database setup/import capabilities.',
       contact: {
         name: 'Tech Team',
         email: 'tech@pamperedpooch.com',
@@ -53,6 +54,14 @@ export async function GET() {
       {
         name: 'Admin',
         description: 'Administrative operations',
+      },
+      {
+        name: 'Health',
+        description: 'Application health and diagnostics',
+      },
+      {
+        name: 'Setup',
+        description: 'Database setup and import operations',
       },
     ],
     paths: {
@@ -1134,26 +1143,526 @@ export async function GET() {
       },
       '/api/admin/backup': {
         get: {
-          operationId: 'getDatabaseBackup',
-          summary: 'Get database backup',
+          operationId: 'listBackups',
+          summary: 'List available backups',
           description:
-            'Generate and download a complete database backup in SQL format',
+            'Get a list of all available database backups with metadata',
           tags: ['Admin'],
           responses: {
             200: {
-              description: 'Database backup file',
+              description: 'List of available backups',
               content: {
-                'application/sql': {
+                'application/json': {
                   schema: {
-                    type: 'string',
-                    format: 'binary',
-                    description: 'SQL backup file',
+                    type: 'object',
+                    properties: {
+                      backups: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            filename: { type: 'string' },
+                            timestamp: { type: 'string' },
+                            size: { type: 'integer' },
+                            createdAt: {
+                              type: 'string',
+                              format: 'date-time',
+                            },
+                            downloadUrl: { type: 'string' },
+                          },
+                        },
+                      },
+                      maxBackups: { type: 'integer' },
+                      backupDir: { type: 'string' },
+                    },
                   },
                 },
               },
             },
             500: {
-              description: 'Backup generation failed',
+              description: 'Failed to list backups',
+            },
+          },
+        },
+        post: {
+          operationId: 'createBackup',
+          summary: 'Create a new database backup',
+          description:
+            'Create a new database backup using mysqldump, compress to ZIP, and store. Old backups are automatically cleaned up (max 5 kept).',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Backup created successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      filename: { type: 'string' },
+                      timestamp: { type: 'string' },
+                      sqlSize: {
+                        type: 'integer',
+                        description: 'Uncompressed SQL size in bytes',
+                      },
+                      zipSize: {
+                        type: 'integer',
+                        description: 'Compressed ZIP size in bytes',
+                      },
+                      downloadUrl: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Backup creation failed',
+            },
+          },
+        },
+      },
+      '/api/admin/backup/download/{filename}': {
+        get: {
+          operationId: 'downloadBackupFile',
+          summary: 'Download a specific backup file',
+          description:
+            'Download a previously created backup file by filename. Filename must match pattern: YYYYMMDD-HHMMSS-backup.zip',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'filename',
+              required: true,
+              schema: {
+                type: 'string',
+                pattern: '^\\d{8}-\\d{6}-backup\\.zip$',
+              },
+              description:
+                'Backup filename (format: YYYYMMDD-HHMMSS-backup.zip)',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Backup ZIP file',
+              content: {
+                'application/zip': {
+                  schema: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'ZIP backup file',
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid filename format',
+            },
+            404: {
+              description: 'Backup file not found',
+            },
+            500: {
+              description: 'Download failed',
+            },
+          },
+        },
+      },
+      '/api/breeds/pricing': {
+        post: {
+          operationId: 'updateBreedPricing',
+          summary: 'Bulk update breed and animal pricing',
+          description:
+            'Apply a fixed or percentage price adjustment to breed average costs and associated animal costs. Can target a single breed or all breeds.',
+          tags: ['Breeds'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['adjustmentType', 'adjustmentValue'],
+                  properties: {
+                    breedId: {
+                      type: 'integer',
+                      description:
+                        'Optional breed ID to target. If omitted, applies to all breeds.',
+                    },
+                    adjustmentType: {
+                      type: 'string',
+                      enum: ['fixed', 'percentage'],
+                      description:
+                        'Type of price adjustment: fixed dollar amount or percentage',
+                    },
+                    adjustmentValue: {
+                      type: 'number',
+                      minimum: 0,
+                      description:
+                        'Adjustment value (dollar amount for fixed, percentage for percentage)',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Pricing updated successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                      summary: {
+                        type: 'object',
+                        properties: {
+                          breedsUpdated: { type: 'integer' },
+                          animalsUpdated: { type: 'integer' },
+                          breedDetails: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                id: { type: 'integer' },
+                                name: { type: 'string' },
+                                oldAvgcost: {
+                                  type: 'number',
+                                  nullable: true,
+                                },
+                                newAvgcost: { type: 'number' },
+                                animalsUpdated: { type: 'integer' },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid request parameters',
+            },
+            404: {
+              description: 'Breed not found',
+            },
+            500: {
+              description: 'Pricing update failed',
+            },
+          },
+        },
+      },
+      '/api/reports/analytics': {
+        get: {
+          operationId: 'getAnalyticsReport',
+          summary: 'Get analytics report data',
+          description:
+            'Retrieve analytics data aggregated by period (daily, weekly, monthly, yearly) with breed breakdowns and revenue summaries',
+          tags: ['Reports'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'period',
+              required: true,
+              schema: {
+                type: 'string',
+                enum: ['daily', 'weekly', 'monthly', 'yearly'],
+              },
+              description:
+                'Aggregation period: daily (7 days), weekly (8 weeks), monthly (6 months), yearly (3 years)',
+            },
+            {
+              in: 'query',
+              name: 'endDate',
+              required: true,
+              schema: { type: 'string', format: 'date' },
+              description: 'End date for the report range (YYYY-MM-DD)',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Analytics data',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      data: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                              description: 'Human-readable period label',
+                            },
+                            dateKey: {
+                              type: 'string',
+                              description: 'Sortable date key',
+                            },
+                            count: {
+                              type: 'integer',
+                              description: 'Number of animals serviced',
+                            },
+                            revenue: {
+                              type: 'number',
+                              description: 'Total revenue for period',
+                            },
+                            breedBreakdown: {
+                              type: 'object',
+                              additionalProperties: { type: 'integer' },
+                              description: 'Count by breed name',
+                            },
+                          },
+                        },
+                      },
+                      summary: {
+                        type: 'object',
+                        properties: {
+                          totalRevenue: { type: 'number' },
+                          totalAnimals: { type: 'integer' },
+                          avgPrice: { type: 'number' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid parameters',
+            },
+          },
+        },
+      },
+      '/api/reports/staff-summary': {
+        get: {
+          operationId: 'getStaffSummary',
+          summary: 'Get daily staff work summary',
+          description:
+            'Retrieve breakdown of animals worked on by each staff member for a specific date, with breed-level details',
+          tags: ['Reports'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'date',
+              required: false,
+              schema: { type: 'string', format: 'date' },
+              description:
+                'Target date (YYYY-MM-DD). Defaults to today if not provided.',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Staff work summary',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      date: {
+                        type: 'string',
+                        format: 'date',
+                        description: 'Report date',
+                      },
+                      staff: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            initials: {
+                              type: 'string',
+                              description:
+                                'Staff member initials (2-3 characters)',
+                            },
+                            breeds: {
+                              type: 'object',
+                              additionalProperties: { type: 'integer' },
+                              description: 'Animal count by breed name',
+                            },
+                            totalAnimals: {
+                              type: 'integer',
+                              description:
+                                'Total unique animals worked on by this staff',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid date format',
+            },
+          },
+        },
+      },
+      '/api/health': {
+        get: {
+          operationId: 'getHealthStatus',
+          summary: 'Get application health status',
+          description:
+            'Run diagnostics and return application health status including database connectivity, schema validation, and data presence',
+          tags: ['Health'],
+          responses: {
+            200: {
+              description: 'Application is healthy',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/HealthStatus' },
+                },
+              },
+            },
+            500: {
+              description: 'Application is unhealthy',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/HealthStatus' },
+                },
+              },
+            },
+            503: {
+              description: 'Application needs setup',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/HealthStatus' },
+                },
+              },
+            },
+          },
+        },
+        post: {
+          operationId: 'refreshHealthStatus',
+          summary: 'Refresh health status',
+          description:
+            'Clear diagnostic cache and re-run health checks. Useful after setup completes.',
+          tags: ['Health'],
+          responses: {
+            200: {
+              description: 'Diagnostics refreshed',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' },
+                      result: { $ref: '#/components/schemas/HealthStatus' },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Failed to refresh diagnostics',
+            },
+          },
+        },
+      },
+      '/api/setup/upload': {
+        post: {
+          operationId: 'uploadBackupFile',
+          summary: 'Upload database backup for import',
+          description:
+            'Upload a database backup file (.sql, .zip, .tar.gz, .tgz) for import. Returns upload ID and detected SQL files.',
+          tags: ['Setup'],
+          requestBody: {
+            required: true,
+            content: {
+              'multipart/form-data': {
+                schema: {
+                  type: 'object',
+                  required: ['file'],
+                  properties: {
+                    file: {
+                      type: 'string',
+                      format: 'binary',
+                      description:
+                        'Backup file (.sql, .zip, .tar.gz, .tgz). Max 100MB.',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'File uploaded successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      uploadId: {
+                        type: 'string',
+                        description: 'Unique ID for this upload session',
+                      },
+                      filename: { type: 'string' },
+                      fileType: { type: 'string' },
+                      size: { type: 'integer' },
+                      sqlFiles: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            table: { type: 'string' },
+                            path: { type: 'string' },
+                            filename: { type: 'string' },
+                          },
+                        },
+                      },
+                      backupPath: { type: 'string', nullable: true },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid file type or size',
+            },
+            500: {
+              description: 'Upload failed',
+            },
+          },
+        },
+      },
+      '/api/setup/import': {
+        get: {
+          operationId: 'importDatabase',
+          summary: 'Import database from uploaded backup',
+          description:
+            'Stream database import progress via Server-Sent Events. Requires uploadId from /api/setup/upload.',
+          tags: ['Setup'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'uploadId',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Upload ID from /api/setup/upload response',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Server-Sent Events stream with import progress',
+              content: {
+                'text/event-stream': {
+                  schema: {
+                    type: 'string',
+                    description:
+                      'SSE stream with events: progress, log, batch, table_complete, complete, error',
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Missing uploadId',
+            },
+            404: {
+              description: 'Upload not found or no SQL files found',
             },
           },
         },
@@ -1699,6 +2208,67 @@ export async function GET() {
               type: 'string',
               format: 'date-time',
               description: 'Date of the service (ISO 8601 format)',
+            },
+          },
+        },
+        HealthStatus: {
+          type: 'object',
+          description: 'Application health diagnostic result',
+          properties: {
+            status: {
+              type: 'string',
+              enum: ['healthy', 'unhealthy', 'needs_setup'],
+              description: 'Overall health status',
+            },
+            checks: {
+              type: 'object',
+              properties: {
+                envConfig: {
+                  type: 'object',
+                  properties: {
+                    passed: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+                dbConnection: {
+                  type: 'object',
+                  properties: {
+                    passed: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+                tablesExist: {
+                  type: 'object',
+                  properties: {
+                    passed: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+                schemaValid: {
+                  type: 'object',
+                  properties: {
+                    passed: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+                dataPresent: {
+                  type: 'object',
+                  properties: {
+                    passed: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+              },
+            },
+            timestamp: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Timestamp of the health check',
+            },
+            error: {
+              type: 'string',
+              nullable: true,
+              description: 'Error message if check failed',
             },
           },
         },

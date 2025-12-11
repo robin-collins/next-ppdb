@@ -1,0 +1,147 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force release even if version unchanged'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      released: ${{ steps.check-version.outputs.release_needed }}
+      version: ${{ steps.check-version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if release is needed
+        id: check-version
+        run: |
+          # Get current version from package.json
+          CURRENT_VERSION=$(jq -r '.version' package.json)
+          echo "Current version: $CURRENT_VERSION"
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Get the latest release tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "Latest tag: $LATEST_TAG"
+
+          # Determine if release is needed
+          if [ "${{ inputs.force }}" == "true" ]; then
+            echo "Force release requested"
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+          elif [ -z "$LATEST_TAG" ]; then
+            echo "No previous releases found - will create first release"
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+          elif [ "$LATEST_TAG" == "v$CURRENT_VERSION" ]; then
+            echo "Version unchanged ($CURRENT_VERSION) - skipping release"
+            echo "release_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version changed from $LATEST_TAG to v$CURRENT_VERSION - will create release"
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get commits since last release
+        if: steps.check-version.outputs.release_needed == 'true'
+        id: commits
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            # No previous tag, get all commits
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges | head -50)
+          else
+            # Get commits since last tag
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          # Handle multiline output
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog for version
+        if: steps.check-version.outputs.release_needed == 'true'
+        id: changelog
+        run: |
+          VERSION="${{ steps.check-version.outputs.version }}"
+
+          # Try to extract the changelog section for this version
+          # First try exact version match, then try [Unreleased]
+          if grep -q "## \[$VERSION\]" CHANGELOG.md 2>/dev/null; then
+            # Extract section for this specific version
+            CHANGELOG=$(awk "/## \[$VERSION\]/,/## \[/" CHANGELOG.md | head -n -1)
+          elif grep -q "## \[Unreleased\]" CHANGELOG.md 2>/dev/null; then
+            # Extract unreleased section
+            CHANGELOG=$(awk '/## \[Unreleased\]/,/## \[/' CHANGELOG.md | head -n -1)
+          else
+            CHANGELOG=""
+          fi
+
+          # Handle multiline output
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.check-version.outputs.release_needed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.check-version.outputs.version }}
+          name: Release v${{ steps.check-version.outputs.version }}
+          body: |
+            ## What's Changed
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ## Commits
+
+            ${{ steps.commits.outputs.commits }}
+
+            ## Docker Image
+
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.check-version.outputs.version }}
+            ```
+
+            📦 [View in Container Registry](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }})
+
+            ---
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ github.event.before && format('{0}...v{1}', github.event.before, steps.check-version.outputs.version) || format('v{0}', steps.check-version.outputs.version) }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show release details
+        if: steps.check-version.outputs.release_needed == 'true'
+        run: |
+          echo "Release created successfully!"
+          echo "Version: v${{ steps.check-version.outputs.version }}"
+          echo "URL: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.check-version.outputs.version }}"
+
+  # Build and publish Docker image after release
+  docker:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write

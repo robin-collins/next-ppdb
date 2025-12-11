@@ -1,0 +1,95 @@
+---
+title: Getting Started
+description: Get up and running with Next PPDB quickly.
+order: 1
+---
+
+# Getting Started
+
+This guide will help you get Next PPDB up and running on your system.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** 18.x or later
+- **pnpm** package manager (recommended)
+- **MySQL** 5.7+ or MariaDB 10.x database
+- **Docker** (optional, for containerized database)
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/robin-collins/next-ppdb.git
+cd next-ppdb
+```
+
+### 2. Install Dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Configure Environment
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL="mysql://user:password@localhost:3306/ppdb"
+```
+
+Replace the connection string with your actual database credentials.
+
+### 4. Initialize the Database
+
+If using Docker, start the database container:
+
+```bash
+docker-compose up -d
+```
+
+Generate the Prisma client and apply migrations:
+
+```bash
+pnpm prisma generate
+pnpm prisma migrate deploy
+```
+
+### 5. Start the Development Server
+
+```bash
+pnpm dev
+```
+
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+## First Steps
+
+Once the application is running:
+
+1. **Navigate to the Dashboard** - Click the hamburger menu and select "Dashboard" for an overview of available features
+
+2. **Try a Search** - Use the search bar to find animals by name, breed, owner name, phone, or email
+
+3. **Add a Customer** - Go to "Add Customer" to create your first customer record
+
+4. **Explore Breeds** - Check "Manage Breeds" to see available breeds and their pricing
+
+## Development Commands
+
+| Command           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `pnpm dev`        | Start development server with hot reload |
+| `pnpm build`      | Create production build                  |
+| `pnpm start`      | Run production server                    |
+| `pnpm test`       | Run unit tests                           |
+| `pnpm lint`       | Run ESLint                               |
+| `pnpm type-check` | Run TypeScript checks                    |
+
+## Next Steps
+
+- Learn about [Search & Animals](/docs/features/search-animals) to find and manage records
+- Explore [Customer Management](/docs/features/customers) for customer workflows
+- Check the [API Reference](/docs/api-reference) for integration options

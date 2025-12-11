@@ -202,6 +202,20 @@ export default function Sidebar({
       ),
       active: currentPath === '/admin/backup',
     },
+    {
+      href: '/docs',
+      label: 'Documentation',
+      icon: (
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+        </svg>
+      ),
+      active: currentPath.startsWith('/docs'),
+    },
   ]
 
   return (
@@ -346,6 +360,12 @@ export default function Sidebar({
         {/* Sidebar Footer */}
         <div className="border-t border-gray-200 bg-gray-50 p-4">
           <div className="bg-primary-light text-primary rounded-full px-4 py-2 text-center text-sm font-semibold">
+            Next-PPDB{' '}
+            {process.env.NEXT_PUBLIC_APP_VERSION && (
+              <div className="mb-2 text-center text-xs text-gray-500">
+                v{process.env.NEXT_PUBLIC_APP_VERSION}
+              </div>
+            )}
             {sidebarDate}
           </div>
         </div>

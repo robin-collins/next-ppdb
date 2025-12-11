@@ -1,0 +1,106 @@
+---
+title: Search
+description: Search for animals, customers, and more in Next PPDB.
+order: 1
+---
+
+# Search
+
+The search feature provides instant access to your entire database of animals, customers, and breeds.
+
+## Search Bar
+
+The search bar is available in the header across all pages.
+
+![Search Bar](/docs/screenshots/search-bar.png)
+
+Enter any of the following to search:
+
+- Animal names
+- Customer names
+- Phone numbers (any format)
+- Email addresses
+- Breed names
+
+## Search Suggestions
+
+Before searching, helpful suggestion chips appear with common searches.
+
+![Suggestion Chips](/docs/screenshots/suggestion-chips.png)
+
+Click any chip to instantly search for that term.
+
+## Search Results
+
+Results display with a header showing the count and search term.
+
+![Search Results Header](/docs/screenshots/search-results-header.png)
+
+### Result Cards
+
+Each result appears as a card showing:
+
+![Result Card](/docs/screenshots/result-card.png)
+
+| Element       | Description                       |
+| ------------- | --------------------------------- |
+| Breed Avatar  | Visual identifier for the breed   |
+| Animal Name   | Click to view full animal details |
+| Breed & Sex   | Quick reference info              |
+| Customer Name | Click to view customer profile    |
+| Phone Number  | Clickable to dial                 |
+| Last Visit    | Most recent grooming date         |
+
+### List View
+
+Toggle to list view for a compact table format.
+
+![List View](/docs/screenshots/list-view.png)
+
+List view displays the same information in rows, ideal for quickly scanning many results.
+
+## Phone Number Search
+
+Phone searches are flexible - formatting doesn't matter. Both searches below return **identical results**:
+
+### Search: "85562340"
+
+![Phone Search Without Spaces](/docs/screenshots/phone-search-1.png)
+
+### Search: "8556 2340"
+
+![Phone Search With Spaces](/docs/screenshots/phone-search-2.png)
+
+The system normalizes phone numbers, stripping spaces and formatting before matching.
+
+## Pagination
+
+Navigate through results using the pagination controls.
+
+![Pagination](/docs/screenshots/pagination.png)
+
+### Controls
+
+- **Previous/Next** - Navigate one page at a time
+- **Page Numbers** - Jump to specific pages
+- **Results Per Page** - Choose 10, 20, 50, or 100 results
+
+## Search Algorithm
+
+Results are ranked by relevance:
+
+| Match Type         | Score      |
+| ------------------ | ---------- |
+| Exact match        | 100 points |
+| Starts with        | 80 points  |
+| Contains           | 50 points  |
+| Fuzzy match (70%+) | 30 points  |
+
+Multi-word searches score each term independently with diversity bonuses applied.
+
+## Tips
+
+- **Partial names work** - Search "Shep" to find "German Shepherd"
+- **Phone digits only** - Just enter the numbers, ignore formatting
+- **Multiple terms** - Space-separated words search across all fields
+- **Case insensitive** - "BUDDY" finds "Buddy" and "buddy"

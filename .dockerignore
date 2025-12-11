@@ -44,5 +44,6 @@ temp
 
 # Build artifacts
 .husky
-scripts
+scripts/build-onmain.sh
+!scripts/build-search-index.mjs
 prompts

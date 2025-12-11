@@ -1,0 +1,102 @@
+---
+title: Customer Management
+description: Learn how to manage customer records in Next PPDB.
+order: 4
+---
+
+# Customer Management
+
+Customer management allows you to create, view, and update customer records. Each customer can have multiple animals associated with their account.
+
+## Adding a New Customer
+
+Navigate to **Add Customer** from the sidebar or dashboard.
+
+### Customer Information Form
+
+![Customer Form](/docs/screenshots/customer-form.png)
+
+| Field      | Description            | Required |
+| ---------- | ---------------------- | -------- |
+| First Name | Customer's first name  | No       |
+| Surname    | Customer's last name   | **Yes**  |
+| Address    | Street address         | No       |
+| Suburb     | City/suburb name       | No       |
+| Postcode   | 4-digit postal code    | No       |
+| Phone 1    | Primary phone number   | No       |
+| Phone 2    | Secondary phone number | No       |
+| Phone 3    | Tertiary phone number  | No       |
+| Email      | Email address          | No       |
+
+### Form Actions
+
+- **Insert Record** - Save the new customer
+- **Clear Form** - Reset all fields
+- **Cancel** - Return without saving
+
+### Tips
+
+![Customer Tips](/docs/screenshots/customer-tips.png)
+
+- Surname is the only required field
+- Phone numbers are automatically normalized (digits only, max 11)
+- Postcode should be a 4-digit Australian postcode
+- After creating, you'll be redirected to the customer detail page
+
+## Customer Detail Page
+
+After creating a customer or clicking "View Customer" from an animal card, you'll see the full profile.
+
+### Customer Header
+
+Displays the customer's full name with primary contact information.
+
+### Contact Details
+
+Shows all phone numbers and email address. Click to:
+
+- Phone numbers open your device's dialer
+- Email addresses open your email client
+
+### Associated Animals
+
+Lists all animals belonging to this customer. Click any animal to view its grooming record.
+
+### Quick Actions
+
+- **Add Animal** - Register a new pet
+- **Edit Customer** - Update information
+- **View History** - See complete visit history
+
+## Customer History
+
+The Customer History report identifies inactive customers:
+
+![Customer History](/docs/screenshots/customer-history.png)
+
+### Filtering Options
+
+| Filter          | Options                                          |
+| --------------- | ------------------------------------------------ |
+| Inactive Period | 12+, 24+, or 36+ months since last visit         |
+| Per Page        | 10, 25, 50, or 100 results                       |
+| Search          | Filter by name, address, phone, animal, or breed |
+
+### History Table
+
+Each row displays:
+
+- Customer name
+- Address
+- Phone number
+- Associated animals (with breed avatars)
+- Date of last visit (highlighted in red for very old records)
+
+Click any row to view the customer's full profile.
+
+## Best Practices
+
+- **Keep contact information current** - Update details when customers provide new information
+- **Use consistent naming** - Capitalize surnames consistently
+- **Add multiple phone numbers** - Customers often have mobile, home, and work numbers
+- **Include email addresses** - Useful for sending reminders

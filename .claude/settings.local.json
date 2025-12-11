@@ -52,7 +52,20 @@
       "Bash(pnpm prisma db pull:*)",
       "Bash(pnpm outdated:*)",
       "Bash(pnpm update:*)",
-      "Bash(pnpm remove:*)"
+      "Bash(pnpm remove:*)",
+      "Bash(mkdir:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_console_messages",
+      "Bash(pnpm install)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 15 pnpm dev:*)",
+      "Bash(timeout 120 pnpm build:*)"
     ],
     "deny": [],
     "ask": []

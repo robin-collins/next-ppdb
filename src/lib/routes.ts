@@ -96,6 +96,7 @@ export const routes = {
     reports: {
       analytics: () => '/api/reports/analytics',
       dailyTotals: () => '/api/reports/daily-totals',
+      staffSummary: () => '/api/reports/staff-summary',
     },
     admin: {
       backup: () => '/api/admin/backup',

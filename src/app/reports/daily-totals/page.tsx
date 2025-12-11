@@ -4,11 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import StaffWorkloadCard from '@/components/reports/StaffWorkloadCard'
 import { routes } from '@/lib/routes'
 import type {
   DailyTotalAnimal,
   DailyTotalsResponse,
 } from '@/app/api/reports/daily-totals/route'
+import type { StaffWorkSummaryResponse } from '@/app/api/reports/staff-summary/route'
 
 function formatCurrency(dollars: number): string {
   return `$${dollars.toFixed(2)}`
@@ -60,7 +62,11 @@ export default function DailyTotalsPage() {
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [data, setData] = useState<DailyTotalsResponse | null>(null)
+  const [staffData, setStaffData] = useState<StaffWorkSummaryResponse | null>(
+    null
+  )
   const [loading, setLoading] = useState(true)
+  const [staffLoading, setStaffLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState<Date>(new Date())
 
@@ -75,21 +81,32 @@ export default function DailyTotalsPage() {
   // Fetch data when date changes
   const fetchData = useCallback(async (date: Date) => {
     setLoading(true)
+    setStaffLoading(true)
     setError(null)
     try {
       const dateStr = getDateInputValue(date)
-      const response = await fetch(
-        `${routes.api.reports.dailyTotals()}?date=${dateStr}`
-      )
-      if (!response.ok) {
+
+      // Fetch both daily totals and staff summary in parallel
+      const [totalsResponse, staffResponse] = await Promise.all([
+        fetch(`${routes.api.reports.dailyTotals()}?date=${dateStr}`),
+        fetch(`${routes.api.reports.staffSummary()}?date=${dateStr}`),
+      ])
+
+      if (!totalsResponse.ok) {
         throw new Error('Failed to fetch daily totals')
       }
-      const result: DailyTotalsResponse = await response.json()
-      setData(result)
+      const totalsResult: DailyTotalsResponse = await totalsResponse.json()
+      setData(totalsResult)
+
+      if (staffResponse.ok) {
+        const staffResult: StaffWorkSummaryResponse = await staffResponse.json()
+        setStaffData(staffResult)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
+      setStaffLoading(false)
     }
   }, [])
 
@@ -296,7 +313,13 @@ export default function DailyTotalsPage() {
                         >
                           <td className="border-b border-[var(--gray-100)] px-4 py-3">
                             <div className="flex items-center gap-2 font-medium text-[var(--gray-900)]">
-                              {animal.animalName}
+                              <span>
+                                {animal.animalName}
+                                <span className="hidden text-[var(--gray-500)] print:inline">
+                                  {' '}
+                                  — {animal.ownerName}
+                                </span>
+                              </span>
                               {animal.hasNotes && (
                                 <svg
                                   className="h-4 w-4 text-green-600"
@@ -314,7 +337,7 @@ export default function DailyTotalsPage() {
                                 </svg>
                               )}
                             </div>
-                            <div className="text-sm text-[var(--gray-600)]">
+                            <div className="text-sm text-[var(--gray-600)] print:hidden">
                               {animal.ownerName}
                             </div>
                           </td>
@@ -358,6 +381,12 @@ export default function DailyTotalsPage() {
                 </p>
               </div>
             )}
+
+            {/* Staff Workload Summary */}
+            <StaffWorkloadCard
+              staff={staffData?.staff || []}
+              loading={staffLoading}
+            />
 
             {/* Print Footer */}
             <div className="print-footer mt-6 border-t border-[var(--gray-200)] pt-4 text-center text-sm text-[var(--gray-500)]">
