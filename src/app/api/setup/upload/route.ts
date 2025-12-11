@@ -13,6 +13,7 @@ import {
   getFileTypeDescription,
   getSqlFilesInOrder,
   SqlFileInfo,
+  BackupType,
 } from '@/lib/import/extractor'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
@@ -26,6 +27,10 @@ export interface UploadResponse {
   size: number
   sqlFiles: SqlFileInfo[]
   backupPath?: string
+  /** Detected backup type: 'legacy' (PHP app), 'nextjs' (this app), or 'unknown' */
+  backupType?: BackupType
+  /** Human-readable description of the backup source */
+  backupSourceDescription?: string
   error?: string
 }
 
@@ -93,11 +98,19 @@ export async function POST(request: Request) {
     const metadata = {
       sqlFiles: orderedFiles,
       backupPath: extractResult.backupPath,
+      backupType: extractResult.backupType,
+      backupSourceDescription: extractResult.backupSourceDescription,
     }
     await writeFile(
       path.join(uploadDir, 'metadata.json'),
       JSON.stringify(metadata, null, 2)
     )
+
+    // Log detected backup type
+    log.info('[Upload] Detected backup type', {
+      backupType: extractResult.backupType,
+      backupSourceDescription: extractResult.backupSourceDescription,
+    })
 
     const response: UploadResponse = {
       success: true,
@@ -107,6 +120,8 @@ export async function POST(request: Request) {
       size: file.size,
       sqlFiles: orderedFiles,
       backupPath: extractResult.backupPath,
+      backupType: extractResult.backupType,
+      backupSourceDescription: extractResult.backupSourceDescription,
     }
 
     return NextResponse.json(response)

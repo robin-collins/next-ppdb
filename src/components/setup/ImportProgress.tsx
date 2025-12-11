@@ -30,8 +30,15 @@ interface FinalStats {
   }
 }
 
+/** Backup type detected during file extraction */
+type BackupType = 'legacy' | 'nextjs' | 'unknown'
+
 interface ImportProgressProps {
   uploadId: string
+  /** Detected backup type */
+  backupType?: BackupType
+  /** Human-readable description of the backup source */
+  backupSourceDescription?: string
   onComplete: (stats: FinalStats) => void
   onError: (error: string) => void
 }
@@ -40,6 +47,8 @@ const TABLE_ORDER = ['breed', 'customer', 'animal', 'notes']
 
 export default function ImportProgress({
   uploadId,
+  backupType,
+  backupSourceDescription,
   onComplete,
   onError,
 }: ImportProgressProps) {
@@ -197,12 +206,52 @@ export default function ImportProgress({
     return Math.round((totalProcessed / totalRecords) * 100)
   }
 
+  // Helper to get backup type badge color
+  const getBackupTypeBadgeColor = () => {
+    switch (backupType) {
+      case 'legacy':
+        return 'bg-amber-100 text-amber-800 border-amber-200'
+      case 'nextjs':
+        return 'bg-blue-100 text-blue-800 border-blue-200'
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200'
+    }
+  }
+
+  // Helper to get backup type label
+  const getBackupTypeLabel = () => {
+    switch (backupType) {
+      case 'legacy':
+        return 'Legacy PHP Backup'
+      case 'nextjs':
+        return 'Next.js Backup'
+      default:
+        return 'Unknown Format'
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Importing Database
-        </h2>
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Importing Database
+          </h2>
+          {backupType && (
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getBackupTypeBadgeColor()}`}
+              >
+                {getBackupTypeLabel()}
+              </span>
+              {backupSourceDescription && (
+                <span className="text-xs text-gray-500">
+                  {backupSourceDescription}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
         {!isComplete && !hasError && (
           <span className="text-primary text-2xl font-bold">
             {getTotalProgress()}%
