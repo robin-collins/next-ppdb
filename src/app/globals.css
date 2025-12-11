@@ -1955,6 +1955,7 @@ main.sidebar-pinned .main-content {
 
 /* ============================================
    PRINT STYLES - Daily Totals Report
+   Monochrome, compact layout, no backgrounds
    ============================================ */
 
 @media print {
@@ -1970,12 +1971,12 @@ main.sidebar-pinned .main-content {
     display: none !important;
   }
 
-  /* Reset page styling for print */
+  /* Reset page styling for print - monochrome */
   body {
     background: white !important;
     color: black !important;
-    font-size: 12pt;
-    line-height: 1.4;
+    font-size: 9pt !important;
+    line-height: 1.2 !important;
     animation: none !important;
   }
 
@@ -1983,11 +1984,11 @@ main.sidebar-pinned .main-content {
     display: none !important;
   }
 
-  /* Main content reset */
+  /* Main content reset - compact */
   .print-main,
   main {
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 8px !important;
     background: white !important;
     box-shadow: none !important;
     border-radius: 0 !important;
@@ -2000,23 +2001,24 @@ main.sidebar-pinned .main-content {
   }
 
   .print-header {
-    border-bottom: 2px solid #333 !important;
-    padding-bottom: 15px !important;
-    margin-bottom: 20px !important;
+    border-bottom: 1px solid black !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 10px !important;
   }
 
   .print-header h2 {
-    font-size: 18pt !important;
+    font-size: 14pt !important;
     color: black !important;
     margin: 0 !important;
   }
 
   .print-header p {
-    font-size: 14pt !important;
-    color: #333 !important;
+    font-size: 10pt !important;
+    color: black !important;
+    margin: 2px 0 !important;
   }
 
-  /* Table print styling */
+  /* Table print styling - no backgrounds, compact */
   .print-table {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -2030,61 +2032,176 @@ main.sidebar-pinned .main-content {
   .print-table tr {
     page-break-inside: avoid !important;
     page-break-after: auto !important;
+    background: none !important;
   }
 
   .print-table th {
-    background: #f0f0f0 !important;
+    background: none !important;
     color: black !important;
-    border: 1px solid #333 !important;
-    padding: 8px 12px !important;
-    font-size: 10pt !important;
+    border: 1px solid black !important;
+    padding: 3px 6px !important;
+    font-size: 8pt !important;
+    font-weight: bold !important;
     text-transform: uppercase !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 
   .print-table td {
-    border: 1px solid #ccc !important;
-    padding: 8px 12px !important;
-    font-size: 11pt !important;
+    background: none !important;
+    border: 1px solid #666 !important;
+    padding: 2px 6px !important;
+    font-size: 8pt !important;
     color: black !important;
   }
 
   .print-table tbody tr:nth-child(even) {
-    background: #f9f9f9 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    background: none !important;
+  }
+
+  .print-table tbody tr:hover {
+    background: none !important;
   }
 
   .print-table tfoot {
-    background: #e8e8e8 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    background: none !important;
   }
 
   .print-table tfoot td {
-    border: 1px solid #333 !important;
+    border: 1px solid black !important;
     font-weight: bold !important;
-  }
-
-  /* Print footer */
-  .print-footer {
-    border-top: 1px solid #333 !important;
-    padding-top: 10px !important;
-    margin-top: 20px !important;
     font-size: 9pt !important;
-    color: #666 !important;
+    padding: 4px 6px !important;
   }
 
-  /* Page setup */
+  /* Remove row highlighting colors */
+  .bg-green-50,
+  .bg-green-100,
+  .bg-green-200,
+  .bg-blue-50 {
+    background: none !important;
+  }
+
+  /* Print footer - compact */
+  .print-footer {
+    border-top: 1px solid black !important;
+    padding-top: 6px !important;
+    margin-top: 10px !important;
+    font-size: 7pt !important;
+    color: black !important;
+  }
+
+  /* Page setup - smaller margins */
   @page {
     size: A4 portrait;
-    margin: 15mm;
+    margin: 10mm;
   }
 
-  /* Ensure colors print correctly */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  /* Staff Workload Card print styling - compact, monochrome */
+  [class*='StaffWorkload'],
+  .staff-workload-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 10px !important;
+    padding: 6px !important;
+    border: 1px solid black !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
+
+  /* Staff workload header */
+  h3 {
+    font-size: 10pt !important;
+    margin-bottom: 6px !important;
+    color: black !important;
+  }
+
+  /* Staff badge cards - monochrome, compact */
+  .bg-indigo-100,
+  .bg-emerald-100,
+  .bg-amber-100,
+  .bg-rose-100,
+  .bg-cyan-100,
+  .bg-purple-100,
+  .bg-orange-100,
+  .bg-teal-100 {
+    background: none !important;
+    border: 1px solid #666 !important;
+    padding: 4px !important;
+  }
+
+  /* Staff initials badge */
+  .rounded-full {
+    background: none !important;
+    border: 1px solid black !important;
+    padding: 1px 4px !important;
+    font-size: 8pt !important;
+  }
+
+  /* Grid layout - compact */
+  .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px !important;
+  }
+
+  /* Text colors to black */
+  .text-indigo-800,
+  .text-emerald-800,
+  .text-amber-800,
+  .text-rose-800,
+  .text-cyan-800,
+  .text-purple-800,
+  .text-orange-800,
+  .text-teal-800,
+  [class*='text-'] {
+    color: black !important;
+  }
+
+  /* Compact spacing */
+  .mb-3,
+  .mb-4 {
+    margin-bottom: 4px !important;
+  }
+
+  .mt-4,
+  .mt-8 {
+    margin-top: 6px !important;
+  }
+
+  .p-4,
+  .p-6 {
+    padding: 4px !important;
+  }
+
+  .gap-4 {
+    gap: 4px !important;
+  }
+
+  .space-y-1 > * + * {
+    margin-top: 1px !important;
+  }
+
+  /* Smaller text sizes */
+  .text-sm {
+    font-size: 7pt !important;
+  }
+
+  .text-lg {
+    font-size: 9pt !important;
+  }
+
+  .text-xl {
+    font-size: 10pt !important;
+  }
+
+  /* Border summary section */
+  .border-t {
+    border-top: 1px solid #666 !important;
+    padding-top: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  /* SVG icons - hide in print for cleaner look */
+  svg {
+    display: none !important;
   }
 }

@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-12-11
+
+### Added
+
+- **Staff Workload Summary on Daily Totals Page**
+  - New `extractStaffInitials()` function in `notes.service.ts` for extracting staff initials from notes
+  - Supports price-before-initials pattern (e.g., `"short cut 7 $65 cc"` → `"CC"`)
+  - Validates 2-3 alphabetic characters, returns uppercase, handles edge cases
+  - New API endpoint `GET /api/reports/staff-summary?date=YYYY-MM-DD` returns daily staff work breakdown
+  - Groups animals by staff initials with breed-level counts
+  - Each animal counted once per staff member even with multiple notes
+  - New `StaffWorkloadCard` component with color-coded staff cards
+  - Integrated into daily-totals page with parallel data fetching
+  - Staff summary included in printed report output
+
+- **Improved Print Styles for Daily Totals Report**
+  - Monochrome output (all text black, no colored backgrounds)
+  - Compact layout with smaller fonts (7-10pt) and reduced padding
+  - Tables without background colors for cleaner printing
+  - Staff workload summary card styled for print
+  - SVG icons hidden in print for cleaner output
+  - Smaller page margins (10mm) for more content per page
+
+### Changed
+
+- **Animal Details Page Notes Display**
+  - Staff initials extraction now uses centralized `extractStaffInitials()` function
+  - Consistent behavior with daily totals staff summary
+
+### Fixed
+
+- Added `reference/**/*` to TypeScript and ESLint exclude lists to prevent checking non-codebase files
+
 ## [UNRELEASED] Production Hardening
 
 ### Security

@@ -9,6 +9,7 @@ import Sidebar from '@/components/Sidebar'
 import AnimalAvatar from '@/components/AnimalAvatar'
 import Toast from '@/components/Toast'
 import { routes } from '@/lib/routes'
+import { extractStaffInitials } from '@/services/notes.service'
 
 interface Breed {
   id: number
@@ -761,13 +762,8 @@ export default function AnimalPage() {
                         const priceMatch = note.notes.match(/\$(\d+)/)
                         const price = priceMatch ? `$${priceMatch[1]}` : null
 
-                        // Extract technician code (2-3 letters at end, or any 2-char word at end)
-                        const techMatch = note.notes.match(
-                          /\b([A-Za-z]{2,3})\b\s*\.?\s*$/
-                        )
-                        const tech = techMatch
-                          ? techMatch[1].toUpperCase()
-                          : null
+                        // Extract technician code using centralized extraction logic
+                        const tech = extractStaffInitials(note.notes)
 
                         return (
                           <div

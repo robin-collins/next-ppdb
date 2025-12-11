@@ -107,15 +107,14 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "eslint --fix --no-warn-ignored",
       "prettier --write"
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
     ],
     "*.{ts,tsx}": [
-      "bash -c 'pnpm tsc --project tsconfig.precommit.json --noEmit'",
-      "bash -c 'pnpm lint'"
+      "bash -c 'pnpm tsc --project tsconfig.precommit.json --noEmit'"
     ],
     "*": [
       "bash scripts/build-on-main.sh"
