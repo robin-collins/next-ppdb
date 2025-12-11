@@ -23,9 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **OpenAPI Documentation Updates**
   - OpenAPI spec version now dynamically reads from package.json (synchronized with app version)
-  - Added 34 documented operations (up from 23)
+  - Now includes 35 documented operations (up from 23)
   - Added missing endpoints: `/api/breeds/pricing`, `/api/reports/analytics`, `/api/reports/staff-summary`
-  - Added admin endpoints: `/api/admin/backup/download/{filename}`
+  - Added admin endpoints: `/api/admin/backup` (GET list, POST create), `/api/admin/backup/download/{filename}`
   - Added health check endpoints: `/api/health` (GET, POST)
   - Added setup/import endpoints: `/api/setup/upload`, `/api/setup/import`
   - Added new tags: Health, Setup

@@ -57,7 +57,8 @@
 
 | Endpoint                                | Method | Description            | Response          |
 | --------------------------------------- | ------ | ---------------------- | ----------------- |
-| `/api/admin/backup`                     | GET    | Create database backup | `Backup`          |
+| `/api/admin/backup`                     | GET    | List available backups | `BackupList`      |
+| `/api/admin/backup`                     | POST   | Create new backup      | `BackupResult`    |
 | `/api/admin/backup/download/[filename]` | GET    | Download backup file   | `application/zip` |
 
 ## Health
@@ -76,7 +77,7 @@
 
 ---
 
-**Total: 34 operations across 21 endpoints**
+**Total: 35 operations across 21 endpoints**
 
 See `/api/docs` for interactive Swagger UI documentation.
 See `/api/docs/openapi.json` for the OpenAPI 3.0.3 specification.

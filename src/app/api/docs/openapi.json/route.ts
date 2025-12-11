@@ -14,7 +14,7 @@ export async function GET() {
       title: 'Pampered Pooch Pet Grooming API',
       version: packageJson.version,
       description:
-        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 34 fully documented operations across CRUD endpoints, count utilities, business intelligence features, health monitoring, and database setup/import capabilities.',
+        'RESTful API for managing customers, animals, breeds, service notes, reports, and administrative operations for a pet grooming business. Includes 35 fully documented operations across CRUD endpoints, count utilities, business intelligence features, health monitoring, and database setup/import capabilities.',
       contact: {
         name: 'Tech Team',
         email: 'tech@pamperedpooch.com',
@@ -1143,26 +1143,80 @@ export async function GET() {
       },
       '/api/admin/backup': {
         get: {
-          operationId: 'getDatabaseBackup',
-          summary: 'Get database backup',
+          operationId: 'listBackups',
+          summary: 'List available backups',
           description:
-            'Generate and download a complete database backup in SQL format',
+            'Get a list of all available database backups with metadata',
           tags: ['Admin'],
           responses: {
             200: {
-              description: 'Database backup file',
+              description: 'List of available backups',
               content: {
-                'application/sql': {
+                'application/json': {
                   schema: {
-                    type: 'string',
-                    format: 'binary',
-                    description: 'SQL backup file',
+                    type: 'object',
+                    properties: {
+                      backups: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            filename: { type: 'string' },
+                            timestamp: { type: 'string' },
+                            size: { type: 'integer' },
+                            createdAt: {
+                              type: 'string',
+                              format: 'date-time',
+                            },
+                            downloadUrl: { type: 'string' },
+                          },
+                        },
+                      },
+                      maxBackups: { type: 'integer' },
+                      backupDir: { type: 'string' },
+                    },
                   },
                 },
               },
             },
             500: {
-              description: 'Backup generation failed',
+              description: 'Failed to list backups',
+            },
+          },
+        },
+        post: {
+          operationId: 'createBackup',
+          summary: 'Create a new database backup',
+          description:
+            'Create a new database backup using mysqldump, compress to ZIP, and store. Old backups are automatically cleaned up (max 5 kept).',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Backup created successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      filename: { type: 'string' },
+                      timestamp: { type: 'string' },
+                      sqlSize: {
+                        type: 'integer',
+                        description: 'Uncompressed SQL size in bytes',
+                      },
+                      zipSize: {
+                        type: 'integer',
+                        description: 'Compressed ZIP size in bytes',
+                      },
+                      downloadUrl: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Backup creation failed',
             },
           },
         },
