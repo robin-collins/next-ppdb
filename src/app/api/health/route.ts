@@ -3,6 +3,65 @@
 
 import { NextResponse } from 'next/server'
 import { runDiagnostics, clearDiagnosticCache } from '@/lib/diagnostics'
+import { updateStore } from '@/lib/update-store'
+import { notificationStore } from '@/lib/notification-store'
+
+interface SchedulerStatus {
+  available: boolean
+  lastVersionCheck: string | null
+  pendingUpdate: {
+    exists: boolean
+    version?: string
+    status?: string
+  }
+  notifications: {
+    unread: number
+    highestPriority: string | null
+  }
+}
+
+/**
+ * Get scheduler status from Valkey stores
+ */
+async function getSchedulerStatus(): Promise<SchedulerStatus> {
+  try {
+    // Check if Valkey stores are available
+    const updateStoreAvailable = updateStore.isAvailable()
+    const notificationStoreAvailable = notificationStore.isAvailable()
+    const available = updateStoreAvailable || notificationStoreAvailable
+
+    // Get last version check time
+    const lastVersionCheck = await updateStore.getLastCheckTime()
+
+    // Get pending update info
+    const currentUpdate = await updateStore.getCurrentUpdate()
+    const pendingUpdate = {
+      exists: !!currentUpdate,
+      version: currentUpdate?.newVersion,
+      status: currentUpdate?.status,
+    }
+
+    // Get notification summary
+    const notificationSummary = await notificationStore.getSummary()
+
+    return {
+      available,
+      lastVersionCheck,
+      pendingUpdate,
+      notifications: {
+        unread: notificationSummary.unread,
+        highestPriority: notificationSummary.highestPriority,
+      },
+    }
+  } catch {
+    return {
+      available: false,
+      lastVersionCheck: null,
+      pendingUpdate: { exists: false },
+      notifications: { unread: 0, highestPriority: null },
+    }
+  }
+}
 
 /**
  * GET /api/health
@@ -10,7 +69,10 @@ import { runDiagnostics, clearDiagnosticCache } from '@/lib/diagnostics'
  */
 export async function GET() {
   try {
-    const result = await runDiagnostics()
+    const [result, schedulerStatus] = await Promise.all([
+      runDiagnostics(),
+      getSchedulerStatus(),
+    ])
 
     // Set appropriate HTTP status based on health
     const httpStatus =
@@ -20,7 +82,13 @@ export async function GET() {
           ? 503
           : 500
 
-    return NextResponse.json(result, { status: httpStatus })
+    return NextResponse.json(
+      {
+        ...result,
+        scheduler: schedulerStatus,
+      },
+      { status: httpStatus }
+    )
   } catch (error) {
     return NextResponse.json(
       {
