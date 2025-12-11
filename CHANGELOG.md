@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Collects commit messages since previous release
   - Added `force` input option for manual workflow dispatch
   - **Now chains Docker build** - release.yml calls docker-publish.yml via `workflow_call`
+  - **Docker image reference in release notes** - Shows pull command and link to container registry
   - Configured in `.github/workflows/release.yml`
 
 - **GitHub Actions Docker Workflow - Fixed Chained Trigger**

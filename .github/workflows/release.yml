@@ -110,6 +110,14 @@ jobs:
 
             ${{ steps.commits.outputs.commits }}
 
+            ## Docker Image
+
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.check-version.outputs.version }}
+            ```
+
+            📦 [View in Container Registry](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }})
+
             ---
 
             **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ github.event.before && format('{0}...v{1}', github.event.before, steps.check-version.outputs.version) || format('v{0}', steps.check-version.outputs.version) }}
