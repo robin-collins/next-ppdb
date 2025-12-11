@@ -68,7 +68,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Extracts changelog content for the release (from `[Unreleased]` or version section)
   - Collects commit messages since previous release
   - Added `force` input option for manual workflow dispatch
+  - **Now chains Docker build** - release.yml calls docker-publish.yml via `workflow_call`
   - Configured in `.github/workflows/release.yml`
+
+- **GitHub Actions Docker Workflow - Fixed Chained Trigger**
+  - Added `workflow_call` trigger to allow release.yml to invoke it directly
+  - This bypasses GitHub's limitation where GITHUB_TOKEN releases don't trigger other workflows
+  - Added version input parameter for explicit tagging
+  - Simplified tag generation using bash instead of complex expressions
+  - Configured in `.github/workflows/docker-publish.yml`
 
 ## [0.9.0] - 2025-12-11
 

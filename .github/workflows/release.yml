@@ -125,3 +125,15 @@ jobs:
           echo "Release created successfully!"
           echo "Version: v${{ steps.check-version.outputs.version }}"
           echo "URL: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.check-version.outputs.version }}"
+
+  # Build and publish Docker image after release
+  docker:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
