@@ -56,9 +56,9 @@ async function scanDirectory(
         // Try to find an index/page file to get the section title
         let title = toTitleCase(entry.name)
 
-        // Check for page.mdx or page.md
-        const pageMdxPath = path.join(fullPath, 'page.mdx')
-        const pageMdPath = path.join(fullPath, 'page.md')
+        // Check for index.mdx or index.md
+        const pageMdxPath = path.join(fullPath, 'index.mdx')
+        const pageMdPath = path.join(fullPath, 'index.md')
 
         try {
           if (fs.existsSync(pageMdxPath)) {
@@ -82,7 +82,7 @@ async function scanDirectory(
       entry.isFile() &&
       (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))
     ) {
-      if (entry.name === 'page.mdx' || entry.name === 'page.md') {
+      if (entry.name === 'index.mdx' || entry.name === 'index.md') {
         // This is the index file for the current folder
         // We usually don't list "Index" as a child, but maybe the folder itself links here.
         // For root /docs/page.mdx, we might want to skip adding it as a child of /docs

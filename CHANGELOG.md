@@ -5,9 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-12-11
+## [0.9.0] - 2025-12-11
 
 ### Added
+
+- **Documentation Page Styling Fixes**
+  - Added comprehensive prose CSS customizations for documentation pages
+  - Fixed vertical spacing between headings and paragraphs
+  - Fixed list bullet/number indentation (now properly inside text body)
+  - Fixed white text on white background for links and bold text
+  - Added table styling with proper headers, borders, and hover effects
+  - Added remark-gfm plugin to both docs page components for GFM table rendering
+  - Styled blockquotes, code blocks, images, and horizontal rules
+
+- **Sidebar Navigation Updates**
+  - Added "Documentation" link to sidebar navigation with document icon
+
+- **OpenAPI Documentation Updates**
+  - OpenAPI spec version now dynamically reads from package.json (synchronized with app version)
+  - Added 34 documented operations (up from 23)
+  - Added missing endpoints: `/api/breeds/pricing`, `/api/reports/analytics`, `/api/reports/staff-summary`
+  - Added admin endpoints: `/api/admin/backup/download/{filename}`
+  - Added health check endpoints: `/api/health` (GET, POST)
+  - Added setup/import endpoints: `/api/setup/upload`, `/api/setup/import`
+  - Added new tags: Health, Setup
+  - Added HealthStatus schema for health check responses
 
 - **Staff Workload Summary on Daily Totals Page**
   - New `extractStaffInitials()` function in `notes.service.ts` for extracting staff initials from notes

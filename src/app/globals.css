@@ -2205,3 +2205,200 @@ main.sidebar-pinned .main-content {
     display: none !important;
   }
 }
+
+/* ============================================
+   DOCUMENTATION PROSE STYLES
+   Override Tailwind Typography for docs pages
+   ============================================ */
+
+/* Vertical spacing between headings and paragraphs */
+.prose h1 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose h3 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* First heading should not have top margin */
+.prose > h1:first-child,
+.prose > h2:first-child,
+.prose > h3:first-child {
+  margin-top: 0;
+}
+
+/* List styling - bullets/numbers indented inside text body */
+.prose ul,
+.prose ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.prose li::marker {
+  color: var(--primary);
+}
+
+/* Nested lists */
+.prose ul ul,
+.prose ol ul {
+  list-style-type: circle;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose ul ul ul,
+.prose ol ol ul {
+  list-style-type: square;
+}
+
+/* Links styling - ensure visibility on white background */
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  transition: color var(--duration-fast) var(--ease-smooth);
+}
+
+.prose a:hover {
+  color: var(--primary-hover);
+}
+
+/* Bold/strong text styling - ensure visibility */
+.prose strong,
+.prose b {
+  color: var(--gray-900);
+  font-weight: 700;
+}
+
+/* Code blocks */
+.prose code {
+  background: var(--gray-100);
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+  color: var(--gray-800);
+}
+
+.prose pre {
+  background: var(--gray-900);
+  color: var(--gray-100);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.875rem;
+}
+
+/* Table styling */
+.prose table {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.prose thead {
+  background: var(--gray-50);
+}
+
+.prose th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-family: var(--font-accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  border-bottom: 2px solid var(--gray-200);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+
+.prose tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Blockquotes */
+.prose blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  color: var(--gray-600);
+  background: var(--primary-light);
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+/* Horizontal rule */
+.prose hr {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border: none;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* Images in docs */
+.prose img {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
