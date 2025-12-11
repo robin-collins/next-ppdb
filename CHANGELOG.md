@@ -59,6 +59,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated Files Summary: 27 files to create, 6 files to modify
   - New files: `notification-store.ts`, `notifications/page.tsx`, notifications API routes
 
+### Fixed
+
+- **GitHub Actions Release Workflow - Replaced Broken Action**
+  - Replaced unavailable `justincy/github-action-npm-release@v2` with custom solution
+  - Uses `softprops/action-gh-release@v2` (well-maintained action)
+  - Detects version changes by comparing `package.json` version against latest git tag
+  - Extracts changelog content for the release (from `[Unreleased]` or version section)
+  - Collects commit messages since previous release
+  - Added `force` input option for manual workflow dispatch
+  - Configured in `.github/workflows/release.yml`
+
 ## [0.9.0] - 2025-12-11
 
 ### Added
