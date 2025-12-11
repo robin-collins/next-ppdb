@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **GitHub Actions Docker Workflow - Enhanced Version Tagging**
+  - Added explicit semantic version tagging for container builds
+  - Release `v1.2.3` now produces tags: `1.2.3`, `1.2`, `1`, and `latest`
+  - Manual workflow dispatch produces SHA-based tags for traceability
+  - Configured in `.github/workflows/docker-publish.yml`
+
+- **Animal Details Page - Clickable Customer Card**
+  - Made entire customer info card clickable to navigate to customer details page
+  - Added hover effects (scale and shadow) for visual feedback
+  - Added keyboard accessibility (Enter/Space to activate)
+  - Button now visual-only; card handles navigation
+
+- **Dashboard Page - Documentation Card Update**
+  - Renamed "API Docs" card to "Application Docs"
+  - Changed link from `/api/docs` to `/docs` (user documentation)
+  - Updated icon to book icon for documentation
+  - Updated description to "User guides and documentation"
+
+- **SCHEDULED_TASKS.md Proposal - Major Revision (Round 2)**
+  - **NO DATABASE SCHEMA CHANGES** - Critical MVP requirement enforced
+  - Replaced Prisma `PendingUpdate` model with Valkey-based state storage (`src/lib/update-store.ts`)
+  - All update state (pending, approved, executed, failed) stored in Valkey with TTLs
+  - **Docker execution moved to scheduler container** - Next.js app no longer needs Docker socket access
+  - Scheduler container has Docker socket for image pull, container restart, and rollback operations
+  - **Automatic rollback strategy implemented**:
+    - Pre-update database backup created before any changes
+    - Previous image tag recorded for container rollback
+    - On failure: container reverted to previous image, database restored if needed
+    - Full rollback details documented in Section 13.8
+  - **Email retry queue implemented** - Valkey-based queue with exponential backoff (Section 3.4)
+  - Updated architecture diagram showing scheduler with Docker access
+  - Removed `dockerode` dependency - scheduler uses Docker CLI directly
+  - Added deployment steps (no database migration required)
+
+- **SCHEDULED_TASKS.md Proposal - Enhancements (Round 3)**
+  - **Valkey redundancy** - Added file-based fallback for critical state when Valkey unavailable (Section 2.3.1)
+  - **GitHub release notes** - Added fetching from GitHub Releases API (Section 4.2)
+  - **Sidebar update notification** - "Update Available" button placed above footer with version transition display
+  - **Update approval modal** - Warning-colored modal showing release notes with markdown rendering, approve/cancel actions
+  - **Testing methodology** - Comprehensive Section 14 added
+  - New files: `UpdateApprovalModal.tsx`, `github-releases.ts`, `update-store-fallback.ts`, `e2e/scheduler.spec.ts`
+
+- **SCHEDULED_TASKS.md Proposal - Notifications System (Round 4)**
+  - **Notification storage in Valkey** - Status tracking (unread/read/archived) with 90-day archive TTL (Section 2.5.1)
+  - **Header bell icon** - Dynamic colors based on notification type priority (error > warning > success > info)
+  - **Notifications page** - Two collapsible sections: Current (expanded) and Archived (collapsed by default)
+  - **Notification actions** - Mark as read, archive, delete
+  - Updated Files Summary: 27 files to create, 6 files to modify
+  - New files: `notification-store.ts`, `notifications/page.tsx`, notifications API routes
+
 ## [0.9.0] - 2025-12-11
 
 ### Added

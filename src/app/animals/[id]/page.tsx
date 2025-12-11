@@ -378,7 +378,18 @@ export default function AnimalPage() {
             </div>
 
             {/* Customer Info Card */}
-            <div className="customer-info-card">
+            <div
+              className="customer-info-card cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
+              onClick={() => router.push(`/customer/${customer.id}`)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  router.push(`/customer/${customer.id}`)
+                }
+              }}
+            >
               <div className="customer-details">
                 <div className="customer-avatar">
                   {customer.surname.charAt(0).toUpperCase()}
@@ -406,10 +417,7 @@ export default function AnimalPage() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => router.push(`/customer/${customer.id}`)}
-                className="btn btn-primary btn-large"
-              >
+              <span className="btn btn-primary btn-large pointer-events-none">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -419,7 +427,7 @@ export default function AnimalPage() {
                   />
                 </svg>
                 View Customer
-              </button>
+              </span>
             </div>
           </div>
 
@@ -725,7 +733,7 @@ export default function AnimalPage() {
                     <textarea
                       id="newNote"
                       className="form-textarea"
-                      placeholder="Enter service details (e.g., full clip 3 legs 7 short ears & face leave top knot CC $60)"
+                      placeholder="Enter service details (e.g., full clip 7 CC $60) NOTE: price auto added if ommited."
                       value={newNoteText}
                       onChange={e => setNewNoteText(e.target.value)}
                     />
