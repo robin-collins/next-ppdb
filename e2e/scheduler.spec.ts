@@ -12,7 +12,8 @@ const mockPendingUpdate = {
   id: 'test-update-001',
   currentVersion: '0.1.2',
   newVersion: '0.1.3',
-  releaseNotes: '## Test Release\n\n- Feature 1: New awesome feature\n- Bug fix 2: Fixed critical issue\n- Improvement 3: Better performance',
+  releaseNotes:
+    '## Test Release\n\n- Feature 1: New awesome feature\n- Bug fix 2: Fixed critical issue\n- Improvement 3: Better performance',
   releaseTitle: 'Release v0.1.3',
   releaseUrl: 'https://github.com/robin-collins/next-ppdb/releases/tag/v0.1.3',
   status: 'PENDING',
@@ -26,7 +27,9 @@ test.describe('Scheduler Update Workflow', () => {
     await page.waitForLoadState('networkidle')
   })
 
-  test('should show update available notification in sidebar when pending update exists', async ({ page }) => {
+  test('should show update available notification in sidebar when pending update exists', async ({
+    page,
+  }) => {
     // Mock the API response for pending updates
     await page.route('**/api/admin/updates/pending', async route => {
       await route.fulfill({
@@ -54,7 +57,9 @@ test.describe('Scheduler Update Workflow', () => {
     await expect(updateNotification).toBeVisible({ timeout: 10000 })
   })
 
-  test('should display correct version transition in update notification', async ({ page }) => {
+  test('should display correct version transition in update notification', async ({
+    page,
+  }) => {
     await page.route('**/api/admin/updates/pending', async route => {
       await route.fulfill({
         status: 200,
@@ -76,7 +81,9 @@ test.describe('Scheduler Update Workflow', () => {
     }
 
     // Check version text
-    const versionText = page.locator(`text=v${mockPendingUpdate.currentVersion} → v${mockPendingUpdate.newVersion}`)
+    const versionText = page.locator(
+      `text=v${mockPendingUpdate.currentVersion} → v${mockPendingUpdate.newVersion}`
+    )
     await expect(versionText).toBeVisible({ timeout: 10000 })
   })
 
@@ -137,7 +144,9 @@ test.describe('Scheduler Update Workflow', () => {
     await expect(page.locator('h1')).toContainText('System Updates')
 
     // Check current update is displayed
-    await expect(page.locator(`text=${mockPendingUpdate.newVersion}`)).toBeVisible()
+    await expect(
+      page.locator(`text=${mockPendingUpdate.newVersion}`)
+    ).toBeVisible()
   })
 
   test('should show notification bell icon in header', async ({ page }) => {
@@ -267,7 +276,9 @@ test.describe('Scheduler Update Workflow', () => {
 })
 
 test.describe('Update Approval Flow', () => {
-  test('should show approve and cancel buttons for pending update', async ({ page }) => {
+  test('should show approve and cancel buttons for pending update', async ({
+    page,
+  }) => {
     await page.route('**/api/admin/updates/pending', async route => {
       await route.fulfill({
         status: 200,
@@ -367,7 +378,9 @@ test.describe('Update Approval Flow', () => {
 })
 
 test.describe('Health Endpoint Scheduler Status', () => {
-  test('should include scheduler status in health response', async ({ page }) => {
+  test('should include scheduler status in health response', async ({
+    page,
+  }) => {
     const response = await page.request.get('/api/health')
     expect(response.ok()).toBeTruthy()
 

@@ -1,5 +1,22 @@
 FROM alpine:3.20
 
+# Build arguments for version info
+ARG BUILD_VERSION=dev
+ARG BUILD_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
+# Labels for container metadata
+LABEL org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.title="PPDB Scheduler" \
+      org.opencontainers.image.description="Scheduled task runner for PPDB (backups, updates, maintenance)"
+
+# Environment variables for runtime version info
+ENV SCHEDULER_VERSION=${BUILD_VERSION} \
+    SCHEDULER_COMMIT=${BUILD_COMMIT} \
+    SCHEDULER_BUILD_DATE=${BUILD_DATE}
+
 # Install required packages
 # - curl: for HTTP requests to Next.js app
 # - docker-cli: for executing Docker commands (pull, restart, etc.)

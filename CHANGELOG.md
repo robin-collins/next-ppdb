@@ -7,7 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **GitHub Actions - Scheduler Container Build**
+  - Updated `docker-publish.yml` to build both main application and scheduler containers
+  - Both images tagged with consistent semantic versioning (`1.2.3`, `1.2`, `1`, `latest`)
+  - Both images use matching commit SHA for SHA-based builds
+  - Scheduler image published to `ghcr.io/<repo>-scheduler`
+  - Added OCI-compliant labels (version, revision, created, title, description) to both images
+  - Added build arguments for version info embedded in containers (`BUILD_VERSION`, `BUILD_COMMIT`, `BUILD_DATE`)
+  - Both images signed with cosign for supply chain security
+  - Added GitHub Actions workflow summary showing both images' tags and digests
+  - Updated `release.yml` to include scheduler image pull command in release notes
+  - Updated `docker-compose.yml` with commented option for production scheduler image
+
+- **Scheduler Container Version Metadata**
+  - Updated `docker/scheduler/Dockerfile` with build args for version info
+  - Added OCI labels for container metadata
+  - Added runtime environment variables: `SCHEDULER_VERSION`, `SCHEDULER_COMMIT`, `SCHEDULER_BUILD_DATE`
+
+- **Main Application Container Version Metadata**
+  - Updated `Dockerfile` with build args for version info in runner stage
+  - Added OCI labels for container metadata
+  - Added runtime environment variables: `APP_BUILD_VERSION`, `APP_BUILD_COMMIT`, `APP_BUILD_DATE`
+
 ### Changed
+
+- **Local Docker Build Script**
+  - Updated `build:docker` script in `package.json` to build both main app and scheduler containers
+  - Now builds: `next-ppdb` (main app) and `next-ppdb-scheduler` (scheduler)
 
 - **GitHub Actions Docker Workflow - Enhanced Version Tagging**
   - Added explicit semantic version tagging for container builds

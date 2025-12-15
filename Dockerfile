@@ -2,6 +2,11 @@
 
 FROM node:20-trixie AS base
 
+# Build arguments for version info (declared early for use in all stages)
+ARG BUILD_VERSION=dev
+ARG BUILD_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
 # Step 1. Rebuild the source code only when needed
 FROM base AS builder
 
@@ -47,6 +52,23 @@ RUN pnpm build
 
 # Step 2. Production image, copy all the files and run next
 FROM base AS runner
+
+# Re-declare build args for this stage
+ARG BUILD_VERSION=dev
+ARG BUILD_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
+# Labels for container metadata
+LABEL org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.title="PPDB - Pampered Pooch Database" \
+      org.opencontainers.image.description="Next.js pet grooming database application"
+
+# Environment variables for runtime version info
+ENV APP_BUILD_VERSION=${BUILD_VERSION} \
+    APP_BUILD_COMMIT=${BUILD_COMMIT} \
+    APP_BUILD_DATE=${BUILD_DATE}
 
 WORKDIR /app
 

@@ -110,13 +110,19 @@ jobs:
 
             ${{ steps.commits.outputs.commits }}
 
-            ## Docker Image
+            ## Docker Images
 
+            **Main Application:**
             ```bash
             docker pull ghcr.io/${{ github.repository }}:${{ steps.check-version.outputs.version }}
             ```
 
-            📦 [View in Container Registry](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }})
+            **Scheduler (for automated tasks):**
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}-scheduler:${{ steps.check-version.outputs.version }}
+            ```
+
+            📦 [View Application Image](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }}) | [View Scheduler Image](https://github.com/${{ github.repository }}/pkgs/container/${{ github.event.repository.name }}-scheduler)
 
             ---
 
