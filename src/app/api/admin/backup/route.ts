@@ -28,6 +28,15 @@ function parseDbUrl(url: string) {
   }
 }
 
+/**
+ * Build MySQL client SSL flags compatible with both MySQL and MariaDB clients
+ * MariaDB uses --skip-ssl, MySQL 8.0+ uses --ssl-mode=DISABLED
+ * Since Debian trixie's default-mysql-client is MariaDB, we use --skip-ssl
+ */
+function getMysqlSslFlags(): string {
+  return '--skip-ssl'
+}
+
 // Get timestamp in YYYYMMDD-HHmmss format
 function getTimestamp(): string {
   const now = new Date()
@@ -121,8 +130,9 @@ export async function POST() {
     // --events includes scheduled events
     // Note: We don't use --databases flag to avoid CREATE DATABASE/USE statements
     // This allows restoring to any database name for testing
-    // --ssl-mode=DISABLED: Internal Docker network doesn't need SSL verification
-    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --ssl-mode=DISABLED --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
+    // --skip-ssl: MariaDB client compatibility (Debian trixie's default-mysql-client)
+    const sslFlags = getMysqlSslFlags()
+    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' ${sslFlags} --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
 
     try {
       await execAsync(mysqldumpCmd)

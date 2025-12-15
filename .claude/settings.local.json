@@ -65,7 +65,10 @@
       "Bash(pnpm install)",
       "Bash(npx tsc:*)",
       "Bash(timeout 15 pnpm dev:*)",
-      "Bash(timeout 120 pnpm build:*)"
+      "Bash(timeout 120 pnpm build:*)",
+      "Bash(git checkout:*)",
+      "Bash(docker build:*)",
+      "Bash(docker compose:*)"
     ],
     "deny": [],
     "ask": []
