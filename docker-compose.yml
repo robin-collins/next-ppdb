@@ -226,6 +226,8 @@ services:
       # Container management
       CONTAINER_NAME: next-ppdb
       GHCR_REPOSITORY: ${GHCR_REPOSITORY:-robin-collins/next-ppdb}
+      GHCR_TOKEN: ${GHCR_TOKEN:-}
+      GHCR_IMAGE: ghcr.io/${GHCR_REPOSITORY:-robin-collins/next-ppdb}
       # Timezone for cron scheduling
       TZ: ${TZ:-Australia/Sydney}
     volumes:

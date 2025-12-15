@@ -12,8 +12,8 @@ if [ -z "$SCHEDULER_API_KEY" ]; then
     exit 1
 fi
 
-if [ -z "$GHCR_PAT" ]; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: GHCR_PAT not set"
+if [ -z "$GHCR_TOKEN" ]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: GHCR_TOKEN not set"
     exit 1
 fi
 
@@ -123,7 +123,7 @@ NEW_IMAGE="$GHCR_IMAGE:$NEW_VERSION"
 
 # Step 1: Authenticate with GHCR
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Authenticating with GHCR..."
-echo "$GHCR_PAT" | docker login ghcr.io -u robin-collins --password-stdin
+echo "$GHCR_TOKEN" | docker login ghcr.io -u robin-collins --password-stdin
 
 if [ $? -ne 0 ]; then
     END_TIME=$(date +%s)
