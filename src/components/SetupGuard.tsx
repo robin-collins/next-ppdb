@@ -33,6 +33,7 @@ export async function SetupGuard({ children }: SetupGuardProps) {
     buildPhase === 'phase-production-build' ||
     buildPhase === 'phase-export'
   ) {
+    console.log('[SetupGuard] Skipping during build phase')
     return <>{children}</>
   }
 
@@ -41,17 +42,23 @@ export async function SetupGuard({ children }: SetupGuardProps) {
   const pathname = headersList.get('x-pathname') || '/'
   const referer = headersList.get('referer') || ''
 
+  // Debug: Log what path we're checking
+  console.log(`[SetupGuard] Checking path: ${pathname}`)
+
   // Check if this path should bypass the guard
   const shouldBypass = BYPASS_PATHS.some(
     path => pathname.startsWith(path) || referer.includes('/setup')
   )
 
   if (shouldBypass) {
+    console.log(`[SetupGuard] Bypassing for path: ${pathname}`)
     return <>{children}</>
   }
 
   // Run diagnostics (uses cache internally) - ONLY at runtime, never during build
+  console.log('[SetupGuard] Running diagnostics...')
   const result = await runDiagnostics()
+  console.log(`[SetupGuard] Diagnostic status: ${result.status}`)
 
   // Only log if something is wrong to avoid noise on every navigation
   if (result.status !== 'healthy') {

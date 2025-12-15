@@ -1,6 +1,8 @@
 // src/lib/import/extractor.ts
 // Archive extraction utility for .zip and .tar.gz files
-// Handles legacy PPDB backup structure with nested folders and per-table SQL files
+// Handles both:
+// - Legacy PPDB backup structure (.tar.gz) with nested folders and per-table SQL files
+// - New Next.js app backup format (.zip) with single combined SQL dump
 
 import AdmZip from 'adm-zip'
 import * as tar from 'tar'
@@ -22,6 +24,17 @@ const LEGACY_BACKUP_PATHS = [
   'backup',
 ]
 
+// Pattern to identify new app backup files: YYYYMMDD-HHmmss-backup.sql
+const NEW_APP_BACKUP_PATTERN = /^\d{8}-\d{6}-backup\.sql$/
+
+/**
+ * Backup type enumeration
+ * - 'legacy': Original PHP application backup (.tar.gz with per-table SQL files)
+ * - 'nextjs': New Next.js application backup (.zip with combined mysqldump)
+ * - 'unknown': Could not determine backup type (generic SQL file)
+ */
+export type BackupType = 'legacy' | 'nextjs' | 'unknown'
+
 export interface SqlFileInfo {
   table: string
   path: string
@@ -34,6 +47,10 @@ export interface ExtractResult {
   error?: string
   tempDir?: string
   backupPath?: string
+  /** Detected backup type */
+  backupType?: BackupType
+  /** Human-readable description of the backup source */
+  backupSourceDescription?: string
 }
 
 /**
@@ -55,18 +72,25 @@ export async function extractSqlFile(
     // Create temp directory for extraction
     await fs.mkdir(tempDir, { recursive: true })
 
-    // Plain .sql file - assume it's a combined dump
+    // Plain .sql file - check if it's a new app backup or generic SQL
     if (ext === '.sql') {
+      const sqlFilename = path.basename(filePath)
+      const isNextJsBackup = NEW_APP_BACKUP_PATTERN.test(sqlFilename)
+
       return {
         success: true,
         sqlFiles: [
           {
             table: 'combined',
             path: filePath,
-            filename: path.basename(filePath),
+            filename: sqlFilename,
           },
         ],
         tempDir,
+        backupType: isNextJsBackup ? 'nextjs' : 'unknown',
+        backupSourceDescription: isNextJsBackup
+          ? 'Next.js PPDB backup (combined mysqldump format)'
+          : 'Generic SQL backup file',
       }
     }
 
@@ -94,6 +118,7 @@ export async function extractSqlFile(
 
 /**
  * Extract ZIP file and find SQL files
+ * Detects both new Next.js app backups and legacy backups packaged as ZIP
  */
 async function extractZip(
   zipPath: string,
@@ -101,10 +126,67 @@ async function extractZip(
 ): Promise<ExtractResult> {
   try {
     const zip = new AdmZip(zipPath)
+    const entries = zip.getEntries()
+
+    // Check if this is a new Next.js app backup
+    // These contain a single SQL file matching pattern: YYYYMMDD-HHmmss-backup.sql
+    const sqlEntries = entries.filter(e =>
+      e.entryName.toLowerCase().endsWith('.sql')
+    )
+
+    if (sqlEntries.length === 1) {
+      const sqlEntry = sqlEntries[0]
+      const sqlFilename = path.basename(sqlEntry.entryName)
+
+      // Check if filename matches new app backup pattern
+      if (NEW_APP_BACKUP_PATTERN.test(sqlFilename)) {
+        // This is a new Next.js app backup
+        zip.extractAllTo(tempDir, true)
+        const extractedPath = path.join(tempDir, sqlEntry.entryName)
+
+        return {
+          success: true,
+          sqlFiles: [
+            {
+              table: 'combined',
+              path: extractedPath,
+              filename: sqlFilename,
+            },
+          ],
+          tempDir,
+          backupType: 'nextjs',
+          backupSourceDescription:
+            'Next.js PPDB backup (combined mysqldump format)',
+        }
+      }
+    }
+
+    // Not a new app backup, extract and search for SQL files
     zip.extractAllTo(tempDir, true)
 
-    // Find backup folder or SQL files
-    return await findSqlFilesInDir(tempDir)
+    // Find backup folder or SQL files (legacy format)
+    const result = await findSqlFilesInDir(tempDir)
+
+    // Determine backup type based on what we found
+    if (result.success && result.sqlFiles) {
+      const expectedFiles: readonly string[] = EXPECTED_SQL_FILES
+      const hasPerTableFiles = result.sqlFiles.some(f =>
+        expectedFiles.includes(f.filename.toLowerCase())
+      )
+      if (hasPerTableFiles) {
+        result.backupType = 'legacy'
+        result.backupSourceDescription =
+          'Legacy PHP PPDB backup (per-table SQL files)'
+      } else if (result.sqlFiles.length === 1) {
+        result.backupType = 'unknown'
+        result.backupSourceDescription = 'Generic SQL backup file'
+      } else {
+        result.backupType = 'unknown'
+        result.backupSourceDescription = 'Unknown backup format'
+      }
+    }
+
+    return result
   } catch (error) {
     return {
       success: false,
@@ -115,6 +197,7 @@ async function extractZip(
 
 /**
  * Extract .tar.gz file and find SQL files
+ * Legacy PPDB backups are always in tar.gz format with per-table SQL files
  */
 async function extractTarGz(
   tarPath: string,
@@ -128,7 +211,16 @@ async function extractTarGz(
     })
 
     // Find backup folder or SQL files
-    return await findSqlFilesInDir(tempDir)
+    const result = await findSqlFilesInDir(tempDir)
+
+    // tar.gz backups are always legacy format
+    if (result.success) {
+      result.backupType = 'legacy'
+      result.backupSourceDescription =
+        'Legacy PHP PPDB backup (per-table SQL files)'
+    }
+
+    return result
   } catch (error) {
     return {
       success: false,

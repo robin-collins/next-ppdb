@@ -35,6 +35,7 @@ import {
   getSqlFilesInOrder,
 } from '@/lib/import/extractor'
 import { clearDiagnosticCache } from '@/lib/diagnostics'
+import { setNeedsSetup } from '@/lib/setupState'
 import { PrismaClient } from '@/generated/prisma'
 
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'setup')
@@ -396,6 +397,9 @@ export async function GET(request: NextRequest) {
 
         // Clear diagnostic cache so next health check shows success
         clearDiagnosticCache()
+
+        // Mark setup as complete
+        setNeedsSetup(false)
 
         // Complete - calculate duration and write summary
         const importEndTime = new Date()

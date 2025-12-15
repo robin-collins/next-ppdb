@@ -968,7 +968,131 @@ flowchart TB
 
 ---
 
-## 17. Glossary
+## 17. Startup & Setup Process
+
+### 17.1 Container Startup Pre-Checks
+
+The application performs a **strict pre-requisite check sequence** during container startup via `docker/docker-entrypoint.sh`:
+
+```mermaid
+flowchart TD
+    Start[Container Start] --> Check1{ENV Vars<br/>Valid?}
+    Check1 -->|No| Fail1[Exit 1: Missing vars]
+    Check1 -->|Yes| Check2{Database<br/>Connectable?}
+    Check2 -->|No| Retry{Retry<br/>< 30 attempts?}
+    Retry -->|Yes| Wait[Wait 1s] --> Check2
+    Retry -->|No| Fail2[Exit 1: DB timeout]
+    Check2 -->|Yes| Check3[Prisma db push]
+    Check3 -->|Fail| Fail3[Exit 1: Schema sync failed]
+    Check3 -->|Success| Ready[Start Next.js]
+```
+
+**Pre-Check Steps:**
+
+| Step | Check                              | Exit on Fail | Purpose                               |
+| ---- | ---------------------------------- | ------------ | ------------------------------------- |
+| 1/4  | `DATABASE_URL` format validation   | Yes          | Ensures valid MySQL connection string |
+| 2/4  | Database connectivity (30 retries) | Yes          | Waits for MySQL to be ready           |
+| 3/4  | `prisma db push`                   | Yes          | Syncs schema to database              |
+| 4/4  | Final status confirmation          | No           | Logs success message                  |
+
+### 17.2 Application-Level Setup Guard
+
+After container startup, the **SetupGuard** React Server Component runs on every page request:
+
+```mermaid
+flowchart TD
+    Request[Page Request] --> Build{Build<br/>Phase?}
+    Build -->|Yes| Render[Render Page]
+    Build -->|No| Bypass{Bypass<br/>Path?}
+    Bypass -->|Yes| Render
+    Bypass -->|No| Diag[Run Diagnostics]
+    Diag --> Status{Status?}
+    Status -->|healthy| Render
+    Status -->|needs_setup| Redirect[Redirect /setup]
+    Status -->|unhealthy| Redirect
+```
+
+**Diagnostic Checks (in order):**
+
+| Check          | Pass Condition                  | Fail Status   |
+| -------------- | ------------------------------- | ------------- |
+| `envConfig`    | `DATABASE_URL` exists and valid | `needs_setup` |
+| `dbConnection` | MySQL responds to `SELECT 1`    | `unhealthy`   |
+| `tablesExist`  | All 4 tables present            | `needs_setup` |
+| `schemaValid`  | Required columns exist          | `needs_setup` |
+| `dataPresent`  | All tables have data            | `needs_setup` |
+
+**Bypass Paths:** `/setup`, `/api/`, `/_next/`, `/favicon`, `/docs`
+
+**Cache TTL:**
+
+- Healthy status: 60 seconds
+- Unhealthy/needs_setup: 10 seconds
+
+### 17.3 Known Issues & Resolutions
+
+#### Issue: MySQL Client SSL Flag Compatibility
+
+**Problem:** The MariaDB client (default on Debian Trixie) doesn't support MySQL's `--ssl-mode=DISABLED` flag.
+
+**Error Message:**
+
+```
+mysql: unknown variable 'ssl-mode=DISABLED'
+```
+
+**Resolution:** Use `--skip-ssl` instead, which is compatible with both MySQL and MariaDB clients.
+
+**Affected Files:**
+
+- `src/lib/setup/tempDb.ts`
+- `src/lib/import/rawImporter.ts`
+- `src/app/api/admin/backup/route.ts`
+
+#### Issue: Diagnostic Cache Preventing Setup Redirect
+
+**Problem:** Previously, healthy diagnostic results were cached indefinitely, preventing detection of database state changes (e.g., tables emptied for fresh setup).
+
+**Resolution:** Changed cache TTL from infinite (for healthy) to 60 seconds, allowing periodic re-evaluation of database state.
+
+#### Issue: Referer-Based Bypass Causing Navigation Issues
+
+**Problem:** The SetupGuard's check `referer.includes('/setup')` could cause the guard to be bypassed when navigating from the setup page to other pages.
+
+**Resolution:** Removed the referer-based bypass check. Only the pathname is now used to determine bypass status.
+
+### 17.4 Setup Wizard Flow
+
+When `needs_setup` status is detected, users are redirected to `/setup`:
+
+```mermaid
+flowchart LR
+    subgraph "Setup Steps"
+        D[Diagnostics] --> U[Upload Backup]
+        U --> I[Import Data]
+        I --> C[Complete]
+    end
+
+    subgraph "Supported Formats"
+        U --> TAR["Legacy PHP (.tar.gz)"]
+        U --> ZIP["Next.js (.zip)"]
+    end
+```
+
+**Import Process:**
+
+1. Upload backup file (`.tar.gz` or `.zip`)
+2. Extract SQL files to temp directory
+3. Create temporary database for import staging
+4. Import SQL files using `mysql` client with `--skip-ssl`
+5. Validate data integrity
+6. Transfer data to production database
+7. Cleanup temp database and files
+
+---
+
+## 18. Glossary
 
 | Term          | Definition                                        |
 | ------------- | ------------------------------------------------- |
