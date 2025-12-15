@@ -151,6 +151,28 @@ services:
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
       DEBUG: ${DEBUG:-false}
       HOSTNAME: '0.0.0.0'
+      # Valkey connection for scheduler state
+      VALKEY_HOST: valkey
+      VALKEY_PORT: 6379
+      # App version for update checks
+      NEXT_PUBLIC_APP_VERSION: ${APP_VERSION:-0.0.0}
+      APP_VERSION: ${APP_VERSION:-0.0.0}
+      # Scheduler authentication
+      SCHEDULER_API_KEY: ${SCHEDULER_API_KEY}
+      # Email notifications (SMTP)
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      UPDATE_NOTIFICATION_EMAIL: ${UPDATE_NOTIFICATION_EMAIL:-}
+      BACKUP_NOTIFICATION_EMAIL: ${BACKUP_NOTIFICATION_EMAIL:-}
+      # GHCR configuration for version checks
+      GHCR_TOKEN: ${GHCR_TOKEN:-}
+      GHCR_REPOSITORY: ${GHCR_REPOSITORY:-robin-collins/next-ppdb}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    volumes:
+      - ppdb_backups:/app/backups
     depends_on:
       mysql:
         condition: service_healthy
@@ -188,6 +210,45 @@ services:
       - 'traefik.http.routers.nextjs.middlewares=nextjs-ipallowlist'
       - 'traefik.http.middlewares.nextjs-ipallowlist.ipallowlist.sourceRange=192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,180.150.119.230/32'
 
+  # Scheduler sidecar container for automated tasks
+  # Handles: nightly backups, version checks, and update execution
+  scheduler:
+    build:
+      context: ./docker/scheduler
+      dockerfile: Dockerfile
+    container_name: ppdb-scheduler
+    hostname: ppdb-scheduler
+    restart: unless-stopped
+    environment:
+      # API connection to main app
+      APP_URL: http://next-ppdb:3000
+      SCHEDULER_API_KEY: ${SCHEDULER_API_KEY}
+      # Container management
+      CONTAINER_NAME: next-ppdb
+      GHCR_REPOSITORY: ${GHCR_REPOSITORY:-robin-collins/next-ppdb}
+      # Timezone for cron scheduling
+      TZ: ${TZ:-Australia/Sydney}
+    volumes:
+      # Docker socket for container management (pull, restart, rollback)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Shared backup volume with main app
+      - ppdb_backups:/backups
+      # Scheduler logs
+      - scheduler_logs:/var/log/scheduler
+    depends_on:
+      next-ppdb:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', '/healthcheck.sh']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - web
+    labels:
+      - 'traefik.enable=false'
+
 networks:
   web:
     external: true
@@ -198,3 +259,7 @@ volumes:
   db_data:
   traefik_acme:
     name: traefik_acme
+  ppdb_backups:
+    driver: local
+  scheduler_logs:
+    driver: local
