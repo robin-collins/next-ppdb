@@ -138,11 +138,14 @@ services:
       - 'traefik.enable=false'
 
   next-ppdb:
+    # LOCAL DEVELOPMENT: Uncomment build section and use local image
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    image: next-ppdb:latest
-    #image: ghcr.io/robin-collins/next-ppdb:latest
+    # image: next-ppdb:latest
+    #
+    # PRODUCTION: Use GHCR image with version from APP_VERSION env var
+    image: ghcr.io/${GHCR_REPOSITORY:-robin-collins/next-ppdb}:${APP_VERSION:-latest}
     container_name: next-ppdb
     hostname: next-ppdb
     restart: unless-stopped
@@ -236,6 +239,8 @@ services:
     volumes:
       # Docker socket for container management (pull, restart, rollback)
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Docker compose file for container recreation during updates
+      - ./docker-compose.yml:/docker-compose.yml:ro
       # Shared backup volume with main app
       - ppdb_backups:/backups
       # Scheduler logs

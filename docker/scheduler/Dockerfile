@@ -20,11 +20,13 @@ ENV SCHEDULER_VERSION=${BUILD_VERSION} \
 # Install required packages
 # - curl: for HTTP requests to Next.js app
 # - docker-cli: for executing Docker commands (pull, restart, etc.)
+# - docker-cli-compose: for docker compose commands during updates
 # - logrotate: for log rotation
 # - tzdata: for timezone support
 RUN apk add --no-cache \
     curl \
     docker-cli \
+    docker-cli-compose \
     logrotate \
     tzdata \
     bash

@@ -11,7 +11,8 @@ import { log } from '@/lib/logger'
 // Configuration from environment
 const ghcrConfig = {
   get pat(): string | undefined {
-    return process.env.GHCR_PAT
+    // Support both GHCR_TOKEN (docker-compose) and GHCR_PAT (legacy) for compatibility
+    return process.env.GHCR_TOKEN || process.env.GHCR_PAT
   },
   get image(): string {
     return process.env.GHCR_IMAGE || 'ghcr.io/robin-collins/next-ppdb'

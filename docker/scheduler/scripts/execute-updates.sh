@@ -1,6 +1,11 @@
 #!/bin/bash
 # Execute Updates Script
 # Handles the actual Docker operations for updates (pull, restart, rollback)
+#
+# PRODUCTION USE: This script assumes docker-compose.yml uses GHCR images:
+#   image: ghcr.io/robin-collins/next-ppdb:${APP_VERSION:-latest}
+#
+# For local testing, see: docker/scheduler/README.md
 
 set -e
 
@@ -18,6 +23,8 @@ if [ -z "$GHCR_TOKEN" ]; then
 fi
 
 GHCR_IMAGE="${GHCR_IMAGE:-ghcr.io/robin-collins/next-ppdb}"
+COMPOSE_FILE="${COMPOSE_FILE:-/docker-compose.yml}"
+CONTAINER_NAME="${CONTAINER_NAME:-next-ppdb}"
 
 # Function to report result back to the app
 report_result() {
@@ -42,21 +49,36 @@ report_result() {
         "http://next-ppdb:3000/api/admin/updates/execute"
 }
 
+# Function to recreate container with specified image version
+recreate_container() {
+    local VERSION=$1
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Recreating container with version: $VERSION"
+
+    # Export APP_VERSION for docker-compose substitution
+    export APP_VERSION="$VERSION"
+
+    # Use docker compose to recreate the container with the new image
+    if [ -f "$COMPOSE_FILE" ]; then
+        docker compose -f "$COMPOSE_FILE" up -d --force-recreate "$CONTAINER_NAME"
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Compose file not found at $COMPOSE_FILE"
+        return 1
+    fi
+}
+
 # Function to perform rollback
 perform_rollback() {
-    local PREVIOUS_IMAGE=$1
+    local PREVIOUS_VERSION=$1
     local ROLLBACK_REASON=$2
+    local PREVIOUS_IMAGE="$GHCR_IMAGE:$PREVIOUS_VERSION"
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Performing rollback to $PREVIOUS_IMAGE..."
 
-    # Pull the previous image (should already exist locally)
+    # Pull the previous image (should already exist locally, but ensure it's available)
     docker pull "$PREVIOUS_IMAGE" 2>/dev/null || true
 
-    # Restart with previous image
-    # Note: This assumes docker-compose is used and the image is set via environment variable
-    # Adjust this based on your actual deployment setup
-    cd /app 2>/dev/null || true
-    docker compose up -d next-ppdb 2>/dev/null || docker restart next-ppdb 2>/dev/null
+    # Recreate container with previous version
+    recreate_container "$PREVIOUS_VERSION" || true
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Rollback completed. Reason: $ROLLBACK_REASON"
 }
@@ -144,19 +166,15 @@ fi
 # Step 3: Store current image for potential rollback
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Current image stored for rollback: $PREVIOUS_IMAGE"
 
-# Step 4: Restart container with new image
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restarting container with new image..."
+# Step 4: Recreate container with new image
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Recreating container with new image..."
 
-# Update the container - method depends on deployment setup
-# This example assumes docker-compose with IMAGE_TAG environment variable
-# Adjust based on your actual deployment
-
-# Option 1: Using docker-compose
-cd /app 2>/dev/null && docker compose up -d next-ppdb 2>/dev/null
-
-# Option 2: Direct Docker restart (if compose is not available)
-# docker stop next-ppdb && docker rm next-ppdb
-# docker run -d --name next-ppdb ... $NEW_IMAGE
+if ! recreate_container "$NEW_VERSION"; then
+    END_TIME=$(date +%s)
+    DURATION=$(( (END_TIME - START_TIME) * 1000 ))
+    report_result "false" "$UPDATE_ID" "$DURATION" "Failed to recreate container with new image" "false" ""
+    exit 1
+fi
 
 # Step 5: Wait for health check (5 minute timeout)
 if ! wait_for_health 300; then
@@ -164,7 +182,7 @@ if ! wait_for_health 300; then
     DURATION=$(( (END_TIME - START_TIME) * 1000 ))
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Health check failed, initiating rollback..."
-    perform_rollback "$PREVIOUS_IMAGE" "Health check failed after container restart"
+    perform_rollback "$CURRENT_VERSION" "Health check failed after container restart"
 
     # Wait for rollback to be healthy
     if wait_for_health 120; then

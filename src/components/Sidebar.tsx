@@ -44,11 +44,11 @@ export default function Sidebar({
       if (res.ok) {
         const data = await res.json()
         if (
-          data.currentUpdate &&
-          (data.currentUpdate.status === 'PENDING' ||
-            data.currentUpdate.status === 'APPROVED')
+          data.pending &&
+          (data.pending.status === 'PENDING' ||
+            data.pending.status === 'APPROVED')
         ) {
-          setPendingUpdate(data.currentUpdate)
+          setPendingUpdate(data.pending)
         } else {
           setPendingUpdate(null)
         }

@@ -89,6 +89,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Scheduler Update Execution Script - Production Docker Compose Integration**
+  - Fixed non-existent `/app` directory reference that caused silent update failures
+  - Script now uses `docker compose -f /docker-compose.yml up -d --force-recreate` for proper container recreation
+  - Added `recreate_container()` function for consistent update and rollback operations
+  - Mount docker-compose.yml into scheduler container for compose access
+  - Added `docker-cli-compose` package to scheduler Dockerfile
+
+- **Sidebar Pending Update Notification - API Response Property Mismatch**
+  - Fixed `fetchPendingUpdate` checking `data.currentUpdate` instead of `data.pending`
+  - Pending update notification banner now displays correctly when updates are available
+
+- **GHCR Environment Variable - Name Mismatch**
+  - Fixed `ghcr.ts` reading `GHCR_PAT` while docker-compose provides `GHCR_TOKEN`
+  - Library now accepts both `GHCR_TOKEN` (preferred) and `GHCR_PAT` (legacy) for compatibility
+  - Version checks now properly authenticate with GHCR
+
+- **Docker Compose - Production GHCR Image Configuration**
+  - Updated `next-ppdb` service to use `ghcr.io/${GHCR_REPOSITORY}:${APP_VERSION}` image
+  - Supports automated version updates via scheduler
+  - Added comments documenting local development vs production configuration
+
 - **GitHub Actions Release Workflow - Replaced Broken Action**
   - Replaced unavailable `justincy/github-action-npm-release@v2` with custom solution
   - Uses `softprops/action-gh-release@v2` (well-maintained action)
