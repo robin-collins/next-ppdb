@@ -33,6 +33,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Docker Entrypoint - Enhanced Startup Pre-Checks**
+  - Added comprehensive pre-requisite validation before starting Next.js server
+  - Step 1: Validates DATABASE_URL environment variable (format and presence)
+  - Step 2: Tests database connectivity with 30 retry attempts (1s between retries)
+  - Step 3: Runs `prisma db push` for schema synchronization
+  - Step 4: Logs final pre-flight status confirmation
+  - Clear console output with timestamps and pass/fail indicators
+  - Exits immediately (code 1) if any check fails with helpful troubleshooting tips
+  - Uses `--skip-ssl` for MariaDB client compatibility
+
+- **ARCHITECTURE.md - New Section 17: Startup & Setup Process**
+  - Documented container startup pre-check sequence with flow diagram
+  - Documented SetupGuard application-level checks with flow diagram
+  - Added "Known Issues & Resolutions" section documenting SSL, cache, and bypass fixes
+  - Documented Setup Wizard flow with import process steps
+
 - **Local Docker Build Script**
   - Updated `build:docker` script in `package.json` to build both main app and scheduler containers
   - Now builds: `next-ppdb` (main app) and `next-ppdb-scheduler` (scheduler)
@@ -88,6 +104,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New files: `notification-store.ts`, `notifications/page.tsx`, notifications API routes
 
 ### Fixed
+
+- **Database Import SSL Error - MariaDB Client Compatibility**
+  - Changed `--ssl-mode=DISABLED` to `--skip-ssl` for MySQL client calls
+  - MariaDB client (default on Debian Trixie) doesn't support MySQL's `--ssl-mode=DISABLED` flag
+  - `--skip-ssl` works with both MySQL and MariaDB clients
+  - **Affected Files:** `src/lib/setup/tempDb.ts`, `src/lib/import/rawImporter.ts`, `src/app/api/admin/backup/route.ts`
+
+- **Setup Redirection Not Triggering**
+  - Changed diagnostic cache TTL from infinite (for healthy status) to 60 seconds
+  - Allows periodic re-evaluation when database state changes (e.g., tables emptied)
+  - Removed referer-based bypass check that could cause incorrect guard bypass
+  - Added debug logging to SetupGuard and diagnostics for troubleshooting
 
 - **Scheduler Update Execution Script - Production Docker Compose Integration**
   - Fixed non-existent `/app` directory reference that caused silent update failures

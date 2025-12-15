@@ -16,6 +16,15 @@ export interface TempDbConfig {
 }
 
 /**
+ * Build MySQL client SSL flags compatible with both MySQL and MariaDB clients
+ * MariaDB uses --skip-ssl, MySQL 8.0+ uses --ssl-mode=DISABLED
+ * Since Debian trixie's default-mysql-client is MariaDB, we use --skip-ssl
+ */
+function getMysqlSslFlags(): string {
+  return '--skip-ssl'
+}
+
+/**
  * Create a temporary database for import staging
  * The app creates this automatically - no pre-creation needed
  */
@@ -34,8 +43,9 @@ export async function createTempDatabase(): Promise<TempDbConfig> {
   const tempDbName = `ppdb_import_${Date.now()}`
 
   // Create the temp database using mysql client
-  // --ssl-mode=DISABLED for internal Docker network (works with both MySQL and MariaDB clients)
-  const createDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED -e "CREATE DATABASE IF NOT EXISTS \\\`${tempDbName}\\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"`
+  // Using --skip-ssl for MariaDB client compatibility (Debian trixie default)
+  const sslFlags = getMysqlSslFlags()
+  const createDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} -e "CREATE DATABASE IF NOT EXISTS \\\`${tempDbName}\\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"`
 
   try {
     await execAsync(createDbCmd)
@@ -75,8 +85,9 @@ export async function importSqlFileToTempDb(
 
   onProgress?.(`Importing: ${sqlFilePath}`)
 
-  // Import using mysql client
-  const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${tempDbName} < "${sqlFilePath}"`
+  // Import using mysql client with --skip-ssl for MariaDB client compatibility
+  const sslFlags = getMysqlSslFlags()
+  const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} ${tempDbName} < "${sqlFilePath}"`
 
   try {
     await execAsync(importCmd, { maxBuffer: 50 * 1024 * 1024 }) // 50MB buffer
@@ -118,7 +129,8 @@ export async function importSqlFilesToTempDb(
       sqlFiles.length
     )
 
-    const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${tempDbName} < "${file.path}"`
+    const sslFlags = getMysqlSslFlags()
+    const importCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} ${tempDbName} < "${file.path}"`
 
     try {
       await execAsync(importCmd, { maxBuffer: 50 * 1024 * 1024 })
@@ -195,7 +207,8 @@ export async function dropTempDatabase(tempDbName: string): Promise<void> {
     return
   }
 
-  const dropDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED -e "DROP DATABASE IF EXISTS \\\`${tempDbName}\\\`"`
+  const sslFlags = getMysqlSslFlags()
+  const dropDbCmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} -e "DROP DATABASE IF EXISTS \\\`${tempDbName}\\\`"`
 
   try {
     await execAsync(dropDbCmd)

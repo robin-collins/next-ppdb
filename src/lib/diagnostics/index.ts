@@ -11,10 +11,14 @@ import {
 import { DiagnosticChecks, HealthCheckResult, HealthStatus } from './types'
 
 // Cache for health check results
-// If healthy: Cache indefinitely (effectively startup check only)
-// If unhealthy: Cache for 10 seconds (retry frequently)
+// If healthy: Cache for 60 seconds (to allow recovery if database changes)
+// If unhealthy/needs_setup: Cache for 10 seconds (retry frequently)
 let cachedResult: HealthCheckResult | null = null
 let cacheTimestamp = 0
+
+// Cache TTL in milliseconds
+const HEALTHY_CACHE_TTL = 60000 // 60 seconds for healthy status
+const UNHEALTHY_CACHE_TTL = 10000 // 10 seconds for unhealthy/needs_setup
 
 /**
  * Run all diagnostic checks and determine application health status
@@ -23,14 +27,23 @@ export async function runDiagnostics(): Promise<HealthCheckResult> {
   // Check cache first
   const now = Date.now()
   if (cachedResult) {
-    if (cachedResult.status === 'healthy') {
-      // If healthy, cache is valid forever (until manual invalidation)
+    const cacheAge = now - cacheTimestamp
+    const ttl =
+      cachedResult.status === 'healthy'
+        ? HEALTHY_CACHE_TTL
+        : UNHEALTHY_CACHE_TTL
+
+    if (cacheAge < ttl) {
+      console.log(
+        `[Diagnostics] Using cached result: ${cachedResult.status} (age: ${cacheAge}ms, ttl: ${ttl}ms)`
+      )
       return cachedResult
     }
-    // If unhealthy, cache for 10s to prevent spamming but allow retries
-    if (now - cacheTimestamp < 10000) {
-      return cachedResult
-    }
+    console.log(
+      `[Diagnostics] Cache expired (age: ${cacheAge}ms), running fresh checks`
+    )
+  } else {
+    console.log('[Diagnostics] No cache, running fresh checks')
   }
 
   const checks: DiagnosticChecks = {

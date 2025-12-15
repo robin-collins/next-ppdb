@@ -16,6 +16,15 @@ import {
 
 const execAsync = promisify(exec)
 
+/**
+ * Build MySQL client SSL flags compatible with both MySQL and MariaDB clients
+ * MariaDB uses --skip-ssl, MySQL 8.0+ uses --ssl-mode=DISABLED
+ * Since Debian trixie's default-mysql-client is MariaDB, we use --skip-ssl
+ */
+function getMysqlSslFlags(): string {
+  return '--skip-ssl'
+}
+
 // Progress callback type for UI updates
 export type ProgressCallback = (current: number, total: number) => void
 
@@ -48,8 +57,9 @@ async function getRawRecords(
   if (!config) throw new Error('Invalid DATABASE_URL')
 
   // Query with explicit column output to handle bad dates
-  // --ssl-mode=DISABLED for internal Docker network (works with both MySQL and MariaDB clients)
-  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${tempDbName} -e "SELECT * FROM ${table}" --batch`
+  // --skip-ssl for MariaDB client compatibility (Debian trixie's default-mysql-client)
+  const sslFlags = getMysqlSslFlags()
+  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} ${tempDbName} -e "SELECT * FROM ${table}" --batch`
 
   const { stdout } = await execAsync(cmd, { maxBuffer: 100 * 1024 * 1024 })
 
@@ -106,7 +116,8 @@ async function rawInsert(
   })
 
   const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${escapedValues.join(', ')})`
-  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' --ssl-mode=DISABLED ${config.database} -e "${sql.replace(/"/g, '\\"')}"`
+  const sslFlags = getMysqlSslFlags()
+  const cmd = `mysql -h${config.host} -P${config.port} -u${config.user} -p'${config.password}' ${sslFlags} ${config.database} -e "${sql.replace(/"/g, '\\"')}"`
 
   await execAsync(cmd)
 }

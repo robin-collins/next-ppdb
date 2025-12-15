@@ -9,14 +9,27 @@ import { HealthCheckResult } from '@/lib/diagnostics/types'
 
 type WizardStep = 'diagnostics' | 'upload' | 'importing' | 'complete' | 'error'
 
+/** Backup type detected during file extraction */
+type BackupType = 'legacy' | 'nextjs' | 'unknown'
+
+interface SqlFileInfo {
+  table: string
+  path: string
+  filename: string
+}
+
 interface UploadResult {
   success: boolean
   uploadId: string
   filename: string
   fileType: string
   size: number
-  sqlFile: string
-  originalSqlFilename: string
+  sqlFiles: SqlFileInfo[]
+  backupPath?: string
+  /** Detected backup type: 'legacy' (PHP app), 'nextjs' (this app), or 'unknown' */
+  backupType?: BackupType
+  /** Human-readable description of the backup source */
+  backupSourceDescription?: string
 }
 
 interface ImportStats {
@@ -285,6 +298,8 @@ export default function SetupPage() {
             {step === 'importing' && uploadResult && (
               <ImportProgress
                 uploadId={uploadResult.uploadId}
+                backupType={uploadResult.backupType}
+                backupSourceDescription={uploadResult.backupSourceDescription}
                 onComplete={handleImportComplete}
                 onError={handleImportError}
               />
