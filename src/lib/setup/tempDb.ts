@@ -7,21 +7,13 @@ import { promisify } from 'util'
 import { PrismaClient } from '@/generated/prisma'
 import { parseDbUrl } from '@/lib/diagnostics/checks'
 import { SqlFileInfo } from '@/lib/import/extractor'
+import { getMysqlSslFlags } from '@/lib/mysql-utils'
 
 const execAsync = promisify(exec)
 
 export interface TempDbConfig {
   name: string
   connectionUrl: string
-}
-
-/**
- * Build MySQL client SSL flags compatible with both MySQL and MariaDB clients
- * MariaDB uses --skip-ssl, MySQL 8.0+ uses --ssl-mode=DISABLED
- * Since Debian trixie's default-mysql-client is MariaDB, we use --skip-ssl
- */
-function getMysqlSslFlags(): string {
-  return '--skip-ssl'
 }
 
 /**

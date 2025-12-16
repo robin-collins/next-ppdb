@@ -7,6 +7,7 @@ import * as path from 'path'
 import archiver from 'archiver'
 import { createWriteStream } from 'fs'
 import { log, logError } from '@/lib/logger'
+import { getMysqlSslFlags } from '@/lib/mysql-utils'
 
 const execAsync = promisify(exec)
 
@@ -26,15 +27,6 @@ function parseDbUrl(url: string) {
     port: match[4],
     database: match[5],
   }
-}
-
-/**
- * Build MySQL client SSL flags compatible with both MySQL and MariaDB clients
- * MariaDB uses --skip-ssl, MySQL 8.0+ uses --ssl-mode=DISABLED
- * Since Debian trixie's default-mysql-client is MariaDB, we use --skip-ssl
- */
-function getMysqlSslFlags(): string {
-  return '--skip-ssl'
 }
 
 // Get timestamp in YYYYMMDD-HHmmss format
