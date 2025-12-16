@@ -30,6 +30,11 @@ import {
   type ImportSummary,
 } from '@/lib/import/importLogger'
 import {
+  createLogArchive,
+  verifyArchive,
+  getDownloadIdentifier,
+} from '@/lib/import/logArchiver'
+import {
   cleanupTempDir,
   SqlFileInfo,
   getSqlFilesInOrder,
@@ -39,6 +44,17 @@ import { setNeedsSetup } from '@/lib/setupState'
 import { PrismaClient } from '@/generated/prisma'
 
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'setup')
+
+/**
+ * Format bytes into human-readable string
+ */
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
 
 // Metadata file saved by upload route
 interface UploadMetadata {
@@ -438,11 +454,68 @@ export async function GET(request: NextRequest) {
           message: `Summary report: ${summaryPath}`,
         })
 
+        // Phase 7: Compress log files into ZIP archive
+        send('progress', {
+          phase: 'archiving_logs',
+          message: 'Compressing log files into archive...',
+        })
+
+        const archiveResult = await createLogArchive(logDir)
+
+        let logArchive: {
+          available: boolean
+          downloadId: string | null
+          filename: string | null
+          fileCount: number
+          archiveSize: number
+        } = {
+          available: false,
+          downloadId: null,
+          filename: null,
+          fileCount: 0,
+          archiveSize: 0,
+        }
+
+        if (archiveResult.success && archiveResult.zipPath) {
+          // Verify the archive was created correctly
+          const isValid = await verifyArchive(archiveResult.zipPath)
+
+          if (isValid) {
+            logArchive = {
+              available: true,
+              downloadId: getDownloadIdentifier(archiveResult.zipPath),
+              filename: archiveResult.zipFilename,
+              fileCount: archiveResult.fileCount,
+              archiveSize: archiveResult.totalSize,
+            }
+
+            send('log', {
+              timestamp: new Date().toISOString(),
+              level: 'success',
+              message: `Log archive created: ${archiveResult.zipFilename} (${archiveResult.fileCount} files, ${formatBytes(archiveResult.totalSize)})`,
+            })
+          } else {
+            send('log', {
+              timestamp: new Date().toISOString(),
+              level: 'warning',
+              message:
+                'Log archive verification failed - download may not be available',
+            })
+          }
+        } else {
+          send('log', {
+            timestamp: new Date().toISOString(),
+            level: 'warning',
+            message: `Failed to create log archive: ${archiveResult.error || 'Unknown error'}`,
+          })
+        }
+
         send('complete', {
           success: true,
           stats: totalStats,
           logDir: logDir,
           summaryPath: summaryPath,
+          logArchive: logArchive,
           message: 'Database import completed successfully!',
         })
       } catch (error) {

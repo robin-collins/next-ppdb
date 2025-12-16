@@ -30,6 +30,14 @@ interface FinalStats {
   }
 }
 
+interface LogArchiveInfo {
+  available: boolean
+  downloadId: string | null
+  filename: string | null
+  fileCount: number
+  archiveSize: number
+}
+
 /** Backup type detected during file extraction */
 type BackupType = 'legacy' | 'nextjs' | 'unknown'
 
@@ -59,6 +67,7 @@ export default function ImportProgress({
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isComplete, setIsComplete] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [logArchive, setLogArchive] = useState<LogArchiveInfo | null>(null)
 
   const startImport = useCallback(() => {
     const eventSource = new EventSource(
@@ -128,6 +137,10 @@ export default function ImportProgress({
       setIsComplete(true)
       setPhase('complete')
       setMessage(data.message)
+      // Capture log archive info if available
+      if (data.logArchive) {
+        setLogArchive(data.logArchive)
+      }
       eventSource.close()
       // Pass final stats to parent after short delay for user to see completion
       setTimeout(() => onComplete(data.stats), 2000)
@@ -227,6 +240,22 @@ export default function ImportProgress({
         return 'Next.js Backup'
       default:
         return 'Unknown Format'
+    }
+  }
+
+  // Helper to format bytes into human-readable string
+  const formatBytes = (bytes: number): string => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  // Handle log archive download
+  const handleDownloadLogs = () => {
+    if (logArchive?.available && logArchive.downloadId) {
+      window.open(`/api/setup/import/logs/${logArchive.downloadId}`, '_blank')
     }
   }
 
@@ -408,6 +437,59 @@ export default function ImportProgress({
 
       {/* Log Viewer */}
       <ImportLog logs={logs} />
+
+      {/* Download Logs Button - Show when import is complete and archive is available */}
+      {isComplete && logArchive?.available && (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                <svg
+                  className="h-5 w-5 text-blue-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-medium text-blue-900">
+                  Import Logs Available
+                </h3>
+                <p className="text-sm text-blue-700">
+                  {logArchive.fileCount} log files (
+                  {formatBytes(logArchive.archiveSize)})
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleDownloadLogs}
+              className="flex items-center gap-2 rounded-lg border-2 border-transparent bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:scale-105 hover:border-blue-700 hover:bg-blue-700 hover:shadow-md"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+              Download Logs
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

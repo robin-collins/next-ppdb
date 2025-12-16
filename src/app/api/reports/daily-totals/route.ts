@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withRateLimit } from '@/lib/middleware/rateLimit'
+import { extractStaffInitials } from '@/services/notes.service'
 
 export interface DailyTotalAnimal {
   animalID: number
@@ -10,6 +11,7 @@ export interface DailyTotalAnimal {
   breedName: string
   cost: number
   hasNotes: boolean
+  staffInitials: string | null
 }
 
 export interface DailyTotalsResponse {
@@ -91,6 +93,7 @@ export async function GET(request: NextRequest) {
             },
             select: {
               noteID: true,
+              notes: true,
             },
           },
         },
@@ -103,6 +106,16 @@ export async function GET(request: NextRequest) {
         const surname = animal.customer?.surname || ''
         const ownerName = `${firstName} ${surname}`.trim() || 'Unknown'
 
+        // Extract staff initials from notes (use first note with valid initials)
+        let staffInitials: string | null = null
+        for (const note of animal.notes) {
+          const initials = extractStaffInitials(note.notes)
+          if (initials) {
+            staffInitials = initials
+            break
+          }
+        }
+
         return {
           animalID: animal.animalID,
           animalName: animal.animalname || 'Unknown',
@@ -113,6 +126,7 @@ export async function GET(request: NextRequest) {
               ? animal.cost
               : Number(animal.cost) || 0,
           hasNotes: animal.notes.length > 0,
+          staffInitials,
         }
       })
 

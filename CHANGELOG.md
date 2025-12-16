@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.9] - 2025-12-16
+
+### Added
+
+- **Daily Totals Report - Staff Initials Display**
+  - Enhanced daily-totals page to show staff initials for animals with notes
+  - Added `staffInitials` field to `DailyTotalAnimal` API response interface
+  - Updated API to extract staff initials from notes using existing `extractStaffInitials` logic
+  - Display uses person icon badge matching the animal details page styling
+  - Staff initials appear next to the notes indicator when notes include valid initials
+
+- **Import Log Archive Download**
+  - Automatically compresses all generated log files into a single ZIP archive at import completion
+  - New download button on import summary page for easy log retrieval
+  - Uses streaming compression with maximum compression level for efficient handling of large log files
+  - Archive verification ensures successful compression before enabling download
+  - Download endpoint at `/api/setup/import/logs/[filename]` with security protections against directory traversal
+  - Files: `src/lib/import/logArchiver.ts` (compression utility), `src/app/api/setup/import/logs/[filename]/route.ts` (download endpoint)
+
 ## [0.9.7] - 2025-12-16
 
 ### Fixed
