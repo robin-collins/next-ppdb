@@ -21,6 +21,7 @@ import {
 } from '@/lib/email-templates'
 import { emailQueue } from '@/lib/email-queue'
 import { notificationStore } from '@/lib/notification-store'
+import { getMysqlSslFlags } from '@/lib/mysql-utils'
 
 const execAsync = promisify(exec)
 
@@ -128,7 +129,8 @@ export async function POST(request: Request) {
     log.info('ScheduledBackup: Starting backup', { timestamp })
 
     // Use mysqldump to create SQL dump
-    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' --ssl-mode=DISABLED --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
+    const sslFlags = getMysqlSslFlags()
+    const mysqldumpCmd = `mysqldump --host=${db.host} --port=${db.port} --user=${db.user} --password='${db.password}' ${sslFlags} --single-transaction --routines --triggers --events ${db.database} > "${sqlPath}"`
 
     try {
       await execAsync(mysqldumpCmd)

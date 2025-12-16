@@ -43,6 +43,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added OCI labels for container metadata
   - Added runtime environment variables: `APP_BUILD_VERSION`, `APP_BUILD_COMMIT`, `APP_BUILD_DATE`
 
+- **Centralized MySQL/MariaDB SSL Compatibility**
+  - Created `src/lib/mysql-utils.ts` with shared `getMysqlSslFlags()` helper
+  - Provides `--skip-ssl` flag compatible with both MySQL and MariaDB clients
+  - Used by backup routes, import system, and temp database management
+
+### Fixed
+
+- **Scheduled Backup MariaDB Compatibility**
+  - Fixed `scheduled-backup/route.ts` using incompatible `--ssl-mode=DISABLED` flag
+  - Now uses shared `getMysqlSslFlags()` helper returning `--skip-ssl`
+  - MariaDB client (Debian default) doesn't support MySQL's `--ssl-mode` flag
+
 ### Changed
 
 - **Docker Entrypoint - Enhanced Startup Pre-Checks**
