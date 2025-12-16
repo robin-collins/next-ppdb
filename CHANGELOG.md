@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.12] - 2025-12-16
+
+### Fixed
+
+- **Fixed sed "Resource busy" error during update execution**
+  - `sed -i` fails on Docker bind-mounted volumes because it creates a temp file and tries to atomically rename it
+  - Changed `update_env_version()` in `execute-updates.sh` to read, modify in memory, and write back directly
+  - This allows APP_VERSION to be updated in .env after successful updates
+
+- **Fixed stale "Update Ready" notifications after successful updates**
+  - Added `archiveBySource()` method to `notification-store.ts` to archive notifications by source
+  - Execute route now archives all `version_check` notifications when an update succeeds
+  - This clears the confusing "Update Ready" indicator after the app has already updated
+
+- **Fixed race condition in update success reporting**
+  - Added 3-second delay after health check before reporting success to the app
+  - Gives the new container time to fully initialize its Valkey connection
+  - Prevents the PUT request from failing due to uninitialized connections
+
+### Changed
+
+- **Enhanced quick-install.ps1 with Interactive Configuration**
+  - Added interactive prompts for .env file creation when no .env exists
+  - Prompts include opinionated defaults for all required settings
+  - Automatically generates secure random passwords for MySQL (24 chars)
+  - Automatically generates secure hex key for Scheduler API (32 bytes)
+  - Groups configuration into: Required, MySQL, Scheduler, Email (optional), GitHub (optional)
+  - Domain name is required; other settings have sensible defaults
+  - Improved completion message showing all service URLs
+  - Updated script documentation header
+
 ## [0.9.11] - 2025-12-16
 
 ### Added

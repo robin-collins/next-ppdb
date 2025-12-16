@@ -202,6 +202,10 @@ export async function PUT(request: Request) {
         duration,
       })
 
+      // Archive old "Update Ready" notifications from version_check
+      // This clears the stale notifications that showed the pending update
+      await notificationStore.archiveBySource('version_check')
+
       // Create success notification
       await notificationStore.create({
         type: 'success',

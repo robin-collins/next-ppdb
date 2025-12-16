@@ -286,10 +286,14 @@ update_env_version() {
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Updating APP_VERSION in .env to $VERSION..."
 
-    # Use sed to update the APP_VERSION line
-    # Handles both APP_VERSION=x.x.x and APP_VERSION="x.x.x" formats
+    # NOTE: We can't use 'sed -i' because it creates a temp file and tries to
+    # atomically rename it, which fails on Docker bind-mounted volumes with
+    # "Resource busy" error. Instead, we read, modify, and write back directly.
     if grep -q "^APP_VERSION=" "$ENV_FILE"; then
-        sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" "$ENV_FILE"
+        # Read, modify in memory, write back directly (no temp file rename)
+        local CONTENT
+        CONTENT=$(sed "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" "$ENV_FILE")
+        printf '%s\n' "$CONTENT" > "$ENV_FILE"
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] .env APP_VERSION updated to $VERSION"
         return 0
     else
@@ -416,7 +420,12 @@ fi
 # This ensures manual docker-compose restarts use the correct version
 update_env_version "$NEW_VERSION"
 
-# Step 7: Report success
+# Step 7: Give the new container a moment to fully initialize Valkey connection
+# This prevents race conditions where the success report arrives before the app is ready
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Waiting 3s for container initialization..."
+sleep 3
+
+# Step 8: Report success
 END_TIME=$(date +%s)
 DURATION=$(( (END_TIME - START_TIME) * 1000 ))
 

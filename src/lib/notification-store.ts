@@ -434,6 +434,58 @@ export class NotificationStore {
   }
 
   /**
+   * Archive notifications by source
+   * Used to clear "Update Ready" notifications after successful update
+   */
+  async archiveBySource(source: NotificationSource): Promise<number> {
+    if (!this.redis) return 0
+
+    try {
+      const notifications = await this.getAll()
+      let count = 0
+      const now = new Date().toISOString()
+
+      for (const notification of notifications) {
+        if (
+          notification.source === source &&
+          notification.status !== 'archived'
+        ) {
+          const wasUnread = notification.status === 'unread'
+          notification.status = 'archived'
+          notification.archivedAt = now
+          count++
+
+          // Update unread count if was unread
+          if (wasUnread) {
+            await this.redis.decr(KEYS.UNREAD_COUNT)
+          }
+        }
+      }
+
+      if (count > 0) {
+        await this.redis.set(
+          KEYS.NOTIFICATIONS,
+          JSON.stringify(notifications),
+          'EX',
+          TTL.NOTIFICATIONS
+        )
+        log.info('NotificationStore: Archived notifications by source', {
+          source,
+          count,
+        })
+      }
+
+      return count
+    } catch (err) {
+      log.error('NotificationStore: Failed to archive by source', {
+        source,
+        error: err instanceof Error ? err.message : 'Unknown error',
+      })
+      return 0
+    }
+  }
+
+  /**
    * Get summary of notifications by priority
    */
   async getSummary(): Promise<{
