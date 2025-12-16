@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.13] - 2025-12-16
+
+### Fixed
+
+- **Fixed 500 Internal Server Error on documentation pages**
+  - Removed `force-dynamic` export from root layout that was causing conflicts with static docs pages
+  - The `force-dynamic` directive conflicted with `revalidate` in docs pages, causing `DYNAMIC_SERVER_USAGE` errors
+  - SetupGuard already bypasses `/docs` paths, so the directive was unnecessary for setup redirection
+
+### Changed
+
+- **Setup page no longer auto-redirects when database has data**
+  - Previously, visiting `/setup` when the database was healthy would auto-redirect to home
+  - Now the diagnostics page displays a blocking message explaining that import is disabled when data exists
+  - Users can still view diagnostics but cannot proceed to upload/import steps
+  - This protects existing data from accidental overwrites while allowing manual access to the setup page
+
 ## [0.9.12] - 2025-12-16
 
 ### Fixed

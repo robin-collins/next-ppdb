@@ -57,17 +57,14 @@ export default function SetupPage() {
       const response = await fetch('/api/health')
       const data = await response.json()
       setHealth(data)
-
-      // If already healthy, redirect to home
-      if (data.status === 'healthy') {
-        router.push('/')
-      }
+      // Note: We no longer auto-redirect when healthy.
+      // If DB has data, the diagnostics page will block progression.
     } catch {
       setError('Failed to check system status')
     } finally {
       setHealthLoading(false)
     }
-  }, [router])
+  }, [])
 
   useEffect(() => {
     fetchHealth()
@@ -263,13 +260,43 @@ export default function SetupPage() {
                 )}
 
                 {!healthLoading && allChecksPassed && (
-                  <div className="flex justify-center pt-4">
-                    <button
-                      onClick={handleGoToApp}
-                      className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700"
-                    >
-                      Go to Application
-                    </button>
+                  <div className="space-y-4 pt-4">
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                      <div className="flex items-start gap-3">
+                        <svg
+                          className="h-5 w-5 flex-shrink-0 text-amber-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                          />
+                        </svg>
+                        <div>
+                          <p className="font-medium text-amber-800">
+                            Database Already Contains Data
+                          </p>
+                          <p className="mt-1 text-sm text-amber-700">
+                            The setup wizard cannot proceed because your
+                            database already has data. To protect your existing
+                            data, import is blocked when records exist in the
+                            database.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleGoToApp}
+                        className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700"
+                      >
+                        Go to Application
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
