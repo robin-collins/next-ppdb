@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Backup Email Notifications Not Sending**
+  - Fixed `src/lib/email.ts` using wrong env var `SMTP_PASSWORD` instead of `SMTP_PASS`
+  - Fixed `scheduled-backup/route.ts` using `BACKUP_EMAIL_TO` instead of `BACKUP_NOTIFICATION_EMAIL`
+  - Added email status reporting to backup API response (shows sent/error/queued status)
+
 ### Added
 
 - **GitHub Actions - Scheduler Container Build**

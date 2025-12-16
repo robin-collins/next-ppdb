@@ -108,7 +108,7 @@ export async function POST(request: Request) {
   }
 
   const startTime = Date.now()
-  const emailTo = process.env.BACKUP_EMAIL_TO
+  const emailTo = process.env.BACKUP_NOTIFICATION_EMAIL
 
   try {
     const dbUrl = process.env.DATABASE_URL
@@ -183,6 +183,13 @@ export async function POST(request: Request) {
     })
 
     // Send success email
+    let emailStatus: {
+      sent: boolean
+      to?: string
+      error?: string
+      queued?: boolean
+    } = { sent: false }
+
     if (emailTo) {
       const template = backupSuccessTemplate({
         filename: zipFilename,
@@ -205,7 +212,9 @@ export async function POST(request: Request) {
         ],
       })
 
-      if (!emailResult.success) {
+      if (emailResult.success) {
+        emailStatus = { sent: true, to: emailTo }
+      } else {
         // Queue for retry
         await emailQueue.enqueue({
           to: emailTo,
@@ -214,6 +223,17 @@ export async function POST(request: Request) {
           text: template.text,
           // Note: Attachment might be large, so we skip it for retry
         })
+        emailStatus = {
+          sent: false,
+          to: emailTo,
+          error: emailResult.error,
+          queued: true,
+        }
+      }
+    } else {
+      emailStatus = {
+        sent: false,
+        error: 'No email recipient configured (BACKUP_NOTIFICATION_EMAIL)',
       }
     }
 
@@ -225,6 +245,7 @@ export async function POST(request: Request) {
       zipSize: zipStats.size,
       duration,
       downloadUrl: `/api/admin/backup/download/${zipFilename}`,
+      email: emailStatus,
     })
   } catch (err) {
     const error = err instanceof Error ? err.message : 'Backup failed'

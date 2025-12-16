@@ -25,7 +25,7 @@ const smtpConfig = {
     return process.env.SMTP_USER
   },
   get password(): string | undefined {
-    return process.env.SMTP_PASSWORD
+    return process.env.SMTP_PASS
   },
   get from(): string {
     return process.env.SMTP_FROM || 'PPDB Scheduler <noreply@example.com>'
