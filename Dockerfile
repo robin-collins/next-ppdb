@@ -21,16 +21,22 @@ RUN corepack enable pnpm
 # Install dependencies
 RUN pnpm i --frozen-lockfile --dangerously-allow-all-builds
 
-COPY src ./src
-COPY public ./public
-COPY prisma ./prisma
-COPY next.config.ts .
-COPY postcss.config.mjs .
-COPY tsconfig.json .
-COPY scripts ./scripts
+# Copy files in order of least to most frequently changed for optimal layer caching
+# 1. Config files (rarely change)
+COPY tsconfig.json next.config.ts postcss.config.mjs ./
 
-# Generate Prisma Client
+# 2. Scripts and static assets (rarely change)
+COPY scripts ./scripts
+COPY public ./public
+
+# 3. Prisma schema (changes infrequently)
+COPY prisma ./prisma
+
+# 4. Generate Prisma Client BEFORE copying src/ so it's cached when only code changes
 RUN pnpm exec prisma generate
+
+# 5. Source code (changes most frequently) - copied last to maximize cache hits
+COPY src ./src
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030

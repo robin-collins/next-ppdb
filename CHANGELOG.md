@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.10] - 2025-12-16
+
 ### Added
 
 - **Fallback Email Notifications for Failed Updates**
@@ -17,6 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Emails include status (success/failure), version info, duration, error details, and rollback status
   - Ensures maintainers are notified of critical failures before end users encounter issues
   - Files: `docker/scheduler/Dockerfile`, `docker/scheduler/scripts/execute-updates.sh`, `docker-compose.yml`
+
+### Changed
+
+- **Dockerfile Build Optimization for Faster Code-Only Rebuilds**
+  - Reordered COPY statements from least to most frequently changed: config files → scripts → public → prisma → src
+  - Moved `prisma generate` BEFORE `src/` copy so it's cached when only source code changes
+  - Grouped config files (tsconfig.json, next.config.ts, postcss.config.mjs) in single COPY layer
+  - Estimated savings: 5-15 seconds per build when only src/ changes (schema unchanged)
+  - File: `Dockerfile`
 
 ### Fixed
 
