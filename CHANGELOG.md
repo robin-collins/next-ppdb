@@ -7,19 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### Added
 
-- **Database Import SSL Error - MariaDB Client Compatibility**
-  - Changed `--ssl-mode=DISABLED` to `--skip-ssl` for MySQL client calls
-  - MariaDB client (default on Debian Trixie) doesn't support MySQL's `--ssl-mode=DISABLED` flag
-  - `--skip-ssl` works with both MySQL and MariaDB clients
-  - **Affected Files:** `src/lib/setup/tempDb.ts`, `src/lib/import/rawImporter.ts`, `src/app/api/admin/backup/route.ts`
+- **GitHub Actions - Scheduler Container Build**
+  - Updated `docker-publish.yml` to build both main application and scheduler containers
+  - Both images tagged with consistent semantic versioning (`1.2.3`, `1.2`, `1`, `latest`)
+  - Both images use matching commit SHA for SHA-based builds
+  - Scheduler image published to `ghcr.io/<repo>-scheduler`
+  - Added OCI-compliant labels (version, revision, created, title, description) to both images
+  - Added build arguments for version info embedded in containers (`BUILD_VERSION`, `BUILD_COMMIT`, `BUILD_DATE`)
+  - Both images signed with cosign for supply chain security
+  - Added GitHub Actions workflow summary showing both images' tags and digests
+  - Updated `release.yml` to include scheduler image pull command in release notes
 
-- **Setup Redirection Not Triggering**
-  - Changed diagnostic cache TTL from infinite (for healthy status) to 60 seconds
-  - Allows periodic re-evaluation when database state changes (e.g., tables emptied)
-  - Removed referer-based bypass check that could cause incorrect guard bypass
-  - Added debug logging to SetupGuard and diagnostics for troubleshooting
+- **Docker Compose Production Configuration**
+  - Both `next-ppdb` and `scheduler` services now use production GHCR images by default
+  - Image versions controlled via `APP_VERSION` environment variable
+  - Local development build instructions commented with clear guidance
+  - Updated `.env.example` with `APP_VERSION=0.9.4` matching current release
+
+- **Automated .env Version Updates**
+  - Scheduler now automatically updates `APP_VERSION` in `.env` after successful updates
+  - Ensures manual `docker compose up` restarts use the correct (updated) version
+  - Mounted `.env` file to scheduler container with read-write access
+  - Added `update_env_version()` function to `execute-updates.sh`
+  - Prevents accidental rollbacks when manually restarting containers
+
+- **Scheduler Container Version Metadata**
+  - Updated `docker/scheduler/Dockerfile` with build args for version info
+  - Added OCI labels for container metadata
+  - Added runtime environment variables: `SCHEDULER_VERSION`, `SCHEDULER_COMMIT`, `SCHEDULER_BUILD_DATE`
+
+- **Main Application Container Version Metadata**
+  - Updated `Dockerfile` with build args for version info in runner stage
+  - Added OCI labels for container metadata
+  - Added runtime environment variables: `APP_BUILD_VERSION`, `APP_BUILD_COMMIT`, `APP_BUILD_DATE`
 
 ### Changed
 
@@ -39,7 +61,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added "Known Issues & Resolutions" section documenting SSL, cache, and bypass fixes
   - Documented Setup Wizard flow with import process steps
 
-### Changed
+- **Local Docker Build Script**
+  - Updated `build:docker` script in `package.json` to build both main app and scheduler containers
+  - Now builds: `next-ppdb` (main app) and `next-ppdb-scheduler` (scheduler)
 
 - **GitHub Actions Docker Workflow - Enhanced Version Tagging**
   - Added explicit semantic version tagging for container builds
@@ -92,6 +116,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New files: `notification-store.ts`, `notifications/page.tsx`, notifications API routes
 
 ### Fixed
+
+- **Database Import SSL Error - MariaDB Client Compatibility**
+  - Changed `--ssl-mode=DISABLED` to `--skip-ssl` for MySQL client calls
+  - MariaDB client (default on Debian Trixie) doesn't support MySQL's `--ssl-mode=DISABLED` flag
+  - `--skip-ssl` works with both MySQL and MariaDB clients
+  - **Affected Files:** `src/lib/setup/tempDb.ts`, `src/lib/import/rawImporter.ts`, `src/app/api/admin/backup/route.ts`
+
+- **Setup Redirection Not Triggering**
+  - Changed diagnostic cache TTL from infinite (for healthy status) to 60 seconds
+  - Allows periodic re-evaluation when database state changes (e.g., tables emptied)
+  - Removed referer-based bypass check that could cause incorrect guard bypass
+  - Added debug logging to SetupGuard and diagnostics for troubleshooting
+
+- **Scheduler Update Execution Script - Production Docker Compose Integration**
+  - Fixed non-existent `/app` directory reference that caused silent update failures
+  - Script now uses `docker compose -f /docker-compose.yml up -d --force-recreate` for proper container recreation
+  - Added `recreate_container()` function for consistent update and rollback operations
+  - Mount docker-compose.yml into scheduler container for compose access
+  - Added `docker-cli-compose` package to scheduler Dockerfile
+
+- **Sidebar Pending Update Notification - API Response Property Mismatch**
+  - Fixed `fetchPendingUpdate` checking `data.currentUpdate` instead of `data.pending`
+  - Pending update notification banner now displays correctly when updates are available
+
+- **GHCR Environment Variable - Name Mismatch**
+  - Fixed `ghcr.ts` reading `GHCR_PAT` while docker-compose provides `GHCR_TOKEN`
+  - Library now accepts both `GHCR_TOKEN` (preferred) and `GHCR_PAT` (legacy) for compatibility
+  - Version checks now properly authenticate with GHCR
+
+- **Docker Compose - Production GHCR Image Configuration**
+  - Updated `next-ppdb` service to use `ghcr.io/${GHCR_REPOSITORY}:${APP_VERSION}` image
+  - Supports automated version updates via scheduler
+  - Added comments documenting local development vs production configuration
 
 - **GitHub Actions Release Workflow - Replaced Broken Action**
   - Replaced unavailable `justincy/github-action-npm-release@v2` with custom solution

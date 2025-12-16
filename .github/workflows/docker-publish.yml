@@ -65,7 +65,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Determine version and generate tags
+      # Determine version and generate tags for both images
       - name: Determine version
         id: version
         run: |
@@ -85,59 +85,143 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
           # Generate Docker tags (lowercase for GHCR compatibility)
-          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-          IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
+          # Main application image
+          APP_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          APP_IMAGE=$(echo "$APP_IMAGE" | tr '[:upper:]' '[:lower:]')
+
+          # Scheduler image (same repo with -scheduler suffix)
+          SCHEDULER_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-scheduler"
+          SCHEDULER_IMAGE=$(echo "$SCHEDULER_IMAGE" | tr '[:upper:]' '[:lower:]')
+
           if [ -n "$VERSION" ]; then
             # Parse semver components
             MAJOR=$(echo "$VERSION" | cut -d. -f1)
             MINOR=$(echo "$VERSION" | cut -d. -f2)
 
-            TAGS="${IMAGE}:${VERSION}"
-            TAGS="${TAGS},${IMAGE}:${MAJOR}.${MINOR}"
-            # Only add major tag if major > 0
+            # App tags
+            APP_TAGS="${APP_IMAGE}:${VERSION}"
+            APP_TAGS="${APP_TAGS},${APP_IMAGE}:${MAJOR}.${MINOR}"
             if [ "$MAJOR" != "0" ]; then
-              TAGS="${TAGS},${IMAGE}:${MAJOR}"
+              APP_TAGS="${APP_TAGS},${APP_IMAGE}:${MAJOR}"
             fi
-            TAGS="${TAGS},${IMAGE}:latest"
-            echo "Generated tags: $TAGS"
+            APP_TAGS="${APP_TAGS},${APP_IMAGE}:latest"
+
+            # Scheduler tags (same version scheme)
+            SCHEDULER_TAGS="${SCHEDULER_IMAGE}:${VERSION}"
+            SCHEDULER_TAGS="${SCHEDULER_TAGS},${SCHEDULER_IMAGE}:${MAJOR}.${MINOR}"
+            if [ "$MAJOR" != "0" ]; then
+              SCHEDULER_TAGS="${SCHEDULER_TAGS},${SCHEDULER_IMAGE}:${MAJOR}"
+            fi
+            SCHEDULER_TAGS="${SCHEDULER_TAGS},${SCHEDULER_IMAGE}:latest"
+
+            echo "Generated app tags: $APP_TAGS"
+            echo "Generated scheduler tags: $SCHEDULER_TAGS"
           else
             # Use SHA for unversioned builds
-            TAGS="${IMAGE}:sha-${GITHUB_SHA::7}"
-            echo "Generated SHA tag: $TAGS"
+            APP_TAGS="${APP_IMAGE}:sha-${GITHUB_SHA::7}"
+            SCHEDULER_TAGS="${SCHEDULER_IMAGE}:sha-${GITHUB_SHA::7}"
+            echo "Generated app SHA tag: $APP_TAGS"
+            echo "Generated scheduler SHA tag: $SCHEDULER_TAGS"
           fi
 
-          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "app_tags=$APP_TAGS" >> $GITHUB_OUTPUT
+          echo "scheduler_tags=$SCHEDULER_TAGS" >> $GITHUB_OUTPUT
+          echo "app_image=$APP_IMAGE" >> $GITHUB_OUTPUT
+          echo "scheduler_image=$SCHEDULER_IMAGE" >> $GITHUB_OUTPUT
 
-      # Extract metadata (labels) for Docker
+      # Extract metadata (labels) for main app Docker image
       # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
+      - name: Extract Docker metadata (App)
+        id: meta-app
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          labels: |
+            org.opencontainers.image.title=PPDB - Pampered Pooch Database
+            org.opencontainers.image.description=Next.js pet grooming database application
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
+      # Extract metadata (labels) for scheduler Docker image
+      - name: Extract Docker metadata (Scheduler)
+        id: meta-scheduler
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-scheduler
+          labels: |
+            org.opencontainers.image.title=PPDB Scheduler
+            org.opencontainers.image.description=Scheduled task runner for PPDB (backups, updates, maintenance)
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+
+      # Build and push main application Docker image
       # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        id: build-and-push
+      - name: Build and push Docker image (App)
+        id: build-and-push-app
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
+          file: ./Dockerfile
           push: true
-          tags: ${{ steps.version.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ steps.version.outputs.app_tags }}
+          labels: ${{ steps.meta-app.outputs.labels }}
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,mode=max,scope=app
+          build-args: |
+            BUILD_VERSION=${{ steps.version.outputs.version }}
+            BUILD_COMMIT=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.release.created_at }}
 
-      # Sign the resulting Docker image digest.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
+      # Build and push scheduler Docker image
+      - name: Build and push Docker image (Scheduler)
+        id: build-and-push-scheduler
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: ./docker/scheduler
+          file: ./docker/scheduler/Dockerfile
+          push: true
+          tags: ${{ steps.version.outputs.scheduler_tags }}
+          labels: ${{ steps.meta-scheduler.outputs.labels }}
+          cache-from: type=gha,scope=scheduler
+          cache-to: type=gha,mode=max,scope=scheduler
+          build-args: |
+            BUILD_VERSION=${{ steps.version.outputs.version }}
+            BUILD_COMMIT=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.release.created_at }}
+
+      # Sign the main app Docker image digest
       # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
+      - name: Sign the published Docker image (App)
         env:
-          TAGS: ${{ steps.version.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.version.outputs.app_tags }}
+          DIGEST: ${{ steps.build-and-push-app.outputs.digest }}
         run: |
           # Convert comma-separated tags to newline-separated for xargs
           echo "${TAGS}" | tr ',' '\n' | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      # Sign the scheduler Docker image digest
+      - name: Sign the published Docker image (Scheduler)
+        env:
+          TAGS: ${{ steps.version.outputs.scheduler_tags }}
+          DIGEST: ${{ steps.build-and-push-scheduler.outputs.digest }}
+        run: |
+          # Convert comma-separated tags to newline-separated for xargs
+          echo "${TAGS}" | tr ',' '\n' | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      # Output summary of built images
+      - name: Build Summary
+        run: |
+          echo "## Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Main Application" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image:** \`${{ steps.version.outputs.app_image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags:** \`${{ steps.version.outputs.app_tags }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest:** \`${{ steps.build-and-push-app.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Scheduler" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image:** \`${{ steps.version.outputs.scheduler_image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags:** \`${{ steps.version.outputs.scheduler_tags }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest:** \`${{ steps.build-and-push-scheduler.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Info" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${{ steps.version.outputs.version || 'sha-' }}${{ steps.version.outputs.version == '' && github.sha || '' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY

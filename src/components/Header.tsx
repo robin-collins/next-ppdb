@@ -1,9 +1,14 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { GITHUB_REPO_URL, DOCS_SITE_URL } from '@/constants'
+
+interface NotificationSummary {
+  unread: number
+  highestPriority: 'error' | 'warning' | 'success' | 'info' | null
+}
 
 interface BreadcrumbItem {
   label: string
@@ -32,6 +37,52 @@ export default function Header({
   const pathname = usePathname()
   const [query, setQuery] = useState(searchValue)
   const [dateTime, setDateTime] = useState('')
+  const [notifications, setNotifications] = useState<NotificationSummary>({
+    unread: 0,
+    highestPriority: null,
+  })
+
+  // Fetch notification summary
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/notifications')
+      if (res.ok) {
+        const data = await res.json()
+        const unreadNotifications =
+          data.notifications?.filter(
+            (n: { status: string }) => n.status === 'unread'
+          ) || []
+
+        // Determine highest priority (error > warning > success > info)
+        let highestPriority: NotificationSummary['highestPriority'] = null
+        const types = unreadNotifications.map((n: { type: string }) => n.type)
+
+        if (types.includes('error')) {
+          highestPriority = 'error'
+        } else if (types.includes('warning')) {
+          highestPriority = 'warning'
+        } else if (types.includes('success')) {
+          highestPriority = 'success'
+        } else if (types.includes('info')) {
+          highestPriority = 'info'
+        }
+
+        setNotifications({
+          unread: unreadNotifications.length,
+          highestPriority,
+        })
+      }
+    } catch {
+      // Silently ignore - notifications are optional
+    }
+  }, [])
+
+  // Poll for notifications every 60 seconds
+  useEffect(() => {
+    fetchNotifications()
+    const interval = setInterval(fetchNotifications, 60000)
+    return () => clearInterval(interval)
+  }, [fetchNotifications])
 
   useEffect(() => {
     setQuery(searchValue)
@@ -263,6 +314,32 @@ export default function Header({
             </svg>
           </Link>
         </div>
+
+        {/* Notification Bell */}
+        <Link
+          href="/admin/notifications"
+          className={`relative flex h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-gray-200 ${
+            notifications.highestPriority === 'error'
+              ? 'bg-red-100 text-red-600'
+              : notifications.highestPriority === 'warning'
+                ? 'bg-yellow-100 text-yellow-600'
+                : 'bg-gray-100 text-gray-600'
+          } ${notifications.unread > 0 && (notifications.highestPriority === 'error' || notifications.highestPriority === 'warning') ? 'animate-pulse' : ''}`}
+          title={
+            notifications.unread > 0
+              ? `${notifications.unread} unread notification${notifications.unread > 1 ? 's' : ''}`
+              : 'No notifications'
+          }
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+          </svg>
+          {notifications.unread > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+              {notifications.unread > 9 ? '9+' : notifications.unread}
+            </span>
+          )}
+        </Link>
 
         {/* Date Display */}
         <div className="ml-auto hidden flex-shrink-0 rounded-full bg-[var(--primary-light)] !px-6 !py-2 text-sm font-semibold whitespace-nowrap text-[var(--primary)] lg:block">

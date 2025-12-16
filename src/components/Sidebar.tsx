@@ -1,7 +1,14 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+
+interface PendingUpdate {
+  id: string
+  currentVersion: string
+  newVersion: string
+  status: 'PENDING' | 'APPROVED'
+}
 
 interface SidebarProps {
   isOpen: boolean
@@ -10,6 +17,7 @@ interface SidebarProps {
   onTogglePin: () => void
   currentPath: string
   skipTransition?: boolean // Skip animation on initial page load when pinned
+  onUpdateClick?: (update: PendingUpdate) => void
 }
 
 export default function Sidebar({
@@ -19,12 +27,67 @@ export default function Sidebar({
   onTogglePin,
   currentPath,
   skipTransition = false,
+  onUpdateClick,
 }: SidebarProps) {
   const [sidebarWidth, setSidebarWidth] = useState(280)
   const [isResizing, setIsResizing] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const sidebarRef = useRef<HTMLElement>(null)
   const [sidebarDate, setSidebarDate] = useState('')
+  const [pendingUpdate, setPendingUpdate] = useState<PendingUpdate | null>(null)
+  const [unreadNotifications, setUnreadNotifications] = useState(0)
+
+  // Fetch pending updates
+  const fetchPendingUpdate = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/updates/pending')
+      if (res.ok) {
+        const data = await res.json()
+        if (
+          data.pending &&
+          (data.pending.status === 'PENDING' ||
+            data.pending.status === 'APPROVED')
+        ) {
+          setPendingUpdate(data.pending)
+        } else {
+          setPendingUpdate(null)
+        }
+      }
+    } catch {
+      // Silently ignore - updates are optional
+    }
+  }, [])
+
+  // Fetch notification count
+  const fetchNotificationCount = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/notifications')
+      if (res.ok) {
+        const data = await res.json()
+        const unread =
+          data.notifications?.filter(
+            (n: { status: string }) => n.status === 'unread'
+          ).length || 0
+        setUnreadNotifications(unread)
+      }
+    } catch {
+      // Silently ignore
+    }
+  }, [])
+
+  // Poll for updates every 5 minutes
+  useEffect(() => {
+    fetchPendingUpdate()
+    fetchNotificationCount()
+    const interval = setInterval(
+      () => {
+        fetchPendingUpdate()
+        fetchNotificationCount()
+      },
+      5 * 60 * 1000
+    )
+    return () => clearInterval(interval)
+  }, [fetchPendingUpdate, fetchNotificationCount])
 
   useEffect(() => {
     updateDate()
@@ -216,7 +279,44 @@ export default function Sidebar({
       ),
       active: currentPath.startsWith('/docs'),
     },
-  ]
+    {
+      href: '/admin/updates',
+      label: 'System Updates',
+      icon: (
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8h1.5z" />
+        </svg>
+      ),
+      active: currentPath === '/admin/updates',
+      badge: pendingUpdate
+        ? pendingUpdate.status === 'APPROVED'
+          ? 'Ready'
+          : 'New'
+        : undefined,
+      badgeColor:
+        pendingUpdate?.status === 'APPROVED' ? 'bg-green-500' : 'bg-yellow-500',
+    },
+    {
+      href: '/admin/notifications',
+      label: 'Notifications',
+      icon: (
+        <svg
+          className="h-[18px] w-[18px]"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+        </svg>
+      ),
+      active: currentPath === '/admin/notifications',
+      badge: unreadNotifications > 0 ? String(unreadNotifications) : undefined,
+      badgeColor: 'bg-red-500',
+    },
+  ] as const
 
   return (
     <>
@@ -351,11 +451,56 @@ export default function Sidebar({
                 }`}
               >
                 {item.icon}
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {'badge' in item && item.badge && (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-bold text-white ${'badgeColor' in item ? item.badgeColor : 'bg-gray-500'}`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             </div>
           ))}
         </div>
+
+        {/* Update Notification */}
+        {pendingUpdate && (
+          <div className="border-t border-gray-200 bg-yellow-50 px-4 py-3">
+            <button
+              onClick={() => {
+                if (onUpdateClick) {
+                  onUpdateClick(pendingUpdate)
+                } else {
+                  window.location.href = '/admin/updates'
+                }
+              }}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                pendingUpdate.status === 'APPROVED'
+                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                  : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8h1.5z" />
+                </svg>
+                <span>
+                  {pendingUpdate.status === 'APPROVED'
+                    ? 'Update Ready'
+                    : 'Update Available'}
+                </span>
+              </div>
+              <span className="text-xs opacity-75">
+                v{pendingUpdate.currentVersion} → v{pendingUpdate.newVersion}
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Sidebar Footer */}
         <div className="border-t border-gray-200 bg-gray-50 p-4">

@@ -68,7 +68,11 @@
       "Bash(timeout 120 pnpm build:*)",
       "Bash(git checkout:*)",
       "Bash(docker build:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
