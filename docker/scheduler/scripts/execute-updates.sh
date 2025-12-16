@@ -25,6 +25,7 @@ fi
 GHCR_IMAGE="${GHCR_IMAGE:-ghcr.io/robin-collins/next-ppdb}"
 COMPOSE_FILE="${COMPOSE_FILE:-/docker-compose.yml}"
 CONTAINER_NAME="${CONTAINER_NAME:-next-ppdb}"
+ENV_FILE="${ENV_FILE:-/app/.env}"
 
 # Function to report result back to the app
 report_result() {
@@ -81,6 +82,32 @@ perform_rollback() {
     recreate_container "$PREVIOUS_VERSION" || true
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Rollback completed. Reason: $ROLLBACK_REASON"
+}
+
+# Function to update APP_VERSION in .env file
+# This ensures manual restarts use the correct version
+update_env_version() {
+    local VERSION=$1
+
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: .env file not found at $ENV_FILE, skipping version update"
+        return 1
+    fi
+
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Updating APP_VERSION in .env to $VERSION..."
+
+    # Use sed to update the APP_VERSION line
+    # Handles both APP_VERSION=x.x.x and APP_VERSION="x.x.x" formats
+    if grep -q "^APP_VERSION=" "$ENV_FILE"; then
+        sed -i "s/^APP_VERSION=.*/APP_VERSION=$VERSION/" "$ENV_FILE"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] .env APP_VERSION updated to $VERSION"
+        return 0
+    else
+        # APP_VERSION line doesn't exist, append it
+        echo "APP_VERSION=$VERSION" >> "$ENV_FILE"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] APP_VERSION=$VERSION appended to .env"
+        return 0
+    fi
 }
 
 # Function to wait for health check
@@ -193,7 +220,11 @@ if ! wait_for_health 300; then
     exit 1
 fi
 
-# Step 6: Report success
+# Step 6: Update .env file with new version
+# This ensures manual docker-compose restarts use the correct version
+update_env_version "$NEW_VERSION"
+
+# Step 7: Report success
 END_TIME=$(date +%s)
 DURATION=$(( (END_TIME - START_TIME) * 1000 ))
 

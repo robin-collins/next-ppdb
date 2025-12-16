@@ -19,7 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Both images signed with cosign for supply chain security
   - Added GitHub Actions workflow summary showing both images' tags and digests
   - Updated `release.yml` to include scheduler image pull command in release notes
-  - Updated `docker-compose.yml` with commented option for production scheduler image
+
+- **Docker Compose Production Configuration**
+  - Both `next-ppdb` and `scheduler` services now use production GHCR images by default
+  - Image versions controlled via `APP_VERSION` environment variable
+  - Local development build instructions commented with clear guidance
+  - Updated `.env.example` with `APP_VERSION=0.9.4` matching current release
+
+- **Automated .env Version Updates**
+  - Scheduler now automatically updates `APP_VERSION` in `.env` after successful updates
+  - Ensures manual `docker compose up` restarts use the correct (updated) version
+  - Mounted `.env` file to scheduler container with read-write access
+  - Added `update_env_version()` function to `execute-updates.sh`
+  - Prevents accidental rollbacks when manually restarting containers
 
 - **Scheduler Container Version Metadata**
   - Updated `docker/scheduler/Dockerfile` with build args for version info

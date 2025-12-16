@@ -216,12 +216,13 @@ services:
   # Scheduler sidecar container for automated tasks
   # Handles: nightly backups, version checks, and update execution
   scheduler:
-    # For development: build locally
-    build:
-      context: ./docker/scheduler
-      dockerfile: Dockerfile
-    # For production: use published image (uncomment and comment out build above)
-    # image: ghcr.io/robin-collins/next-ppdb-scheduler:latest
+    # LOCAL DEVELOPMENT: Uncomment build section and comment out image line
+    # build:
+    #   context: ./docker/scheduler
+    #   dockerfile: Dockerfile
+    #
+    # PRODUCTION: Use GHCR image with version from APP_VERSION env var
+    image: ghcr.io/${GHCR_REPOSITORY:-robin-collins/next-ppdb}-scheduler:${APP_VERSION:-latest}
     container_name: ppdb-scheduler
     hostname: ppdb-scheduler
     restart: unless-stopped
@@ -241,6 +242,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # Docker compose file for container recreation during updates
       - ./docker-compose.yml:/docker-compose.yml:ro
+      # Environment file - writable for version updates after successful upgrades
+      - ./.env:/app/.env:rw
       # Shared backup volume with main app
       - ppdb_backups:/backups
       # Scheduler logs
