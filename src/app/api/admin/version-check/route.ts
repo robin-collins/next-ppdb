@@ -71,10 +71,10 @@ export async function POST(request: Request) {
     // Check GHCR for next sequential version
     const updateCheck = await checkForUpdate(currentVersion)
 
-    if (!updateCheck) {
+    if (updateCheck.error) {
       return NextResponse.json(
         {
-          error: 'Failed to check for updates',
+          error: `Failed to check for updates: ${updateCheck.error}`,
         },
         { status: 500 }
       )

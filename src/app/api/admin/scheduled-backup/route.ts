@@ -193,7 +193,7 @@ export async function POST(request: Request) {
     if (emailTo) {
       const template = backupSuccessTemplate({
         filename: zipFilename,
-        timestamp,
+        timestamp: new Date().toISOString(),
         sqlSize: sqlStats.size,
         zipSize: zipStats.size,
         downloadUrl: `/api/admin/backup/download/${zipFilename}`,

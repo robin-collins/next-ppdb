@@ -7,12 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.7] - 2025-12-16
+
 ### Fixed
 
 - **Backup Email Notifications Not Sending**
   - Fixed `src/lib/email.ts` using wrong env var `SMTP_PASSWORD` instead of `SMTP_PASS`
   - Fixed `scheduled-backup/route.ts` using `BACKUP_EMAIL_TO` instead of `BACKUP_NOTIFICATION_EMAIL`
   - Added email status reporting to backup API response (shows sent/error/queued status)
+  - Fixed "Invalid Date" in backup email by passing ISO timestamp instead of custom format
+
+- **Version Check Error Reporting**
+  - Improved error handling in `src/lib/ghcr.ts` to return actual error message instead of null
+  - Updated `version-check/route.ts` to display the real error cause (e.g., "GHCR authentication failed")
 
 ### Added
 

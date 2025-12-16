@@ -206,11 +206,16 @@ export function getNextSequentialVersion(
  * @param currentVersion - Current app version
  * @returns Update info or null if no update available
  */
-export async function checkForUpdate(currentVersion: string): Promise<{
+export interface UpdateCheckResult {
   hasUpdate: boolean
   nextVersion: string | null
   skippedVersions: string[]
-} | null> {
+  error?: string
+}
+
+export async function checkForUpdate(
+  currentVersion: string
+): Promise<UpdateCheckResult> {
   try {
     const availableTags = await fetchAvailableTags()
     const nextVersion = getNextSequentialVersion(currentVersion, availableTags)
@@ -236,10 +241,14 @@ export async function checkForUpdate(currentVersion: string): Promise<{
       skippedVersions,
     }
   } catch (err) {
-    log.error('GHCR: Failed to check for update', {
-      error: err instanceof Error ? err.message : 'Unknown error',
-    })
-    return null
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    log.error('GHCR: Failed to check for update', { error: errorMessage })
+    return {
+      hasUpdate: false,
+      nextVersion: null,
+      skippedVersions: [],
+      error: errorMessage,
+    }
   }
 }
 
