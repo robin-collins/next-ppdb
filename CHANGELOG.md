@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.11] - 2025-12-16
+
+### Added
+
+- **Comprehensive Documentation Updates**
+  - Created `src/app/docs/features/notifications.mdx` documenting the notification system (bell icon, priority colors, notification management)
+  - Added Staff Workload Summary section to `reports.mdx` with screenshot and explanation of initials extraction
+  - Added Bulk Pricing modal documentation to `breeds.mdx` including Fixed Amount and Percentage adjustment types
+  - Added Safe Deletion / Mandatory Migration workflow to `breeds.mdx`
+  - Added Selective Rehoming documentation to `customers.mdx` for customer deletion workflow
+  - Added Customer Statistics section (Years Active, Total Visits) to `customers.mdx`
+  - Added Real-time Validation section to `customers.mdx`
+  - Added Type-to-Confirm deletion safety to `animals.mdx`
+  - Added Automatic Cost Extraction from service notes to `animals.mdx`
+  - Added Two-Column Layout, Actionable Contact Details, and Keyboard Accessibility to `search.mdx`
+  - Added Email Notifications, Import Log Archives, and System Updates sections to `admin.mdx`
+  - Added Docker Deployment and Environment Configuration to `getting-started/index.mdx`
+  - Updated `index.mdx` with link to new Notifications documentation
+
+- **New Documentation Screenshots**
+  - `notifications-empty.png` - Notifications page layout
+  - `daily-totals-staff-workload.png` - Daily totals with staff workload summary
+  - `breeds-bulk-pricing-modal.png` - Bulk pricing adjustment modal
+
 ## [0.9.10] - 2025-12-16
 
 ### Added

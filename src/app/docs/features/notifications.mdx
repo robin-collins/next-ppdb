@@ -1,0 +1,133 @@
+---
+title: Notifications
+description: Learn about the notification system in Next PPDB.
+order: 7
+---
+
+# Notifications
+
+Next PPDB includes a notification system that keeps you informed about important events, system updates, and alerts.
+
+## Notification Bell
+
+The notification bell icon appears in the header across all pages.
+
+![Header with notification bell](/docs/screenshots/notifications-empty.png)
+
+| State            | Appearance                              |
+| ---------------- | --------------------------------------- |
+| No notifications | Bell icon shows "No notifications"      |
+| New alerts       | Bell icon displays count with indicator |
+
+Click the bell icon to navigate to the Notifications page.
+
+## Notifications Page
+
+Navigate to **Notifications** from the sidebar or by clicking the bell icon in the header.
+
+### Current Notifications
+
+Active notifications appear in the "Current Notifications" section. Each notification displays:
+
+| Element   | Description                                 |
+| --------- | ------------------------------------------- |
+| Icon      | Color-coded by priority (Error/Warning/Success) |
+| Title     | Brief description of the notification       |
+| Timestamp | When the notification was generated         |
+| Actions   | Mark as read, archive, or delete            |
+
+### Priority Colors
+
+Notifications are color-coded by severity:
+
+| Priority | Color  | Examples                           |
+| -------- | ------ | ---------------------------------- |
+| Error    | Red    | Failed backups, system errors      |
+| Warning  | Yellow | Pending updates, storage warnings  |
+| Success  | Green  | Completed backups, successful imports |
+| Info     | Blue   | General system information         |
+
+### Archived Notifications
+
+Click "Archived Notifications" to expand and view previously archived notifications. Archived items are kept for reference but don't appear in the active notification count.
+
+## Notification Types
+
+The system generates notifications for various events:
+
+### Backup Events
+
+- Successful backup creation
+- Backup failures
+- Low backup storage warnings
+
+### System Updates
+
+- New version available
+- Update completed successfully
+- Update failures or rollback required
+
+### Import Events
+
+- Data import completed
+- Import validation warnings
+- Failed import attempts
+
+### Administrative Alerts
+
+- Database connection issues
+- Configuration changes
+- Scheduled maintenance reminders
+
+## Managing Notifications
+
+### Mark as Read
+
+Click the checkmark icon to mark a notification as read. Read notifications remain visible but with reduced emphasis.
+
+### Archive
+
+Click the archive icon to move a notification to the archived section. Use this for notifications you've addressed but want to keep for reference.
+
+### Delete
+
+Click the delete icon to permanently remove a notification. This action cannot be undone.
+
+### Refresh
+
+Click the **Refresh** button to check for new notifications without reloading the page.
+
+## Best Practices
+
+### Regular Review
+
+- Check notifications daily for important alerts
+- Address error notifications promptly
+- Archive resolved items to keep the current list manageable
+
+### Priority Response
+
+| Priority | Recommended Response Time |
+| -------- | ------------------------- |
+| Error    | Immediate                 |
+| Warning  | Within 24 hours           |
+| Success  | Review at convenience     |
+| Info     | Review at convenience     |
+
+### Notification Hygiene
+
+- Archive or delete notifications after addressing them
+- Review archived notifications periodically
+- Don't ignore recurring warnings
+
+## Email Notifications
+
+For critical events, the system can send email notifications to configured administrators. This ensures important alerts aren't missed even when the application isn't actively being used.
+
+Email notifications are sent for:
+
+- Backup failures
+- System errors
+- Critical security alerts
+
+See [Administration](/docs/features/admin) for email configuration details.

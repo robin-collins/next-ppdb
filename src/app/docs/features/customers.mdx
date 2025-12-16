@@ -43,6 +43,19 @@ Navigate to **Add Customer** from the sidebar or dashboard.
 - Postcode should be a 4-digit Australian postcode
 - After creating, you'll be redirected to the customer detail page
 
+### Real-time Validation
+
+The form provides instant feedback as you type:
+
+| Field    | Validation                                           |
+| -------- | ---------------------------------------------------- |
+| Surname  | Required, cannot be empty                            |
+| Email    | Valid email format with domain check                 |
+| Phone    | Digits only, automatically strips formatting         |
+| Postcode | Numeric, 4 digits for Australian postcodes           |
+
+Invalid fields are highlighted with error messages to help correct issues before saving.
+
 ## Customer Detail Page
 
 After creating a customer or clicking "View Customer" from an animal card, you'll see the full profile.
@@ -62,11 +75,59 @@ Shows all phone numbers and email address. Click to:
 
 Lists all animals belonging to this customer. Click any animal to view its grooming record.
 
+### Customer Statistics
+
+The detail page displays activity insights:
+
+| Statistic     | Description                                        |
+| ------------- | -------------------------------------------------- |
+| Years Active  | How long this customer has been using your service |
+| Total Visits  | Cumulative grooming appointments across all pets   |
+| Animal Count  | Number of pets registered to this customer         |
+
 ### Quick Actions
 
 - **Add Animal** - Register a new pet
 - **Edit Customer** - Update information
+- **Delete Customer** - Remove customer and manage their animals
 - **View History** - See complete visit history
+
+## Deleting a Customer
+
+Click the **Delete** button on the customer detail page to remove a customer record.
+
+### Selective Rehoming
+
+If the customer has animals, you have options for handling them:
+
+1. **Delete All Animals** - Remove the customer and all their pet records
+2. **Rehome Animals** - Transfer pets to a different owner before deleting
+
+#### Rehoming Process
+
+When selecting rehome:
+
+1. A modal displays all animals belonging to the customer
+2. Select which animals to rehome (checkboxes)
+3. Search for and select the new owner
+4. Click **Rehome Selected** to transfer ownership
+5. After rehoming, proceed with customer deletion
+
+This feature is useful when:
+
+- A pet changes ownership (sold, gifted, etc.)
+- Family members split and take different pets
+- Correcting data entry mistakes
+
+### Customers Without Animals
+
+If the customer has no animals, deletion proceeds with a simple confirmation dialog.
+
+### Validation & Safety
+
+- You cannot delete a customer while actively editing their record
+- The system confirms the action before permanent deletion
+- Deleted customer data cannot be recovered (ensure backups exist)
 
 ## Customer History
 

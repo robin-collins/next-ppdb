@@ -90,6 +90,33 @@ Once the application is running:
 
 ## Next Steps
 
-- Learn about [Search & Animals](/docs/features/search-animals) to find and manage records
+- Learn about [Search](/docs/features/search) to find and manage records
 - Explore [Customer Management](/docs/features/customers) for customer workflows
-- Check the [API Reference](/docs/api-reference) for integration options
+- Review [Reports](/docs/features/reports) for daily totals and staff workload
+- Check [Notifications](/docs/features/notifications) to stay informed about system events
+- See the [API Reference](/docs/api-reference) for integration options
+
+## Docker Deployment
+
+For production deployments, Docker images are available:
+
+```bash
+docker pull ghcr.io/robin-collins/next-ppdb:latest
+docker run -p 3000:3000 --env-file .env ghcr.io/robin-collins/next-ppdb:latest
+```
+
+See the [GitHub repository](https://github.com/robin-collins/next-ppdb) for complete Docker Compose configurations.
+
+## Environment Configuration
+
+Required environment variables:
+
+| Variable       | Description                                   |
+| -------------- | --------------------------------------------- |
+| `DATABASE_URL` | MySQL connection string                       |
+| `MYSQL_HOST`   | Database host (if using variable interpolation)|
+| `MYSQL_USER`   | Database username                             |
+| `MYSQL_PASSWORD`| Database password                            |
+| `MYSQL_DATABASE`| Database name                                |
+
+Optional variables for email notifications and other features are documented in the repository's `.env.example` file.

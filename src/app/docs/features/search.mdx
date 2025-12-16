@@ -38,18 +38,37 @@ Results display with a header showing the count and search term.
 
 ### Result Cards
 
-Each result appears as a card showing:
+Each result appears as a horizontal card showing animal and customer information side by side:
 
 ![Result Card](/docs/screenshots/result-card.png)
 
-| Element       | Description                       |
-| ------------- | --------------------------------- |
-| Breed Avatar  | Visual identifier for the breed   |
-| Animal Name   | Click to view full animal details |
-| Breed & Sex   | Quick reference info              |
-| Customer Name | Click to view customer profile    |
-| Phone Number  | Clickable to dial                 |
-| Last Visit    | Most recent grooming date         |
+| Element       | Description                         |
+| ------------- | ----------------------------------- |
+| Breed Avatar  | Visual identifier for the breed     |
+| Animal Name   | Click to view full animal details   |
+| Breed & Sex   | Quick reference info                |
+| Customer Name | Click to view customer profile      |
+| Phone Number  | Click-to-call (opens phone dialer)  |
+| Email         | Click-to-email (opens email client) |
+| Last Visit    | Most recent grooming date           |
+
+### Two-Column Layout
+
+The card design splits information into two columns:
+
+- **Left Column**: Animal details (name, breed, sex, last visit)
+- **Right Column**: Customer details (name, contact info)
+
+This high-density layout shows more information at a glance while maintaining readability.
+
+### Actionable Contact Details
+
+Contact information is interactive:
+
+- **Phone numbers** - Click to initiate a call directly from your device
+- **Email addresses** - Click to compose a new email in your default mail client
+
+These features save time by eliminating the need to copy/paste contact details.
 
 ### List View
 
@@ -58,6 +77,16 @@ Toggle to list view for a compact table format.
 ![List View](/docs/screenshots/list-view.png)
 
 List view displays the same information in rows, ideal for quickly scanning many results.
+
+### Keyboard Accessibility
+
+Navigate search results using your keyboard:
+
+| Key        | Action                            |
+| ---------- | --------------------------------- |
+| Tab        | Move between interactive elements |
+| Enter      | Select focused item               |
+| Arrow keys | Navigate pagination               |
 
 ## Phone Number Search
 

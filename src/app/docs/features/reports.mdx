@@ -41,13 +41,42 @@ The report displays the daily summary:
 For each animal serviced:
 
 - Animal name and breed
-- Service performed
-- Groomer initials
-- Cost
+- Staff initials badge (extracted from service notes)
+- Service cost
+- Notes indicator (when service notes exist for that date)
+
+### Staff Workload Summary
+
+Below the daily totals table, the **Staff Workload Summary** card shows work distribution by groomer:
+
+![Daily Totals with Staff Workload Summary](/docs/screenshots/daily-totals-staff-workload.png)
+
+| Element        | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| Staff Initials | Two-letter badge identifying the groomer (e.g., BB, CC, EJ) |
+| Animal Count   | Total animals groomed by that staff member            |
+| Breed Breakdown| List of breeds groomed with counts                    |
+| Total Summary  | Overall staff count and total jobs for the day        |
+
+### How Staff Initials Are Extracted
+
+The system automatically extracts staff initials from service note text. When recording a service, include initials at the end of the note:
+
+```
+full clip 3 legs 7 short ears & face leave top knot CC $60
+```
+
+In this example, "CC" is recognized as the staff member who performed the service.
+
+Common initials include: BB, CC, EJ, TB, SP, TM, KM, HM.
 
 ### Printing
 
-Click **Print Report** to open the print dialog. The report formats cleanly for standard paper sizes.
+Click **Print Report** to open the print dialog. The report features improved print styles:
+
+- Monochrome-optimized formatting
+- Compact layout for paper efficiency
+- Staff workload summary included on printout
 
 ## Analytics Dashboard
 

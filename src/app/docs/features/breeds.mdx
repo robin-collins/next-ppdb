@@ -51,7 +51,32 @@ Use the search box above the table to filter breeds by name. Filtering is applie
 
 ### Modify All Pricing
 
-Click the **Modify All Pricing** button to apply percentage-based changes to all breeds simultaneously.
+Click the **Modify All Pricing** button to apply bulk pricing changes to all breeds simultaneously.
+
+![Bulk Pricing Modal](/docs/screenshots/breeds-bulk-pricing-modal.png)
+
+#### Adjustment Types
+
+| Type           | Description                                    | Example                        |
+| -------------- | ---------------------------------------------- | ------------------------------ |
+| Fixed Amount   | Add a specific dollar amount to all prices     | +$10 to all breeds             |
+| Percentage     | Increase prices by a percentage                | +5% to all breeds              |
+
+#### How Bulk Pricing Works
+
+When you apply a bulk pricing change:
+
+1. All breed `avgcost` values are updated by the specified amount
+2. Animal costs at or below their breed's avgcost are increased proportionally
+3. Animals with custom pricing (above breed avgcost) preserve their price difference
+4. Animals with $0 cost remain unchanged (discounted pricing preserved)
+
+#### Using the Pricing Modal
+
+1. Select **Fixed Amount ($)** or **Percentage (%)**
+2. Enter the adjustment value (must be greater than 0)
+3. Review the warning about what the operation will do
+4. Click **Apply to All Breeds** to confirm
 
 ## Editing a Breed
 
@@ -63,13 +88,30 @@ Click the **Edit** button (pencil icon) next to any breed:
 
 ## Deleting a Breed
 
-Click the **Delete** button (trash icon):
+Click the **Delete** button (trash icon) next to any breed.
 
-1. A confirmation dialog appears
-2. Click **Confirm** to delete
-3. Click **Cancel** to keep the breed
+### Safe Deletion (Mandatory Migration)
 
-**Warning**: Deleting a breed may affect animals that use this breed.
+If animals are currently assigned to the breed, you **cannot delete it directly**. The system requires you to migrate those animals to another breed first:
+
+1. Click the **Delete** button
+2. A dialog shows how many animals use this breed
+3. Select a **target breed** from the dropdown to migrate animals to
+4. Click **Migrate and Delete** to proceed
+
+This prevents orphaned animal records and ensures data integrity.
+
+### Deleting Unused Breeds
+
+If no animals are assigned to the breed:
+
+1. Click the **Delete** button
+2. A confirmation dialog appears
+3. Click **Confirm** to delete the breed
+
+### Duplicate Prevention
+
+When adding or editing breeds, the system validates for duplicate names (case-insensitive). You cannot create a breed named "Poodle" if "POODLE" or "poodle" already exists.
 
 ## Individual Pricing
 

@@ -66,6 +66,63 @@ mysql -u user -p database_name < backup.sql
 
 **Warning**: Restoring overwrites all current data. Create a fresh backup first.
 
+## Email Notifications
+
+The system can send email notifications for backup events to configured administrators.
+
+### Notification Types
+
+| Event            | Description                              |
+| ---------------- | ---------------------------------------- |
+| Backup Success   | Confirmation when a backup completes     |
+| Backup Failure   | Alert when a backup fails                |
+| Storage Warning  | Notice when backup storage is running low|
+
+### Configuration
+
+Email notifications require SMTP configuration in your environment. Contact your system administrator to enable this feature.
+
+## Import Log Archives
+
+After importing data (during initial setup or restoration), the system creates detailed import logs.
+
+### Accessing Import Logs
+
+1. Navigate to the **Database Backup** page
+2. Look for the "Import Logs" section
+3. Click **Download** to retrieve compressed log archives
+
+### Log Contents
+
+Import logs include:
+
+- Records processed and imported
+- Validation warnings and errors
+- Orphaned record handling
+- Date repair operations
+- Import duration and summary
+
+These logs are useful for troubleshooting import issues and auditing data migrations.
+
+## System Updates
+
+Navigate to **System Updates** from the sidebar to manage application updates.
+
+### Update Features
+
+- View current version and available updates
+- Apply updates with one click
+- Automatic rollback on failure
+- Update history and changelog
+
+### Update Process
+
+1. The system checks for available updates
+2. Review the changelog for new features and fixes
+3. Click **Apply Update** to begin
+4. The system backs up current state before updating
+5. If the update fails, automatic rollback restores the previous version
+
 ## Best Practices
 
 ### Regular Backups

@@ -82,6 +82,16 @@ full clip 3 legs 7 short ears & face leave top knot CC $60
 
 The placeholder shows an example of the expected format.
 
+### Automatic Cost Extraction
+
+The system automatically extracts cost information from service notes. When you include a dollar amount (e.g., `$60`, `$85.50`) in your note, it's recognized and used for:
+
+- Daily totals calculations
+- Revenue reporting
+- Animal cost history
+
+If no cost is specified in the note, the breed's default pricing applies.
+
 ### Service Note Entry
 
 Each historical visit displays as a card.
@@ -125,6 +135,24 @@ Click "All Animal Notes" at the bottom to view the complete history on a dedicat
 1. Modify any field in the Animal Details form
 2. Click "Update Record" to save
 3. Changes apply immediately
+
+### Deleting an Animal
+
+To delete an animal record:
+
+1. Navigate to the animal's detail page
+2. Click the **Delete** button
+3. A confirmation dialog appears requiring you to **type the animal's name** to confirm
+
+#### Type-to-Confirm Safety
+
+To prevent accidental deletion, you must type the exact animal name (case-insensitive) before the delete button becomes active. This extra step ensures:
+
+- No accidental deletions from misclicks
+- Deliberate confirmation of the action
+- Protection of valuable grooming history
+
+**Warning**: Deleting an animal removes all associated service notes and history. This action cannot be undone.
 
 ## Tips
 

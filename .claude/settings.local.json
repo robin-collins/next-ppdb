@@ -73,7 +73,8 @@
       "Bash(git merge-base:*)",
       "Bash(git merge:*)",
       "Bash(git stash:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "mcp__playwright__browser_install"
     ],
     "deny": [],
     "ask": []
