@@ -27,7 +27,72 @@ COMPOSE_FILE="${COMPOSE_FILE:-/docker-compose.yml}"
 CONTAINER_NAME="${CONTAINER_NAME:-next-ppdb}"
 ENV_FILE="${ENV_FILE:-/app/.env}"
 
+# Configure msmtp for sending emails
+# Generates config file from environment variables
+configure_msmtp() {
+    if [ -z "$SMTP_HOST" ] || [ -z "$SMTP_USER" ] || [ -z "$SMTP_PASS" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] SMTP not configured, email notifications disabled"
+        return 1
+    fi
+
+    cat > /tmp/msmtprc <<EOF
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        /var/log/scheduler/msmtp.log
+
+account        default
+host           $SMTP_HOST
+port           ${SMTP_PORT:-587}
+from           ${SMTP_FROM:-$SMTP_USER}
+user           $SMTP_USER
+password       $SMTP_PASS
+EOF
+    chmod 600 /tmp/msmtprc
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SMTP configured for $SMTP_HOST"
+    return 0
+}
+
+# Send email notification directly via msmtp
+# Used as fallback when app is unhealthy and can't send emails
+send_fallback_email() {
+    local SUBJECT=$1
+    local BODY=$2
+    local EMAIL_TO="${UPDATE_NOTIFICATION_EMAIL:-}"
+
+    if [ -z "$EMAIL_TO" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] No UPDATE_NOTIFICATION_EMAIL set, skipping fallback email"
+        return 1
+    fi
+
+    if ! configure_msmtp; then
+        return 1
+    fi
+
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sending fallback email to $EMAIL_TO..."
+
+    # Send email using msmtp
+    {
+        echo "To: $EMAIL_TO"
+        echo "From: ${SMTP_FROM:-$SMTP_USER}"
+        echo "Subject: $SUBJECT"
+        echo "Content-Type: text/plain; charset=UTF-8"
+        echo ""
+        echo "$BODY"
+    } | msmtp -C /tmp/msmtprc "$EMAIL_TO"
+
+    if [ $? -eq 0 ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fallback email sent successfully"
+        return 0
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Failed to send fallback email"
+        return 1
+    fi
+}
+
 # Function to report result back to the app
+# Returns 0 if successful, 1 if failed (app may be down)
 report_result() {
     local SUCCESS=$1
     local UPDATE_ID=$2
@@ -36,7 +101,8 @@ report_result() {
     local ROLLBACK_PERFORMED=$5
     local ROLLBACK_DETAILS=$6
 
-    curl -s -X PUT \
+    local HTTP_RESPONSE
+    HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT \
         -H "Authorization: Bearer $SCHEDULER_API_KEY" \
         -H "Content-Type: application/json" \
         -d "{
@@ -47,7 +113,116 @@ report_result() {
             \"rollbackPerformed\": $ROLLBACK_PERFORMED,
             \"rollbackDetails\": \"$ROLLBACK_DETAILS\"
         }" \
-        "http://next-ppdb:3000/api/admin/updates/execute"
+        "http://next-ppdb:3000/api/admin/updates/execute" 2>/dev/null)
+
+    local HTTP_CODE
+    HTTP_CODE=$(echo "$HTTP_RESPONSE" | tail -n 1)
+
+    if [ "$HTTP_CODE" = "200" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Result reported to app successfully"
+        return 0
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: Failed to report result to app (HTTP $HTTP_CODE)"
+        return 1
+    fi
+}
+
+# Report result and send fallback email if app is unreachable
+# This ensures notifications are sent even when both containers fail
+report_and_notify() {
+    local SUCCESS=$1
+    local UPDATE_ID=$2
+    local DURATION=$3
+    local ERROR_MSG=$4
+    local ROLLBACK_PERFORMED=$5
+    local ROLLBACK_DETAILS=$6
+    local FROM_VERSION=$7
+    local TO_VERSION=$8
+
+    # Try to report via API (which sends email if app is healthy)
+    if report_result "$SUCCESS" "$UPDATE_ID" "$DURATION" "$ERROR_MSG" "$ROLLBACK_PERFORMED" "$ROLLBACK_DETAILS"; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] App received result, email should be sent by app"
+        return 0
+    fi
+
+    # App is unreachable - send fallback email directly
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] App unreachable, sending fallback email notification..."
+
+    local SUBJECT
+    local BODY
+    local TIMESTAMP
+    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
+    if [ "$SUCCESS" = "true" ]; then
+        SUBJECT="[PPDB] Update Completed: v${FROM_VERSION} → v${TO_VERSION}"
+        BODY="PPDB Update Notification
+========================================
+
+Status: SUCCESS
+
+Update Details:
+- From Version: ${FROM_VERSION}
+- To Version: ${TO_VERSION}
+- Duration: ${DURATION}ms
+- Timestamp: ${TIMESTAMP}
+
+The application has been successfully updated.
+
+Note: This email was sent directly by the scheduler because
+the app was temporarily unreachable during result reporting.
+The update itself was successful.
+
+---
+PPDB Scheduler"
+    else
+        SUBJECT="[PPDB] Update FAILED: v${FROM_VERSION} → v${TO_VERSION}"
+        BODY="PPDB Update Notification - FAILURE
+========================================
+
+Status: FAILED
+
+Update Details:
+- From Version: ${FROM_VERSION}
+- To Version: ${TO_VERSION}
+- Duration: ${DURATION}ms
+- Timestamp: ${TIMESTAMP}
+
+Error: ${ERROR_MSG}
+
+Rollback Performed: ${ROLLBACK_PERFORMED}
+Rollback Details: ${ROLLBACK_DETAILS:-N/A}
+
+IMPORTANT: The application may be in an unhealthy state.
+Please check the server immediately.
+
+This email was sent directly by the scheduler because
+the app is unreachable (both update and rollback may have failed).
+
+---
+PPDB Scheduler"
+    fi
+
+    send_fallback_email "$SUBJECT" "$BODY"
+}
+
+# Function to validate that required environment variables are present in env file
+validate_env_file() {
+    local REQUIRED_VARS="MYSQL_USER MYSQL_PASSWORD MYSQL_HOST MYSQL_PORT MYSQL_DATABASE"
+    local MISSING_VARS=""
+
+    for VAR in $REQUIRED_VARS; do
+        if ! grep -q "^${VAR}=" "$ENV_FILE" 2>/dev/null; then
+            MISSING_VARS="$MISSING_VARS $VAR"
+        fi
+    done
+
+    if [ -n "$MISSING_VARS" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Missing required variables in $ENV_FILE:$MISSING_VARS"
+        return 1
+    fi
+
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Environment file validation passed"
+    return 0
 }
 
 # Function to recreate container with specified image version
@@ -58,9 +233,24 @@ recreate_container() {
     # Export APP_VERSION for docker-compose substitution
     export APP_VERSION="$VERSION"
 
+    # Verify env file exists
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Environment file not found at $ENV_FILE"
+        return 1
+    fi
+
+    # Validate required environment variables are present
+    if ! validate_env_file; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Environment file validation failed"
+        return 1
+    fi
+
     # Use docker compose to recreate the container with the new image
+    # CRITICAL: --env-file is required because the .env is at /app/.env but compose file is at /
+    # Without this, Docker Compose cannot find environment variables for interpolation
     if [ -f "$COMPOSE_FILE" ]; then
-        docker compose -f "$COMPOSE_FILE" up -d --force-recreate "$CONTAINER_NAME"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Using env file: $ENV_FILE"
+        docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate "$CONTAINER_NAME"
     else
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Compose file not found at $COMPOSE_FILE"
         return 1
@@ -177,7 +367,7 @@ echo "$GHCR_TOKEN" | docker login ghcr.io -u robin-collins --password-stdin
 if [ $? -ne 0 ]; then
     END_TIME=$(date +%s)
     DURATION=$(( (END_TIME - START_TIME) * 1000 ))
-    report_result "false" "$UPDATE_ID" "$DURATION" "GHCR authentication failed" "false" ""
+    report_and_notify "false" "$UPDATE_ID" "$DURATION" "GHCR authentication failed" "false" "" "$CURRENT_VERSION" "$NEW_VERSION"
     exit 1
 fi
 
@@ -186,7 +376,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pulling new image: $NEW_IMAGE..."
 if ! docker pull "$NEW_IMAGE"; then
     END_TIME=$(date +%s)
     DURATION=$(( (END_TIME - START_TIME) * 1000 ))
-    report_result "false" "$UPDATE_ID" "$DURATION" "Failed to pull image $NEW_IMAGE" "false" ""
+    report_and_notify "false" "$UPDATE_ID" "$DURATION" "Failed to pull image $NEW_IMAGE" "false" "" "$CURRENT_VERSION" "$NEW_VERSION"
     exit 1
 fi
 
@@ -199,7 +389,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Recreating container with new image..."
 if ! recreate_container "$NEW_VERSION"; then
     END_TIME=$(date +%s)
     DURATION=$(( (END_TIME - START_TIME) * 1000 ))
-    report_result "false" "$UPDATE_ID" "$DURATION" "Failed to recreate container with new image" "false" ""
+    report_and_notify "false" "$UPDATE_ID" "$DURATION" "Failed to recreate container with new image" "false" "" "$CURRENT_VERSION" "$NEW_VERSION"
     exit 1
 fi
 
@@ -213,9 +403,11 @@ if ! wait_for_health 300; then
 
     # Wait for rollback to be healthy
     if wait_for_health 120; then
-        report_result "false" "$UPDATE_ID" "$DURATION" "Health check failed after restart" "true" "Rolled back to $CURRENT_VERSION successfully"
+        report_and_notify "false" "$UPDATE_ID" "$DURATION" "Health check failed after restart" "true" "Rolled back to $CURRENT_VERSION successfully" "$CURRENT_VERSION" "$NEW_VERSION"
     else
-        report_result "false" "$UPDATE_ID" "$DURATION" "Health check failed and rollback also failed" "true" "Rollback attempted but container still unhealthy"
+        # CRITICAL: Both update and rollback failed - app is likely down
+        # This is the most important fallback email scenario
+        report_and_notify "false" "$UPDATE_ID" "$DURATION" "Health check failed and rollback also failed" "true" "Rollback attempted but container still unhealthy" "$CURRENT_VERSION" "$NEW_VERSION"
     fi
     exit 1
 fi
@@ -229,6 +421,6 @@ END_TIME=$(date +%s)
 DURATION=$(( (END_TIME - START_TIME) * 1000 ))
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Update completed successfully in ${DURATION}ms"
-report_result "true" "$UPDATE_ID" "$DURATION" "" "false" ""
+report_and_notify "true" "$UPDATE_ID" "$DURATION" "" "false" "" "$CURRENT_VERSION" "$NEW_VERSION"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Update execution task finished"

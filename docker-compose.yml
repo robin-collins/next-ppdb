@@ -237,6 +237,14 @@ services:
       GHCR_IMAGE: ghcr.io/${GHCR_REPOSITORY:-robin-collins/next-ppdb}
       # Timezone for cron scheduling
       TZ: ${TZ:-Australia/Sydney}
+      # SMTP settings for fallback email notifications
+      # Used when app is unhealthy and can't send emails itself
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      UPDATE_NOTIFICATION_EMAIL: ${UPDATE_NOTIFICATION_EMAIL:-}
     volumes:
       # Docker socket for container management (pull, restart, rollback)
       - /var/run/docker.sock:/var/run/docker.sock:ro

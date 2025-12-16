@@ -23,13 +23,15 @@ ENV SCHEDULER_VERSION=${BUILD_VERSION} \
 # - docker-cli-compose: for docker compose commands during updates
 # - logrotate: for log rotation
 # - tzdata: for timezone support
+# - msmtp: for sending email notifications (fallback when app is unhealthy)
 RUN apk add --no-cache \
     curl \
     docker-cli \
     docker-cli-compose \
     logrotate \
     tzdata \
-    bash
+    bash \
+    msmtp
 
 # Create directories
 RUN mkdir -p /var/log/scheduler /scripts

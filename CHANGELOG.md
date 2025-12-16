@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Fallback Email Notifications for Failed Updates**
+  - Scheduler now sends email notifications directly when app is unreachable
+  - Critical for the scenario where both update AND rollback fail (app is down, can't send its own emails)
+  - Uses `msmtp` package added to scheduler container for SMTP email delivery
+  - SMTP environment variables added to scheduler service in docker-compose.yml
+  - Emails include status (success/failure), version info, duration, error details, and rollback status
+  - Ensures maintainers are notified of critical failures before end users encounter issues
+  - Files: `docker/scheduler/Dockerfile`, `docker/scheduler/scripts/execute-updates.sh`, `docker-compose.yml`
+
+### Fixed
+
+- **Auto-Update Container Recreation Missing Environment Variables**
+  - Fixed critical bug where `execute-updates.sh` failed to pass `.env` file to Docker Compose
+  - Root cause: Docker Compose looks for `.env` in the compose file directory (`/`) but env file is mounted at `/app/.env`
+  - Symptom: Container failed health checks with `DATABASE_URL format is invalid` showing `mysql:***@:/`
+  - Fix: Added `--env-file "$ENV_FILE"` flag to `docker compose up` command
+  - Added `validate_env_file()` function to verify required MySQL variables exist before container recreation
+  - Both update and rollback operations now correctly use the mounted `.env` file
+  - File: `docker/scheduler/scripts/execute-updates.sh`
+
 ## [0.9.9] - 2025-12-16
 
 ### Added
