@@ -35,23 +35,32 @@ const ghcrConfig = {
 
 export { ghcrConfig }
 
-interface TagsResponse {
+interface GitHubPackageVersion {
+  id: number
   name: string
-  tags: string[]
+  metadata?: {
+    container?: {
+      tags: string[]
+    }
+  }
 }
 
 /**
- * Parse image path from full image URL
+ * Parse owner and package name from image URL
  */
-function getImagePath(): string {
-  // ghcr.io/robin-collins/next-ppdb -> robin-collins/next-ppdb
+function parseImagePath(): { owner: string; packageName: string } {
+  // ghcr.io/robin-collins/next-ppdb -> owner: robin-collins, package: next-ppdb
   const image = ghcrConfig.image
   const parts = image.replace('ghcr.io/', '').split('/')
-  return parts.join('/')
+  return {
+    owner: parts[0],
+    packageName: parts.slice(1).join('/'),
+  }
 }
 
 /**
- * Fetch available tags from GHCR
+ * Fetch available tags from GitHub Packages API
+ * Uses the REST API which accepts PATs directly (unlike Docker Registry v2 API)
  */
 export async function fetchAvailableTags(): Promise<string[]> {
   // Return mock versions in test mode
@@ -67,41 +76,57 @@ export async function fetchAvailableTags(): Promise<string[]> {
     return []
   }
 
-  const imagePath = getImagePath()
-  const url = `${ghcrConfig.apiUrl}/v2/${imagePath}/tags/list`
+  const { owner, packageName } = parseImagePath()
+  // Use GitHub REST API for packages (accepts PAT directly)
+  const url = `https://api.github.com/users/${owner}/packages/container/${packageName}/versions?per_page=100`
 
   try {
     const response = await fetch(url, {
       headers: {
-        Accept: 'application/json',
+        Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${ghcrConfig.pat}`,
+        'X-GitHub-Api-Version': '2022-11-28',
       },
     })
 
     if (!response.ok) {
       if (response.status === 401) {
-        log.error('GHCR: Authentication failed - PAT may have expired')
-        throw new Error('GHCR authentication failed')
+        log.error(
+          'GHCR: Authentication failed - PAT may have expired or missing read:packages scope'
+        )
+        throw new Error(
+          'GitHub authentication failed - check PAT has read:packages scope'
+        )
       }
       if (response.status === 404) {
-        log.warn('GHCR: Image not found', { image: imagePath })
+        log.warn('GHCR: Package not found', { owner, packageName })
         return []
       }
-      throw new Error(`GHCR API error: ${response.status}`)
+      const errorBody = await response.text()
+      log.error('GHCR: API error', { status: response.status, body: errorBody })
+      throw new Error(`GitHub API error: ${response.status}`)
     }
 
-    const data: TagsResponse = await response.json()
+    const versions: GitHubPackageVersion[] = await response.json()
 
-    // Filter to only semver-valid tags
-    const validTags = data.tags.filter(tag => {
-      // Skip pre-release tags unless they match specific pattern
+    // Extract all tags from all versions
+    const allTags: string[] = []
+    for (const version of versions) {
+      const tags = version.metadata?.container?.tags || []
+      allTags.push(...tags)
+    }
+
+    // Filter to only semver-valid tags (deduplicated)
+    const uniqueTags = [...new Set(allTags)]
+    const validTags = uniqueTags.filter(tag => {
       const cleaned = tag.replace(/^v/, '')
       return semver.valid(cleaned) && !semver.prerelease(cleaned)
     })
 
-    log.info('GHCR: Fetched available tags', {
-      total: data.tags.length,
-      valid: validTags.length,
+    log.info('GHCR: Fetched available tags via GitHub API', {
+      totalVersions: versions.length,
+      totalTags: allTags.length,
+      validTags: validTags.length,
     })
 
     return validTags

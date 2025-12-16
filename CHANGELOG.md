@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Improved error handling in `src/lib/ghcr.ts` to return actual error message instead of null
   - Updated `version-check/route.ts` to display the real error cause (e.g., "GHCR authentication failed")
 
+- **GHCR Version Check 403 Error**
+  - Switched from Docker Registry v2 API to GitHub REST API for fetching package versions
+  - Docker Registry API requires token exchange flow; GitHub REST API accepts PAT directly
+  - Now uses `api.github.com/users/{owner}/packages/container/{package}/versions` endpoint
+  - Better error messages for missing `read:packages` scope on PAT
+
 ### Added
 
 - **GitHub Actions - Scheduler Container Build**
