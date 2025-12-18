@@ -14,7 +14,7 @@
 
 $ErrorActionPreference = "Stop"
 $repoBaseUrl = "https://raw.githubusercontent.com/robin-collins/next-ppdb/main"
-$AppVersion = "1.0.1"  # Default version - update as needed
+$AppVersion = "1.0.3"  # Default version - update as needed
 
 # Function to download a file
 function Download-File {
