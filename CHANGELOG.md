@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-12-19
+
+### Added
+
+- Cloudflare DNS API token configuration in `quick-install.ps1`
+  - Interactive prompt to configure DNS challenge for SSL certificate generation
+  - Links to Cloudflare API token creation page with required permissions
+  - Graceful skip option if user decides not to configure
+  - Token written as `CF_DNS_API_TOKEN` in generated `.env` file
+
+### Changed
+
+- Synchronized `APP_VERSION` across `package.json`, `quick-install.ps1`, and `.env.example` to 1.0.5
+
 ## [1.0.2] - 2025-12-19
 
 ### Fixed

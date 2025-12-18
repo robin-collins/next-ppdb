@@ -14,7 +14,7 @@
 
 $ErrorActionPreference = "Stop"
 $repoBaseUrl = "https://raw.githubusercontent.com/robin-collins/next-ppdb/main"
-$AppVersion = "1.0.3"  # Default version - update as needed
+$AppVersion = "1.0.5"  # Default version - update as needed
 
 # Function to download a file
 function Download-File {
@@ -126,7 +126,7 @@ if (-not (Test-Path ".env")) {
     }
 
     $acmeEmail = Read-HostWithDefault -Prompt "Email for SSL certificates" -Default "admin@$domainName"
-    $timezone = Read-HostWithDefault -Prompt "Timezone" -Default "Australia/Sydney"
+    $timezone = Read-HostWithDefault -Prompt "Timezone" -Default "Australia/Adelaide"
 
     # MySQL Configuration
     Write-Host "`n--- MySQL Configuration ---" -ForegroundColor Yellow
@@ -154,6 +154,29 @@ if (-not (Test-Path ".env")) {
     } else {
         $smtpHost = ""; $smtpPort = "587"; $smtpUser = ""; $smtpPass = ""
         $smtpFrom = ""; $notifyEmail = ""; $devNotifyEmail = ""
+    }
+
+    # Optional Cloudflare DNS Configuration
+    Write-Host "`n--- Cloudflare DNS Configuration (Optional) ---" -ForegroundColor Yellow
+    Write-Host "A Cloudflare DNS API token is required for automatic SSL certificate generation"
+    Write-Host "via DNS challenge (recommended for wildcard certificates)."
+    $configureCf = Read-HostWithDefault -Prompt "Configure Cloudflare DNS token? (y/n)" -Default "n"
+
+    if ($configureCf -eq "y" -or $configureCf -eq "Y") {
+        Write-Host "Create a token at: https://dash.cloudflare.com/profile/api-tokens"
+        Write-Host "Required permissions: Zone:DNS:Edit for your domain"
+        $cfDnsToken = Read-HostWithDefault -Prompt "Cloudflare DNS API token" -Default ""
+        while ([string]::IsNullOrWhiteSpace($cfDnsToken)) {
+            Write-Host "DNS token is required if you want to use Cloudflare DNS challenge!" -ForegroundColor Red
+            $skipCf = Read-HostWithDefault -Prompt "Skip Cloudflare configuration? (y/n)" -Default "n"
+            if ($skipCf -eq "y" -or $skipCf -eq "Y") {
+                $cfDnsToken = ""
+                break
+            }
+            $cfDnsToken = Read-Host "Cloudflare DNS API token"
+        }
+    } else {
+        $cfDnsToken = ""
     }
 
     # Optional GitHub Configuration
@@ -185,6 +208,7 @@ MYSQL_PORT=3306
 # Traefik / Let's Encrypt Configuration
 DOMAIN_NAME=$domainName
 ACME_EMAIL=$acmeEmail
+CF_DNS_API_TOKEN=$cfDnsToken
 
 # VALKEY SETTINGS
 Valkey_HOST=valkey

@@ -1,6 +1,6 @@
 {
   "name": "next-ppdb",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "dev": "node scripts/build-search-index.mjs && node scripts/get-port.js",
