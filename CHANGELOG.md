@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.19] - 2025-12-19
+
+### Fixed
+
+- **.gitignore file issues**
+  - The .gitignore file was had incorrect entries blocking valid files from being committed.
+  - Updated the .gitignore file to include valid path entries.
+
+- **Download Logs button returning 404 error in Docker deployments**
+  - The import log download API was returning 404 errors despite the log archive file existing in the container.
+  - Root cause: The route handler relied solely on `process.cwd()` to resolve the log directory path, which may resolve differently in Next.js standalone production deployments within Docker.
+  - Solution: Updated the route handler to search multiple possible locations (`process.cwd()/logs/import` and `/app/logs/import`) to handle different deployment contexts.
+  - Added comprehensive diagnostic logging to help debug any future path resolution issues.
+  - Enhanced security checks to validate paths against all valid log directories.
+
 ## [0.9.18] - 2025-12-19
 
 ### Added

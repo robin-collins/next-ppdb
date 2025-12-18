@@ -74,7 +74,12 @@
       "Bash(git merge:*)",
       "Bash(git stash:*)",
       "Bash(docker exec:*)",
-      "mcp__playwright__browser_install"
+      "mcp__playwright__browser_install",
+      "Bash(git status:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(for pattern in \"test-results\" \".vercel\" \"next-env.d.ts\" \"chrome-user-data-dir\" \"console_output\" \"prompts\" \"acme.json\" \"local_test\" \"decisions\" \"openapi\")",
+      "Bash(do echo \"Pattern: $pattern\" find src -type d -name \"$pattern\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

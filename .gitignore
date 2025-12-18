@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-test-results/
+/test-results/
 
 # next.js
 /.next/
@@ -37,37 +37,38 @@ yarn-error.log*
 
 
 # vercel
-.vercel
+/.vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+/next-env.d.ts
 
 # reference/
 reference/reports/
 
 /src/generated/prisma
-chrome-user-data-dir
-console_output*
+/chrome-user-data-dir
+/console_output*
 #.specstory 
 *.log
 *:Zone.Identifier
 scripts/generated*
-prompts/
+/prompts/
 reference/archive
 # Database backups
 /backups
 scripts/.next/
 scripts/note-words.txt
 
-logs/
-uploads/
-acme.json
+# Runtime directories (only at project root)
+/logs/
+/uploads/
+/acme.json
 reference/*.png
 reference/*.txt
 reference/nextjs-docs/
-local_test/
-decisions/
+/local_test/
+/decisions/
 
 public/search-index.json
-openapi/
+/openapi/
