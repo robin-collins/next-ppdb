@@ -5,6 +5,229 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2025-12-19
+
+### 🎉 Production Release - Pampered Pooch Database (PPDB)
+
+**A complete, modern replacement for the legacy PHP pet grooming management system.**
+
+PPDB is a full-featured Next.js 15 application built for pet grooming businesses to manage their customers, animals, breeds, and service records. Designed as a drop-in replacement for legacy systems, it combines enterprise-grade architecture with an elegant, intuitive interface.
+
+---
+
+### ✨ Core Features
+
+#### 🔍 Intelligent Search System
+
+- **Relevance-ranked search** across animals, customers, breeds, and contact details
+- **Multi-field matching** with exact, prefix, contains, and fuzzy matching (70%+ character overlap)
+- **Smart phone number search** - normalizes input to match against formatted or unformatted numbers
+- **Multi-word queries** with diversity bonuses for comprehensive results
+- **Real-time results** with staggered animations and infinite scroll pagination
+
+#### 👤 Customer Management
+
+- Complete CRUD operations with validation and error handling
+- **Customer Statistics** - Years Active and Total Visits calculated from service history
+- **Selective Animal Rehoming** - When deleting customers, choose which animals to migrate or delete
+- **Contact Integration** - Click-to-call and click-to-email directly from search results
+- **Customer History Page** - Track inactive customers with configurable inactivity periods
+
+#### 🐕 Animal Management
+
+- Full animal profiles with breed, color, cost, and visit tracking
+- **Service History Notes** with automatic cost extraction and staff initials parsing
+- **Breed-specific avatars** with automatic fallback to gradient placeholders
+- **Type-to-Confirm Deletion** - Safety confirmation requiring exact animal name
+- **Automatic cost insertion** - Notes without costs automatically inherit the animal's base cost
+
+#### 🏷️ Breed Management
+
+- Complete breed catalog with average time and pricing
+- **Bulk Pricing Modifier** - Apply fixed amount or percentage increases across all breeds
+- **Safe Breed Deletion** - Mandatory animal migration before breed removal
+- **Duplicate Prevention** - Case-insensitive breed name validation
+
+#### 📝 Service Notes
+
+- Full service history tracking per animal
+- **Staff Initials Extraction** - Automatically parses technician codes (e.g., "CC", "JB")
+- **Cost Extraction** - Pulls pricing from notes (e.g., "$65" patterns)
+- **Cascade Deletion** - Notes properly cleaned up with animal deletion
+
+---
+
+### 📊 Reporting & Analytics
+
+#### 📈 Analytics Dashboard
+
+- Revenue trends visualization with customizable date ranges
+- Animals served and breed distribution charts
+- Interactive filtering and period selection
+
+#### 📋 Daily Totals Report
+
+- Printable end-of-day reconciliation report
+- **Staff Workload Summary** - Color-coded cards showing work per technician
+- Date-selectable with optimized print styles
+- Shows animal names, breeds, costs, and totals
+
+#### 📜 Customer History
+
+- Track customers by inactivity period (12/24/36+ months)
+- Paginated results with configurable page sizes
+- Quick navigation to customer and animal details
+
+---
+
+### 🔐 Security & Performance
+
+#### 🛡️ Security Features
+
+- **Rate Limiting** - Token bucket algorithm via Valkey (30/20/10 req/min tiers)
+- **IP Allowlisting** - Network-level access control via Traefik
+- **Structured Logging** - Pino logger with automatic PII redaction (phones, emails)
+- **Input Validation** - Zod schemas on all API endpoints
+- **SQL Injection Protection** - Prisma ORM with parameterized queries
+- **Container Security** - Non-root execution, no-new-privileges flag
+
+#### ⚡ Performance Optimizations
+
+- **Request Deduplication** - Prevents duplicate concurrent API calls (5s cache)
+- **Database Indexes** - Optimized queries on frequently searched fields
+- **Conditional Pagination** - In-memory scoring for small results, DB pagination for large
+- **React Server Components** - Reduced client-side JavaScript bundle
+- **Docker Build Optimization** - Layer caching for faster code-only rebuilds
+
+---
+
+### 🐳 Enterprise Deployment
+
+#### 🚀 Docker Infrastructure
+
+- **Production-Ready Stack** - Next.js, MySQL 8.0, Valkey, Traefik, phpMyAdmin
+- **Automatic SSL** - Let's Encrypt certificates via Traefik ACME (DNS challenge)
+- **Health Checks** - All services monitored with restart policies
+- **Named Volumes** - Persistent data storage with backup support
+
+#### 🔄 Automated Updates
+
+- **Version Checking** - Scheduled checks against GitHub Container Registry
+- **One-Click Updates** - Admin approval workflow with release notes preview
+- **Automatic Rollback** - Pre-update backups with container version tracking
+- **Email Notifications** - Segregated alerts for users and developers
+- **Scheduler Self-Update** - Companion container stays in sync
+
+#### 💾 Backup System
+
+- **On-Demand Backups** - Full database dumps via admin UI
+- **Scheduled Backups** - Automatic daily backups before updates
+- **ZIP Compression** - Level 9 compression with auto-cleanup (keeps 5 most recent)
+- **Download & Restore** - Easy backup retrieval from admin panel
+
+---
+
+### 🎨 Modern User Interface
+
+#### 🖥️ Design System
+
+- **Glassmorphic UI** - Beautiful frosted glass panels with backdrop blur
+- **Animated Gradients** - 15-second cycling background animations
+- **Brand Typography** - Lora/Rubik font pairing for elegance and readability
+- **Responsive Design** - Mobile-first with tablet and desktop breakpoints
+
+#### 🧭 Navigation
+
+- **Pinnable Sidebar** - Stays open with content shift on desktop
+- **Resizable Width** - Drag handle for 200-500px adjustment
+- **Persistent State** - Sidebar preferences saved to localStorage
+- **Hamburger Animation** - Transforms to pushpin when pinned
+
+#### 🔔 Notifications
+
+- **Toast System** - Animated notifications (info, success, warning, error)
+- **Bell Icon Alerts** - Priority-colored indicators in header
+- **Notification Center** - Current and archived notification management
+
+---
+
+### 📖 Documentation & API
+
+#### 📚 User Documentation
+
+- **Interactive Docs Site** - MDX-powered documentation at `/docs`
+- **Feature Guides** - Comprehensive documentation for all features
+- **Getting Started** - Installation and configuration guides
+
+#### 🔌 API Documentation
+
+- **OpenAPI 3.0.3 Specification** - 35+ documented operations
+- **Swagger UI** - Interactive API explorer at `/api/docs`
+- **Type-Safe Routes** - Centralized route helpers with no hardcoded strings
+
+---
+
+### 🔧 Developer Experience
+
+#### 🛠️ Development Tools
+
+- **TypeScript** - Full type safety across the codebase
+- **Prisma ORM** - Type-safe database queries with custom output location
+- **Zustand State** - Lightweight state management with persistence
+- **Hot Reloading** - Turbopack-powered development server
+
+#### ✅ Code Quality
+
+- **ESLint + Prettier** - Consistent code formatting
+- **Husky + lint-staged** - Pre-commit hooks for quality gates
+- **Jest + Playwright** - Unit and E2E testing infrastructure
+
+#### 🚀 CI/CD Pipeline
+
+- **GitHub Actions** - Automated build, test, and deploy
+- **GHCR Publishing** - Docker images with semantic versioning
+- **Cosign Signing** - Supply chain security with image signatures
+- **Release Automation** - Automatic changelog extraction and release notes
+
+---
+
+### 🔄 Data Migration
+
+#### 📥 Intelligent Onboarding
+
+- **Setup Wizard** - Multi-step guided configuration
+- **Health Diagnostics** - 5 automated checks with clear status indicators
+- **Auto-Redirect** - Automatically routes to setup when database needs initialization
+
+#### 📦 Legacy Import System
+
+- **File Upload** - Accepts .sql, .zip, .tar.gz formats (up to 100MB)
+- **Two-Stage Import** - Raw SQL staging followed by validated transfer
+- **Data Remediation** - Automatic repair of invalid dates, orphan records, and encoding issues
+- **Real-Time Progress** - Server-Sent Events for live status updates
+- **Comprehensive Logging** - Per-table audit logs with repair documentation
+- **Archive Download** - ZIP file of all import logs for verification
+
+---
+
+### 🏗️ Architecture Highlights
+
+- **Next.js 15 App Router** - Modern React with Server Components
+- **Repository Pattern** - Clean data access layer separation
+- **Service Layer** - Centralized business logic
+- **Environment Validation** - Zod-based startup validation with fail-fast behavior
+- **Request Cache** - In-flight deduplication and short-term caching
+- **Shared Types** - Consistent API response types across client and server
+
+---
+
+### Added
+
+- **Automated stale cache cleanup in release workflow**
+  - Added `cleanup_cache` job to the release workflow chain: `release → docker → cleanup_cache`
+  - Automatically deletes GitHub Actions caches that haven't been accessed in 24+ hours
+  - Runs after successful Docker image build and publish
+
 ## [0.9.19] - 2025-12-19
 
 ### Fixed

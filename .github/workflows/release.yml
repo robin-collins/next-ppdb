@@ -151,3 +151,67 @@ jobs:
       contents: read
       packages: write
       id-token: write
+
+  # Cleanup stale GitHub Actions caches (not accessed in 24+ hours)
+  cleanup_cache:
+    needs: docker
+    if: always() && needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cleanup stale caches
+        run: |
+          echo "Fetching list of cache keys with metadata..."
+
+          # Get current time in seconds since epoch
+          NOW=$(date +%s)
+          # 24 hours in seconds
+          MAX_AGE_SECONDS=$((24 * 60 * 60))
+
+          # Get all caches with their metadata (id, key, lastAccessedAt)
+          CACHES=$(gh cache list --limit 100 --json id,key,lastAccessedAt)
+
+          if [ -z "$CACHES" ] || [ "$CACHES" == "[]" ]; then
+            echo "No caches found."
+            exit 0
+          fi
+
+          echo "Found $(echo "$CACHES" | jq length) caches. Checking for stale entries..."
+
+          # Setting this to not fail the workflow while deleting cache keys
+          set +e
+
+          DELETED_COUNT=0
+          KEPT_COUNT=0
+
+          # Process each cache
+          echo "$CACHES" | jq -c '.[]' | while read -r cache; do
+            CACHE_ID=$(echo "$cache" | jq -r '.id')
+            CACHE_KEY=$(echo "$cache" | jq -r '.key')
+            LAST_ACCESSED=$(echo "$cache" | jq -r '.lastAccessedAt')
+
+            # Convert lastAccessedAt to seconds since epoch
+            LAST_ACCESSED_EPOCH=$(date -d "$LAST_ACCESSED" +%s 2>/dev/null || echo "0")
+
+            # Calculate age in seconds
+            AGE_SECONDS=$((NOW - LAST_ACCESSED_EPOCH))
+            AGE_HOURS=$((AGE_SECONDS / 3600))
+
+            if [ "$AGE_SECONDS" -gt "$MAX_AGE_SECONDS" ]; then
+              echo "Deleting stale cache: $CACHE_KEY (last accessed ${AGE_HOURS}h ago)"
+              gh cache delete "$CACHE_ID" && DELETED_COUNT=$((DELETED_COUNT + 1))
+            else
+              echo "Keeping cache: $CACHE_KEY (last accessed ${AGE_HOURS}h ago)"
+              KEPT_COUNT=$((KEPT_COUNT + 1))
+            fi
+          done
+
+          echo ""
+          echo "Cache cleanup complete."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
