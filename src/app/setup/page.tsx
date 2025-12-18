@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import DiagnosticResults from '@/components/setup/DiagnosticResults'
 import FileUploader from '@/components/setup/FileUploader'
-import ImportProgress from '@/components/setup/ImportProgress'
+import ImportProgress, {
+  type LogArchiveInfo,
+} from '@/components/setup/ImportProgress'
 import { HealthCheckResult } from '@/lib/diagnostics/types'
 
 type WizardStep = 'diagnostics' | 'upload' | 'importing' | 'complete' | 'error'
@@ -49,6 +51,7 @@ export default function SetupPage() {
   const [healthLoading, setHealthLoading] = useState(true)
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null)
   const [importStats, setImportStats] = useState<ImportStats | null>(null)
+  const [logArchive, setLogArchive] = useState<LogArchiveInfo | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const fetchHealth = useCallback(async () => {
@@ -80,8 +83,12 @@ export default function SetupPage() {
     setError(errorMsg)
   }
 
-  const handleImportComplete = (stats: ImportStats) => {
+  const handleImportComplete = (
+    stats: ImportStats,
+    archive: LogArchiveInfo | null
+  ) => {
     setImportStats(stats)
+    setLogArchive(archive)
     setError(null) // Clear any previous errors on successful completion
     setStep('complete')
     // Set cookie to indicate setup is complete
@@ -431,7 +438,33 @@ export default function SetupPage() {
                   </div>
                 )}
 
-                <div className="text-center">
+                <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+                  {logArchive?.available && (
+                    <button
+                      onClick={() =>
+                        window.open(
+                          `/api/setup/import/logs/${logArchive.downloadId}`,
+                          '_blank'
+                        )
+                      }
+                      className="border-primary text-primary hover:bg-primary/5 flex items-center gap-2 rounded-lg border-2 bg-white px-8 py-3 font-semibold transition-colors"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      Download Logs
+                    </button>
+                  )}
                   <button
                     onClick={handleGoToApp}
                     className="bg-primary hover:bg-primary-hover rounded-lg px-8 py-3 font-semibold text-white transition-colors"

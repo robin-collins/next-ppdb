@@ -30,7 +30,7 @@ interface FinalStats {
   }
 }
 
-interface LogArchiveInfo {
+export interface LogArchiveInfo {
   available: boolean
   downloadId: string | null
   filename: string | null
@@ -47,7 +47,7 @@ interface ImportProgressProps {
   backupType?: BackupType
   /** Human-readable description of the backup source */
   backupSourceDescription?: string
-  onComplete: (stats: FinalStats) => void
+  onComplete: (stats: FinalStats, archive: LogArchiveInfo | null) => void
   onError: (error: string) => void
 }
 
@@ -137,13 +137,15 @@ export default function ImportProgress({
       setIsComplete(true)
       setPhase('complete')
       setMessage(data.message)
+
+      const archiveInfo = data.logArchive || null
       // Capture log archive info if available
-      if (data.logArchive) {
-        setLogArchive(data.logArchive)
+      if (archiveInfo) {
+        setLogArchive(archiveInfo)
       }
       eventSource.close()
-      // Pass final stats to parent after short delay for user to see completion
-      setTimeout(() => onComplete(data.stats), 2000)
+      // Pass final stats and archive info to parent after short delay for user to see completion
+      setTimeout(() => onComplete(data.stats, archiveInfo), 2000)
     })
 
     eventSource.addEventListener('error', (e: Event) => {

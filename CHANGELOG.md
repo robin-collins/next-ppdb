@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.9.18] - 2025-12-19
+
+### Added
+
+- **Unified Import Logs Download on Setup Completion**
+  - Moved the "Download Logs" button from the processing phase to the final "Setup Complete" screen.
+  - The button is now permanently available alongside the "Launch Application" button after a successful import.
+  - Updated `ImportProgress` component to pass log archive information to the parent `SetupPage`.
+  - Improved accessibility of import logs for late-stage verification.
 
 ## [0.9.17] - 2025-12-19
 
