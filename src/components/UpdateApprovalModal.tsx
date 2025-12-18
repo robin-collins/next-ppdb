@@ -18,7 +18,7 @@ interface PendingUpdate {
 interface UpdateApprovalModalProps {
   update: PendingUpdate
   onClose: () => void
-  onApprove: () => void
+  onApprove: (approverName: string) => void
   onCancel: () => void
   isLoading?: boolean
 }
@@ -37,7 +37,7 @@ export default function UpdateApprovalModal({
     if (!approverName.trim()) {
       return
     }
-    onApprove()
+    onApprove(approverName.trim())
   }
 
   const formatDate = (dateStr: string) => {

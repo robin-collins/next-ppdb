@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Fixed update approval email always showing "Approved By: Admin" instead of actual approver name**
+  - The approval modal captured the approver's name in state but didn't pass it to the parent callback
+  - The parent page hardcoded `'Admin'` in the API request body
+  - Updated `UpdateApprovalModal` to pass `approverName` via the `onApprove(approverName: string)` callback
+  - Updated `admin/updates/page.tsx` to receive and use the actual approver name in the approval API call
+  - The email now correctly shows "Approved By: [Approver Name]" as entered in the verification modal
+
 - **Fixed scheduler backup timing running at 16:30 instead of 19:00 Adelaide time**
   - Root cause: Crontab was written with UTC times assuming traditional cron behavior, but Alpine's crond respects the container's TZ environment variable
   - The crontab specified `30 16 * * *` thinking it was 16:30 UTC (≈2:00 AM Adelaide), but crond interpreted it as 16:30 Adelaide local time

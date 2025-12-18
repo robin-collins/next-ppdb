@@ -55,7 +55,7 @@ export default function AdminUpdatesPage() {
     fetchUpdates()
   }, [fetchUpdates])
 
-  const handleApprove = async () => {
+  const handleApprove = async (approverName: string) => {
     if (!pendingUpdate) return
 
     setActionLoading(true)
@@ -65,7 +65,7 @@ export default function AdminUpdatesPage() {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ approvedBy: 'Admin' }),
+          body: JSON.stringify({ approvedBy: approverName }),
         }
       )
 
