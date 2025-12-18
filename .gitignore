@@ -70,3 +70,4 @@ local_test/
 decisions/
 
 public/search-index.json
+openapi/

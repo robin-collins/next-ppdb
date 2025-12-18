@@ -1667,6 +1667,636 @@ export async function GET() {
           },
         },
       },
+      '/api/admin/notifications': {
+        get: {
+          operationId: 'listNotifications',
+          summary: 'List system notifications',
+          description:
+            'Retrieve a list of system notifications with optional filtering by status',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'status',
+              schema: {
+                type: 'string',
+                enum: ['current', 'archived', 'unread', 'read'],
+              },
+              description: 'Filter by notification status',
+              required: false,
+            },
+            {
+              in: 'query',
+              name: 'summary',
+              schema: { type: 'boolean' },
+              description: 'Return only summary counts if true',
+              required: false,
+            },
+          ],
+          responses: {
+            200: {
+              description: 'List of notifications',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      notifications: {
+                        type: 'array',
+                        items: { $ref: '#/components/schemas/Notification' },
+                      },
+                      unreadCount: { type: 'integer' },
+                      total: { type: 'integer' },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+        post: {
+          operationId: 'manageNotifications',
+          summary: 'Manage notifications',
+          description:
+            'Perform bulk actions on notifications (mark all read, clear archived)',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'action',
+              schema: {
+                type: 'string',
+                enum: ['markAllRead', 'clearArchived', 'recalculate'],
+              },
+              description: 'Action to perform',
+              required: true,
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Action completed successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                      count: { type: 'integer' },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid action',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/notifications/{id}': {
+        get: {
+          operationId: 'getNotification',
+          summary: 'Get single notification',
+          description: 'Retrieve details of a specific notification',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Notification ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Notification details',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      notification: {
+                        $ref: '#/components/schemas/Notification',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            404: {
+              description: 'Notification not found',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+        patch: {
+          operationId: 'updateNotification',
+          summary: 'Update notification',
+          description: 'Update notification status (mark as read or archive)',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Notification ID',
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['action'],
+                  properties: {
+                    action: {
+                      type: 'string',
+                      enum: ['read', 'archive'],
+                      description: 'Action to perform',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Notification updated',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      notification: {
+                        $ref: '#/components/schemas/Notification',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid action',
+            },
+            404: {
+              description: 'Notification not found',
+            },
+          },
+        },
+        delete: {
+          operationId: 'deleteNotification',
+          summary: 'Delete notification',
+          description: 'Permanently delete an archived notification',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Notification ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Notification deleted',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Notification must be archived before deletion',
+            },
+            404: {
+              description: 'Notification not found',
+            },
+          },
+        },
+      },
+      '/api/admin/updates/pending': {
+        get: {
+          operationId: 'getPendingUpdates',
+          summary: 'Get pending updates',
+          description:
+            'Retrieve information about pending updates and update history',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'history',
+              schema: { type: 'boolean' },
+              description: 'Include update history',
+              required: false,
+            },
+            {
+              in: 'query',
+              name: 'limit',
+              schema: { type: 'integer', default: 20 },
+              description: 'Limit history items',
+              required: false,
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Pending update info',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      pending: {
+                        nullable: true,
+                        allOf: [{ $ref: '#/components/schemas/Update' }],
+                      },
+                      lastCheck: {
+                        type: 'string',
+                        format: 'date-time',
+                        nullable: true,
+                      },
+                      history: {
+                        type: 'array',
+                        items: { $ref: '#/components/schemas/Update' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/updates/{id}': {
+        get: {
+          operationId: 'getUpdate',
+          summary: 'Get update details',
+          description: 'Retrieve details for a specific update',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Update ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Update details',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      update: { $ref: '#/components/schemas/Update' },
+                      source: {
+                        type: 'string',
+                        enum: ['current', 'history'],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            404: {
+              description: 'Update not found',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+        delete: {
+          operationId: 'cancelUpdate',
+          summary: 'Cancel update',
+          description: 'Cancel a pending or approved update',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Update ID',
+            },
+          ],
+          responses: {
+            200: {
+              description: 'Update cancelled',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                      cancelledUpdate: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          version: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Cannot cancel update in current status',
+            },
+            404: {
+              description: 'Update not found',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/updates/{id}/approve': {
+        post: {
+          operationId: 'approveUpdate',
+          summary: 'Approve update',
+          description: 'Approve a pending update for execution',
+          tags: ['Admin'],
+          parameters: [
+            {
+              in: 'path',
+              name: 'id',
+              required: true,
+              schema: { type: 'string' },
+              description: 'Update ID',
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['approvedBy'],
+                  properties: {
+                    approvedBy: {
+                      type: 'string',
+                      description: 'Username of approver',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Update approved',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                      update: { $ref: '#/components/schemas/Update' },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: 'Invalid status or request',
+            },
+            404: {
+              description: 'Update not found',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/updates/execute': {
+        post: {
+          operationId: 'executeUpdate',
+          summary: 'Execute update (Internal)',
+          description:
+            'Signal scheduler to execute approved update. Internal endpoint used by scheduler.',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Execution instructions',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      executeUpdate: { type: 'boolean' },
+                      update: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          currentVersion: { type: 'string' },
+                          newVersion: { type: 'string' },
+                        },
+                      },
+                      instructions: {
+                        type: 'object',
+                        properties: {
+                          pullCommand: { type: 'string' },
+                          restartCommand: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: 'Unauthorized (Scheduler auth required)',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+        put: {
+          operationId: 'reportUpdateResult',
+          summary: 'Report update result (Internal)',
+          description:
+            'Callback for scheduler to report execution success or failure.',
+          tags: ['Admin'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['success', 'updateId'],
+                  properties: {
+                    success: { type: 'boolean' },
+                    updateId: { type: 'string' },
+                    duration: { type: 'integer' },
+                    error: { type: 'string' },
+                    rollbackPerformed: { type: 'boolean' },
+                    rollbackDetails: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Result processed',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      message: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: 'Unauthorized',
+            },
+            404: {
+              description: 'Update not found',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/version-check': {
+        get: {
+          operationId: 'getVersionCheckStatus',
+          summary: 'Get version check status',
+          description:
+            'Retrieve current app version, last check time, and any pending updates',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Version check status',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      currentVersion: { type: 'string' },
+                      lastCheck: {
+                        type: 'string',
+                        format: 'date-time',
+                        nullable: true,
+                      },
+                      pendingUpdate: {
+                        nullable: true,
+                        allOf: [{ $ref: '#/components/schemas/Update' }],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+        post: {
+          operationId: 'checkForUpdates',
+          summary: 'Check for updates',
+          description:
+            'Trigger a manual check for new application versions on GitHub Container Registry',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Check completed',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      updateAvailable: { type: 'boolean' },
+                      current: { type: 'string' },
+                      nextVersion: { type: 'string', nullable: true },
+                      pendingUpdateId: { type: 'string', nullable: true },
+                      message: { type: 'string', nullable: true },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: 'Unauthorized (Scheduler auth required)',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
+      '/api/admin/scheduled-backup': {
+        post: {
+          operationId: 'triggerScheduledBackup',
+          summary: 'Trigger scheduled backup',
+          description:
+            'Trigger a database backup. Used by scheduler for nightly backups.',
+          tags: ['Admin'],
+          responses: {
+            200: {
+              description: 'Backup completed',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      success: { type: 'boolean' },
+                      filename: { type: 'string' },
+                      sqlSize: { type: 'integer' },
+                      zipSize: { type: 'integer' },
+                      duration: { type: 'integer' },
+                      downloadUrl: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: 'Unauthorized (Scheduler auth required)',
+            },
+            500: {
+              description: 'Server error',
+            },
+          },
+        },
+      },
     },
     components: {
       schemas: {
@@ -2269,6 +2899,122 @@ export async function GET() {
               type: 'string',
               nullable: true,
               description: 'Error message if check failed',
+            },
+          },
+        },
+        Notification: {
+          type: 'object',
+          description: 'System notification',
+          required: ['id', 'type', 'message', 'createdAt', 'read'],
+          properties: {
+            id: { type: 'string', description: 'Notification ID' },
+            type: {
+              type: 'string',
+              enum: ['info', 'success', 'warning', 'error'],
+              description: 'Notification type',
+            },
+            title: {
+              type: 'string',
+              nullable: true,
+              description: 'Notification title',
+            },
+            message: { type: 'string', description: 'Notification content' },
+            timestamp: { type: 'integer', description: 'Creation timestamp' },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Creation date',
+            },
+            read: { type: 'boolean', description: 'Read status' },
+            archived: { type: 'boolean', description: 'Archived status' },
+            source: {
+              type: 'string',
+              nullable: true,
+              description: 'Source of notification',
+            },
+            metadata: {
+              type: 'object',
+              additionalProperties: true,
+              description: 'Additional metadata',
+            },
+          },
+        },
+        Update: {
+          type: 'object',
+          description: 'System update information',
+          required: [
+            'id',
+            'currentVersion',
+            'newVersion',
+            'status',
+            'detectedAt',
+          ],
+          properties: {
+            id: { type: 'string', description: 'Update ID' },
+            currentVersion: {
+              type: 'string',
+              description: 'Current system version',
+            },
+            newVersion: {
+              type: 'string',
+              description: 'New available version',
+            },
+            status: {
+              type: 'string',
+              enum: ['PENDING', 'APPROVED', 'EXECUTED', 'FAILED'],
+              description: 'Update status',
+            },
+            releaseNotes: {
+              type: 'string',
+              nullable: true,
+              description: 'Release notes in markdown',
+            },
+            releaseTitle: {
+              type: 'string',
+              nullable: true,
+              description: 'Release title',
+            },
+            releaseUrl: {
+              type: 'string',
+              nullable: true,
+              description: 'GitHub release URL',
+            },
+            detectedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Date update was detected',
+            },
+            approvedAt: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              description: 'Date update was approved',
+            },
+            approvedBy: {
+              type: 'string',
+              nullable: true,
+              description: 'User who approved the update',
+            },
+            executedAt: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              description: 'Date update was executed',
+            },
+            executionDuration: {
+              type: 'integer',
+              nullable: true,
+              description: 'Execution time in ms',
+            },
+            errorMessage: {
+              type: 'string',
+              nullable: true,
+              description: 'Error message if failed',
+            },
+            rollbackPerformed: {
+              type: 'boolean',
+              nullable: true,
+              description: 'Whether rollback was performed',
             },
           },
         },

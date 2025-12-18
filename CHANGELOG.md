@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.16] - 2025-12-18
+
+### Added
+
+- **Complete Admin API Documentation**
+  - Updated OpenAPI specification (`/api/docs/openapi.json`) to include all administrative endpoints
+  - Added documentation for Notification Management (`/api/admin/notifications`)
+  - Added documentation for Update Management and Execution (`/api/admin/updates`)
+  - Added documentation for System Backup triggers (`/api/admin/scheduled-backup`)
+  - Added documentation for Version Checking (`/api/admin/version-check`)
+  - Added new schemas: `Notification`, `Update`, `UpdateExecutionResult`
+
+### Fixed
+
+- **OpenAPI Specification Validation Error**
+  - Fixed `vacuum` linter error regarding `$ref` usage with sibling properties
+  - Wrapped request body references in `allOf` array for nullable fields in `Update` schema
+  - Verified spec compliance with OpenAPI 3.0.3 standards
+
 ## [0.9.15] - 2025-12-18
 
 ### Added
