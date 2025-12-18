@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Fixed scheduler backup timing running at 16:30 instead of 19:00 Adelaide time**
+  - Root cause: Crontab was written with UTC times assuming traditional cron behavior, but Alpine's crond respects the container's TZ environment variable
+  - The crontab specified `30 16 * * *` thinking it was 16:30 UTC (≈2:00 AM Adelaide), but crond interpreted it as 16:30 Adelaide local time
+  - Updated crontab to use local Adelaide times directly since TZ=Australia/Adelaide is correctly configured
+  - Backup now runs at 19:00 (7:00 PM) Adelaide time, 1 hour before scheduled updates at 20:00
+  - Corrected all other scheduled tasks to use local times: version checks at 06:00 and 12:00, updates at 20:00, log rotation at midnight
+  - Simplified crontab comments to clarify that times are local (no UTC conversion needed)
+
 ## [0.9.13] - 2025-12-16
 
 ### Fixed

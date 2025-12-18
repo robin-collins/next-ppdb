@@ -1,33 +1,24 @@
 # Scheduler Crontab
-# Timezone: Australia/Adelaide
-# Note: Cron runs in UTC, adjust times accordingly
-# Australia/Adelaide is UTC+9:30 (or UTC+10:30 during DST)
+# Timezone: Australia/Adelaide (set via TZ environment variable in container)
+# Note: Alpine crond respects the container's TZ setting, so times below are LOCAL Adelaide times
+# No UTC conversion needed - crond uses the configured timezone automatically
 
-# Nightly backup at 2:00 AM Adelaide time
-# During standard time: 2:00 AM ACST = 4:30 PM UTC (previous day)
-# During DST: 2:00 AM ACDT = 3:30 PM UTC (previous day)
-30 16 * * * /scripts/backup.sh >> /var/log/scheduler/cron.log 2>&1
+# Pre-update backup at 7:00 PM (19:00) Adelaide time
+# Runs 1 hour before scheduled updates to ensure recovery points
+0 19 * * * /scripts/backup.sh >> /var/log/scheduler/cron.log 2>&1
 
 # Version check at 6:00 AM Adelaide time
-# During standard time: 6:00 AM ACST = 8:30 PM UTC (previous day)
-# During DST: 6:00 AM ACDT = 7:30 PM UTC (previous day)
-30 20 * * * /scripts/version-check.sh >> /var/log/scheduler/cron.log 2>&1
+0 6 * * * /scripts/version-check.sh >> /var/log/scheduler/cron.log 2>&1
 
 # Version check at 12:00 PM (noon) Adelaide time
-# During standard time: 12:00 PM ACST = 2:30 AM UTC
-# During DST: 12:00 PM ACDT = 1:30 AM UTC
-30 2 * * * /scripts/version-check.sh >> /var/log/scheduler/cron.log 2>&1
+0 12 * * * /scripts/version-check.sh >> /var/log/scheduler/cron.log 2>&1
 
-# Execute approved updates at 8:00 PM Adelaide time
-# During standard time: 8:00 PM ACST = 10:30 AM UTC
-# During DST: 8:00 PM ACDT = 9:30 AM UTC
-30 10 * * * /scripts/execute-updates.sh >> /var/log/scheduler/cron.log 2>&1
+# Execute approved updates at 8:00 PM (20:00) Adelaide time
+0 20 * * * /scripts/execute-updates.sh >> /var/log/scheduler/cron.log 2>&1
 
 # Process email queue every 15 minutes
 */15 * * * * /scripts/process-email-queue.sh >> /var/log/scheduler/cron.log 2>&1
 
 # Log rotation at midnight Adelaide time
-# During standard time: 12:00 AM ACST = 2:30 PM UTC (previous day)
-# During DST: 12:00 AM ACDT = 1:30 PM UTC (previous day)
-30 14 * * * /usr/sbin/logrotate /etc/logrotate.d/scheduler
+0 0 * * * /usr/sbin/logrotate /etc/logrotate.d/scheduler
 
