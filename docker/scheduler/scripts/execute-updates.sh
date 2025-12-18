@@ -531,8 +531,9 @@ if docker pull "$NEW_SCHEDULER_IMAGE"; then
         # - Access to scheduler_logs volume (named volume - mount by name)
         # - Project working directory for relative path resolution
         #
-        # Using docker/compose image which has docker-compose standalone
-        # Override entrypoint to add a delay before running compose (gives scheduler time to finish logging)
+        # IMPORTANT: Must use 'docker compose' (v2, Go-based CLI plugin) NOT 'docker-compose' (v1, Python standalone)
+        # The compose file uses top-level 'name:' which is only supported in Compose v2
+        # Using 'docker:27-cli' which includes the compose plugin (v2.x)
         docker run -d --rm \
             --name ppdb-scheduler-updater \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -541,9 +542,8 @@ if docker pull "$NEW_SCHEDULER_IMAGE"; then
             -v ppdb-app_scheduler_logs:/var/log/scheduler \
             -e COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT" \
             --workdir / \
-            --entrypoint sh \
-            docker/compose:latest \
-            -c "echo 'Updater started, waiting 3s...' >> /var/log/scheduler/self-update.log 2>&1; sleep 3; echo 'Running docker-compose up...' >> /var/log/scheduler/self-update.log 2>&1; docker-compose -f /docker-compose.yml --env-file /app/.env up -d --force-recreate $SCHEDULER_SERVICE_NAME >> /var/log/scheduler/self-update.log 2>&1; echo 'Scheduler self-update complete' >> /var/log/scheduler/self-update.log 2>&1"
+            docker:27-cli \
+            sh -c "echo 'Updater started, waiting 3s...' >> /var/log/scheduler/self-update.log 2>&1; sleep 3; echo 'Checking docker compose version...' >> /var/log/scheduler/self-update.log 2>&1; docker compose version >> /var/log/scheduler/self-update.log 2>&1; echo 'Running docker compose up...' >> /var/log/scheduler/self-update.log 2>&1; docker compose -f /docker-compose.yml --env-file /app/.env up -d --force-recreate $SCHEDULER_SERVICE_NAME >> /var/log/scheduler/self-update.log 2>&1; echo 'Scheduler self-update complete' >> /var/log/scheduler/self-update.log 2>&1"
 
         UPDATER_EXIT=$?
         if [ $UPDATER_EXIT -eq 0 ]; then

@@ -11,12 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Scheduler self-update leaving orphaned containers with mangled names (e.g., `41146c4d20b7_ppdb-scheduler`)
   - Root cause: Running `docker compose` from inside the container being recreated causes all processes to be killed when Docker stops the container, interrupting the recreation mid-way
-  - Solution: Spawn a separate ephemeral "updater" container using `docker/compose:latest` image
+  - Solution: Spawn a separate ephemeral "updater" container using `docker:27-cli` image
+  - Must use `docker compose` (v2 CLI plugin) not `docker-compose` (v1 standalone) - compose file uses top-level `name:` field only supported in v2
   - Updater container runs independently and survives the scheduler's termination
   - Uses `docker inspect` to discover host paths for bind-mounted compose file and env file
   - Named volume `ppdb-app_scheduler_logs` mounted directly by name for logging
   - Inherits `COMPOSE_PROJECT_NAME` from container labels for correct project context
-  - 3-second delay before running docker-compose to allow scheduler to finish logging
+  - 3-second delay before running docker compose to allow scheduler to finish logging
   - Container auto-removes itself after completion (`--rm` flag)
 
 ## [1.0.1] - 2025-12-19
