@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Enhanced email notification segregation for update events**
+  - Added `DEVELOPER_NOTIFICATION_EMAIL` environment variable for developer-specific notifications
+  - Implemented recipient segregation based on event type:
+    - **Update Available**: End users only (`UPDATE_NOTIFICATION_EMAIL`)
+    - **Update Approved**: Both end users and developers
+    - **Update Success**: Both end users and developers
+    - **Update Failed**: Developers only (`DEVELOPER_NOTIFICATION_EMAIL`)
+    - **Update Rollback**: Developers only (`DEVELOPER_NOTIFICATION_EMAIL`)
+  - End users receive notifications relevant to update availability and success
+  - Developers are additionally notified of failures and rollbacks for prompt awareness and action
+  - Added `getUpdateNotificationRecipients()` helper function in `src/lib/email.ts` for consistent recipient resolution
+  - Updated scheduler fallback emails to respect the same segregation rules
+  - Added `DEVELOPER_NOTIFICATION_EMAIL` to docker-compose.yml for both next-ppdb and scheduler services
+  - Updated quick-install.ps1 to prompt for separate user and developer notification emails
+  - Files modified: `src/lib/email.ts`, `src/lib/config.ts`, `docker-compose.yml`, `quick-install.ps1`,
+    `src/app/api/admin/version-check/route.ts`, `src/app/api/admin/updates/[id]/approve/route.ts`,
+    `src/app/api/admin/updates/execute/route.ts`, `docker/scheduler/scripts/execute-updates.sh`
+
 ### Fixed
 
 - **Fixed scheduler backup timing running at 16:30 instead of 19:00 Adelaide time**

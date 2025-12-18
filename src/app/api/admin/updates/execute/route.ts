@@ -11,7 +11,7 @@ import { log } from '@/lib/logger'
 import { validateSchedulerAuth } from '@/lib/scheduler-auth'
 import { updateStore } from '@/lib/update-store'
 import { notificationStore } from '@/lib/notification-store'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, getUpdateNotificationRecipients } from '@/lib/email'
 import {
   updateExecutedSuccessTemplate,
   updateExecutedFailureTemplate,
@@ -44,7 +44,6 @@ export async function POST(request: Request) {
   }
 
   const _startTime = Date.now()
-  const _emailTo = process.env.UPDATE_NOTIFICATION_EMAIL
 
   try {
     // Get current approved update
@@ -187,8 +186,6 @@ export async function PUT(request: Request) {
       )
     }
 
-    const emailTo = process.env.UPDATE_NOTIFICATION_EMAIL
-
     if (success) {
       // Mark as executed
       await updateStore.markExecuted(duration)
@@ -220,8 +217,10 @@ export async function PUT(request: Request) {
         },
       })
 
-      // Send success email
-      if (emailTo) {
+      // Send success email (update_success goes to both users and developers)
+      const successRecipients =
+        getUpdateNotificationRecipients('update_success')
+      if (successRecipients.length > 0) {
         const updatedRecord = {
           ...update,
           status: 'EXECUTED' as const,
@@ -229,18 +228,19 @@ export async function PUT(request: Request) {
           executionDuration: duration,
         }
         const template = updateExecutedSuccessTemplate(updatedRecord)
+        const subject = `[PPDB] Update Completed: v${update.currentVersion} → v${update.newVersion}`
 
         const emailResult = await sendEmail({
-          to: emailTo,
-          subject: `[PPDB] Update Completed: v${update.currentVersion} → v${update.newVersion}`,
+          to: successRecipients,
+          subject,
           html: template.html,
           text: template.text,
         })
 
         if (!emailResult.success) {
           await emailQueue.enqueue({
-            to: emailTo,
-            subject: `[PPDB] Update Completed: v${update.currentVersion} → v${update.newVersion}`,
+            to: successRecipients,
+            subject,
             html: template.html,
             text: template.text,
           })
@@ -280,8 +280,9 @@ export async function PUT(request: Request) {
         },
       })
 
-      // Send failure email
-      if (emailTo) {
+      // Send failure email (update_failed goes to developers only)
+      const failureRecipients = getUpdateNotificationRecipients('update_failed')
+      if (failureRecipients.length > 0) {
         const failedRecord = {
           ...update,
           status: 'FAILED' as const,
@@ -291,18 +292,19 @@ export async function PUT(request: Request) {
           rollbackDetails,
         }
         const template = updateExecutedFailureTemplate(failedRecord)
+        const subject = `[PPDB] Update FAILED: v${update.currentVersion} → v${update.newVersion}`
 
         const emailResult = await sendEmail({
-          to: emailTo,
-          subject: `[PPDB] Update FAILED: v${update.currentVersion} → v${update.newVersion}`,
+          to: failureRecipients,
+          subject,
           html: template.html,
           text: template.text,
         })
 
         if (!emailResult.success) {
           await emailQueue.enqueue({
-            to: emailTo,
-            subject: `[PPDB] Update FAILED: v${update.currentVersion} → v${update.newVersion}`,
+            to: failureRecipients,
+            subject,
             html: template.html,
             text: template.text,
           })

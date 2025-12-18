@@ -149,10 +149,11 @@ if (-not (Test-Path ".env")) {
         $smtpUser = Read-HostWithDefault -Prompt "SMTP username" -Default ""
         $smtpPass = Read-HostWithDefault -Prompt "SMTP password" -Default ""
         $smtpFrom = Read-HostWithDefault -Prompt "SMTP from address" -Default "notifications@$domainName"
-        $notifyEmail = Read-HostWithDefault -Prompt "Notification email" -Default "admin@$domainName"
+        $notifyEmail = Read-HostWithDefault -Prompt "User notification email (updates/success)" -Default "admin@$domainName"
+        $devNotifyEmail = Read-HostWithDefault -Prompt "Developer notification email (failures/rollbacks)" -Default $notifyEmail
     } else {
         $smtpHost = ""; $smtpPort = "587"; $smtpUser = ""; $smtpPass = ""
-        $smtpFrom = ""; $notifyEmail = ""
+        $smtpFrom = ""; $notifyEmail = ""; $devNotifyEmail = ""
     }
 
     # Optional GitHub Configuration
@@ -217,6 +218,7 @@ SMTP_PASS=$smtpPass
 SMTP_FROM=$smtpFrom
 UPDATE_NOTIFICATION_EMAIL=$notifyEmail
 BACKUP_NOTIFICATION_EMAIL=$notifyEmail
+DEVELOPER_NOTIFICATION_EMAIL=$devNotifyEmail
 
 # ==========================================
 # GHCR / GitHub Configuration

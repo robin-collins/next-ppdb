@@ -170,6 +170,7 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       UPDATE_NOTIFICATION_EMAIL: ${UPDATE_NOTIFICATION_EMAIL:-}
       BACKUP_NOTIFICATION_EMAIL: ${BACKUP_NOTIFICATION_EMAIL:-}
+      DEVELOPER_NOTIFICATION_EMAIL: ${DEVELOPER_NOTIFICATION_EMAIL:-}
       # GHCR configuration for version checks
       GHCR_TOKEN: ${GHCR_TOKEN:-}
       GHCR_REPOSITORY: ${GHCR_REPOSITORY:-robin-collins/next-ppdb}
@@ -245,6 +246,7 @@ services:
       SMTP_PASS: ${SMTP_PASS:-}
       SMTP_FROM: ${SMTP_FROM:-}
       UPDATE_NOTIFICATION_EMAIL: ${UPDATE_NOTIFICATION_EMAIL:-}
+      DEVELOPER_NOTIFICATION_EMAIL: ${DEVELOPER_NOTIFICATION_EMAIL:-}
     volumes:
       # Docker socket for container management (pull, restart, rollback)
       - /var/run/docker.sock:/var/run/docker.sock:ro

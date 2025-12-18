@@ -56,13 +56,14 @@ EOF
 
 # Send email notification directly via msmtp
 # Used as fallback when app is unhealthy and can't send emails
+# Parameters: SUBJECT, BODY, RECIPIENT
 send_fallback_email() {
     local SUBJECT=$1
     local BODY=$2
-    local EMAIL_TO="${UPDATE_NOTIFICATION_EMAIL:-}"
+    local EMAIL_TO=$3
 
     if [ -z "$EMAIL_TO" ]; then
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] No UPDATE_NOTIFICATION_EMAIL set, skipping fallback email"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] No recipient specified, skipping fallback email"
         return 1
     fi
 
@@ -83,11 +84,42 @@ send_fallback_email() {
     } | msmtp -C /tmp/msmtprc "$EMAIL_TO"
 
     if [ $? -eq 0 ]; then
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fallback email sent successfully"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fallback email sent successfully to $EMAIL_TO"
         return 0
     else
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Failed to send fallback email"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Failed to send fallback email to $EMAIL_TO"
         return 1
+    fi
+}
+
+# Send fallback emails to appropriate recipients based on event type
+# Success emails go to both users and developers
+# Failure/rollback emails go only to developers
+send_fallback_emails() {
+    local SUCCESS=$1
+    local SUBJECT=$2
+    local BODY=$3
+    local USER_EMAIL="${UPDATE_NOTIFICATION_EMAIL:-}"
+    local DEV_EMAIL="${DEVELOPER_NOTIFICATION_EMAIL:-}"
+
+    if [ "$SUCCESS" = "true" ]; then
+        # Success notifications go to both users and developers
+        if [ -n "$USER_EMAIL" ]; then
+            send_fallback_email "$SUBJECT" "$BODY" "$USER_EMAIL"
+        fi
+        if [ -n "$DEV_EMAIL" ] && [ "$DEV_EMAIL" != "$USER_EMAIL" ]; then
+            send_fallback_email "$SUBJECT" "$BODY" "$DEV_EMAIL"
+        fi
+        if [ -z "$USER_EMAIL" ] && [ -z "$DEV_EMAIL" ]; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] No notification emails configured, skipping fallback emails"
+        fi
+    else
+        # Failure notifications go only to developers
+        if [ -n "$DEV_EMAIL" ]; then
+            send_fallback_email "$SUBJECT" "$BODY" "$DEV_EMAIL"
+        else
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] No DEVELOPER_NOTIFICATION_EMAIL set, skipping failure notification"
+        fi
     fi
 }
 
@@ -129,6 +161,9 @@ report_result() {
 
 # Report result and send fallback email if app is unreachable
 # This ensures notifications are sent even when both containers fail
+# Email recipients are segregated:
+# - Success: Both UPDATE_NOTIFICATION_EMAIL and DEVELOPER_NOTIFICATION_EMAIL
+# - Failure/Rollback: Only DEVELOPER_NOTIFICATION_EMAIL
 report_and_notify() {
     local SUCCESS=$1
     local UPDATE_ID=$2
@@ -202,7 +237,8 @@ the app is unreachable (both update and rollback may have failed).
 PPDB Scheduler"
     fi
 
-    send_fallback_email "$SUBJECT" "$BODY"
+    # Use segregated email sending based on success/failure
+    send_fallback_emails "$SUCCESS" "$SUBJECT" "$BODY"
 }
 
 # Function to validate that required environment variables are present in env file

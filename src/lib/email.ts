@@ -180,3 +180,53 @@ export function getEmailStatus(): {
     port: smtpConfig.port,
   }
 }
+
+/**
+ * Update notification event types for email recipient segregation
+ */
+export type UpdateNotificationEvent =
+  | 'update_available' // USER only
+  | 'update_approved' // BOTH
+  | 'update_success' // BOTH
+  | 'update_failed' // DEVELOPER only
+  | 'update_rollback' // DEVELOPER only
+
+/**
+ * Get email recipients for update notification events
+ *
+ * Segregates notifications between end users and developers:
+ * - UPDATE_NOTIFICATION_EMAIL: Users who care about availability and success
+ * - DEVELOPER_NOTIFICATION_EMAIL: Developers who need to know about failures/rollbacks
+ *
+ * @param event - The type of update event
+ * @returns Array of email addresses to notify (may be empty if no recipients configured)
+ */
+export function getUpdateNotificationRecipients(
+  event: UpdateNotificationEvent
+): string[] {
+  const userEmail = process.env.UPDATE_NOTIFICATION_EMAIL
+  const devEmail = process.env.DEVELOPER_NOTIFICATION_EMAIL
+  const recipients: string[] = []
+
+  switch (event) {
+    case 'update_available':
+      // Only end users care about new updates being available
+      if (userEmail) recipients.push(userEmail)
+      break
+
+    case 'update_approved':
+    case 'update_success':
+      // Both users and developers want to know about approvals and successes
+      if (userEmail) recipients.push(userEmail)
+      if (devEmail && devEmail !== userEmail) recipients.push(devEmail)
+      break
+
+    case 'update_failed':
+    case 'update_rollback':
+      // Only developers need to know about failures and rollbacks
+      if (devEmail) recipients.push(devEmail)
+      break
+  }
+
+  return recipients
+}

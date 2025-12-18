@@ -12,7 +12,7 @@ import { checkForUpdate } from '@/lib/ghcr'
 import { getReleaseNotes } from '@/lib/github-releases'
 import { updateStore } from '@/lib/update-store'
 import { notificationStore } from '@/lib/notification-store'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, getUpdateNotificationRecipients } from '@/lib/email'
 import { updateAvailableTemplate } from '@/lib/email-templates'
 import { emailQueue } from '@/lib/email-queue'
 
@@ -129,22 +129,23 @@ export async function POST(request: Request) {
       },
     })
 
-    // Send email notification
-    const emailTo = process.env.UPDATE_NOTIFICATION_EMAIL
-    if (emailTo) {
+    // Send email notification (update_available goes to end users only)
+    const recipients = getUpdateNotificationRecipients('update_available')
+    if (recipients.length > 0) {
       const template = updateAvailableTemplate(pendingUpdate)
+      const subject = `[PPDB] Update Available: v${pendingUpdate.currentVersion} → v${pendingUpdate.newVersion}`
 
       const emailResult = await sendEmail({
-        to: emailTo,
-        subject: `[PPDB] Update Available: v${pendingUpdate.currentVersion} → v${pendingUpdate.newVersion}`,
+        to: recipients,
+        subject,
         html: template.html,
         text: template.text,
       })
 
       if (!emailResult.success) {
         await emailQueue.enqueue({
-          to: emailTo,
-          subject: `[PPDB] Update Available: v${pendingUpdate.currentVersion} → v${pendingUpdate.newVersion}`,
+          to: recipients,
+          subject,
           html: template.html,
           text: template.text,
         })

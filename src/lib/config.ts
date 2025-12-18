@@ -145,6 +145,9 @@ export const smtp = {
   get backupNotificationEmail(): string | undefined {
     return process.env.BACKUP_NOTIFICATION_EMAIL
   },
+  get developerNotificationEmail(): string | undefined {
+    return process.env.DEVELOPER_NOTIFICATION_EMAIL
+  },
 }
 
 /**

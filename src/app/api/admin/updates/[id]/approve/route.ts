@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
 import { log } from '@/lib/logger'
 import { updateStore } from '@/lib/update-store'
 import { notificationStore } from '@/lib/notification-store'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, getUpdateNotificationRecipients } from '@/lib/email'
 import { updateApprovedTemplate } from '@/lib/email-templates'
 import { emailQueue } from '@/lib/email-queue'
 
@@ -101,22 +101,23 @@ export async function POST(request: Request, { params }: Params) {
       },
     })
 
-    // Send confirmation email
-    const emailTo = process.env.UPDATE_NOTIFICATION_EMAIL
-    if (emailTo) {
+    // Send confirmation email (update_approved goes to both users and developers)
+    const recipients = getUpdateNotificationRecipients('update_approved')
+    if (recipients.length > 0) {
       const template = updateApprovedTemplate(approved)
+      const subject = `[PPDB] Update Approved: v${approved.currentVersion} → v${approved.newVersion}`
 
       const emailResult = await sendEmail({
-        to: emailTo,
-        subject: `[PPDB] Update Approved: v${approved.currentVersion} → v${approved.newVersion}`,
+        to: recipients,
+        subject,
         html: template.html,
         text: template.text,
       })
 
       if (!emailResult.success) {
         await emailQueue.enqueue({
-          to: emailTo,
-          subject: `[PPDB] Update Approved: v${approved.currentVersion} → v${approved.newVersion}`,
+          to: recipients,
+          subject,
           html: template.html,
           text: template.text,
         })
