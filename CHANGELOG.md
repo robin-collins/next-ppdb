@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.15] - 2025-12-18
+
 ### Added
+
+- **Scheduler self-update mechanism for version synchronization**
+  - After successfully updating the main application, the scheduler now automatically updates itself to the same version
+  - Solves the problem where the scheduler remained on the old version after an update
+  - Implementation approach: Self-restart at end of successful update (simpler than dedicated orchestrator container)
+  - The update sequence ensures all critical work is complete before scheduler restart:
+    1. Main app is healthy on new version
+    2. Success has been reported to the app
+    3. Email notifications sent
+    4. .env updated with new version
+    5. Then scheduler pulls its new image and restarts
+  - Uses `nohup` with background execution to ensure the Docker command completes even if the script is terminated
+  - If scheduler image pull fails, logs a warning but doesn't fail the overall update (main app is already updated)
+  - Self-update log available at `/var/log/scheduler/self-update.log`
 
 - **Enhanced email notification segregation for update events**
   - Added `DEVELOPER_NOTIFICATION_EMAIL` environment variable for developer-specific notifications
@@ -23,9 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated scheduler fallback emails to respect the same segregation rules
   - Added `DEVELOPER_NOTIFICATION_EMAIL` to docker-compose.yml for both next-ppdb and scheduler services
   - Updated quick-install.ps1 to prompt for separate user and developer notification emails
-  - Files modified: `src/lib/email.ts`, `src/lib/config.ts`, `docker-compose.yml`, `quick-install.ps1`,
-    `src/app/api/admin/version-check/route.ts`, `src/app/api/admin/updates/[id]/approve/route.ts`,
-    `src/app/api/admin/updates/execute/route.ts`, `docker/scheduler/scripts/execute-updates.sh`
 
 ### Fixed
 

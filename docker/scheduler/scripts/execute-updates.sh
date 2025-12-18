@@ -23,8 +23,10 @@ if [ -z "$GHCR_TOKEN" ]; then
 fi
 
 GHCR_IMAGE="${GHCR_IMAGE:-ghcr.io/robin-collins/next-ppdb}"
+GHCR_SCHEDULER_IMAGE="${GHCR_IMAGE}-scheduler"
 COMPOSE_FILE="${COMPOSE_FILE:-/docker-compose.yml}"
 CONTAINER_NAME="${CONTAINER_NAME:-next-ppdb}"
+SCHEDULER_CONTAINER_NAME="${SCHEDULER_CONTAINER_NAME:-ppdb-scheduler}"
 ENV_FILE="${ENV_FILE:-/app/.env}"
 
 # Configure msmtp for sending emails
@@ -468,4 +470,35 @@ DURATION=$(( (END_TIME - START_TIME) * 1000 ))
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Update completed successfully in ${DURATION}ms"
 report_and_notify "true" "$UPDATE_ID" "$DURATION" "" "false" "" "$CURRENT_VERSION" "$NEW_VERSION"
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Update execution task finished"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Main app update execution task finished"
+
+# Step 9: Update scheduler container to match the new version
+# This is the final step - the scheduler restarts itself to stay in sync with the app
+# By this point all critical work is done (app healthy, success reported, emails sent)
+# so even if this script gets killed during the restart, the update is complete
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Updating scheduler to version $NEW_VERSION..."
+
+# Pull the new scheduler image first
+NEW_SCHEDULER_IMAGE="$GHCR_SCHEDULER_IMAGE:$NEW_VERSION"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pulling new scheduler image: $NEW_SCHEDULER_IMAGE"
+if docker pull "$NEW_SCHEDULER_IMAGE"; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler image pulled successfully"
+
+    # Now restart the scheduler container
+    # This command will kill the current script, but that's expected behavior
+    # The new scheduler container will start immediately with the new version
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restarting scheduler container (this process will terminate)..."
+
+    # Use nohup and background to ensure the command completes even if this script is killed
+    # The 'sleep 2' gives Docker time to start the restart before the old container is stopped
+    nohup sh -c "sleep 2 && docker compose --env-file '$ENV_FILE' -f '$COMPOSE_FILE' up -d --force-recreate '$SCHEDULER_CONTAINER_NAME'" > /var/log/scheduler/self-update.log 2>&1 &
+
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler self-update initiated. Check /var/log/scheduler/self-update.log for details."
+else
+    # If scheduler image pull fails, log it but don't fail the overall update
+    # The main app is already updated successfully
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: Failed to pull scheduler image $NEW_SCHEDULER_IMAGE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler remains on previous version. Manual update may be required."
+fi
+
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Update execution complete"
