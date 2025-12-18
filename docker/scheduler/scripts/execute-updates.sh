@@ -27,6 +27,8 @@ GHCR_SCHEDULER_IMAGE="${GHCR_IMAGE}-scheduler"
 COMPOSE_FILE="${COMPOSE_FILE:-/docker-compose.yml}"
 CONTAINER_NAME="${CONTAINER_NAME:-next-ppdb}"
 SCHEDULER_CONTAINER_NAME="${SCHEDULER_CONTAINER_NAME:-ppdb-scheduler}"
+# Service name in docker-compose.yml (different from container_name)
+SCHEDULER_SERVICE_NAME="${SCHEDULER_SERVICE_NAME:-scheduler}"
 ENV_FILE="${ENV_FILE:-/app/.env}"
 
 # Configure msmtp for sending emails
@@ -491,7 +493,8 @@ if docker pull "$NEW_SCHEDULER_IMAGE"; then
 
     # Use nohup and background to ensure the command completes even if this script is killed
     # The 'sleep 2' gives Docker time to start the restart before the old container is stopped
-    nohup sh -c "sleep 2 && docker compose --env-file '$ENV_FILE' -f '$COMPOSE_FILE' up -d --force-recreate '$SCHEDULER_CONTAINER_NAME'" > /var/log/scheduler/self-update.log 2>&1 &
+    # NOTE: docker compose requires SERVICE name ('scheduler'), not CONTAINER name ('ppdb-scheduler')
+    nohup sh -c "sleep 2 && docker compose --env-file '$ENV_FILE' -f '$COMPOSE_FILE' up -d --force-recreate '$SCHEDULER_SERVICE_NAME'" > /var/log/scheduler/self-update.log 2>&1 &
 
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler self-update initiated. Check /var/log/scheduler/self-update.log for details."
 else

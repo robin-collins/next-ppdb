@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-12-19
+
+### Fixed
+
+- Scheduler self-update failing with "no such service: ppdb-scheduler" error
+  - Root cause: `docker compose up` requires service name (`scheduler`), not container name (`ppdb-scheduler`)
+  - Added `SCHEDULER_SERVICE_NAME` variable to `execute-updates.sh`
+  - Updated self-update command at line 497 to use service name
+
 ## [1.0.0] - 2025-12-19
 
 ### 🎉 Production Release - Pampered Pooch Database (PPDB)
