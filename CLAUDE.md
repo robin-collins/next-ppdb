@@ -2,10 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-@.project\steering\CHANGELOG.md
-@.project\steering\manageable-tasts.md
-@.project\steering\pnpm.md
-@.project\steering\report-writing.md
+## Steering Files (Guidance Only)
+
+The following files in `.project/steering/` provide **guidance and formatting instructions** - they are NOT files to be directly updated with changes:
+
+- `.project/steering/CHANGELOG.md` - Instructions on HOW to write changelog entries (format, categories, conventions)
+- `.project/steering/manageable-tasks.md` - Task management guidance
+- `.project/steering/pnpm.md` - Package manager conventions
+- `.project/steering/report-writing.md` - Report writing standards
+
+## Actual Changelog Location
+
+**IMPORTANT**: The actual project changelog that should be updated with code changes is:
+
+- **`CHANGELOG.md`** (in repository root) - Update this file with all code changes, bug fixes, and features
 
 When comparing a mock ui versus a live page, follow the following analysis insructions in the file `MOCKUI_ANALYSIS.md`
 

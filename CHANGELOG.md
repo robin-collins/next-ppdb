@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-12-19
+
+### Fixed
+
+- Scheduler self-update leaving orphaned containers with mangled names (e.g., `41146c4d20b7_ppdb-scheduler`)
+  - Root cause: Running `docker compose` from inside the container being recreated causes all processes to be killed when Docker stops the container, interrupting the recreation mid-way
+  - Solution: Spawn a separate ephemeral "updater" container using `docker/compose:latest` image
+  - Updater container runs independently and survives the scheduler's termination
+  - Uses `docker inspect` to discover host paths for bind-mounted compose file and env file
+  - Named volume `ppdb-app_scheduler_logs` mounted directly by name for logging
+  - Inherits `COMPOSE_PROJECT_NAME` from container labels for correct project context
+  - 3-second delay before running docker-compose to allow scheduler to finish logging
+  - Container auto-removes itself after completion (`--rm` flag)
+
 ## [1.0.1] - 2025-12-19
 
 ### Fixed
@@ -12,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scheduler self-update failing with "no such service: ppdb-scheduler" error
   - Root cause: `docker compose up` requires service name (`scheduler`), not container name (`ppdb-scheduler`)
   - Added `SCHEDULER_SERVICE_NAME` variable to `execute-updates.sh`
-  - Updated self-update command at line 497 to use service name
+  - Updated self-update command to use service name
 
 ## [1.0.0] - 2025-12-19
 

@@ -487,16 +487,71 @@ if docker pull "$NEW_SCHEDULER_IMAGE"; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler image pulled successfully"
 
     # Now restart the scheduler container
-    # This command will kill the current script, but that's expected behavior
-    # The new scheduler container will start immediately with the new version
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restarting scheduler container (this process will terminate)..."
+    # IMPORTANT: We cannot run docker compose from inside this container because:
+    # - When Docker stops this container to recreate it, ALL processes inside are killed
+    # - nohup/background doesn't help - the entire cgroup is destroyed
+    # - This leaves the recreation incomplete with orphaned/renamed containers
+    #
+    # SOLUTION: Spawn a separate "updater" container that:
+    # - Runs independently from the scheduler being updated
+    # - Survives when the scheduler container is stopped
+    # - Executes docker-compose to recreate the scheduler
+    # - Auto-removes itself when done (--rm)
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Spawning updater container to recreate scheduler..."
 
-    # Use nohup and background to ensure the command completes even if this script is killed
-    # The 'sleep 2' gives Docker time to start the restart before the old container is stopped
-    # NOTE: docker compose requires SERVICE name ('scheduler'), not CONTAINER name ('ppdb-scheduler')
-    nohup sh -c "sleep 2 && docker compose --env-file '$ENV_FILE' -f '$COMPOSE_FILE' up -d --force-recreate '$SCHEDULER_SERVICE_NAME'" > /var/log/scheduler/self-update.log 2>&1 &
+    # Discover HOST paths for bind-mounted files
+    # When using Docker socket from inside a container, volume paths must be HOST paths
+    # We use docker inspect to find where our bind mounts actually point on the host
+    COMPOSE_FILE_HOST=$(docker inspect "$SCHEDULER_CONTAINER_NAME" --format '{{range .Mounts}}{{if eq .Destination "/docker-compose.yml"}}{{.Source}}{{end}}{{end}}')
+    ENV_FILE_HOST=$(docker inspect "$SCHEDULER_CONTAINER_NAME" --format '{{range .Mounts}}{{if eq .Destination "/app/.env"}}{{.Source}}{{end}}{{end}}')
 
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler self-update initiated. Check /var/log/scheduler/self-update.log for details."
+    # Get the compose project name from the container's labels
+    # This ensures the updater uses the same project context
+    COMPOSE_PROJECT=$(docker inspect "$SCHEDULER_CONTAINER_NAME" --format '{{index .Config.Labels "com.docker.compose.project"}}')
+    COMPOSE_PROJECT=${COMPOSE_PROJECT:-ppdb-app}
+
+    # Get the Docker Compose project working directory from labels
+    # This is needed for relative path resolution in compose file
+    PROJECT_WORKING_DIR=$(docker inspect "$SCHEDULER_CONTAINER_NAME" --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}')
+
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Host paths discovered:"
+    echo "  Compose file: $COMPOSE_FILE_HOST"
+    echo "  Env file: $ENV_FILE_HOST"
+    echo "  Project name: $COMPOSE_PROJECT"
+    echo "  Project dir: $PROJECT_WORKING_DIR"
+
+    if [ -z "$COMPOSE_FILE_HOST" ] || [ -z "$ENV_FILE_HOST" ]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Could not discover host paths for bind mounts"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Scheduler self-update skipped. Manual update required."
+    else
+        # NOTE: docker compose requires SERVICE name ('scheduler'), not CONTAINER name ('ppdb-scheduler')
+        # The updater container needs:
+        # - Docker socket to talk to Docker daemon
+        # - Access to compose file and env file (bind mounts - use discovered HOST paths)
+        # - Access to scheduler_logs volume (named volume - mount by name)
+        # - Project working directory for relative path resolution
+        #
+        # Using docker/compose image which has docker-compose standalone
+        # Override entrypoint to add a delay before running compose (gives scheduler time to finish logging)
+        docker run -d --rm \
+            --name ppdb-scheduler-updater \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$COMPOSE_FILE_HOST":/docker-compose.yml:ro \
+            -v "$ENV_FILE_HOST":/app/.env:ro \
+            -v ppdb-app_scheduler_logs:/var/log/scheduler \
+            -e COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT" \
+            --workdir / \
+            --entrypoint sh \
+            docker/compose:latest \
+            -c "echo 'Updater started, waiting 3s...' >> /var/log/scheduler/self-update.log 2>&1; sleep 3; echo 'Running docker-compose up...' >> /var/log/scheduler/self-update.log 2>&1; docker-compose -f /docker-compose.yml --env-file /app/.env up -d --force-recreate $SCHEDULER_SERVICE_NAME >> /var/log/scheduler/self-update.log 2>&1; echo 'Scheduler self-update complete' >> /var/log/scheduler/self-update.log 2>&1"
+
+        UPDATER_EXIT=$?
+        if [ $UPDATER_EXIT -eq 0 ]; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Updater container spawned successfully"
+        else
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: Failed to spawn updater container (exit code: $UPDATER_EXIT)"
+        fi
+    fi
 else
     # If scheduler image pull fails, log it but don't fail the overall update
     # The main app is already updated successfully
