@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.17] - 2025-12-19
+
+### Added
+
+- **GHCR Authentication in Quick Install Script**
+  - Added `docker login ghcr.io` to `quick-install.ps1` using the provided `GHCR_TOKEN`.
+  - Ensures initial `docker compose up` can pull private images or avoid registry rate limits.
+  - Automatically pipes the token to `--password-stdin` for secure, non-interactive authentication.
+
+### Changed
+
+- **Traefik ACME challenge method switched from TLS to DNS**
+  - Replaced TLS challenge (`tlschallenge=true`) with Cloudflare DNS challenge
+  - Added `CF_DNS_API_TOKEN` environment variable for Cloudflare API authentication
+  - Updated `.env.example` with the new Cloudflare token configuration
+  - Benefits: Works without exposing port 443 publicly, better for firewalled environments
+
 ## [0.9.16] - 2025-12-18
 
 ### Added

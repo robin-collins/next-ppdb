@@ -27,6 +27,8 @@ services:
     depends_on:
       traefik-acme-init:
         condition: service_completed_successfully
+    environment:
+      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
     command:
       - '--api.dashboard=true'
       - '--ping=true'
@@ -35,7 +37,8 @@ services:
       - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
-      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
+      - '--certificatesresolvers.myresolver.acme.dnschallenge=true'
+      - '--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare'
       - '--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}'
       - '--certificatesresolvers.myresolver.acme.storage=/acme/acme.json'
       # Global redirect to HTTPS

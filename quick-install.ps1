@@ -14,7 +14,7 @@
 
 $ErrorActionPreference = "Stop"
 $repoBaseUrl = "https://raw.githubusercontent.com/robin-collins/next-ppdb/main"
-$AppVersion = "0.9.12"  # Default version - update as needed
+$AppVersion = "0.9.17"  # Default version - update as needed
 
 # Function to download a file
 function Download-File {
@@ -265,7 +265,19 @@ if (-not $networkExists) {
     Write-Host "Docker network 'web' already exists. Skipping creation."
 }
 
-# 5. Start Docker Compose
+# 5. Authenticate with GHCR if token is provided
+if (-not [string]::IsNullOrWhiteSpace($env:GHCR_TOKEN)) {
+    Write-Host "Authenticating with GitHub Container Registry..."
+    # Pipe the token to docker login --password-stdin
+    $env:GHCR_TOKEN | docker login ghcr.io -u robin-collins --password-stdin
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "GHCR authentication failed. Initial image pull might fail if images are private or rate-limited."
+    } else {
+        Write-Host "GHCR authentication successful." -ForegroundColor Green
+    }
+}
+
+# 6. Start Docker Compose
 Write-Host "`nStarting application with Docker Compose..."
 docker compose up -d
 
