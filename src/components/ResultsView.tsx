@@ -2,6 +2,7 @@ import { useRouter } from 'next/navigation'
 import AnimalCard from './AnimalCard'
 import AnimalAvatar from './AnimalAvatar'
 import Pagination from './Pagination'
+import { formatDateAU } from '@/lib/date'
 
 interface Animal {
   id: number
@@ -237,13 +238,7 @@ export default function ResultsView({
           {/* Table Body */}
           <div className="divide-y divide-gray-100">
             {animals.map((animal, index) => {
-              const formattedDate = new Date(
-                animal.lastVisit
-              ).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: '2-digit',
-              })
+              const formattedDate = formatDateAU(animal.lastVisit)
 
               // Get all valid phone numbers (filter out "Unknown" and empty values)
               const allPhones = [

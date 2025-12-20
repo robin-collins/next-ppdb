@@ -1,5 +1,7 @@
 'use client'
 
+import { formatDateAU } from '@/lib/date'
+
 interface Animal {
   id: number
   name: string
@@ -62,11 +64,7 @@ export default function CustomerHeader({
   const lastVisit = getLastVisit()
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
+    return formatDateAU(date)
   }
 
   return (

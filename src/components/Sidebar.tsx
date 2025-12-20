@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { formatDateSidebar } from '@/lib/date'
 
 interface PendingUpdate {
   id: string
@@ -107,12 +108,7 @@ export default function Sidebar({
 
   const updateDate = () => {
     const now = new Date()
-    const dateText = now.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    })
-    setSidebarDate(dateText)
+    setSidebarDate(formatDateSidebar(now))
   }
 
   // Resize functionality

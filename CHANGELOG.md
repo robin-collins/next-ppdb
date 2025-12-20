@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2025-12-21
+
+### Added
+
+- New centralized date utility library (`src/lib/date.ts`) with timezone-aware formatting functions:
+  - `formatDateAU()` - Australian format DD-MM-YYYY
+  - `formatDateShortAU()` - Short format DD MMM YYYY
+  - `formatDateSidebar()` - Sidebar format Day DD MMM
+  - `formatDateTimeHeader()` - Full datetime for header
+  - `formatDateForInput()` - Form input format YYYY-MM-DD
+  - `getTodayLocalDateString()` - Timezone-safe date creation
+- Documentation in CLAUDE.md for date and timezone configuration standards
+
+### Fixed
+
+- **Timezone issue causing notes to be logged with wrong date**
+  - Notes entered on 20-12-2025 were being logged as 19-12-2025
+  - Root cause: Using `toISOString().split('T')[0]` converts to UTC, shifting dates backward for Australian timezone (UTC+10:30)
+  - Solution: Use local timezone components via `getTodayLocalDateString()`
+- **Inconsistent date formatting across the application**
+  - Changed all date displays from US format (Mon DD, YYYY) to Australian format (DD-MM-YYYY)
+  - Updated components: `AnimalCard`, `ResultsView`, `AnimalDetailCard`, `CustomerHeader`, `Header`, `Sidebar`
+  - Updated pages: Animal details, Customer history, New animal, Analytics reports
+  - Updated services: `notes.service.ts`
+
+### Changed
+
+- All date formatting now uses centralized utilities from `src/lib/date.ts`
+- Header and sidebar date/time display now uses Australian locale (en-AU)
+
 ## [1.0.5] - 2025-12-19
 
 ### Added

@@ -10,6 +10,7 @@ import AnimalAvatar from '@/components/AnimalAvatar'
 import Toast from '@/components/Toast'
 import { routes } from '@/lib/routes'
 import { extractStaffInitials } from '@/services/notes.service'
+import { getTodayLocalDateString, formatDateForInput } from '@/lib/date'
 
 interface Breed {
   id: number
@@ -99,12 +100,8 @@ export default function AnimalPage() {
         sex: selectedAnimal.sex || '',
         colour: selectedAnimal.colour || '',
         cost: selectedAnimal.cost || 0,
-        lastVisit: selectedAnimal.lastVisit
-          ? new Date(selectedAnimal.lastVisit).toISOString().split('T')[0]
-          : '',
-        thisVisit: selectedAnimal.thisVisit
-          ? new Date(selectedAnimal.thisVisit).toISOString().split('T')[0]
-          : '',
+        lastVisit: formatDateForInput(selectedAnimal.lastVisit),
+        thisVisit: formatDateForInput(selectedAnimal.thisVisit),
         comments: selectedAnimal.comments || '',
       })
     }
@@ -166,7 +163,7 @@ export default function AnimalPage() {
       try {
         await addNote(selectedAnimal.id, {
           notes: newNoteText,
-          serviceDate: new Date().toISOString().split('T')[0],
+          serviceDate: getTodayLocalDateString(),
         })
         setNewNoteText('')
         setToast({ message: 'Note added successfully', type: 'success' })
@@ -205,11 +202,7 @@ export default function AnimalPage() {
     deleteNoteConfirm && deleteNoteConfirm.typedDate === deleteNoteConfirm.date
 
   const handleChangeDates = async () => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    const today = `${year}-${month}-${day}`
+    const today = getTodayLocalDateString()
 
     const updatedFormData = {
       ...formData,

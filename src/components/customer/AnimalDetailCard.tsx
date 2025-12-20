@@ -1,5 +1,7 @@
 'use client'
 
+import { formatDateAU } from '@/lib/date'
+
 interface AnimalDetailCardProps {
   animal: {
     id: number
@@ -19,15 +21,6 @@ export default function AnimalDetailCard({
   onDelete,
   onClick,
 }: AnimalDetailCardProps) {
-  const formatDate = (date: Date | string) => {
-    const d = typeof date === 'string' ? new Date(date) : date
-    return d.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
   const formatCost = (cost: number | null | undefined) => {
     if (!cost) return 'N/A'
     return `$${cost.toFixed(0)}`
@@ -123,7 +116,7 @@ export default function AnimalDetailCard({
             Last Visit
           </div>
           <div className="mt-1 font-medium text-gray-800">
-            {animal.lastVisit ? formatDate(animal.lastVisit) : 'Never'}
+            {animal.lastVisit ? formatDateAU(animal.lastVisit) : 'Never'}
           </div>
         </div>
 

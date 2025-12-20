@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
 import AnimalAvatar from '@/components/AnimalAvatar'
 import { routes } from '@/lib/routes'
+import { formatDateAU } from '@/lib/date'
 
 interface InactiveAnimal {
   animalId: number
@@ -91,11 +92,7 @@ export default function CustomersHistoryPage() {
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'Never'
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+    return formatDateAU(dateString)
   }
 
   const getDateBadgeClass = (monthsSince: number | null): string => {

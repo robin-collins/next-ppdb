@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import AnimalAvatar from './AnimalAvatar'
+import { formatDateAU } from '@/lib/date'
 
 interface Animal {
   id: number
@@ -44,11 +45,7 @@ function formatPhone(phone: string): string {
 
 export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
   const router = useRouter()
-  const formattedDate = new Date(animal.lastVisit).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: '2-digit',
-  })
+  const formattedDate = formatDateAU(animal.lastVisit)
 
   // Get all valid phone numbers (filter out "Unknown" and empty values)
   const isValidPhone = (phone: string | null | undefined): phone is string => {

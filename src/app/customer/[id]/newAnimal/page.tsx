@@ -6,6 +6,7 @@ import { useAnimalsStore } from '@/store/animalsStore'
 import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import { getTodayLocalDateString } from '@/lib/date'
 
 interface Breed {
   id: number
@@ -65,8 +66,8 @@ export default function NewAnimalPage() {
     sex: 'Male' as 'Male' | 'Female',
     colour: '',
     cost: '',
-    lastVisit: new Date().toISOString().split('T')[0],
-    thisVisit: new Date().toISOString().split('T')[0],
+    lastVisit: getTodayLocalDateString(),
+    thisVisit: getTodayLocalDateString(),
     comments: '',
   })
 

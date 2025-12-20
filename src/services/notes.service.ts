@@ -1,6 +1,7 @@
 /**
  * Notes Service - Business logic for service notes operations
  */
+import { formatDateAU, getTodayLocalDateString } from '@/lib/date'
 
 /**
  * Parse a note to extract cost and technician code
@@ -129,23 +130,19 @@ export function appendCostToNote(noteText: string, animalCost: number): string {
 }
 
 /**
- * Format date for note display
+ * Format date for note display (DD-MM-YYYY Australian format)
  */
 export function formatNoteDate(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date
-
-  return d.toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
+  return formatDateAU(date)
 }
 
 /**
- * Get current date formatted for new note
+ * Get current date formatted for new note (YYYY-MM-DD in local timezone)
+ *
+ * IMPORTANT: Uses local timezone instead of UTC to ensure correct date
  */
 export function getCurrentDateForNote(): string {
-  return new Date().toISOString().split('T')[0]
+  return getTodayLocalDateString()
 }
 
 /**

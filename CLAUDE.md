@@ -182,6 +182,60 @@ Zustand stores use middleware for:
 - Tablet/Mobile: Never pins, always overlays with backdrop
 - Resize handle: Drag to adjust width (200-500px), updates CSS variable `--sidebar-width`
 
+## Date and Timezone Configuration
+
+### Timezone
+
+The application timezone is configured via the `TZ` environment variable in `.env`:
+
+```bash
+TZ=Australia/Adelaide
+```
+
+**CRITICAL**: All date/time operations MUST respect this timezone. The Docker container and application server should both use this timezone.
+
+### Date Formatting Standards
+
+All dates displayed in the application MUST use Australian format (DD-MM-YYYY). Use the centralized date utilities in `src/lib/date.ts`:
+
+```typescript
+import {
+  formatDateAU, // DD-MM-YYYY format: "21-12-2025"
+  formatDateShortAU, // DD MMM YYYY format: "21 Dec 2025"
+  formatDateSidebar, // Day DD MMM format: "Sat 21 Dec"
+  formatDateTimeHeader, // h:mm am/pm Day, DD MMM YYYY
+  formatDateForInput, // YYYY-MM-DD for form inputs
+  getTodayLocalDateString, // YYYY-MM-DD in local timezone
+} from '@/lib/date'
+```
+
+### Timezone-Aware Date Creation
+
+**NEVER** use `new Date().toISOString().split('T')[0]` to get today's date - this converts to UTC and can shift the date by a day for Australian timezones.
+
+**ALWAYS** use `getTodayLocalDateString()` instead:
+
+```typescript
+// WRONG - Uses UTC, may be wrong date in Australia
+const today = new Date().toISOString().split('T')[0]
+
+// CORRECT - Uses local timezone
+import { getTodayLocalDateString } from '@/lib/date'
+const today = getTodayLocalDateString()
+```
+
+### Date Display Consistency
+
+| Context             | Function                    | Example Output           |
+| ------------------- | --------------------------- | ------------------------ |
+| Animal cards, lists | `formatDateAU()`            | 21-12-2025               |
+| Notes, reports      | `formatDateAU()`            | 21-12-2025               |
+| Date ranges         | `formatDateShortAU()`       | 21 Dec 2025              |
+| Header clock        | `formatDateTimeHeader()`    | 4:30 pm Sat, 21 Dec 2025 |
+| Sidebar date        | `formatDateSidebar()`       | Sat 21 Dec               |
+| Form inputs         | `formatDateForInput()`      | 2025-12-21               |
+| Creating dates      | `getTodayLocalDateString()` | 2025-12-21               |
+
 ## Code Style & Conventions
 
 - **Prettier Config**: 2-space indent, single quotes, no semicolons, Tailwind class sorting plugin

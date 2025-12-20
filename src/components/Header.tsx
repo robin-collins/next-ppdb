@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { GITHUB_REPO_URL, DOCS_SITE_URL } from '@/constants'
+import { formatDateTimeHeader } from '@/lib/date'
 
 interface NotificationSummary {
   unread: number
@@ -96,20 +97,7 @@ export default function Header({
 
   const updateDateTime = () => {
     const now = new Date()
-    const timeText = now
-      .toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      })
-      .toLowerCase()
-    const dateText = now.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-    setDateTime(`${timeText} ${dateText}`)
+    setDateTime(formatDateTimeHeader(now))
   }
 
   // search is triggered by explicit button click; no need for form submit handler

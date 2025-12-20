@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useSidebarState } from '@/hooks/useSidebarState'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
+import { getTodayLocalDateString, formatDateShortAU } from '@/lib/date'
 
 interface AnalyticsPoint {
   label: string
@@ -37,9 +38,7 @@ export default function AnalyticsDashboardPage() {
 
   const [searchQuery, setSearchQuery] = useState('')
   const [period, setPeriod] = useState<Period>('daily')
-  const [endDate, setEndDate] = useState(
-    () => new Date().toISOString().split('T')[0]
-  )
+  const [endDate, setEndDate] = useState(() => getTodayLocalDateString())
 
   const [data, setData] = useState<ApiResponse | null>(null)
   const [loading, setLoading] = useState(false)
@@ -86,26 +85,21 @@ export default function AnalyticsDashboardPage() {
   // Helper for Period Description
   const periodDescription = useMemo(() => {
     const end = new Date(endDate)
-    const options: Intl.DateTimeFormatOptions = {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }
 
     if (period === 'daily') {
       const start = new Date(end)
       start.setDate(end.getDate() - 6)
-      return `Last 7 days: ${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`
+      return `Last 7 days: ${formatDateShortAU(start)} - ${formatDateShortAU(end)}`
     } else if (period === 'weekly') {
       // 8 weeks
       const start = new Date(end)
       start.setDate(end.getDate() - 55)
-      return `Last 8 weeks: ${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`
+      return `Last 8 weeks: ${formatDateShortAU(start)} - ${formatDateShortAU(end)}`
     } else if (period === 'monthly') {
       // 6 months
       const start = new Date(end)
       start.setMonth(end.getMonth() - 5)
-      return `Last 6 months ending ${end.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+      return `Last 6 months ending ${end.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}`
     } else if (period === 'yearly') {
       // 3 years
       const start = new Date(end)
