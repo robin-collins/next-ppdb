@@ -111,4 +111,4 @@ ppdb-ts/
 │       └── customersStore.ts        # Customers store with mutating flag (updated 2025-12-03)
 ```
 
-**Last Updated**: 2025-12-04
+**Last Updated**: 2026-01-01
