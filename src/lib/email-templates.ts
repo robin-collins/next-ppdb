@@ -5,6 +5,7 @@
  */
 
 import type { PendingUpdate } from './update-store'
+import { marked } from 'marked'
 
 // Common styles for HTML emails
 const styles = `
@@ -219,7 +220,13 @@ export function updateAvailableTemplate(update: PendingUpdate): {
 
           ${update.releaseTitle ? `<h3>${update.releaseTitle}</h3>` : ''}
 
-          ${update.releaseNotes ? `<div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 15px 0;">${update.releaseNotes}</div>` : '<p><em>No release notes available.</em></p>'}
+          ${
+            update.releaseNotes
+              ? `<div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 15px 0;" class="markdown-body">
+                  ${marked.parse(update.releaseNotes)}
+                 </div>`
+              : '<p><em>No release notes available.</em></p>'
+          }
 
           ${update.releaseUrl ? `<p><a href="${update.releaseUrl}" class="button">View on GitHub</a></p>` : ''}
 
