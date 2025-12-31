@@ -318,6 +318,21 @@ export async function DELETE(
           // Determine which animals to migrate vs delete
           let animalsToMigrate: number[] = []
 
+          // If no migration target or deletion flag, block the delete to prevent accidental loss
+          if (
+            !migrateToCustomerId &&
+            !deleteAnimalsExplicitly &&
+            animalIdsToMigrate.length === 0
+          ) {
+            return NextResponse.json(
+              {
+                error:
+                  'Cannot delete customer: associated animals found. Please specify if they should be migrated or deleted.',
+              },
+              { status: 400 }
+            )
+          }
+
           if (animalIdsToMigrate.length > 0 && migrateToCustomerId) {
             animalsToMigrate = allAnimalIds.filter(id =>
               animalIdsToMigrate.includes(id)

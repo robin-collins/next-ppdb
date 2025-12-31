@@ -76,7 +76,9 @@ describe('API: /api/animals/[id]/notes', () => {
         }
       )
 
-      const response = await createNote(request, { params: { id: '1' } })
+      const response = await createNote(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(201)
@@ -155,7 +157,9 @@ describe('API: /api/notes/[noteId]', () => {
         params: { noteId: '1' },
       })
 
-      const response = await getNoteById(request, { params: { noteId: '1' } })
+      const response = await getNoteById(request, {
+        params: Promise.resolve({ noteId: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -172,7 +176,7 @@ describe('API: /api/notes/[noteId]', () => {
       )
 
       const response = await getNoteById(request, {
-        params: { noteId: '9999' },
+        params: Promise.resolve({ noteId: '9999' }),
       })
       const data = await parseResponseJSON(response)
 
@@ -195,6 +199,12 @@ describe('API: /api/notes/[noteId]', () => {
         animalID: 1,
       }
 
+      mockPrisma.notes.findUnique.mockResolvedValue({
+        noteID: 1,
+        notes: 'Original note',
+        date: new Date('2024-02-15'),
+        animalID: 1,
+      })
       ;(mockPrisma.notes.update as jest.Mock).mockResolvedValue(mockUpdatedNote)
 
       const request = createMockRequest('http://localhost:3000/api/notes/1', {
@@ -226,6 +236,12 @@ describe('API: /api/notes/[noteId]', () => {
         animalID: 1,
       }
 
+      mockPrisma.notes.findUnique.mockResolvedValue({
+        noteID: 1,
+        notes: 'Original note',
+        date: new Date('2024-02-15'),
+        animalID: 1,
+      })
       ;(mockPrisma.notes.update as jest.Mock).mockResolvedValue(mockUpdatedNote)
 
       const request = createMockRequest('http://localhost:3000/api/notes/1', {
@@ -246,6 +262,12 @@ describe('API: /api/notes/[noteId]', () => {
 
   describe('DELETE /api/notes/[noteId]', () => {
     it('should delete note by ID', async () => {
+      mockPrisma.notes.findUnique.mockResolvedValue({
+        noteID: 1,
+        notes: 'Service note',
+        date: new Date('2024-02-15'),
+        animalID: 1,
+      })
       ;(mockPrisma.notes.delete as jest.Mock).mockResolvedValue({
         noteID: 1,
         notes: 'Service note',
@@ -258,6 +280,12 @@ describe('API: /api/notes/[noteId]', () => {
         params: { noteId: '1' },
       })
 
+      mockPrisma.notes.findUnique.mockResolvedValue({
+        noteID: 1,
+        notes: 'Service note',
+        date: new Date('2024-02-15'),
+        animalID: 1,
+      })
       const response = await deleteNote(request, {
         params: Promise.resolve({ noteId: '1' }),
       })

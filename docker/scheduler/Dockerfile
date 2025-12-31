@@ -39,10 +39,13 @@ RUN mkdir -p /var/log/scheduler /scripts
 # Copy configuration files
 COPY crontab /etc/crontabs/root
 COPY logrotate.conf /etc/logrotate.d/scheduler
+# Copy scripts
 COPY scripts/ /scripts/
-
-# Set permissions
 RUN chmod +x /scripts/*.sh
+
+# Copy and set entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Copy health check script
 COPY healthcheck.sh /healthcheck.sh
@@ -57,5 +60,5 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && \
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD /healthcheck.sh
 
-# Run crond in foreground with log level 2 (notice and above)
-CMD ["crond", "-f", "-l", "2"]
+# Entrypoint
+ENTRYPOINT ["/entrypoint.sh"]

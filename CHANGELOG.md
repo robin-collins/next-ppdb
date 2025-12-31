@@ -12,10 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Application version display in the header navbar (vX.X.X) to the left of the GitHub icon.
 - Collapsible "System Environment" section to the System Updates page, displaying key package versions (Next.js, React, Prisma, etc.).
 - Enhanced updates API to provide environment-level dependency information.
+- Automatic email notification to `DEVELOPER_NOTIFICATION_EMAIL` when the scheduler container starts.
+- **Jest Test Repair Mission**: Comprehensive restoration of the test suite for React 19 and Next.js 16 compatibility.
 
 ### Fixed
 
 - Vertical misalignment in the "Add New Breed" form where input fields were not aligning due to varying presence of hint text.
+- **React 19 `act()` warnings**: All timer-based state updates in `Toast.test.tsx` now correctly wrapped in `act()`.
+- **API `params` type errors**: Wrapped request parameters in `Promise.resolve()` across all API test suites to match Next.js 16's asynchronous requirements.
+- **Prisma Mocking**: Resolved `TypeError` and missed mocks by enhancing Prisma mock objects with nested properties and missing methods (`count`, `$queryRaw`).
+- **Customer Deletion logic**: Added a guard clause to the `DELETE /api/customers/[id]` route to block deletion of customers with animals unless instructions are provided, matching intended business rules.
+
+### Changed
+
+- Realigned "Last Visit" and "This Visit" fields on the animal details page to appear side-by-side by moving the "Cost" field to its own full-width row.
 
 ## [1.0.6] - 2025-12-21
 

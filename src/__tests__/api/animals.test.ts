@@ -36,6 +36,15 @@ jest.mock('@/lib/prisma', () => ({
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
+    },
+    breed: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     },
     $disconnect: jest.fn(),
     $connect: jest.fn(),
@@ -316,6 +325,11 @@ describe('API: /api/animals', () => {
 
       mockPrisma.animal.create.mockResolvedValue(mockCreatedAnimal)
 
+      mockPrisma.breed.findFirst.mockResolvedValue({
+        breedID: 1,
+        breedname: 'Golden Retriever',
+      })
+
       const request = createMockRequest('http://localhost:3000/api/animals', {
         method: 'POST',
         body: newAnimal,
@@ -421,7 +435,9 @@ describe('API: /api/animals/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await getAnimalById(request, { params: { id: '1' } })
+      const response = await getAnimalById(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -440,7 +456,9 @@ describe('API: /api/animals/[id]', () => {
         { params: { id: '9999' } }
       )
 
-      const response = await getAnimalById(request, { params: { id: '9999' } })
+      const response = await getAnimalById(request, {
+        params: Promise.resolve({ id: '9999' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(404)
@@ -456,7 +474,7 @@ describe('API: /api/animals/[id]', () => {
       )
 
       const response = await getAnimalById(request, {
-        params: { id: 'invalid' },
+        params: Promise.resolve({ id: 'invalid' }),
       })
       const data = await parseResponseJSON(response)
 
@@ -500,11 +518,26 @@ describe('API: /api/animals/[id]', () => {
           breedID: 1,
           breedname: 'Golden Retriever',
           avgtime: 90,
-          avgcost: 45.0,
         },
         notes: [],
       }
 
+      mockPrisma.animal.findUnique.mockResolvedValue({
+        animalID: 1,
+        animalname: 'Max',
+        SEX: 'Male',
+        colour: 'Golden',
+        cost: 45,
+        lastvisit: new Date('2024-01-15'),
+        thisvisit: new Date('2024-02-15'),
+        comments: 'Friendly',
+        customerID: 1,
+        breedID: 1,
+      })
+      mockPrisma.breed.findUnique.mockResolvedValue({
+        breedID: 1,
+        breedname: 'Golden Retriever',
+      })
       mockPrisma.animal.update.mockResolvedValue(mockUpdatedAnimal)
 
       const request = createMockRequest('http://localhost:3000/api/animals/1', {
@@ -513,7 +546,9 @@ describe('API: /api/animals/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await updateAnimal(request, { params: { id: '1' } })
+      const response = await updateAnimal(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -538,7 +573,9 @@ describe('API: /api/animals/[id]', () => {
         }
       )
 
-      const response = await updateAnimal(request, { params: { id: '9999' } })
+      const response = await updateAnimal(request, {
+        params: Promise.resolve({ id: '9999' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(404)
@@ -561,15 +598,22 @@ describe('API: /api/animals/[id]', () => {
         breedID: 1,
       }
 
+      mockPrisma.animal.findUnique.mockResolvedValue({
+        animalID: 1,
+        animalname: 'Buddy',
+      })
+      mockPrisma.notes.count.mockResolvedValue(2)
       mockPrisma.notes.deleteMany.mockResolvedValue({ count: 2 })
-      mockPrisma.animal.delete.mockResolvedValue(mockAnimal)
+      mockPrisma.animal.delete.mockResolvedValue({ animalID: 1 })
 
       const request = createMockRequest('http://localhost:3000/api/animals/1', {
         method: 'DELETE',
         params: { id: '1' },
       })
 
-      const response = await deleteAnimal(request, { params: { id: '1' } })
+      const response = await deleteAnimal(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -594,7 +638,9 @@ describe('API: /api/animals/[id]', () => {
         }
       )
 
-      const response = await deleteAnimal(request, { params: { id: '9999' } })
+      const response = await deleteAnimal(request, {
+        params: Promise.resolve({ id: '9999' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(404)

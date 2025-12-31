@@ -132,7 +132,7 @@ export default function AnimalCard({ animal, onClick }: AnimalCardProps) {
         {/* RIGHT SECTION - Customer Details (2/3 on desktop) */}
         <div
           onClick={handleCustomerClick}
-          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-2 rounded-lg transition-all hover:bg-[var(--primary-light)] md:gap-1 md:p-4"
+          className="customer-area flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-2 rounded-lg transition-all hover:bg-[var(--primary-light)] md:gap-1 md:p-4"
           title="View customer details"
         >
           {/* Customer Name - Large & Bold (matching animal name size) */}

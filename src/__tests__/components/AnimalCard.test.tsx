@@ -5,6 +5,7 @@
  */
 
 import { render, screen } from '@testing-library/react'
+import { act } from 'react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import AnimalCard from '@/components/AnimalCard'
@@ -68,7 +69,8 @@ describe('AnimalCard', () => {
   it('should render customer name', () => {
     render(<AnimalCard animal={mockAnimal} onClick={mockOnClick} />)
 
-    expect(screen.getByText(/Smith, John/i)).toBeInTheDocument()
+    expect(screen.getByText('Smith')).toBeInTheDocument()
+    expect(screen.getByText(', John')).toBeInTheDocument()
   })
 
   it('should render customer address', () => {
@@ -108,9 +110,11 @@ describe('AnimalCard', () => {
       <AnimalCard animal={mockAnimal} onClick={mockOnClick} />
     )
 
-    // Check for pipe separator between phone numbers
-    const separators = container.querySelectorAll('.mx-1')
-    expect(separators.length).toBeGreaterThan(0)
+    // Check for contact section (which contains separators or gap styling)
+    const contactSection = container.querySelector(
+      '.flex.flex-wrap.items-center.gap-x-4'
+    )
+    expect(contactSection).toBeInTheDocument()
   })
 
   it('should render animal colour', () => {
@@ -119,11 +123,11 @@ describe('AnimalCard', () => {
     expect(screen.getByText('Golden')).toBeInTheDocument()
   })
 
-  it('should render formatted last visit date', () => {
+  it('should render last visit date', () => {
     render(<AnimalCard animal={mockAnimal} onClick={mockOnClick} />)
-
-    // Date formatted as "Jan 15, 24"
-    expect(screen.getByText(/Jan 15, 24/i)).toBeInTheDocument()
+    expect(screen.getByText(/Last Visit:/)).toBeInTheDocument()
+    // AU format: 15/01/2024
+    expect(screen.getByText('15/01/2024')).toBeInTheDocument()
   })
 
   it('should call onClick when card is clicked', async () => {
@@ -141,9 +145,7 @@ describe('AnimalCard', () => {
     const user = userEvent.setup()
     render(<AnimalCard animal={mockAnimal} onClick={mockOnClick} />)
 
-    const customerArea = screen
-      .getByText(/Smith, John/i)
-      .closest('.customer-area')
+    const customerArea = screen.getByText('Smith').closest('.customer-area')
     await user.click(customerArea!)
 
     expect(mockRouter.push).toHaveBeenCalledWith('/customer/10')
@@ -196,20 +198,13 @@ describe('AnimalCard', () => {
     }
     render(<AnimalCard animal={animalNoPhones} onClick={mockOnClick} />)
 
-    expect(screen.queryByText('5550101')).not.toBeInTheDocument()
+    expect(screen.queryByText('555 0101')).not.toBeInTheDocument()
   })
 
-  it('should display N/A for missing colour', () => {
+  it('should handle missing colour (not rendered)', () => {
     const animalNoColour = { ...mockAnimal, colour: null }
     render(<AnimalCard animal={animalNoColour} onClick={mockOnClick} />)
 
-    expect(screen.getByText('N/A')).toBeInTheDocument()
-  })
-
-  it('should render Color and Last Visit labels', () => {
-    render(<AnimalCard animal={mockAnimal} onClick={mockOnClick} />)
-
-    expect(screen.getByText('Color')).toBeInTheDocument()
-    expect(screen.getByText('Last Visit')).toBeInTheDocument()
+    expect(screen.queryByText('Golden')).not.toBeInTheDocument()
   })
 })

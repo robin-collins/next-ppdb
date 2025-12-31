@@ -44,7 +44,7 @@ function _getStatusColor(status: number): string {
   return COLORS.reset
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // Create response with pathname header for SetupGuard

@@ -523,7 +523,7 @@ export default function AnimalPage() {
                     </div>
 
                     {/* Cost */}
-                    <div className="form-group">
+                    <div className="form-group full-width">
                       <label className="form-label" htmlFor="cost">
                         Cost ($)
                       </label>

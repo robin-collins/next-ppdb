@@ -207,9 +207,6 @@ importers:
       remark-strip-html:
         specifier: ^1.0.2
         version: 1.0.2
-      rifraf:
-        specifier: ^2.0.3
-        version: 2.0.3
       strip-markdown:
         specifier: ^6.0.0
         version: 6.0.0
@@ -5157,9 +5154,6 @@ packages:
 
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
-
-  rifraf@2.0.3:
-    resolution: {integrity: sha512-4likEZrmIWT1MT3wDR0Gq3SC2q6CfUBQ7CbRlE365jMKgKpTLwUpJmTSurn8gIjyHIRWAFLtiDg7QfemHHI0rA==}
 
   rimraf@6.1.2:
     resolution: {integrity: sha512-cFCkPslJv7BAXJsYlK1dZsbP8/ZNLkCAQ0bi1hf5EKX2QHegmDFEFA6QhuYJlk7UDdc+02JjO80YSOrWPpw06g==}
@@ -12409,8 +12403,6 @@ snapshots:
   reusify@1.1.0: {}
 
   rfdc@1.4.1: {}
-
-  rifraf@2.0.3: {}
 
   rimraf@6.1.2:
     dependencies:

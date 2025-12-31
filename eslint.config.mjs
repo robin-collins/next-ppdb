@@ -37,7 +37,9 @@ const eslintConfig = [
       'jest.config.mjs',
       'playwright.config.ts',
       'scripts/**/*',
+      'prisma/scripts/**',
       'reference/**/*',
+      'chrome-user-data-dir/**',
     ],
   },
   {

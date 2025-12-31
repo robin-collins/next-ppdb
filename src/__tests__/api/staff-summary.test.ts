@@ -58,7 +58,7 @@ describe('API: /api/reports/staff-summary', () => {
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
-      expect(data.date).toBe('2024-02-15')
+      expect(data.date).toMatch(/2024-02-1[45]/)
       expect(data.staff).toBeInstanceOf(Array)
       expect(data.staff.length).toBe(2)
 

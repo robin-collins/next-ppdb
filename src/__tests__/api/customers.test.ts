@@ -30,6 +30,19 @@ jest.mock('@/lib/prisma', () => ({
       count: jest.fn(),
     },
     animal: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      count: jest.fn(),
+      updateMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    breed: {
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      findFirst: jest.fn(),
+    },
+    notes: {
+      deleteMany: jest.fn(),
       count: jest.fn(),
     },
     $disconnect: jest.fn(),
@@ -188,7 +201,7 @@ describe('API: /api/customers', () => {
         phone2: '',
         phone3: '',
         email: 'sarah@example.com',
-        animal: [], // Include empty animals array
+        animal: [],
       }
 
       mockPrisma.customer.create.mockResolvedValue(mockCreatedCustomer)
@@ -210,7 +223,6 @@ describe('API: /api/customers', () => {
     it('should return 400 for missing required fields', async () => {
       const invalidCustomer = {
         firstname: 'Sarah',
-        // Missing surname (required)
       }
 
       const request = createMockRequest('http://localhost:3000/api/customers', {
@@ -225,8 +237,6 @@ describe('API: /api/customers', () => {
       expect(data.error).toBe('Invalid request data')
     })
 
-    // NOTE: Phone validation checks max length BEFORE normalization
-    // So phone numbers must be ≤10 chars including formatting
     it('should normalize phone numbers on creation', async () => {
       const newCustomer = {
         surname: 'Test',
@@ -234,8 +244,8 @@ describe('API: /api/customers', () => {
         address: '123 Test St',
         suburb: 'Testville',
         postcode: '1000',
-        phone1: '555-1234', // 8 chars with dash, normalizes to 7
-        phone2: '555-9998', // 8 chars with dash, normalizes to 7
+        phone1: '555-1234',
+        phone2: '555-9998',
         phone3: '',
         email: 'test@example.com',
       }
@@ -251,7 +261,7 @@ describe('API: /api/customers', () => {
         phone2: '5559998',
         phone3: '',
         email: 'test@example.com',
-        animal: [], // Include empty animals array
+        animal: [],
       }
 
       mockPrisma.customer.create.mockResolvedValue(mockCreatedCustomer)
@@ -309,6 +319,7 @@ describe('API: /api/customers/[id]', () => {
               breedID: 1,
               breedname: 'Golden Retriever',
             },
+            notes: [],
           },
         ],
       }
@@ -320,7 +331,9 @@ describe('API: /api/customers/[id]', () => {
         { params: { id: '1' } }
       )
 
-      const response = await getCustomerById(request, { params: { id: '1' } })
+      const response = await getCustomerById(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -338,7 +351,7 @@ describe('API: /api/customers/[id]', () => {
       )
 
       const response = await getCustomerById(request, {
-        params: { id: '9999' },
+        params: Promise.resolve({ id: '9999' }),
       })
       const data = await parseResponseJSON(response)
 
@@ -362,9 +375,24 @@ describe('API: /api/customers/[id]', () => {
         suburb: 'Springfield',
         postcode: 1234,
         phone1: '5550101',
-        phone2: '',
-        phone3: '',
+        phone2: '5550102',
+        phone3: null,
         email: 'john@example.com',
+        animal: [
+          {
+            animalID: 1,
+            animalname: 'Max',
+            SEX: 'Male',
+            colour: 'Golden',
+            cost: 45.0,
+            lastvisit: new Date('2024-01-15'),
+            thisvisit: new Date('2024-02-15'),
+            comments: 'Friendly',
+            breedID: 1,
+            breed: { breedname: 'Golden Retriever' },
+            notes: [],
+          },
+        ],
       }
 
       const mockUpdatedCustomer = {
@@ -381,9 +409,9 @@ describe('API: /api/customers/[id]', () => {
         animal: [],
       }
 
-      // Mock findUnique (for existence check) and update
       mockPrisma.customer.findUnique.mockResolvedValue(mockExistingCustomer)
       mockPrisma.customer.update.mockResolvedValue(mockUpdatedCustomer)
+      mockPrisma.animal.findMany.mockResolvedValue([])
 
       const request = createMockRequest(
         'http://localhost:3000/api/customers/1',
@@ -394,7 +422,9 @@ describe('API: /api/customers/[id]', () => {
         }
       )
 
-      const response = await updateCustomer(request, { params: { id: '1' } })
+      const response = await updateCustomer(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -418,11 +448,14 @@ describe('API: /api/customers/[id]', () => {
         phone2: '',
         phone3: '',
         email: 'john@example.com',
-        animal: [], // No associated animals
+        animal: [],
       }
 
       // Mock findUnique to return customer with no animals
+      // Also mock findMany for safety as it might be used
       mockPrisma.customer.findUnique.mockResolvedValue(mockExistingCustomer)
+      mockPrisma.animal.findMany.mockResolvedValue([])
+      mockPrisma.animal.deleteMany.mockResolvedValue({ count: 0 })
       mockPrisma.customer.delete.mockResolvedValue(mockExistingCustomer)
 
       const request = createMockRequest(
@@ -433,7 +466,9 @@ describe('API: /api/customers/[id]', () => {
         }
       )
 
-      const response = await deleteCustomer(request, { params: { id: '1' } })
+      const response = await deleteCustomer(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -455,14 +490,17 @@ describe('API: /api/customers/[id]', () => {
         phone3: '',
         email: 'john@example.com',
         animal: [
-          { animalID: 1, animalname: 'Max' },
-          { animalID: 2, animalname: 'Bella' },
-          { animalID: 3, animalname: 'Charlie' },
-        ], // Has associated animals
+          { animalID: 1, animalname: 'Max', notes: [] },
+          { animalID: 2, animalname: 'Bella', notes: [] },
+          { animalID: 3, animalname: 'Charlie', notes: [] },
+        ],
       }
 
-      // Mock findUnique to return customer with animals
+      // Mock findUnique and findMany
       mockPrisma.customer.findUnique.mockResolvedValue(mockExistingCustomer)
+      mockPrisma.animal.findMany.mockResolvedValue(mockExistingCustomer.animal)
+      mockPrisma.animal.deleteMany.mockResolvedValue({ count: 0 })
+      mockPrisma.notes.deleteMany.mockResolvedValue({ count: 0 })
 
       const request = createMockRequest(
         'http://localhost:3000/api/customers/1',
@@ -472,7 +510,9 @@ describe('API: /api/customers/[id]', () => {
         }
       )
 
-      const response = await deleteCustomer(request, { params: { id: '1' } })
+      const response = await deleteCustomer(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(400)

@@ -25,7 +25,9 @@ jest.mock('@/lib/prisma', () => ({
     },
     animal: {
       count: jest.fn(),
+      findMany: jest.fn(),
     },
+    $queryRaw: jest.fn(),
     $disconnect: jest.fn(),
     $connect: jest.fn(),
   },
@@ -109,6 +111,7 @@ describe('API: /api/breeds', () => {
 
       mockPrisma.breed.create.mockResolvedValue(mockCreatedBreed)
 
+      mockPrisma.$queryRaw.mockResolvedValue([])
       const request = createMockRequest('http://localhost:3000/api/breeds', {
         method: 'POST',
         body: newBreed,
@@ -212,7 +215,9 @@ describe('API: /api/breeds/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await updateBreed(request, { params: { id: '1' } })
+      const response = await updateBreed(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -242,7 +247,9 @@ describe('API: /api/breeds/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await updateBreed(request, { params: { id: '1' } })
+      const response = await updateBreed(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -265,7 +272,9 @@ describe('API: /api/breeds/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await deleteBreed(request, { params: { id: '1' } })
+      const response = await deleteBreed(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(200)
@@ -281,7 +290,9 @@ describe('API: /api/breeds/[id]', () => {
         params: { id: '1' },
       })
 
-      const response = await deleteBreed(request, { params: { id: '1' } })
+      const response = await deleteBreed(request, {
+        params: Promise.resolve({ id: '1' }),
+      })
       const data = await parseResponseJSON(response)
 
       expect(response.status).toBe(400)

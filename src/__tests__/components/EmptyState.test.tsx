@@ -44,7 +44,7 @@ describe('EmptyState', () => {
   it('should render all suggestion buttons', () => {
     render(<EmptyState onSuggestionClick={mockOnSuggestionClick} />)
 
-    const suggestions = ['Cody', 'Maltese', 'James', 'Active pets']
+    const suggestions = ['Collins, Christine', 'German Shepherd', '85562340']
     suggestions.forEach(suggestion => {
       expect(
         screen.getByRole('button', { name: suggestion })
@@ -56,26 +56,28 @@ describe('EmptyState', () => {
     const user = userEvent.setup()
     render(<EmptyState onSuggestionClick={mockOnSuggestionClick} />)
 
-    const codyButton = screen.getByRole('button', { name: 'Cody' })
-    await user.click(codyButton)
+    const suggestionButton = screen.getByRole('button', {
+      name: 'Collins, Christine',
+    })
+    await user.click(suggestionButton)
 
     expect(mockOnSuggestionClick).toHaveBeenCalledTimes(1)
-    expect(mockOnSuggestionClick).toHaveBeenCalledWith('Cody')
+    expect(mockOnSuggestionClick).toHaveBeenCalledWith('Collins, Christine')
   })
 
   it('should call onSuggestionClick with correct suggestion for each button', async () => {
     const user = userEvent.setup()
     render(<EmptyState onSuggestionClick={mockOnSuggestionClick} />)
 
-    const malteseButton = screen.getByRole('button', { name: 'Maltese' })
-    await user.click(malteseButton)
+    const breedButton = screen.getByRole('button', { name: 'German Shepherd' })
+    await user.click(breedButton)
 
-    expect(mockOnSuggestionClick).toHaveBeenCalledWith('Maltese')
+    expect(mockOnSuggestionClick).toHaveBeenCalledWith('German Shepherd')
 
-    const jamesButton = screen.getByRole('button', { name: 'James' })
-    await user.click(jamesButton)
+    const phoneButton = screen.getByRole('button', { name: '85562340' })
+    await user.click(phoneButton)
 
-    expect(mockOnSuggestionClick).toHaveBeenCalledWith('James')
+    expect(mockOnSuggestionClick).toHaveBeenCalledWith('85562340')
   })
 
   it('should render the "Try searching for" section heading', () => {
