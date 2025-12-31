@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Application version display in the header navbar (vX.X.X) to the left of the GitHub icon.
 - Collapsible "System Environment" section to the System Updates page, displaying key package versions (Next.js, React, Prisma, etc.).
 - Enhanced updates API to provide environment-level dependency information.
-- Automatic email notification to `DEVELOPER_NOTIFICATION_EMAIL` when the scheduler container starts.
+- Enhanced scheduler startup notification and update execution scripts with verbose logging and better error reporting.
+- Added masked environment variable logging and automatic Port 465 (Implicit TLS) detection for SMTP compatibility.
+- Switched to `msmtp -v` for detailed SMTP transaction logs in the container stdout.
 - **Jest Test Repair Mission**: Comprehensive restoration of the test suite for React 19 and Next.js 16 compatibility.
 
 ### Fixed

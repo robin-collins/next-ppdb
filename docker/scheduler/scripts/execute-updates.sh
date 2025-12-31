@@ -39,22 +39,48 @@ configure_msmtp() {
         return 1
     fi
 
-    cat > /tmp/msmtprc <<EOF
+    local MSMTP_CONF="/tmp/msmtprc"
+    local MSMTP_LOG="/var/log/scheduler/msmtp.log"
+    local SMTP_CUR_PORT=${SMTP_PORT:-587}
+
+    # Ensure log directory exists
+    local LOG_DIR=$(dirname "$MSMTP_LOG")
+    if [ ! -d "$LOG_DIR" ]; then
+        mkdir -p "$LOG_DIR" 2>/dev/null || MSMTP_LOG="/tmp/msmtp.log"
+    fi
+
+    # msmtp settings for 465 vs 587
+    local TLS_STARTTLS="on"
+    if [ "$SMTP_CUR_PORT" == "465" ]; then
+        TLS_STARTTLS="off"
+    fi
+
+    # Check for SSL certs
+    local TLS_TRUST_FILE="/etc/ssl/certs/ca-certificates.crt"
+    local TLS_CHECK="on"
+    if [ ! -f "$TLS_TRUST_FILE" ]; then
+        TLS_CHECK="off"
+    fi
+
+    cat > "$MSMTP_CONF" <<EOF
 defaults
 auth           on
 tls            on
-tls_trust_file /etc/ssl/certs/ca-certificates.crt
-logfile        /var/log/scheduler/msmtp.log
+tls_starttls   $TLS_STARTTLS
+tls_certcheck  $TLS_CHECK
+tls_trust_file $TLS_TRUST_FILE
+logfile        $MSMTP_LOG
+timeout        15
 
 account        default
 host           $SMTP_HOST
-port           ${SMTP_PORT:-587}
+port           $SMTP_CUR_PORT
 from           ${SMTP_FROM:-$SMTP_USER}
 user           $SMTP_USER
 password       $SMTP_PASS
 EOF
-    chmod 600 /tmp/msmtprc
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SMTP configured for $SMTP_HOST"
+    chmod 600 "$MSMTP_CONF"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SMTP configured (Port: $SMTP_CUR_PORT, StartTLS: $TLS_STARTTLS)"
     return 0
 }
 
@@ -75,9 +101,16 @@ send_fallback_email() {
         return 1
     fi
 
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sending fallback email to $EMAIL_TO..."
+    # Prepare envelope from address (strip friendly name if present for SMTP compatibility)
+    local ENVELOPE_FROM="${SMTP_FROM:-$SMTP_USER}"
+    if [[ "$ENVELOPE_FROM" =~ \<([^>]+)\> ]]; then
+        ENVELOPE_FROM="${BASH_REMATCH[1]}"
+    fi
 
-    # Send email using msmtp
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Sending fallback email to $EMAIL_TO (from $ENVELOPE_FROM)..."
+
+    # Send email using msmtp (verbose output captured in logs)
+    set +e
     {
         echo "To: $EMAIL_TO"
         echo "From: ${SMTP_FROM:-$SMTP_USER}"
@@ -85,13 +118,18 @@ send_fallback_email() {
         echo "Content-Type: text/plain; charset=UTF-8"
         echo ""
         echo "$BODY"
-    } | msmtp -C /tmp/msmtprc "$EMAIL_TO"
+    } | msmtp -v -C /tmp/msmtprc -f "$ENVELOPE_FROM" "$EMAIL_TO" 2>&1 | while read -r line; do
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [msmtp] $line"
+    done
+    
+    local MSMTP_STATUS=${PIPESTATUS[0]}
+    set -e
 
-    if [ $? -eq 0 ]; then
+    if [ $MSMTP_STATUS -eq 0 ]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fallback email sent successfully to $EMAIL_TO"
         return 0
     else
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Failed to send fallback email to $EMAIL_TO"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: Failed to send fallback email to $EMAIL_TO (exit code: $MSMTP_STATUS)"
         return 1
     fi
 }

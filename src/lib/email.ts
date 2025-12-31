@@ -19,6 +19,8 @@ const smtpConfig = {
     return parseInt(process.env.SMTP_PORT || '587', 10)
   },
   get secure(): boolean {
+    // Port 465 is always secure (Implicit TLS)
+    if (this.port === 465) return true
     return process.env.SMTP_SECURE === 'true'
   },
   get user(): string | undefined {
