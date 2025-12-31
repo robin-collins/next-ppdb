@@ -82,6 +82,10 @@ function getTransporter(): Transporter<SMTPTransport.SentMessageInfo> | null {
         user: smtpConfig.user,
         pass: smtpConfig.password,
       },
+      tls: {
+        // Disabling cert rejection to handle hostname mismatches on shared gator/hostgator servers
+        rejectUnauthorized: false,
+      },
     })
 
     // Verify connection on first use

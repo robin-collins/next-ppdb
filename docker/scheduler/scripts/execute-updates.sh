@@ -56,11 +56,9 @@ configure_msmtp() {
     fi
 
     # Check for SSL certs
+    # Unconditionally disabling cert check to handle hostname mismatches common on shared hosting
     local TLS_TRUST_FILE="/etc/ssl/certs/ca-certificates.crt"
-    local TLS_CHECK="on"
-    if [ ! -f "$TLS_TRUST_FILE" ]; then
-        TLS_CHECK="off"
-    fi
+    local TLS_CHECK="off"
 
     cat > "$MSMTP_CONF" <<EOF
 defaults

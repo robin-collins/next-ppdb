@@ -40,6 +40,10 @@ async function testConnection() {
             user: config.user,
             pass: config.pass,
         },
+        tls: {
+            // Disabling cert rejection to handle hostname mismatches on shared gator/hostgator servers
+            rejectUnauthorized: false,
+        },
         debug: true, // Enable debug output
         logger: true // Log to console
     });

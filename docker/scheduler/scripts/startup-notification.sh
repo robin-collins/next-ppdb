@@ -62,12 +62,10 @@ if [ "$SMTP_CUR_PORT" == "465" ]; then
 fi
 
 # Check for SSL certs on host vs container
+# Unconditionally disabling cert check to handle hostname mismatches common on shared hosting
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] DEBUG: Disabling TLS certificate verification for maximum compatibility"
+TLS_CHECK="off"
 TLS_TRUST_FILE="/etc/ssl/certs/ca-certificates.crt"
-TLS_CHECK="on"
-if [ ! -f "$TLS_TRUST_FILE" ]; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] DEBUG: CA certs not found at $TLS_TRUST_FILE, disabling cert check for test"
-    TLS_CHECK="off"
-fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Generating msmtp configuration at $MSMTP_CONF"
 cat > "$MSMTP_CONF" <<EOF
