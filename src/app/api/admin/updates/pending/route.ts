@@ -24,6 +24,7 @@ export async function GET(request: Request) {
       pending: typeof pending
       lastCheck: string | null
       history?: Awaited<ReturnType<typeof updateStore.getHistory>>
+      environment?: Record<string, string>
     } = {
       pending,
       lastCheck,
@@ -31,6 +32,18 @@ export async function GET(request: Request) {
 
     if (includeHistory) {
       response.history = await updateStore.getHistory(historyLimit)
+    }
+
+    // Add environment info
+    const pkg = require('../../../../../../package.json')
+    response.environment = {
+      app: pkg.version,
+      next: pkg.dependencies.next,
+      react: pkg.dependencies.react,
+      prisma: pkg.dependencies['@prisma/client'],
+      typescript: pkg.devDependencies.typescript,
+      tailwindcss: pkg.devDependencies.tailwindcss,
+      node: process.version,
     }
 
     return NextResponse.json(response)

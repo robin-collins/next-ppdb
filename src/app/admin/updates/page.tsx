@@ -31,7 +31,9 @@ export default function AdminUpdatesPage() {
   const [pendingUpdate, setPendingUpdate] = useState<PendingUpdate | null>(null)
   const [updateHistory, setUpdateHistory] = useState<UpdateHistory[]>([])
   const [lastCheck, setLastCheck] = useState<string | null>(null)
+  const [environment, setEnvironment] = useState<Record<string, string>>({})
   const [showModal, setShowModal] = useState(false)
+  const [showEnv, setShowEnv] = useState(false)
 
   const fetchUpdates = useCallback(async () => {
     try {
@@ -44,6 +46,7 @@ export default function AdminUpdatesPage() {
       setPendingUpdate(data.pending)
       setUpdateHistory(data.history || [])
       setLastCheck(data.lastCheck)
+      setEnvironment(data.environment || {})
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch updates')
     } finally {
@@ -389,6 +392,69 @@ export default function AdminUpdatesPage() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* System Environment (Collapsible) */}
+              <div className="card mt-6">
+                <button
+                  onClick={() => setShowEnv(!showEnv)}
+                  className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-gray-50"
+                  aria-expanded={showEnv}
+                >
+                  <div className="flex items-center gap-3">
+                    <svg
+                      className="h-5 w-5 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                      />
+                    </svg>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      System Environment
+                    </h2>
+                  </div>
+                  <svg
+                    className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
+                      showEnv ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                {showEnv && (
+                  <div className="border-t border-gray-100 bg-gray-50/50 p-6">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {Object.entries(environment).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex flex-col rounded-lg bg-white p-3 shadow-sm ring-1 ring-gray-100"
+                        >
+                          <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                            {key === 'app' ? 'Application' : key}
+                          </span>
+                          <span className="mt-1 font-mono text-sm font-medium text-gray-900">
+                            {value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}

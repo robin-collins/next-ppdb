@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2025-12-31
+
+### Added
+
+- Application version display in the header navbar (vX.X.X) to the left of the GitHub icon.
+- Collapsible "System Environment" section to the System Updates page, displaying key package versions (Next.js, React, Prisma, etc.).
+- Enhanced updates API to provide environment-level dependency information.
+
+### Fixed
+
+- Vertical misalignment in the "Add New Breed" form where input fields were not aligning due to varying presence of hint text.
+
 ## [1.0.6] - 2025-12-21
 
 ### Added

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "MCP_DOCKER": {
+      "command": "docker.exe",
+      "args": ["mcp", "gateway", "run"],
+      "env": {
+        "LOCALAPPDATA": "C:\\Users\\Robin\\AppData\\Local",
+        "ProgramData": "C:\\ProgramData",
+        "ProgramFiles": "C:\\Program Files"
+      },
+      "type": "stdio"
+    }
+  }
+}

@@ -1687,11 +1687,11 @@ main.sidebar-pinned .main-content {
   margin: 0;
 }
 
-.form-grid {
+.add-breed-section .form-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr auto;
   gap: var(--space-4);
-  align-items: end;
+  align-items: flex-start;
 }
 
 .form-group {

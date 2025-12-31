@@ -19,12 +19,12 @@ import 'swagger-ui-react/swagger-ui.css'
 if (typeof window !== 'undefined') {
   const originalError = console.error
   console.error = (...args: unknown[]) => {
-    const message = args[0]
-    if (
-      typeof message === 'string' &&
-      message.includes('UNSAFE_componentWillReceiveProps') &&
-      message.includes('ModelCollapse')
-    ) {
+    const fullMessage = args.join(' ')
+    const isSwaggerWarning =
+      fullMessage.includes('UNSAFE_componentWillReceiveProps') &&
+      fullMessage.includes('ModelCollapse')
+
+    if (isSwaggerWarning) {
       return // Suppress this specific swagger-ui warning
     }
     originalError.apply(console, args)

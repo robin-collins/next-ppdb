@@ -108,22 +108,27 @@ export default function BreedForm({ onCreate }: BreedFormProps) {
             Default: Lowest existing breed cost
           </span>
         </div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          aria-label="Add new breed to database"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
+        <div className="form-group">
+          <label className="form-label invisible" aria-hidden="true">
+            &nbsp;
+          </label>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            aria-label="Add new breed to database"
           >
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-          </svg>
-          Add Breed
-        </button>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Add Breed
+          </button>
+        </div>
       </form>
     </section>
   )

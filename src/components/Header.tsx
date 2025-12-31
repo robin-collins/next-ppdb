@@ -262,6 +262,11 @@ export default function Header({
 
         {/* External Links */}
         <div className="hidden items-center gap-3 lg:flex">
+          {process.env.NEXT_PUBLIC_APP_VERSION && (
+            <span className="text-xs text-gray-400">
+              v{process.env.NEXT_PUBLIC_APP_VERSION}
+            </span>
+          )}
           <Link
             href={GITHUB_REPO_URL}
             target="_blank"
